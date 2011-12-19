@@ -1,0 +1,17 @@
+defaults: &DEFAULTS
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: trailsforward
+  password:
+
+development:
+  <<: *DEFAULTS
+  database: trails_forward_development
+
+test: &TEST
+  <<: *DEFAULTS
+  database: trails_forward_test
+
+cucumber:
+  <<: *TEST
