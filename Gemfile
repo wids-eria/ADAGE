@@ -12,8 +12,14 @@ end
 
 gem 'jquery-rails'
 gem 'capistrano'
+gem 'haml'
 
-group :test do
+group :test, :development do
+  gem 'cucumber-rails'
+  gem 'database_cleaner'
+  gem 'factory_girl_rails'
+  gem 'rspec-rails'
+
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false
 end
