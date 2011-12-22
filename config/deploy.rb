@@ -28,7 +28,7 @@ set :normalize_asset_timestamps, false
 
 # CALLBACKS #########
 
-after 'deploy:finalize_update', 'deploy:symlink_db'
+after 'deploy:symlink', 'deploy:symlink_db'
 
 namespace :deploy do
   desc "Symlinks the database.yml"
