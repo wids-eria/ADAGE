@@ -1,6 +1,4 @@
 class UsersController < ApplicationController
-  skip_authorization_check :only => :authenticate_for_token
-
   def authenticate_for_token
     @user = User.find_by_email params[:email]
     if @user != nil and @user.valid_password? params[:password]
