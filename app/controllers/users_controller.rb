@@ -10,7 +10,7 @@ class UsersController < ApplicationController
         format.xml  {render :xml => ret, :status => :created }
       end
     else
-      ret = {:errors => "Invalid email or password"}
+      ret = {:error => "Invalid email or password"}
       respond_to do |format|
         format.json {render :json => ret, :status => :unauthorized }
         format.xml  {render :xml => ret, :status => :unauthorized }
