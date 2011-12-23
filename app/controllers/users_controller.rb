@@ -3,7 +3,7 @@ class UsersController < ApplicationController
     @user = User.find_by_email params[:email]
     if @user != nil and @user.valid_password? params[:password]
       @auth_token = @user.authentication_token
-      ret = {:session_id => @user.id, :auth_token => @auth_token}
+      ret = {:session_id => @user.id.to_s, :auth_token => @auth_token}
       respond_to do |format|
         format.json {render :json => ret }
         format.xml  {render :xml => ret }
