@@ -31,7 +31,7 @@ set :normalize_asset_timestamps, false
 after 'deploy:finalize_update', 'deploy:symlink_db'
 
 set :passenger_port, 9292
-set :passenger_cmd,  "#{bundle_cmd} exec passenger"
+set :passenger_cmd,  "RAILS_ENV=production bundle exec passenger"
 
 namespace :deploy do
   desc "Symlinks the database.yml"
