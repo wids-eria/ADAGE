@@ -30,19 +30,31 @@ set :normalize_asset_timestamps, false
 
 after 'deploy:finalize_update', 'deploy:symlink_db'
 
+set :passenger_port, 9292
+set :passenger_cmd,  "#{bundle_cmd} exec passenger"
+
 namespace :deploy do
   desc "Symlinks the database.yml"
   task :symlink_db, :roles => :app do
     run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
   end
 
-  desc "Restarting mod_rails with restart.txt"
-  task :restart, :roles => :app, :except => { :no_release => true } do
-    run "touch #{current_path}/tmp/restart.txt"
+  task :start, :roles => :app, :except => { :no_release => true } do
+    run "cd #{current_path} && #{passenger_cmd} start -e #{rails_env} -p #{passenger_port} -d"
   end
- 
-  [:start, :stop].each do |t|
-    desc "#{t} task is a no-op with mod_rails"
-    task t, :roles => :app do ; end
+
+  task :stop, :roles => :app, :except => { :no_release => true } do
+    run "cd #{current_path} && #{passenger_cmd} stop -p #{passenger_port}"
+  end
+
+  task :restart, :roles => :app, :except => { :no_release => true } do
+    run <<-CMD
+      if [[ -f #{current_path}/tmp/pids/passenger.#{passenger_port}.pid ]];
+      then
+        cd #{current_path} && #{passenger_cmd} stop -p #{passenger_port};
+      fi
+    CMD
+
+    run "cd #{current_path} && #{passenger_cmd} start -e #{rails_env} -p #{passenger_port} -d"
   end
 end
