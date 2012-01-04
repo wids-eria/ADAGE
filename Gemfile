@@ -20,8 +20,8 @@ gem 'haml'
 group :test, :development do
   gem 'cucumber-rails'
   gem 'database_cleaner'
-  gem 'fabrication'
   gem 'rspec-rails'
+  gem 'fabrication'
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false
