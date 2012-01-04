@@ -5,6 +5,7 @@ gem 'pg'
 gem 'devise'
 gem 'passenger'
 gem 'mongoid'
+gem 'bson_ext'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
