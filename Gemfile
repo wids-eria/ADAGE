@@ -4,6 +4,7 @@ gem 'rails', '3.1.3'
 gem 'pg'
 gem 'devise'
 gem 'passenger'
+gem 'mongoid'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
@@ -18,7 +19,7 @@ gem 'haml'
 group :test, :development do
   gem 'cucumber-rails'
   gem 'database_cleaner'
-  gem 'factory_girl_rails'
+  gem 'fabrication'
   gem 'rspec-rails'
 
   # Pretty printed test output

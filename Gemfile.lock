@@ -32,6 +32,7 @@ GEM
     ansi (1.4.1)
     arel (2.2.1)
     bcrypt-ruby (3.0.1)
+    bson (1.5.2)
     builder (3.0.0)
     capistrano (2.9.0)
       highline
@@ -75,11 +76,7 @@ GEM
     erubis (2.7.0)
     execjs (1.2.13)
       multi_json (~> 1.0)
-    factory_girl (2.3.2)
-      activesupport
-    factory_girl_rails (1.4.0)
-      factory_girl (~> 2.3.0)
-      railties (>= 3.0.0)
+    fabrication (1.2.0)
     fastthread (1.0.7)
     ffi (1.0.11)
     gherkin (2.7.1)
@@ -97,6 +94,12 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.17.2)
+    mongo (1.5.2)
+      bson (= 1.5.2)
+    mongoid (2.3.4)
+      activemodel (~> 3.1)
+      mongo (~> 1.3)
+      tzinfo (~> 0.3.22)
     multi_json (1.0.4)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
@@ -199,9 +202,10 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   devise
-  factory_girl_rails
+  fabrication
   haml
   jquery-rails
+  mongoid
   passenger
   pg
   rails (= 3.1.3)
