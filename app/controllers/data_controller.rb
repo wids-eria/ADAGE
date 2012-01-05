@@ -1,4 +1,6 @@
 class DataController < ApplicationController
+  respond_to :html, :json
+
   def create
     if params[:data]
       params[:data].each do |datum|
@@ -6,6 +8,7 @@ class DataController < ApplicationController
       end
     end
 
-    render :text => "woo"
+    return_value = {}
+    respond_with return_value, :location => ''
   end
 end
