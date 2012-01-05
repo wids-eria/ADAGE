@@ -6,5 +6,7 @@ Ada::Application.routes.draw do
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
 
+  resources :data
+
   root :to => 'welcome#index'
 end
