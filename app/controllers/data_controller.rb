@@ -3,6 +3,12 @@ class DataController < ApplicationController
 
   def index
     @data = AdaData.all
+    respond_with @data
+  end
+
+  def show
+    @data = AdaData.find(params[:id])
+    respond_with @data
   end
 
   def create

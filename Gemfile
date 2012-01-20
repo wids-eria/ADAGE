@@ -6,6 +6,7 @@ gem 'devise'
 gem 'passenger'
 gem 'mongoid'
 gem 'bson_ext'
+gem 'decent_exposure'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'

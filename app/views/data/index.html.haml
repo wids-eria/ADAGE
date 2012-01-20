@@ -1,4 +1,6 @@
 %ul
-  - @data.each do |data|
+  - @data.each do |datum|
     %li
-      = debug data
+      = link_to datum.id, datum_path(datum)
+      = datum.created_at
+      = datum.game
