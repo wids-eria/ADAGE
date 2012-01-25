@@ -2,7 +2,7 @@ class DataController < ApplicationController
   respond_to :html, :json
 
   def index
-    @data = AdaData.all
+    @data = AdaData.page params[:page]
     respond_with @data
   end
 

@@ -1,9 +1,17 @@
 require 'spec_helper'
 
 describe DataController do
+  let!(:user) { Fabricate :user, password: 'pass1234' }
+
+  describe "#index" do
+    let(:datum) { create :datum }
+    it "returns a list of data" do
+      get :index
+      response.should be_success
+    end
+  end
 
   describe "data collector" do
-    let!(:user) { Fabricate :user, password: 'pass1234' }
 
     it "creates mongo records from incoming json" do
       lambda do

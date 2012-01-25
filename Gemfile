@@ -7,6 +7,7 @@ gem 'passenger'
 gem 'mongoid'
 gem 'bson_ext'
 gem 'decent_exposure'
+gem 'kaminari'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
