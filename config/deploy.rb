@@ -1,16 +1,16 @@
 $:.unshift(File.expand_path('./lib', ENV['rvm_path']))
 
-set :application, "ada"
-
 require 'rvm/capistrano'
 set :rvm_ruby_string, '1.9.3'
-
-require 'bundler/capistrano'
-load 'deploy/assets'
 
 require 'capistrano/ext/multistage'
 set :stages, %w(production staging)
 set :default_stage, "staging"
+
+require 'bundler/capistrano'
+load 'deploy/assets'
+
+set :application, "ada"
 
 set :scm, :git
 set :repository,  "git@github.com:wids-eria/ada.git"
@@ -21,12 +21,13 @@ role :app, "terrordome.discovery.wisc.edu"
 role :db,  "terrordome.discovery.wisc.edu", :primary => true # This is where Rails migrations will run
 
 set :user, :deploy
-ssh_options[:forward_agent] = true
 set :deploy_to, "/var/www/#{application}"
 set :deploy_via, :remote_cache
 set :use_sudo, false
+ssh_options[:forward_agent] = true
 
 set :normalize_asset_timestamps, false
+
 
 # CALLBACKS #########
 
