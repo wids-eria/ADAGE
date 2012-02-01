@@ -1,13 +1,14 @@
 $:.unshift(File.expand_path('./lib', ENV['rvm_path']))
 
+set :application, "ada"
+
 require 'rvm/capistrano'
 set :rvm_ruby_string, '1.9.3'
 
 require 'bundler/capistrano'
 load 'deploy/assets'
 
-set :application, "ada"
-
+require 'capistrano/ext/multistage'
 set :stages, %w(production staging)
 set :default_stage, "staging"
 
