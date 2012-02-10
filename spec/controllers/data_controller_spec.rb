@@ -23,6 +23,7 @@ describe DataController do
         post :create, "data" => [{"one" => 1}, {"two" => 2}], "format" => "json"
         response.status.should be(201)
       end.should change(AdaData, :count).by(2)
+      assigns(:data).first.reload.user.should == user
     end
   end
 end

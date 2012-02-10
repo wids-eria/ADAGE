@@ -13,9 +13,13 @@ class DataController < ApplicationController
   end
 
   def create
+    @data = []
     if params[:data]
       params[:data].each do |datum|
-        AdaData.create datum
+        data = AdaData.new(datum)
+        data.user = current_user
+        data.save
+        @data << data
       end
     end
 
