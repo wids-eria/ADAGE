@@ -1,0 +1,17 @@
+= form_for @user_sequence, :url => create_sequence_users_path do |f|
+  %p
+    = f.label :prefix
+    = f.text_field :prefix
+  %p
+    = f.label :count
+    = f.text_field :count
+
+  %p
+    = f.label :start_value
+    = f.text_field :start_value
+
+  %p
+    = f.label :password
+    = f.text_field :password
+
+  = f.submit 'Create users'
