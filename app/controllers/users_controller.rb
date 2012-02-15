@@ -20,6 +20,10 @@ class UsersController < ApplicationController
     end
   end
 
+  def index
+    @users = User.page params[:page]
+  end
+
   def new_sequence
     @user_sequence = UserSequence.new
   end
@@ -32,13 +36,13 @@ class UsersController < ApplicationController
       @user_sequence.create_users!
 
       respond_to do |format|
-        format.html { render 'new_sequence' }
-        format.json { render :json => @user_sequence }
+        format.html { redirect_to users_path }
+        format.json { render :json => @user_sequence, :status => :created }
       end
     else
       respond_to do |format|
-        format.html { redirect_to root_path }
-        format.json { render :json => @user_sequence, :status => :created }
+        format.html { render 'new_sequence' }
+        format.json { render :json => @user_sequence }
       end
     end
   end

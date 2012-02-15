@@ -10,4 +10,9 @@ Feature: User management
     Given I am on the mass user form
     When I create "10" users with prefix "ada_student" and start value "3"
     Then I should have users
+     And I should be at the users index
 
+  Scenario: List users
+    Given 5 users
+    When I am on the user index
+    Then I should see the users

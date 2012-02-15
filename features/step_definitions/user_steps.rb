@@ -27,3 +27,21 @@ Then /^I should have users$/ do
   @users = User.limit(@sequence_count).order("id desc").all
   User.count.should == @sequence_count + @original_count
 end
+
+Then /^I should be at the homepage$/ do
+  current_path = URI.parse(current_url).path
+  current_path.should == root_path
+end
+
+Then /^I should be at the users index$/ do
+  current_path = URI.parse(current_url).path
+  current_path.should == users_path
+end
+
+When /^I am on the user index$/ do
+  visit users_path
+end
+
+Then /^I should see the users$/ do
+  page.should have_content(User.last.email)
+end

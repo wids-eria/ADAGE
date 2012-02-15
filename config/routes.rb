@@ -7,7 +7,7 @@ Ada::Application.routes.draw do
   match "data_collector" => "data#create", :via => :post
 
   resources :data
-  resources :users, :only => [] do
+  resources :users, :only => [:index] do
     collection do
       get :new_sequence
       post :create_sequence
