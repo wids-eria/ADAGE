@@ -1,0 +1,8 @@
+<cross-domain-policy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.adobe.com/xml/schemas/PolicyFile.xsd">
+<allow-access-from domain="twitter.com"/>
+<allow-access-from domain="api.twitter.com"/>
+<allow-access-from domain="search.twitter.com"/>
+<allow-access-from domain="static.twitter.com"/>
+<site-control permitted-cross-domain-policies="master-only"/>
+<allow-http-request-headers-from domain="*.twitter.com" headers="*" secure="true"/>
+</cross-domain-policy>
