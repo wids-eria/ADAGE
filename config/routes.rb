@@ -1,4 +1,5 @@
 Ada::Application.routes.draw do
+  
   get "welcome/index"
   get "welcome/my_page"
 
@@ -14,5 +15,5 @@ Ada::Application.routes.draw do
     end
   end
 
-  root :to => 'welcome#index'
+  root :to => 'welcome#my_page'
 end

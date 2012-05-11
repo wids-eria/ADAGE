@@ -1,0 +1,21 @@
+<h1>Manage Users</H1>
+
+<TABLE>
+  <TR>
+    <TH>USER</TH>
+    <TH>ROLE</TH>
+    <TH></TH>
+    <TH></TH>
+  </TR>
+
+<% @users.each do |user| %>
+  <TR>
+    <TD><%= user.email %></td>
+    <td><%= user.role %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'Create Users', new_sequence_users_path %>

@@ -20,10 +20,20 @@ class UsersController < ApplicationController
     end
   end
 
+  def new
+    @user = User.new
+
+    respond_to do |format|
+      format.html # new.html.erb
+      format.json { render json: @user }
+    end
+  end
+
+
   def index
     @users = User.page params[:page]
   end
-
+ 
   def new_sequence
     @user_sequence = UserSequence.new
   end

@@ -5,10 +5,11 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable,
          :token_authenticatable
 
+  ROLES = %w[admin moderator author banned]
   before_save :ensure_authentication_token
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :authentication_token
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :authentication_token, :roles
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group

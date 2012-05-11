@@ -12,10 +12,9 @@
     <%= current_user.email %>
     <%= link_to 'logout', destroy_user_session_url, :method => :delete %>
   <% else %>
-    <%= link_to 'login', new_user_session_url %>
-    |
-    <%= link_to 'register', new_user_registration_url %>
-  <% end %>
+    <%= link_to 'login', new_user_session_url %> 
+    <%#| <%= link_to 'register', new_user_registration_url %>
+     <% end %>
 
 <%= yield %>
 

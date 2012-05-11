@@ -8,6 +8,7 @@ gem 'mongoid'
 gem 'bson_ext'
 gem 'decent_exposure'
 gem 'kaminari'
+gem 'cancan'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
