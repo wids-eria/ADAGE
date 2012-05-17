@@ -23,7 +23,7 @@ class UserSequence
   def create_users!
     @users = []
     (start_value.to_i...start_value.to_i+count.to_i).each do |n|
-      email = "#{prefix}_#{n}@stu.de.nt"
+      email = "#{prefix}#{n}@stu.de.nt"
       @users << User.new(email: email, password: password)
     end
     @users.each{|user| user.save!}
