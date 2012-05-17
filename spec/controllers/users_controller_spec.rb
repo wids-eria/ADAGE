@@ -10,6 +10,12 @@ describe UsersController do
       response.should be_success
       response.body.should match 'auth_token'
     end
+
+    it "logs in without case sensitivity" do
+      post :authenticate_for_token, {'email' => user.email.upcase, 'password' => 'pass1234', 'format' => 'json'}
+      response.should be_success
+      response.body.should match 'auth_token'
+    end
   end
 
 end

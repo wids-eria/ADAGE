@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   respond_to :html, :json
 
   def authenticate_for_token
-    @user = User.find_by_email params[:email]
+    @user = User.find_by_email params[:email].downcase
     ret = {}
     if @user != nil and @user.valid_password? params[:password]
       @auth_token = @user.authentication_token
