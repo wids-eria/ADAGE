@@ -13,6 +13,10 @@ class User < ActiveRecord::Base
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
 
+  def data
+    AdaData.where("user_id" => self.id)
+  end
+
   private
 
   def update_control_group
