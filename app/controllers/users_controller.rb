@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
   respond_to :html, :json
 
+  before_filter :authenticate_user!
+
   def authenticate_for_token
     @user = User.find_by_email params[:email].downcase
     ret = {}
@@ -22,6 +24,10 @@ class UsersController < ApplicationController
 
   def index
     @users = User.page params[:page]
+    respond_to do |format|
+      format.html { @users = User.page params[:page] }
+      format.json { render :json => User.all }
+    end
   end
 
   def new_sequence
@@ -44,6 +50,13 @@ class UsersController < ApplicationController
         format.html { render 'new_sequence' }
         format.json { render :json => @user_sequence }
       end
+    end
+  end
+  
+  def get_data
+    @data = AdaData.where(user_id: params[:user_id]).where(gameName: "APA:Tracts")
+    respond_to do |format|
+      format.json { render :json => @data }
     end
   end
 end

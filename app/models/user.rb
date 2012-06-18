@@ -12,6 +12,12 @@ class User < ActiveRecord::Base
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
+  
+  has_and_belongs_to_many :roles
+  
+  def role?(role)
+      return !!self.roles.find_by_name(role.to_s.camelize)
+  end
 
   def data
     AdaData.where("user_id" => self.id)
