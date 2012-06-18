@@ -28,6 +28,8 @@ group :test, :development do
   gem 'database_cleaner'
   gem 'rspec-rails'
   gem 'fabrication'
+  gem 'pry'
+  gem 'pry-rails'
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false
