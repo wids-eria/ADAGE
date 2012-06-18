@@ -1,0 +1,7 @@
+%ul
+  - @roles.each do |role|
+    %li
+      = role.name
+      = role.created_at
+
+= paginate @roles
