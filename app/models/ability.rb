@@ -1,16 +1,16 @@
 class Ability
   include CanCan::Ability
- 
+
   def initialize(user)
     user ||= User.new # guest user
-    
-    can :read, AdaData do |data|
-      data.user_id == user.id
-    end
-    
+
+    cannot :manage, AdaData
+    cannot :manage, User
+
     if user.role? :admin
       can :manage, :all
     elsif user.role? :player
+      can :create, AdaData
       can :read, AdaData do |data|
         data.user_id == user.id
       end
@@ -18,6 +18,6 @@ class Ability
         user == a_user
       end
     end
-    
+
   end
 end

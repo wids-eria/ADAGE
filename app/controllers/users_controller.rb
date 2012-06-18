@@ -24,6 +24,7 @@ class UsersController < ApplicationController
 
   def index
     @users = User.page params[:page]
+    authorize! :read, @users
     respond_to do |format|
       format.html { @users = User.page params[:page] }
       format.json { render :json => User.all }
