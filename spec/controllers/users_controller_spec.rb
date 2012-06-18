@@ -3,7 +3,9 @@ require 'spec_helper'
 describe UsersController do
 
   describe "unity login" do
-    let!(:user) { Fabricate :user, password: 'pass1234' }
+    let!(:player_role) { Role.create(name: 'player') }
+    let!(:admin_role) { Role.create(name: 'admin') }
+    let!(:user) { Fabricate :user, password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'player').first] }
 
     it "returns json containing authentication token" do
       post :authenticate_for_token, {'email' => user.email, 'password' => 'pass1234', 'format' => 'json'}

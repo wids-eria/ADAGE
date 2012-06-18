@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   respond_to :html, :json
 
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :except => :authenticate_for_token
 
   def authenticate_for_token
     @user = User.find_by_email params[:email].downcase

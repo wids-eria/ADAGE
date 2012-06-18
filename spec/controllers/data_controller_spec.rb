@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe DataController do
-  let!(:user) { Fabricate :user, password: 'pass1234' }
+  let!(:player_role) { Role.create(name: 'player') }
+  let!(:admin_role) { Role.create(name: 'admin') }
+  let!(:user) { Fabricate :user, password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'player').first] }
 
   before do
     @request.env["devise.mapping"] = Devise.mappings[:user]
