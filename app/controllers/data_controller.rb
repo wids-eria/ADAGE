@@ -6,7 +6,7 @@ class DataController < ApplicationController
     @data = AdaData.page params[:page]
     respond_with @data
   end
-  
+
   def recent
     @data = AdaData.where(gameName: "APA:Tracts").where(:created_at.gt => params[:since]).where(key: "Colon Position")
     respond_to do |format|

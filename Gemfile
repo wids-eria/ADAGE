@@ -10,6 +10,7 @@ gem 'decent_exposure'
 gem 'kaminari'
 gem 'therubyracer'
 gem 'cancan'
+gem 'omniauth'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'

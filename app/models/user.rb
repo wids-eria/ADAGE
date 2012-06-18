@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   before_create :update_control_group
 
   has_and_belongs_to_many :roles
+  has_many :access_tokens
 
   def role?(role)
       return !!self.roles.find_by_name(role.to_s)

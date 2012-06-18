@@ -14,5 +14,8 @@ Ada::Application.routes.draw do
     end
   end
 
+  # OAuth provider:
+  get '/auth/ada/authorize' => 'users#oauth_authorize'
+
   root :to => 'welcome#index'
 end

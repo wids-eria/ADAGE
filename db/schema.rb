@@ -11,7 +11,24 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120606214027) do
+ActiveRecord::Schema.define(:version => 20120618213743) do
+
+  create_table "access_tokens", :force => true do |t|
+    t.string   "consumer_token"
+    t.string   "consumer_secret"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.integer  "client_id"
+  end
+
+  create_table "clients", :force => true do |t|
+    t.string   "name"
+    t.string   "app_token"
+    t.string   "app_secret"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "roles", :force => true do |t|
     t.string   "name"

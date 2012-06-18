@@ -3,6 +3,11 @@ class UsersController < ApplicationController
 
   before_filter :authenticate_user!, :except => :authenticate_for_token
 
+  def oauth_authorize
+    access_token = current_user.access_tokens.create({client: application})
+    redirect_to access_token.redirect_uri_for(params[:redirect_uri])
+  end
+
   def authenticate_for_token
     @user = User.find_by_email params[:email].downcase
     ret = {}
@@ -53,11 +58,17 @@ class UsersController < ApplicationController
       end
     end
   end
-  
+
   def get_data
     @data = AdaData.where(user_id: params[:user_id]).where(gameName: "APA:Tracts")
     respond_to do |format|
       format.json { render :json => @data }
     end
+  end
+
+  protected
+
+  def application
+    @application ||= Client.where(app_token: params[:client_id]).first
   end
 end
