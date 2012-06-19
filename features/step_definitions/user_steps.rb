@@ -1,5 +1,5 @@
 Given /^a logged in admin$/ do
-  @user = Fabricate :user
+  @user = Fabricate(:admin, roles: [Role.create(name: 'admin'), Role.create(name: 'player')])
 
   visit new_user_session_path
   fill_in 'Email', with: @user.email
