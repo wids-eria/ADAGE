@@ -1,29 +1,11 @@
 class OauthController < ApplicationController
-  before_filter :authenticate_user!, except: [:access_token]
+  before_filter :authenticate_user!, except: [:access_token, :user]
+  skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
 
   def authorize
     application = Client.where(app_token: params[:client_id]).first
     access_token = current_user.access_tokens.create({client: application})
     redirect_to access_token.redirect_uri_for(params[:redirect_uri])
-  end
-
-  def authenticate_for_token
-    @user = User.find_by_email params[:email].downcase
-    ret = {}
-    if @user != nil and @user.valid_password? params[:password]
-      @auth_token = @user.authentication_token
-      ret = {:session_id => 'remove me', :auth_token => @auth_token}
-      respond_to do |format|
-        format.json {render :json => ret, :status => :created }
-        format.xml  {render :xml => ret, :status => :created }
-      end
-    else
-      ret = {:error => "Invalid email or password"}
-      respond_to do |format|
-        format.json {render :json => ret, :status => :unauthorized }
-        format.xml  {render :xml => ret, :status => :unauthorized }
-      end
-    end
   end
 
   def access_token
@@ -34,7 +16,7 @@ class OauthController < ApplicationController
     end
 
     access_token = AccessToken.authenticate(params[:code], application.id)
-    render :json => {:access_token => access_token }
+    render :json => {:access_token => access_token.consumer_secret  }
   end
 
   def failure
@@ -42,15 +24,20 @@ class OauthController < ApplicationController
   end
 
   def user
+    access_token = AccessToken.where(consumer_secret: params[:oauth_token]).first
+    user = access_token.user
+    redirect_to :failure unless user
     hash = {
       provider: 'ada',
-      uid: current_user.id.to_s,
+      uid: user.id.to_s,
       info: {
-        email: current_user.email
+        email: user.email
       }
     }
 
-    render :json => hash.to_json
+    respond_to do |format|
+      format.json { render :json => hash.to_json }
+    end
   end
 
 end
