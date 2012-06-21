@@ -44,7 +44,7 @@ class OauthController < ApplicationController
   def user
     hash = {
       provider: 'ada',
-      id: current_user.id.to_s,
+      uid: current_user.id.to_s,
       info: {
         email: current_user.email
       }
