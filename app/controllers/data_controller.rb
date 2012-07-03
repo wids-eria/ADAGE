@@ -4,6 +4,7 @@ class DataController < ApplicationController
 
   def index
     @data = AdaData.page params[:page]
+    authorize! :read, @data
     respond_with @data
   end
 

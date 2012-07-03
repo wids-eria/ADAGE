@@ -7,6 +7,9 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+  <% if flash[:error] -%> 
+    <p class="error"><%= flash[:error] %></p> 
+  <% end -%>
   <% if user_signed_in? %>
     logged in as
     <%= current_user.email %>

@@ -7,8 +7,22 @@ Given /^a logged in admin$/ do
   click_button 'Sign in'
 end
 
+Given /^a logged in player$/ do
+  @user = Fabricate(:user, roles: [Role.create(name: 'player')])
+
+  visit new_user_session_path
+  fill_in 'Email', with: @user.email
+  fill_in 'Password', with: @user.password
+  click_button 'Sign in'
+end
+
+
 Given /^I am on the mass user form$/ do
   visit new_sequence_users_path
+end
+
+Given /^some data$/ do
+  @data = Fabricate(:AdaData)
 end
 
 When /^I create "([^"]*)" users with prefix "([^"]*)" and start value "([^"]*)"$/ do |count, prefix, start_value|
@@ -42,6 +56,20 @@ When /^I am on the user index$/ do
   visit users_path
 end
 
+When /^I am on the data index$/ do
+  visit data_path
+end
+
 Then /^I should see the users$/ do
   page.should have_content(User.last.email)
 end
+
+Then /^I should see access denied message$/ do
+  page.should have_content('You are not authorized to access this page')
+end
+
+Then /^I should see data$/ do
+  page.should have_content(AdaData.last.id)
+end
+
+
