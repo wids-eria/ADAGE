@@ -60,78 +60,82 @@ end
 #users = User.all
 #users = User.where(id: 364)
 users = User.where(id: 296..480)
-users.each do |d|
-  u = d.data.where(gameName: "ProgenitorX").where(schema: "4-18-2012")
-  if u.count != 0 
-  CSV.open('csv/log_' + d.email+'.csv', 'w') do |csv|
-    columns = init_columns()
-    csv << ['log event', 'timestamp'] + columns.keys
-    objective = ['none']
-    u.each do |e|
-      case e.key
-      when 'ObjectiveActionData'
-        objective = set_objective(e, objective)
-      when 'PopulateGridData'
-        #Beginning a cycle reset the counts
-        if e.respond_to?('fillType')
-          if e.fillType == 'Fibroblast'
-            columns['IPS1 started'] += 1
+CSV.open('csv/progenitor_all_player_log.csv', 'w') do |csv|
+  users.each do |d|
+    u = d.data.where(gameName: "ProgenitorX").where(schema: "4-18-2012")
+    if u.count != 0 
+      columns = init_columns()
+      csv << ['log event', 'serial number', 'timestamp', 'objective', 'current cycle'] + columns.keys
+      objective = ['none']
+      current_cycle = 'none'
+      u.each do |e|
+        case e.key
+        when 'ObjectiveActionData'
+          objective = set_objective(e, objective)
+        when 'PopulateGridData'
+          #Beginning a cycle reset the counts
+          if e.respond_to?('fillType')
+            if e.fillType == 'Fibroblast'
+              columns['IPS1 started'] += 1
+              organGrid = false
+            end
+            if e.fillType == 'IPS1' || e.fillType == 'IPS2'
+              columns['cell started'] += 1
+              organGrid = false
+            end
+            current_cycle = e.fillType
+          end
+          if e.gridType == 'tissue'
+            columns['tissue started'] += 1
+            organGrid = false
+            current_cycle = 'tissue'
+          end
+          if e.gridType == 'organ'
+            columns['organ started'] += 1
+            organGrid = true
+            current_cycle = 'organ'
+          end
+        when 'ToolUseData'
+          if e.toolName == 'Collect' && organGrid == true
+            csv << ['cycle type','organ']
+            csv << cycle_totals.keys
+            csv << cycle_totals.values
+            cycle_totals = init_cycle_totals()
+            columns['organ success'] += 1
             organGrid = false
           end
-          if e.fillType == 'IPS1' || e.fillType == 'IPS2'
-            columns['cell started'] += 1
+          if columns[e.toolName] != nil
+            columns[e.toolName] += 1
+          end
+        when 'GridDestroyData'
+          #count this as a fails
+          columns['destroy'] += 1
+        when 'CellCollectionData'
+          #end of a cell cycle was this a success?
+          columns['collect type'] = e.cellType
+          columns['collect amount'] = e.tileCoords.count.to_s()
+          if objective.include?(e.cellType)
+            #puts e.cellType + ' success'
+            columns[e.cellType + ' success'] += 1
+            if e.cellType != 'IPS1'
+              columns['cell success'] += 1
+            end
+            organGrid = false
+          elsif
+            columns['unsuccessful collect'] += 1
+          end
+        when 'TissueCollectionData'
+          columns['collect type'] = e.tissueType
+          if objective.include?(e.tissueType)
+            columns['tissue success'] += 1
             organGrid = false
           end
+          #end of a tissue cycle was this a success?
         end
-        if e.gridType == 'tissue'
-          columns['tissue started'] += 1
-          organGrid = false
-        end
-        if e.gridType == 'organ'
-          columns['organ started'] += 1
-          organGrid = true
-        end
-      when 'ToolUseData'
-        if e.toolName == 'Collect' && organGrid == true
-          csv << ['cycle type','organ']
-          csv << cycle_totals.keys
-          csv << cycle_totals.values
-          cycle_totals = init_cycle_totals()
-          columns['organ success'] += 1
-          organGrid = false
-        end
-        if columns[e.toolName] != nil
-          columns[e.toolName] += 1
-        end
-      when 'GridDestroyData'
-        #count this as a fails
-        columns['destroy'] += 1
-      when 'CellCollectionData'
-        #end of a cell cycle was this a success?
-        columns['collect type'] = e.cellType
-        columns['collect amount'] = e.tileCoords.count.to_s()
-        if objective.include?(e.cellType)
-          #puts e.cellType + ' success'
-          columns[e.cellType + ' success'] += 1
-          if e.cellType != 'IPS1'
-            columns['cell success'] += 1
-          end
-          organGrid = false
-        elsif
-          columns['unsuccessful collect'] += 1
-        end
-      when 'TissueCollectionData'
-        columns['collect type'] = e.tissueType
-        if objective.include?(e.tissueType)
-          columns['tissue success'] += 1
-          organGrid = false
-        end
-        #end of a tissue cycle was this a success?
+        csv << [e.key, d.email, e.timestamp, objective, current_cycle] + columns.values
+        columns = init_columns() 
       end
-      csv << [e.key, e.timestamp] + columns.values
-      columns = init_columns() 
     end
-  end
   end
 end
 
