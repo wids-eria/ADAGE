@@ -61,11 +61,11 @@ end
 #users = User.where(id: 364)
 users = User.where(id: 296..480)
 CSV.open('csv/progenitor_all_player_log.csv', 'w') do |csv|
+  columns = init_columns()
+  csv << ['log event', 'serial number', 'timestamp', 'objective', 'current cycle'] + columns.keys
   users.each do |d|
     u = d.data.where(gameName: "ProgenitorX").where(schema: "4-18-2012")
     if u.count != 0 
-      columns = init_columns()
-      csv << ['log event', 'serial number', 'timestamp', 'objective', 'current cycle'] + columns.keys
       objective = ['none']
       current_cycle = 'none'
       u.each do |e|
