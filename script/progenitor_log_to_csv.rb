@@ -57,9 +57,9 @@ def init_columns()
 end
 
 
-#users = User.all
+users = User.all
 #users = User.where(id: 364)
-users = User.where(id: 296..480)
+#users = User.where(id: 296..480)
 CSV.open('csv/progenitor_all_player_log.csv', 'w') do |csv|
   columns = init_columns()
   csv << ['log event', 'serial number', 'timestamp', 'objective', 'current cycle'] + columns.keys
