@@ -72,4 +72,6 @@ Then /^I should see data$/ do
   page.should have_content(AdaData.last.id)
 end
 
-
+Then /^show me the page$/ do
+  save_and_open_page
+end

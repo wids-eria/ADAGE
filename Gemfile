@@ -30,7 +30,12 @@ group :test, :development do
   gem 'fabrication'
   gem 'pry'
   gem 'pry-rails'
+  gem 'launchy'
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false
+end
+
+group :development do
+  gem 'spork', '0.9.0.rc9'
 end
