@@ -16,3 +16,6 @@
 /config/database.yml
 /config/mongoid.yml
 /csv/*
+*.csv
+# Ignore all os stuff
+.DS_Store

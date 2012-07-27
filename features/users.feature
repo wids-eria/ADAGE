@@ -16,3 +16,8 @@ Feature: User management
     Given 5 users
     When I am on the user index
     Then I should see the users
+
+  Scenario: View data
+    Given some data
+    When I am on the data index
+    Then I should see data

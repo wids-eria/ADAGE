@@ -14,5 +14,11 @@ Ada::Application.routes.draw do
     end
   end
 
+  # OAuth provider:
+  get '/auth/ada/authorize' => 'oauth#authorize'
+  get '/auth/ada/access_token' => 'oauth#access_token'
+  get '/auth/ada/user' => 'oauth#user'
+  post '/oauth/token' => 'oauth#access_token'
+
   root :to => 'welcome#index'
 end

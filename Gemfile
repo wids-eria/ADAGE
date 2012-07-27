@@ -9,6 +9,9 @@ gem 'bson_ext'
 gem 'decent_exposure'
 gem 'kaminari'
 gem 'therubyracer'
+gem 'cancan'
+gem 'omniauth'
+gem 'progressbar'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
@@ -26,7 +29,14 @@ group :test, :development do
   gem 'database_cleaner'
   gem 'rspec-rails'
   gem 'fabrication'
+  gem 'pry'
+  gem 'pry-rails'
+  gem 'launchy'
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false
+end
+
+group :development do
+  gem 'spork', '0.9.0.rc9'
 end

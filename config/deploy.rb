@@ -1,5 +1,4 @@
-$:.unshift(File.expand_path('./lib', ENV['rvm_path']))
-
+set :rvm_type, :system
 Deploy_host = "eria-1.morgridge.net"
 
 require 'rvm/capistrano'

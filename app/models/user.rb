@@ -12,6 +12,14 @@ class User < ActiveRecord::Base
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
+  before_save :set_default_role
+
+  has_and_belongs_to_many :roles
+  has_many :access_tokens
+
+  def role?(role)
+      return !!self.roles.find_by_name(role.to_s)
+  end
 
   def data
     AdaData.where("user_id" => self.id)
@@ -29,5 +37,16 @@ class User < ActiveRecord::Base
     end
 
     true
+  end
+
+  def set_default_role
+    if self.new_record?
+      default_role = Role.where(name: 'player').first || Role.create(name: 'player')
+      if !self.roles.present?
+        self.roles = [default_role]
+      elsif !self.role?(default_role)
+        self.roles << default_role
+      end
+    end
   end
 end
