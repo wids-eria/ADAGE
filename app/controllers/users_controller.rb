@@ -54,8 +54,20 @@ class UsersController < ApplicationController
     end
   end
 
-  def get_data
-    @data = AdaData.where(user_id: params[:user_id]).where(gameName: "APA:Tracts")
+  def get_data_by_user
+    @data = AdaData.where(user_id: params[:user_id]).where(GameName: params[:game_name])
+    authorize! :read, @data
+    respond_to do |format|
+      format.json { render :json => @data }
+    end
+  end
+
+  def get_kodu_activity
+    @data = AdaData.where(user_id: params[:user_id]).where(gameName: 'kodu').where(name: 'SetGameMode').limit(500)
+    #@data = AdaData.where(user_id: params[:user_id]).where(name: 'SetGameMode')
+    authorize! :read, @data
+    #@data +=  AdaData.where(user_id: params[:user_id]).where(name: 'LevelName')
+    @data = @data.sort{|x,y| x.time <=> y.time}
     respond_to do |format|
       format.json { render :json => @data }
     end

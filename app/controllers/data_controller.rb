@@ -8,8 +8,9 @@ class DataController < ApplicationController
     respond_with @data
   end
 
-  def recent
-    @data = AdaData.where(gameName: "APA:Tracts").where(:created_at.gt => params[:since]).where(key: "Colon Position")
+  def get_data_by_game
+    @data = AdaData.where(gameName: params[:game_name])
+    authorize! :read, @data
     respond_to do |format|
       format.json { render :json => @data }
     end
