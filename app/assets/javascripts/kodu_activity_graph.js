@@ -1,7 +1,7 @@
 $(function() {  
   var margin = {top: 10, right: 10, bottom: 20, left: 80}
-      width = 800 - margin.left - margin.right,
-      height = 300 - margin.top - margin.bottom,
+      width = 1100 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom,
       format = d3.time.format("%Y-%m-%d");
 
   var x = d3.scale.linear()
@@ -170,36 +170,39 @@ $(function() {
             .data(json)
           .enter().append("svg:path")
             .attr("class", "blueline")
-            .attr("stroke",'#'+Math.floor(Math.random()*16777215).toString(16))
+            //.attr("stroke",'#'+Math.floor(Math.random()*16777215).toString(16))
             .attr("d", line(json, start))
         
 
-        /*new_chart.selectAll(".bluedot")
+        var node = new_chart.selectAll(".bluedot")
           .data(json)
         .enter().append("circle")
           .attr("class", "bluedot")
-          .attr("r", 1)
-          .attr("fill",'#'+Math.floor(Math.random()*16777215).toString(16))
+          .attr("r", 4)
+          //.attr("fill",'#'+Math.floor(Math.random()*16777215).toString(16))
           .attr("cx", function(d) {return x(d3.time.seconds(start,new Date(d.created_at)).length);})
           .attr("cy", function(d) { 
             if(d.data == "Programming")
             { 
               //console.log('Programming: ' + y(2)); 
-              return y(.5);
+              return y(0);
             }
             else if(d.data == "InGame")
             {
               //console.log('InGame: ' + y(3)); 
-              return y(3.5);
+              return y(3);
             }
             else if(d.data == "HomeMenu" || d.data.indexOf("ToolMenu") != -1 )
             {
               //console.log('HomeMenu: ' + y(1)); 
-              return y(2.5);
+              return y(2);
             }
             //console.log('Everything else: ' + y(0)); 
-            return y(1.5);
-          })*/
+            return y(1);
+          });
+
+        node.append("title")
+          .text(function(d) { return d.name + " " + d.data;});
 
 
         resume();
