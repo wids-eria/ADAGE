@@ -12,6 +12,7 @@ Ada::Application.routes.draw do
   match 'game_data' => "data#get_data_by_game"
   match 'user_data' => "users#get_data_by_user"
   match 'user_kodu_activity_data' => "users#get_kodu_activity"
+  match 'user_kodu_level_info' => "users#get_kodu_level_info"
   resources :users, :only => [:index] do
     collection do
       get :new_sequence

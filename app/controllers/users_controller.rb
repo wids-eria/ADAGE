@@ -63,11 +63,16 @@ class UsersController < ApplicationController
   end
 
   def get_kodu_activity
-    @data = AdaData.where(user_id: params[:user_id]).where(gameName: 'kodu').where(name: 'SetGameMode').limit(500)
-    #@data = AdaData.where(user_id: params[:user_id]).where(name: 'SetGameMode')
+    @data = AdaData.where(user_id: params[:user_id]).where(gameName: 'kodu').where(:created_at.gte => params[:start_time]).where(:created_at.lt => params[:end_time]).where(name: 'SetGameMode')
     authorize! :read, @data
-    #@data +=  AdaData.where(user_id: params[:user_id]).where(name: 'LevelName')
-    @data = @data.sort{|x,y| x.time <=> y.time}
+    respond_to do |format|
+      format.json { render :json => @data }
+    end
+  end
+
+  def get_kodu_level_info
+    @data = AdaData.where(user_id: params[:user_id]).where(gameName: 'kodu').where(data: 'MainMenu')
+    authorize! :read, @data
     respond_to do |format|
       format.json { render :json => @data }
     end

@@ -5,6 +5,11 @@ class AdaData
   field :game, type: String
   field :user_id, type: Integer
 
+  index :user_id
+  index :gameName
+  index :created_at
+  index :name
+
   def user=(user)
     self.user_id = user.id
   end
