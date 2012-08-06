@@ -63,7 +63,7 @@ class UsersController < ApplicationController
   end
 
   def get_kodu_activity
-    @data = AdaData.where(user_id: params[:user_id]).where(gameName: 'kodu').where(:created_at.gte => params[:start_time]).where(:created_at.lt => params[:end_time]).where(name: 'SetGameMode')
+    @data = AdaData.where(user_id: params[:user_id]).where(gameName: 'kodu').where(:created_at.gte => params[:start_time]).where(:created_at.lt => params[:end_time]).where(:name => 'SetGameMode', :data.nin => ['HomeMenu', 'ToolMenuHomeMenu', 'GamepadEditObjectFocus', 'GamepadEditObject', 'ToolMenuEditObject'])
     authorize! :read, @data
     respond_to do |format|
       format.json { render :json => @data }

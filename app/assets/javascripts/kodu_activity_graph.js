@@ -9,7 +9,7 @@ $(function() {
    
   var y = d3.scale.linear()
     .range([height, 0])
-    .domain([0,3]);
+    .domain([0,2]);
 
   var xAxis = d3.svg.axis()
     .scale(x)
@@ -17,17 +17,17 @@ $(function() {
     .orient("bottom")
 
   var yLabel = function(i) {
-      var labels = ["Programming", "Edit", "Menu", "In Game"];
+      var labels = ["Programming", "Edit", "In Game"];
       return labels[i];
   };
 
   var yAxis = d3.svg.axis()
     .scale(y)
-    .ticks(4)
+    .ticks(3)
     .tickFormat(yLabel)
     .orient("left");
   
-  var new_chart = d3.select("#kodu_chart").append("svg")
+  var chart = d3.select("#kodu_chart").append("svg")
     //.attr("class", "chart")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -35,12 +35,12 @@ $(function() {
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  new_chart.append("g")
+  chart.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
 
-  new_chart.append("g")
+  chart.append("g")
     .attr("class", "y axis")
     .call(yAxis)
 
@@ -60,16 +60,16 @@ $(function() {
           //console.log('Programming: ' + y(2)); 
           return y(0);
         }
-        else if(d.data == "InGame")
+        else if(d.data == "InGame" || d.data == 'ToolMenuRunSim')
         {
           //console.log('InGame: ' + y(3)); 
-          return y(3);
-        }
-        else if(d.data == "HomeMenu" || d.data.indexOf("ToolMenu") != -1 )
-        {
-          //console.log('HomeMenu: ' + y(1)); 
           return y(2);
         }
+        //else if(d.data == "HomeMenu" || d.data.indexOf("ToolMenu") != -1 )
+        //{
+          //console.log('HomeMenu: ' + y(1)); 
+        //  return y(2);
+        //}
         //console.log('Everything else: ' + y(0)); 
         return y(1);
       })
@@ -147,30 +147,19 @@ $(function() {
         }
 
 
-       /* var new_chart = d3.select("#kodu_chart").append("svg")
+        var new_chart = d3.select("#kodu_chart").append("svg")
             //.attr("class", "chart")
-            .attr("width", width)
-            .attr("height", height)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
             .style("margin-left", "32px") // Tweak alignment…
           .append("g")
-            .attr("transform", "translateo(10,15)");
-    
-          new_chart.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-
-          new_chart.append("g")
-            .attr("class", "y axis")
-            .call(yAxis)
-        */
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         new_chart.selectAll("path")
             .data(json)
           .enter().append("svg:path")
             .attr("class", "blueline")
-            //.attr("stroke",'#'+Math.floor(Math.random()*16777215).toString(16))
+            .attr("stroke",'#'+Math.floor(Math.random()*16777215).toString(16))
             .attr("d", line(json, start))
         
 
@@ -179,7 +168,7 @@ $(function() {
         .enter().append("circle")
           .attr("class", "bluedot")
           .attr("r", 4)
-          //.attr("fill",'#'+Math.floor(Math.random()*16777215).toString(16))
+          .attr("fill",'#'+Math.floor(Math.random()*16777215).toString(16))
           .attr("cx", function(d) {return x(d3.time.seconds(start,new Date(d.created_at)).length);})
           .attr("cy", function(d) { 
             if(d.data == "Programming")
@@ -187,16 +176,16 @@ $(function() {
               //console.log('Programming: ' + y(2)); 
               return y(0);
             }
-            else if(d.data == "InGame")
+            else if(d.data == "InGame"  || d.data == 'ToolMenuRunSim')
             {
               //console.log('InGame: ' + y(3)); 
-              return y(3);
-            }
-            else if(d.data == "HomeMenu" || d.data.indexOf("ToolMenu") != -1 )
-            {
-              //console.log('HomeMenu: ' + y(1)); 
               return y(2);
             }
+            //else if(d.data == "HomeMenu" || d.data.indexOf("ToolMenu") != -1 )
+            //{
+              //console.log('HomeMenu: ' + y(1)); 
+            //  return y(2);
+           // }
             //console.log('Everything else: ' + y(0)); 
             return y(1);
           });

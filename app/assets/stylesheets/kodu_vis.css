@@ -13,7 +13,6 @@
 	}
 	.blueline {
 	  fill: none;
-    stroke: blue;
 	  stroke-width: 1.5px;
 	}
 	.redline {
@@ -24,7 +23,6 @@
 	
 	.bluedot {
 	  stroke-width: 1.5px;
-    fill: red;
     stroke: black;
 	}
 	.reddot {
