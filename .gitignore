@@ -19,3 +19,4 @@
 *.csv
 # Ignore all os stuff
 .DS_Store
+/script/dumped_strings/*.txt
