@@ -12,6 +12,7 @@ gem 'therubyracer'
 gem 'cancan'
 gem 'omniauth'
 gem 'progressbar'
+gem 'narray'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
