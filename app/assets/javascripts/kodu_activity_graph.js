@@ -17,7 +17,7 @@ $(function() {
     .orient("bottom")
 
   var yLabel = function(i) {
-      var labels = ["Programming", "Edit", "In Game"];
+      var labels = ["Edit", "Programming", "In Game"];
       return labels[i];
   };
 
@@ -58,7 +58,7 @@ $(function() {
         if(d.data == "Programming")
         { 
           //console.log('Programming: ' + y(2)); 
-          return y(0);
+          return y(1);
         }
         else if(d.data == "InGame" || d.data == 'ToolMenuRunSim')
         {
@@ -71,7 +71,7 @@ $(function() {
         //  return y(2);
         //}
         //console.log('Everything else: ' + y(0)); 
-        return y(1);
+        return y(0);
       })
     return func(json);  
   };
@@ -108,17 +108,28 @@ $(function() {
     resume();
   };
   
-  d3.json("http://localhost:3000/user_kodu_level_info.json?user_id=3466", function(level_info) {
+  d3.json("http://localhost:3000/user_kodu_level_info.json?user_id=3928", function(level_info) {
 
     var i = 0;
     var max_time = 0;
     AsyncEach(level_info, function(item, resume) {
 
       var start_time = level_info[i].created_at;
-      var end_time = (i < level_info.length-1) ? level_info[i+1].created_at : ""; 
+      var end_time = (i < level_info.length-1) ? level_info[i+1].created_at : start_time; 
       
       var start = new Date(start_time);
       var end = new Date(end_time);
+
+      console.log(start + " " + end);
+      if(end_time == start_time)
+      {
+        console.log("setting new end");i
+        end.setHours(start.getHours()+3);
+        //end.setDate(start.getDate()+1);
+        end_time = end.toTimeString("YYYY-MM-DDTHH:mm:ss");
+      }
+      console.log(start + " " + end);
+
 
       if(i > 0)
       {
@@ -126,10 +137,10 @@ $(function() {
       }
 
       i++;
-      console.log("http://localhost:3000/user_kodu_activity_data.json?user_id=3466&start_time="+start_time+"&end_time="+end_time);
+      console.log("http://localhost:3000/user_kodu_activity_data.json?user_id=3928&start_time="+start_time+"&end_time="+end_time);
 
      
-      d3.json("http://localhost:3000/user_kodu_activity_data.json?user_id=3466&start_time="+start_time+"&end_time="+end_time, function(json) {
+      d3.json("http://localhost:3000/user_kodu_activity_data.json?user_id=3928&start_time="+start_time+"&end_time="+end_time, function(json) {
    
 
         console.log(json.length);
@@ -174,7 +185,7 @@ $(function() {
             if(d.data == "Programming")
             { 
               //console.log('Programming: ' + y(2)); 
-              return y(0);
+              return y(1);
             }
             else if(d.data == "InGame"  || d.data == 'ToolMenuRunSim')
             {
@@ -187,7 +198,7 @@ $(function() {
             //  return y(2);
            // }
             //console.log('Everything else: ' + y(0)); 
-            return y(1);
+            return y(0);
           });
 
         node.append("title")
