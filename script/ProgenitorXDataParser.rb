@@ -59,7 +59,7 @@ end
 
 #users = User.where(id: 296..480)
 #users = User.where(id: 365)
-users = User.all
+users = User.where(consented: true)
 CSV.open('csv/totals.csv', 'w') do |totals|
 users.each do |d|
   u = d.data.where(gameName: "ProgenitorX").where(schema: "4-18-2012")
