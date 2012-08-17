@@ -24,6 +24,10 @@ class User < ActiveRecord::Base
   def data
     AdaData.where("user_id" => self.id)
   end
+  
+  def progenitor_data
+    AdaData.where("user_id" => self.id, "gameName" => "ProgenitorX")
+  end
 
   private
 
