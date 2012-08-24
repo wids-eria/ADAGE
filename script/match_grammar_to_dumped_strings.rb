@@ -49,6 +49,14 @@ all_the_matches = loop_over_all_the_files
 
 big_array = create_match_array(all_the_matches)
 CSV do |csv_out|
+  grammar_file = File.open("script/grammars.txt", "r")
+  header = ["session_id"]
+  grammar_file.lines.each do |line|
+    header << line.strip
+  end
+  
+  csv_out << header
+  
   big_array.shape[1].times do |row|
     csv_out << big_array[true, row].to_a
   end
