@@ -32,20 +32,21 @@ end
 
 def init_player_totals()
   all_cycle = Hash.new
-  all_cycle['IPS1 started'] = 0
+ # all_cycle['IPS1 started'] = 0
   all_cycle['IPS1 success'] = 0
-  all_cycle['cell started'] = 0
+  #all_cycle['cell started'] = 0
   all_cycle['Meso success'] = 0
   all_cycle['Ecto success'] = 0
   all_cycle['Endo success'] = 0
   all_cycle['cell success'] = 0
-  all_cycle['tissue started'] = 0
+ # all_cycle['tissue started'] = 0
   all_cycle['tissue success'] = 0
-  all_cycle['organ started'] = 0
+ # all_cycle['organ started'] = 0
   all_cycle['organ success'] = 0
   all_cycle['total collects'] = 0
   all_cycle['total destroys'] = 0
   all_cycle['total unsuccessful collects'] = 0
+  all_cycle['total successful collects'] = 0
   return all_cycle
 end
 
@@ -72,6 +73,7 @@ users.each do |d|
     cycle_totals = init_cycle_totals()
     organGrid = false;
     timestamp = 0;
+    cycle_name = ''
     u.each do |e|
       timestamp = e.timestamp
       cycle_type = ''
@@ -87,22 +89,38 @@ users.each do |d|
         #Beginning a cycle reset the counts
         if e.respond_to?('fillType')
           if e.fillType == 'Fibroblast'
-            all_cycle['IPS1 started'] += 1
+            #all_cycle['IPS1 started'] += 1
+            cycle_name = 'Fibroblast'
             organGrid = false
           end
           if e.fillType == 'IPS1' || e.fillType == 'IPS2'
-            all_cycle['cell started'] += 1
+            #all_cycle['cell started'] += 1
+            cycle_name = e.fillType
             organGrid = false
           end
         end
         if e.gridType == 'tissue'
-          all_cycle['tissue started'] += 1
+          #all_cycle['tissue started'] += 1
+          cycle_name = 'tissue'
           organGrid = false
         end
         if e.gridType == 'organ'
-          all_cycle['organ started'] += 1
+          #all_cycle['organ started'] += 1
+          cycle_name = 'organ'
           organGrid = true
         end
+        if cycle_totals[cycle_name + 'populate'] == nil
+          cycle_totals[cycle_name + 'populate'] = 1
+        else
+          cycle_totals[cycle_name + 'populate'] += 1
+        end
+        if all_cycle[cycle_name + 'populate'] == nil
+          all_cycle[cycle_name + 'populate'] = 1
+        else
+          all_cycle[cycle_name + 'populate'] += 1
+        end
+
+
       when 'ToolUseData'
         if e.toolName == 'Collect' && organGrid == true
           #puts e.tileCoord['cellType']
@@ -114,43 +132,58 @@ users.each do |d|
             all_cycle['organ success'] += 1
             organGrid = false
           #end
-        else
-          if cycle_totals[e.toolName] == nil
-            cycle_totals[e.toolName] = 1
-          else
-            cycle_totals[e.toolName] += 1
-          end
+        #else
+         # if cycle_totals[e.toolName] == nil
+          #  cycle_totals[e.toolName] = 1
+          #else
+            #cycle_totals[e.toolName] += 1
+          #end
         end
       when 'GridDestroyData'
         #count this as a fails
         cycle_totals['destroys'] += 1
+       if all_cycle[cycle_name + ' destroys'] == nil
+          all_cycle[cycle_name + ' destroys'] = 1
+        else
+          all_cycle[cycle_name + ' destroys'] += 1
+        end 
+        all_cycle['total destroys'] += 1
+        if all_cycle[cycle_name + ' destroys'] == nil
+          all_cycle[cycle_name + ' destroys'] = 1
+        else
+          all_cycle[cycle_name + ' destroys'] += 1
+        end 
+
       when 'CellCollectionData'
         #end of a cell cycle was this a success?
         all_cycle['total collects'] += 1
         cycle_totals['collect' + all_cycle['total collects'].to_s()] = e.cellType + ' ' + e.tileCoords.count.to_s()
+        csv << ['cycle type', e.cellType, 'objectives', objective]
+        csv << cycle_totals.keys
+        csv << cycle_totals.values
+        cycle_totals = init_cycle_totals()
+        #puts e.cellType + ' success'
         if objective.include?(e.cellType)
-          csv << ['cycle type', e.cellType]
-          csv << cycle_totals.keys
-          csv << cycle_totals.values
-          cycle_totals = init_cycle_totals()
-          #puts e.cellType + ' success'
           all_cycle[e.cellType + ' success'] += 1
           if e.cellType != 'IPS1'
             all_cycle['cell success'] += 1
           end
           organGrid = false
+          all_cycle['total successful collects'] += 1
         elsif
           all_cycle['total unsuccessful collects'] += 1
           cycle_totals['unsuccessful collects'] += 1
         end
       when 'TissueCollectionData'
+        all_cycle['total collects'] += 1
+        csv << ['cycle type', e.tissueType,'objectives', objective]
+        csv << cycle_totals.keys
+        csv << cycle_totals.values
+        cycle_totals = init_cycle_totals()
         if objective.include?(e.tissueType)
-          csv << ['cycle type', e.tissueType]
-          csv << cycle_totals.keys
-          csv << cycle_totals.values
-          cycle_totals = init_cycle_totals()
           all_cycle['tissue success'] += 1
           organGrid = false
+          all_cycle['total successful collects'] += 1 
         end
         #end of a tissue cycle was this a success?
       end

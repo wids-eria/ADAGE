@@ -48,6 +48,7 @@ def init_columns()
   all_cycle['collect type'] = 0
   all_cycle['collect amount'] = 0
   all_cycle['destroy'] = 0
+  all_cycle['total destroys']=0
   all_cycle['unsuccessful collect'] = 0
   all_cycle['Move'] = 0
   all_cycle['Shock'] = 0
@@ -110,6 +111,13 @@ CSV.open('csv/progenitor_all_player_log.csv', 'w') do |csv|
         when 'GridDestroyData'
           #count this as a fails
           columns['destroy'] += 1
+          columns['total destroys'] += 1
+          if columns[current_cycle + ' destroys'] == nil
+            columns[current_cycle + ' destroys'] = 1
+          else
+            columns[current_cycle + ' destroys'] += 1
+          end 
+        
         when 'CellCollectionData'
           #end of a cell cycle was this a success?
           columns['collect type'] = e.cellType
