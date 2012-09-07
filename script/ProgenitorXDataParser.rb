@@ -32,7 +32,7 @@ end
 
 def init_player_totals()
   all_cycle = Hash.new
- # all_cycle['IPS1 started'] = 0
+ # cycle_totals['IPS1 started'] = 0
   all_cycle['IPS1 success'] = 0
   #all_cycle['cell started'] = 0
   all_cycle['Meso success'] = 0
