@@ -3,12 +3,13 @@ class User < ActiveRecord::Base
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :token_authenticatable
+         :token_authenticatable, :authentication_keys => [:login]
 
   before_save :ensure_authentication_token
 
+  attr_accessor :login
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token
+  attr_accessible :email, :player_name, :login, :password, :password_confirmation, :remember_me, :authentication_token
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
@@ -26,6 +27,12 @@ class User < ActiveRecord::Base
 
   def data
     AdaData.where("user_id" => self.id)
+  end
+
+  def self.find_for_database_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    login = conditions.delete(:login)
+    where(conditions).where(["lower(player_name) = :login OR lower(email) = :login", login: login.strip.downcase]).first
   end
 
   private
