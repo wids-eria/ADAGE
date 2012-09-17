@@ -14,6 +14,9 @@ class User < ActiveRecord::Base
   before_create :update_control_group
   before_save :set_default_role
 
+  before_validation :set_email_from_player_name
+  validates :player_name, presence: true
+
   has_and_belongs_to_many :roles
   has_many :access_tokens
 
@@ -48,5 +51,12 @@ class User < ActiveRecord::Base
         self.roles << default_role
       end
     end
+  end
+
+  def set_email_from_player_name
+    return if self.email.present?
+    return if self.player_name.blank?
+
+    self.email = self.player_name + "@stu.de.nt"
   end
 end

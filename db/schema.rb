@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(:version => 20120711164247) do
     t.string   "authentication_token"
     t.boolean  "consented",                             :default => false
     t.boolean  "control_group"
-    t.string   "player_name"
+    t.string   "player_name",                           :default => ""
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
