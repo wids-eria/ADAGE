@@ -31,7 +31,8 @@ class OauthController < ApplicationController
       provider: 'ada',
       uid: user.id.to_s,
       info: {
-        email: user.email
+        email: user.email,
+        username: user.player_name
       }
     }
 
