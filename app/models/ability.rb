@@ -18,6 +18,12 @@ class Ability
         user == a_user
       end
     end
+    
+    if user.role? :tenacity
+      can :read, AdaData do |data|
+        data.gameName == 'Tenacity-Meditation'
+      end
+    end
 
   end
 end

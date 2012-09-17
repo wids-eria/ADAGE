@@ -16,6 +16,16 @@ Given /^a logged in player$/ do
   click_button 'Sign in'
 end
 
+Given /^a logged in tenacity researcher$/ do
+  @user = Fabricate(:user, roles: [Role.create(name: 'tenacity')])
+
+  visit new_user_session_path
+  fill_in 'Email', with: @user.email
+  fill_in 'Password', with: @user.password
+  click_button 'Sign in'
+end
+
+
 
 Given /^I am on the mass user form$/ do
   visit new_sequence_users_path

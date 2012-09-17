@@ -1,0 +1,10 @@
+%ul
+  = @user.email
+  %br
+  = @user.created_at
+  %br
+  %br
+  Roles:
+  -@user.roles.each do |role|
+    %br
+    = role.name

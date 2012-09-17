@@ -18,4 +18,11 @@ namespace :abilities do
       user.save
     end
   end
+
+  desc 'Safely add tenacity role'
+  task :create_tenacity_role => :environment do
+    if Role.where(name: 'tenacity').empty?
+      Role.create(name: 'tenacity')
+    end
+  end
 end

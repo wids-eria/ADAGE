@@ -7,7 +7,7 @@ Ada::Application.routes.draw do
   match "data_collector" => "data#create", :via => :post
 
   resources :data
-  resources :users, :only => [:index] do
+  resources :users, :only => [:index, :show] do
     collection do
       get :new_sequence
       post :create_sequence
@@ -19,6 +19,8 @@ Ada::Application.routes.draw do
   get '/auth/ada/access_token' => 'oauth#access_token'
   get '/auth/ada/user' => 'oauth#user'
   post '/oauth/token' => 'oauth#access_token'
+
+  get '/tenacity' => 'tenacity#index'
 
   root :to => 'welcome#index'
 end
