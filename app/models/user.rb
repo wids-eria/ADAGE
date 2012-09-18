@@ -9,13 +9,13 @@ class User < ActiveRecord::Base
 
   attr_accessor :login
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :player_name, :login, :password, :password_confirmation, :remember_me, :authentication_token
+  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
   before_save :set_default_role
 
-  before_validation :set_email_from_player_name
+  before_validation :set_email_from_player_name, :on => :create
   validates :player_name, presence: true
 
   has_and_belongs_to_many :roles
