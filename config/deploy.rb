@@ -1,7 +1,6 @@
 set :rvm_type, :system
 Deploy_host = "eria-1.morgridge.net"
 
-require 'rvm/capistrano'
 set :rvm_ruby_string, '1.9.3'
 
 require 'capistrano/ext/multistage'
