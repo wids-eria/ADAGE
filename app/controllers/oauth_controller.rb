@@ -32,7 +32,7 @@ class OauthController < ApplicationController
       uid: user.id.to_s,
       info: {
         email: user.email,
-        username: user.player_name
+        player_name: user.player_name
       }
     }
 
