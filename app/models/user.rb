@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   before_create :update_control_group
   before_save :set_default_role
 
-  before_validation :set_email_from_player_name, :on => :create
+  before_validation :email_or_player_name, :on => :create
   validates :player_name, presence: true
 
   has_and_belongs_to_many :roles
@@ -60,10 +60,11 @@ class User < ActiveRecord::Base
     end
   end
 
-  def set_email_from_player_name
-    return if self.email.present?
-    return if self.player_name.blank?
-
-    self.email = self.player_name + "@stu.de.nt"
+  def email_or_player_name
+    if self.email.blank? && self.player_name.present?
+      self.email = self.player_name + "@stu.de.nt"
+    elsif self.player_name.blank? && self.email.present? && self.email.match("@")
+      self.player_name = self.email.split("@").first
+    end
   end
 end

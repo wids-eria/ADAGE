@@ -7,6 +7,9 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+  <% if flash[:alert] -%> 
+    <p class="alert"><%= flash[:alert] %></p> 
+  <% end -%>
   <% if flash[:error] -%> 
     <p class="error"><%= flash[:error] %></p> 
   <% end -%>

@@ -1,5 +1,7 @@
-<marquee>
-  <h1>You are logged in</h1>
-</marquee>
+<% if user_signed_in? %>
+  <marquee>
+    <h1>You are logged in</h1>
+  </marquee>
+<% end %>
 
 <%= image_tag 'truelove.png' %>
