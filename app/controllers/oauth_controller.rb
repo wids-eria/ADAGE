@@ -5,7 +5,7 @@ class OauthController < ApplicationController
   def authorize
     application = Client.where(app_token: params[:client_id]).first
     access_token = current_user.access_tokens.create({client: application})
-    redirect_to access_token.redirect_uri_for(params[:redirect_uri])
+    redirect_to access_token.redirect_uri_for(params[:redirect_uri]+"?&state=#{params[:state]}")
   end
 
   def access_token
