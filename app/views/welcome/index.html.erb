@@ -1,2 +1,7 @@
-<h1>Welcome#index</h1>
-<p>Find me in app/views/welcome/index.html.erb</p>
+<% if user_signed_in? %>
+  <marquee>
+    <h1>You are logged in</h1>
+  </marquee>
+<% end %>
+
+<%= image_tag 'truelove.png' %>

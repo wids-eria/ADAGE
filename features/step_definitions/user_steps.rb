@@ -2,7 +2,7 @@ Given /^a logged in admin$/ do
   @user = Fabricate(:admin, roles: [Role.create(name: 'admin'), Role.create(name: 'player')])
 
   visit new_user_session_path
-  fill_in 'Email', with: @user.email
+  fill_in 'Login', with: @user.email
   fill_in 'Password', with: @user.password
   click_button 'Sign in'
 end
@@ -11,7 +11,7 @@ Given /^a logged in player$/ do
   @user = Fabricate(:user, roles: [Role.create(name: 'player')])
 
   visit new_user_session_path
-  fill_in 'Email', with: @user.email
+  fill_in 'Login', with: @user.email
   fill_in 'Password', with: @user.password
   click_button 'Sign in'
 end
