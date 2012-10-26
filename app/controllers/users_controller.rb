@@ -14,6 +14,9 @@ class UsersController < ApplicationController
 
   def authenticate_for_token
     @user = User.find_by_email params[:email].downcase
+    if @user == nil
+      @user = User.find_by_player_name params[:email].downcase
+    end
     ret = {}
     if @user != nil and @user.valid_password? params[:password]
       @auth_token = @user.authentication_token
