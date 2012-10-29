@@ -1,7 +1,8 @@
 require 'csv'
 require 'progressbar'
 
-players=User.all
+#players=User.all
+players=User.where(id: 3454..3456)
 =begin
 CSV.open("kodu_moving_minds_data.csv", "w") do |csv|
   csv << ['player name', 'created at', 'timestamp', 'tag name', 'data']
@@ -20,11 +21,11 @@ end
 CSV.open("kodu_moving_minds_data.csv", "w") do |csv|
   csv << ['player name', 'created at', 'timestamp', 'tag name', 'data']
   puts players.count
-    data = AdaData.where(gameName: 'kodu')#, user_id: players.map(&:id))
+    data = AdaData.where(gameName: 'kodu', user_id: 3454..3456)
     puts data.count
     bar = ProgressBar.new 'wee', data.count 
     data.each do |log_entry|
-      csv << [players.detect{|p| p.id == log_entry.user_id}, log_entry.created_at, log_entry.time, log_entry.name, log_entry.data]
+      csv << [players.detect{|p| p.id == log_entry.user_id}.id, log_entry.created_at, log_entry.time, log_entry.name, log_entry.data]
       bar.inc
     end
     bar.finish
