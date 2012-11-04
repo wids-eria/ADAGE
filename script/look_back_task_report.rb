@@ -265,17 +265,21 @@ class IndividualReport
 
 
   def fill_column(fill_type)
-    {'IPS1' => 'IPS',
-     'IPS2' => 'IPS',
-     'Meso' => 'Meso',
-     'Organ' => 'Organ',
-     'Tissue1' => 'Tissue',
-     'Tissue2' => 'Tissue',
-     'Tissue3' => 'Tissue',
-     'Tissue4' => 'Tissue',
-     'Tissue5' => 'Tissue',
-     'Fibroblast' => 'Fibroblast'
+    fill_name = {'IPS1'    => 'IPS',
+                 'IPS2'    => 'IPS',
+                 'Ecto'    => 'Ecto',
+                 'Endo'    => 'Endo',
+                 'Meso'    => 'Meso',
+                 'Organ'   => 'Organ',
+                 'Tissue1' => 'Tissue',
+                 'Tissue2' => 'Tissue',
+                 'Tissue3' => 'Tissue',
+                 'Tissue4' => 'Tissue',
+                 'Tissue5' => 'Tissue',
+                 'Fibroblast' => 'Fibroblast'
     }[fill_type]
+    raise "dont know #{fill_type}" if fill_name == nil
+    fill_name
   end
 
 
