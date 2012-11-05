@@ -93,6 +93,7 @@ class IndividualReport
   end
 
 
+
   # GRID DESTROY ########################
   #
   def grid_destroy(data)
@@ -153,6 +154,7 @@ class IndividualReport
   end
 
 
+
   # CELL COLLECT #######################
   #
   def cell_collect(data)
@@ -192,6 +194,7 @@ class IndividualReport
       end
     end
   end
+
 
 
   # TISSUE COLLECT #######################
@@ -237,6 +240,7 @@ class IndividualReport
   end
 
 
+
   # ORGAN COLLECT #######################
   #
   def organ_collect(data)
@@ -254,6 +258,7 @@ class IndividualReport
       end
     end
   end
+
 
 
   # SUPPORT METHODS #####################
@@ -280,6 +285,16 @@ class IndividualReport
     }[fill_type]
     raise "dont know #{fill_type}" if fill_name == nil
     fill_name
+  end
+
+
+  def increase_multiple_counts
+    raise 'write a test that 5 increments and passing the 5 to this create the same buckets'
+  end
+
+
+  def log_event
+    raise 'add every event into an array, compare this to array of unfiltered events to find missing ones'
   end
 
 
