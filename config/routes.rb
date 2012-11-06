@@ -5,6 +5,7 @@ Ada::Application.routes.draw do
   devise_for :users
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
+  match "heatmap" => "data#heatmap" 
 
   resources :data
   resources :users, :only => [:index] do
