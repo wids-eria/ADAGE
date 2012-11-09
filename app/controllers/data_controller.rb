@@ -16,7 +16,11 @@ class DataController < ApplicationController
   end
 
   def heatmap
-    @data = AdaData.where(gameName: params[:gameName]).where(level: params[:level]).where(:created_at.gt => params[:since]).where(key: params[:key])
+    if params[:level] != nil
+      @data = AdaData.where(gameName: params[:gameName]).where(level: params[:level]).where(:created_at.gt => params[:since]).where(key: params[:key])
+    else
+      @data = AdaData.where(gameName: params[:gameName]).where(:created_at.gt => params[:since]).where(key: params[:key])
+    end
     respond_to do |format|
       format.json { render :json => @data }
     end
