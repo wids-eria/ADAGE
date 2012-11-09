@@ -2,7 +2,7 @@ require 'csv'
 
 players=User.all
 players.each do |play|
-  data = play.data.where(gameName: 'Tenacity-Meditation')
+  data = play.data.where(gameName: 'Tenacity-Meditation').where(schema: 'BETA-TESTING-10-29-2012')
   if data.count > 0
     CSV.open("tenacity_test_"+play.email+".csv", "w") do |csv|
       puts data.count
