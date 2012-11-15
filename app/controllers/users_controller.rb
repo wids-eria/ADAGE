@@ -57,8 +57,12 @@ class UsersController < ApplicationController
     end
   end
 
-  def get_data
-    @data = AdaData.where(user_id: params[:user_id]).where(gameName: "APA:Tracts")
+  def get_data 
+    if params[:level] != nil
+      @data = AdaData.where(user_id: params[:user_id]).where(gameName: params[:game_name]).where(schema: params[:schema]).where(key: params[key])
+    else
+      @data = AdaData.where(user_id: params[:user_id]).where(gameName: params[:game_name]).where(schema: params[:schema]).where(level: params[:level]).where(key: params[key])
+    end
     respond_to do |format|
       format.json { render :json => @data }
     end
