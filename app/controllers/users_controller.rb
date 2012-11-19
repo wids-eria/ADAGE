@@ -59,9 +59,9 @@ class UsersController < ApplicationController
 
   def get_data 
     if params[:level] != nil
-      @data = AdaData.where(user_id: params[:user_id], gameName: params[:game_name], schema: params[:schema], key: params[:key])
+      @data = AdaData.where(user_id: params[:user_id], gameName: params[:gameName], schema: params[:schema], level: params[:level], key: params[:key])
     else
-      @data = AdaData.where(user_id: params[:user_id], gameName: params[:game_name], schema: params[:schema], level: params[:level], key: params[:key])
+      @data = AdaData.where(user_id: params[:user_id], gameName: params[:gameName], schema: params[:schema], key: params[:key])
     end
     respond_to do |format|
       format.json { render :json => @data }
