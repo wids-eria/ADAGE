@@ -6,3 +6,9 @@
         = user.created_at
 
 = paginate @users
+
+Find Player
+= form_tag find_users_path do
+  = label_tag 'Player name'
+  = text_field_tag :player_name 
+  = submit_tag 'search'

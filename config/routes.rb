@@ -5,12 +5,16 @@ Ada::Application.routes.draw do
   devise_for :users
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
+  match "data/heatmap" => "data#heatmap"
+  match "user/user_data" => "users#get_data" 
 
+  resources :roles
   resources :data
   resources :users, :only => [:index, :show] do
     collection do
       get :new_sequence
       post :create_sequence
+      post :find
     end
   end
 

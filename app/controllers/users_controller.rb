@@ -16,8 +16,23 @@ class UsersController < ApplicationController
     end
   end
 
+  def find
+    @user = User.where(player_name: params[:player_name]).first
+    respond_to do |format|
+      if @user.present?
+        format.any { redirect_to user_path(@user) }
+      else
+        flash[:error] = 'Player name not found'
+        format.any { redirect_to :back }
+      end
+    end
+  end
+
   def authenticate_for_token
     @user = User.find_by_email params[:email].downcase
+    if @user == nil
+      @user = User.find_by_player_name params[:email].downcase
+    end
     ret = {}
     if @user != nil and @user.valid_password? params[:password]
       @auth_token = @user.authentication_token
@@ -58,8 +73,12 @@ class UsersController < ApplicationController
     end
   end
 
-  def get_data
-    @data = AdaData.where(user_id: params[:user_id]).where(gameName: "APA:Tracts")
+  def get_data 
+    if params[:level] != nil
+      @data = AdaData.where(user_id: params[:user_id], gameName: params[:gameName], schema: params[:schema], level: params[:level], key: params[:key])
+    else
+      @data = AdaData.where(user_id: params[:user_id], gameName: params[:gameName], schema: params[:schema], key: params[:key])
+    end
     respond_to do |format|
       format.json { render :json => @data }
     end

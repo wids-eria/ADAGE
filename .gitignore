@@ -14,9 +14,12 @@
 /log/*.log
 /tmp
 /config/database.yml
+/config/database.yml.joytemplate
 /config/mongoid.yml
-/csv/*.csv
+/config/mongoid.yml.joytemplate
 /*.csv
+/*.zip
+/csv
 
 
 # Ignore all os stuff
