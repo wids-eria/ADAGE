@@ -1,5 +1,4 @@
 set :rails_env, :staging
-set :rvm_type, :user
 set :branch, "master"
 
 role :web, "terrordome.discovery.wisc.edu"

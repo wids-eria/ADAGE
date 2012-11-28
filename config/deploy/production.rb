@@ -1,5 +1,4 @@
 set :rails_env, :staging
-set :rvm_type, :system
 set :branch, "adventurous_aardvark"
 
 role :web, "eria-1.morgridge.net"
