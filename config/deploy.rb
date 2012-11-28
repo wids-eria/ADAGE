@@ -1,5 +1,4 @@
 set :rvm_type, :system
-Deploy_host = "eria-1.morgridge.net"
 
 set :rvm_ruby_string, '1.9.3'
 
@@ -14,11 +13,6 @@ set :application, "ada"
 
 set :scm, :git
 set :repository,  "git@github.com:wids-eria/ada.git"
-set :branch, "master"
-
-role :web, Deploy_host
-role :app, Deploy_host
-role :db,  Deploy_host, :primary => true # This is where Rails migrations will run
 
 set :user, :deploy
 set :deploy_to, "/home/deploy/applications/#{application}"
