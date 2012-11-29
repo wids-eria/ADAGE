@@ -21,6 +21,7 @@ end
 gem 'jquery-rails'
 gem 'capistrano'
 gem 'capistrano-ext'
+gem 'rvm-capistrano'
 gem 'haml'
 
 group :test, :development do
