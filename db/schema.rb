@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120711164247) do
+ActiveRecord::Schema.define(:version => 20121129214915) do
 
   create_table "access_tokens", :force => true do |t|
     t.string   "consumer_token"
@@ -26,6 +26,12 @@ ActiveRecord::Schema.define(:version => 20120711164247) do
     t.string   "name"
     t.string   "app_token"
     t.string   "app_secret"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "games", :force => true do |t|
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

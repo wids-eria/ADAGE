@@ -9,6 +9,7 @@ Ada::Application.routes.draw do
   match "user/user_data" => "users#get_data" 
 
   resources :roles
+  resources :games
   resources :data
   resources :users, :only => [:index, :show] do
     collection do
