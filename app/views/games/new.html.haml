@@ -1,0 +1,6 @@
+= form_for @game do |game|
+  %p
+  = game.label :name
+  = game.text_field :name
+  %p
+  = game.submit 'Add'

@@ -1,5 +1,4 @@
 class GamesController < ApplicationController
-  respond_to :html, :json
   before_filter :authenticate_user!
 
   def show
@@ -15,5 +14,18 @@ class GamesController < ApplicationController
     end
   end
 
+  def new
+    @game = Game.new
+  end
+
+  def create
+    game = Game.new(params[:game])
+    if game.save
+      flash[:notice] = 'Game created'
+    else
+      flash[:error] = 'Game name is not unique'
+    end
+    redirect_to games_path
+  end
 
 end
