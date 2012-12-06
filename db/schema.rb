@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121129214915) do
+ActiveRecord::Schema.define(:version => 20121205210429) do
 
   create_table "access_tokens", :force => true do |t|
     t.string   "consumer_token"
@@ -46,6 +46,15 @@ ActiveRecord::Schema.define(:version => 20121129214915) do
     t.integer "role_id"
     t.integer "user_id"
   end
+
+  create_table "schemas", :force => true do |t|
+    t.string   "name"
+    t.integer  "game_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "schemas", ["game_id"], :name => "index_schemas_on_game_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "",    :null => false

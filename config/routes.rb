@@ -10,6 +10,7 @@ Ada::Application.routes.draw do
 
   resources :roles
   resources :games
+  resources :schemas
   resources :data
   resources :users, :only => [:index, :show] do
     collection do

@@ -21,11 +21,15 @@ class GamesController < ApplicationController
   def create
     game = Game.new(params[:game])
     if game.save
-      flash[:notice] = 'Game created'
+      flash[:notice] = 'Game Added'
     else
       flash[:error] = 'Game name is not unique'
     end
     redirect_to games_path
+  end
+
+  def edit
+    @game = Game.find(params[:id])
   end
 
 end

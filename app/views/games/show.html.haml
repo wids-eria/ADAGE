@@ -2,6 +2,11 @@
   = @game.name
   %br
   = @game.created_at
+
+  - @game.schemas.each do |s|
+    %li
+      = s.name
+  = render partial: 'schemas/add_schema', locals: {game: @game} 
   
   - @users.each do |user|
     %li
