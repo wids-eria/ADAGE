@@ -1,15 +1,11 @@
 require 'spec_helper.rb'
 
 describe 'add a game' do
-  let!(:player_role) { Role.create(name: 'player') }
-  let!(:admin_role) { Role.create(name: 'admin') }
-  let!(:user) { Fabricate :user, password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'player').first] }
 
   describe 'add a game with a unqiuename' do 
     it 'adds the game' do
 
-      sign_in_user
-
+      sign_in_admin
       visit new_game_path
 
       fill_in 'Name', :with => 'TestGame'
@@ -23,7 +19,7 @@ describe 'add a game' do
   describe 'try to add a game with the same name' do 
     it 'it does not add the game' do
 
-      sign_in_user
+      sign_in_admin
 
       visit new_game_path
 
@@ -44,7 +40,7 @@ describe 'add a game' do
 
   describe 'add a schema to the game' do
     it 'adds a schema' do
-      sign_in_user
+      sign_in_admin
 
       visit new_game_path
 
@@ -52,6 +48,7 @@ describe 'add a game' do
       click_button 'Add'
 
       click_link 'TestGame'
+      click_link 'Edit'
 
       fill_in 'schema_name', :with => 'BETA_BUILD'
       click_button 'Add'

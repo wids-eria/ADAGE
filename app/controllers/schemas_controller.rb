@@ -10,7 +10,7 @@ class SchemasController < ApplicationController
     else
       flash[:error] = 'Error adding schema'
     end
-    redirect_to :back
+    redirect_to game_path(schema.game) 
   end
 
 end

@@ -1,7 +1,7 @@
 module ValidUserRequestHelper
   # for use in request specs
 
-  def sign_in_user
+  def sign_in_admin
     Role.create(name: 'player')
     Role.create(name: 'admin')
     @user = Fabricate :user, password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'player').first] 

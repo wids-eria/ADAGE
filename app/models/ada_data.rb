@@ -1,3 +1,5 @@
+require 'csv'
+
 class AdaData
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -12,4 +14,5 @@ class AdaData
   def user
     User.find(self.user_id)
   end
+
 end

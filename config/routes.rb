@@ -18,6 +18,9 @@ Ada::Application.routes.draw do
       post :create_sequence
       post :find
     end
+    member do
+      get :data_by_game
+    end
   end
 
   # OAuth provider:

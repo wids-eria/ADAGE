@@ -1,6 +1,6 @@
 class DataController < ApplicationController
   before_filter :authenticate_user!
-  respond_to :html, :json
+  respond_to :html, :json, :csv
 
   def index
     @data = AdaData.page params[:page]

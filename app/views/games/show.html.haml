@@ -1,16 +1,17 @@
 %ul
-  = @game.name
+  %h1= @game.name
+  = link_to 'Edit', edit_game_path
   %br
-  = @game.created_at
 
+  %h1='Game Versions'
   - @game.schemas.each do |s|
     %li
       = s.name
-  = render partial: 'schemas/add_schema', locals: {game: @game} 
-  
+  %br
+  %h1='Players'
   - @users.each do |user|
     %li
-      = link_to user do 
+      = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do 
         = user.player_name
         = user.consented 
 

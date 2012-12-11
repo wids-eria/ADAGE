@@ -84,9 +84,28 @@ class UsersController < ApplicationController
     end
   end
 
+  def data_by_game
+    @user = User.find(params[:id])
+    @game = Game.find_by_name(params[:gameName])
+    @data = AdaData.where(user_id: params[:id], gameName: params[:gameName]) 
+    respond_to do |format| 
+      format.csv {send_data export_csv(@data, @user.player_name), filename: @user.player_name+'_'+@game.name+'.csv'} 
+    end
+  end
+
   protected
 
   def application
     @application ||= Client.where(app_token: params[:client_id]).first
   end
+
+  def export_csv(data, name)
+    CSV.generate do |csv|
+      keys = Hash.new
+      data.each do |log_entry|
+        csv << JSON.parse(log_entry.as_document.to_json).values
+      end 
+    end 
+  end
+
 end
