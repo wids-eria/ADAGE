@@ -13,9 +13,11 @@ class FarFailureReport
 
 
   def run
-    users = User.where(id: 296..480)
+    #users = User.where(id: 296..480)
+    users = User.where(consented: true)
 
-    users.select{|u| u.data.count > 0}.each do |user|
+    users.select{|u| u.data.where(gameName: 'ProgenitorX').count > 0}.each do |user|
+      puts user.player_name
       reports << IndividualReport.new(user).run
     end
 
@@ -244,7 +246,7 @@ class IndividualReport
   # ORGAN COLLECT #######################
   #
   def organ_collect(data)
-    if self.current_populate.fillType == "Organ"
+    if self.current_populate.respond_to?('fillType') == false
       if data.toolName == "Collect"
         if data.tileCoord["cellType"] == "Empty"
           increment("succesful collects")
