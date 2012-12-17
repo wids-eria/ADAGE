@@ -29,7 +29,5 @@ Ada::Application.routes.draw do
   get '/auth/ada/user' => 'oauth#user'
   post '/oauth/token' => 'oauth#access_token'
 
-  get '/tenacity' => 'tenacity#index'
-
   root :to => 'welcome#index'
 end

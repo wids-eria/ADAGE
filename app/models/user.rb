@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   has_many :access_tokens
 
   def role?(role)
-      return !!self.roles.find_by_name(role.to_s)
+    return !!self.roles.find_by_name(role.name)
   end
 
   def data

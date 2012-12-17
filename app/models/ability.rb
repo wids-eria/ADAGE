@@ -6,10 +6,11 @@ class Ability
 
     cannot :manage, AdaData
     cannot :manage, User
+    cannot :manage, Game
 
-    if user.role? :admin
+    if user.role? Role.find_by_name('admin') 
       can :manage, :all
-    elsif user.role? :player
+    elsif user.role? Role.find_by_name('player')
       can :create, AdaData
       can :read, AdaData do |data|
         data.user_id == user.id
@@ -18,12 +19,10 @@ class Ability
         user == a_user
       end
     end
-    
-    if user.role? :tenacity
-      can :read, AdaData do |data|
-        data.gameName == 'Tenacity-Meditation'
-      end
-    end
 
-  end
+    can :read, Game do |game|
+      user.role? Role.where(game_id: game.id).first
+    end
+   
+   end
 end
