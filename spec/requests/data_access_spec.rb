@@ -30,6 +30,10 @@ describe 'Test access to game data' do
   describe 'player role' do
     it 'can not see all data, users and games' do 
       sign_in_player
+
+      visit games_path
+
+      page.should_not have_content(@private_game.name)
       
       visit game_path(@private_game)
 
@@ -49,6 +53,12 @@ describe 'Test access to game data' do
   describe 'researcher role' do
     it 'can see games they are doing research on and can not see users or data' do 
       sign_in_researcher_with_game
+
+      visit games_path
+
+      save_and_open_page
+      page.should_not have_content(@private_game.name)
+      page.should have_content(@game.name)
       
       visit game_path(@private_game)
       page.should_not have_content(@private_game.name)

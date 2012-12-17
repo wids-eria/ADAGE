@@ -8,10 +8,11 @@ class GamesController < ApplicationController
   end
 
   def index
-    @games = Game.page params[:page]
-    respond_to do |format|
-      format.html { @games }
-      format.json { render :json => Games.all }
+    @games = Array.new 
+    Game.all.each do |game|
+      if can? :read, game
+        @games << game
+      end
     end
   end
 
