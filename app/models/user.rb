@@ -25,6 +25,10 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_name(role.name)
   end
 
+  def researcher_role?
+    return !!self.roles.find_by_type('ResearcherRole')
+  end
+
   def data
     AdaData.where("user_id" => self.id)
   end

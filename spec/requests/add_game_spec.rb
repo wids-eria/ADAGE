@@ -6,7 +6,10 @@ describe 'add a game' do
     it 'adds the game' do
 
       sign_in_admin
-      visit new_game_path
+     
+      click_link 'Games'
+
+      click_link 'Add A Game' 
 
       fill_in 'Name', :with => 'TestGame'
       click_button 'Add'

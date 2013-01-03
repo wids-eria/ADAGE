@@ -9,12 +9,17 @@ Ada::Application.routes.draw do
   match "user/user_data" => "users#get_data" 
 
   resources :roles
-  resources :games
+  resources :games do
+    collection do
+      get :admin
+    end
+  end
   resources :schemas
   resources :data
-  resources :users, :only => [:index, :show] do
+  resources :users do
     collection do
       get :new_sequence
+      get :admin
       post :create_sequence
       post :find
     end

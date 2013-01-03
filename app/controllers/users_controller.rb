@@ -84,6 +84,7 @@ class UsersController < ApplicationController
   def data_by_game
     @user = User.find(params[:id])
     @game = Game.find_by_name(params[:gameName])
+    authorize! :read, @game 
     @data = AdaData.where(user_id: params[:id], gameName: params[:gameName]) 
     respond_to do |format| 
       format.csv {send_data export_csv(@data, @user.player_name), filename: @user.player_name+'_'+@game.name+'.csv'} 

@@ -1,0 +1,9 @@
+%ul
+  - @games.each do |game|
+    %li
+      = link_to game do 
+        = game.name
+      = link_to 'Edit', edit_game_path(game)
+
+  %br
+  = link_to 'Add A Game', new_game_path

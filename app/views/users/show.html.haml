@@ -1,10 +1,15 @@
 %ul
-  = @user.email
+  %h1= @user.player_name
+  %h2= @user.email
+  - if can? :manage, @user
+    = link_to 'Edit', edit_user_path
   %br
-  = @user.created_at
   %br
   %br
-  Roles:
+  %h2= 'Roles:'
   -@user.roles.each do |role|
     %br
-    = role.name
+    - if role.game_id != nil
+      = link_to role.game.name, game_path(role.game)
+    - else
+      = role.name

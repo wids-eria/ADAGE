@@ -1,0 +1,11 @@
+<% if user_signed_in? %>
+  <h1>Welcome to Adage</h1>
+
+  <h2> Admin Tools </h2>
+  <ul>
+    <li><%= link_to 'Users', admin_users_path %></li>
+    <li><%= link_to 'Games', admin_games_path %></li>
+  </ul>
+<% end %>
+
+<%= image_tag 'truelove.png' %>

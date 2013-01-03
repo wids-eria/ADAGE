@@ -1,6 +1,7 @@
 %ul
   %h1= @game.name
-  = link_to 'Edit', edit_game_path
+  - if can? :manage, @game
+    = link_to 'Edit', edit_game_path
   %br
 
   %h1='Game Versions'

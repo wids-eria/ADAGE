@@ -11,6 +11,8 @@ describe 'Test access to game data' do
   describe 'admin role' do
     it 'can see all data, users and games' do 
       sign_in_admin
+
+      page.should have_content('Admin Tools')
       
       visit games_path
 
@@ -30,6 +32,8 @@ describe 'Test access to game data' do
   describe 'player role' do
     it 'can not see all data, users and games' do 
       sign_in_player
+      
+      page.should have_content('Thanks for playing our games!')
 
       visit games_path
 
@@ -53,10 +57,12 @@ describe 'Test access to game data' do
   describe 'researcher role' do
     it 'can see games they are doing research on and can not see users or data' do 
       sign_in_researcher_with_game
+     
+      page.should_not have_content('Thanks for playing our games!')
+      page.should_not have_content('Admin Tools')
 
       visit games_path
 
-      save_and_open_page
       page.should_not have_content(@private_game.name)
       page.should have_content(@game.name)
       

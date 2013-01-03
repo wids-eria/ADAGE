@@ -1,0 +1,10 @@
+<% if user_signed_in? %>
+
+  <h1>Welcome to Adage</h1>
+
+  <ul>
+    <li><%= link_to 'Profile', user_path(current_user) %></li>
+    <li><%= link_to 'Games', games_path %></li>
+  </ul>
+<% end %>
+

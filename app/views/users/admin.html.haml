@@ -1,0 +1,9 @@
+%h1= 'Admin Users'
+
+%h2= 'Find A User'
+= form_tag find_users_path do
+  = label_tag 'Player name'
+  = text_field_tag :player_name 
+  = submit_tag 'search'
+
+ 
