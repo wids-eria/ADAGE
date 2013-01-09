@@ -11,6 +11,7 @@ gem 'kaminari'
 gem 'therubyracer'
 gem 'cancan'
 gem 'omniauth'
+gem 'simple_form'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'

@@ -1,6 +1,7 @@
 %ul
   %h1= @user.player_name
   %h2= @user.email
+  %h2= 'Consented: ' + @user.consented.to_s
   - if can? :manage, @user
     = link_to 'Edit', edit_user_path
   %br

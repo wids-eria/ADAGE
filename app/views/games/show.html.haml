@@ -10,10 +10,14 @@
       = s.name
   %br
   %h1='Players'
+  %h2='Total number of players: ' + @users.count.to_s
+  %h2='Average time played: ' + @average_time.to_s
   - @users.each do |user|
     %li
       = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do 
         = user.player_name
         = user.consented 
+        - timeplayed =  user.data.last.created_at - user.data.first.created_at
+        = timeplayed
 
 

@@ -21,7 +21,7 @@ class Ability
     end
 
     can :read, Game do |game|
-      user.role? Role.where(game_id: game.id).first
+      user.role? ResearcherRole.where(game_id: game.id).first
     end
    
    end

@@ -7,6 +7,19 @@ class UsersController < ApplicationController
      @user = User.find(params[:id])
   end
 
+  def edit 
+     @user = User.find(params[:id])
+  end
+
+  def update
+     @user = User.find(params[:id])
+     if @user.update_attributes(params[:user])
+       redirect_to user_path(@user)
+     else
+       redirect_to edit_user_path(@user)
+     end
+  end
+
   def index
     @users = User.page params[:page]
     authorize! :read, @users
