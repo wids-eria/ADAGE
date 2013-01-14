@@ -3,6 +3,7 @@
   - if can? :manage, @game
     = link_to 'Edit', edit_game_path
   %br
+  
 
   %h1='Game Versions'
   - @game.schemas.each do |s|
