@@ -1,6 +1,6 @@
 players=User.all
 players.each do |play|
-  data = play.data.where(gameName: 'Pathfinder')
+  data = play.data.where(gameName: 'FairPlay')
   if data.count > 0
     data.each do |log_entry|
       if log_entry.key == 'IATFinalBias'
