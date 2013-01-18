@@ -2,7 +2,7 @@ require 'csv'
 require 'progressbar'
 
 #players=User.all
-players=User.where(id: 3454..3456)
+players=User.where(consented: 'true')
 =begin
 CSV.open("kodu_moving_minds_data.csv", "w") do |csv|
   csv << ['player name', 'created at', 'timestamp', 'tag name', 'data']
@@ -18,15 +18,17 @@ end
 =end
 
 
-CSV.open("kodu_1_14_2013.csv", "w") do |csv|
+CSV.open("kodu_1_18_2013.csv", "w") do |csv|
   csv << ['player name', 'created at', 'timestamp', 'tag name', 'data']
   puts players.count
-    data = AdaData.where(gameName: 'kodu', consented: true)
+  players.each do |p|
+    data = p.data.where(gameName: 'kodu')
     puts data.count
     bar = ProgressBar.new 'wee', data.count 
     data.each do |log_entry|
-      csv << [players.detect{|p| p.id == log_entry.user_id}.email, log_entry.created_at, log_entry.time, log_entry.name, log_entry.data]
+      csv << [p.email, log_entry.created_at, log_entry.time, log_entry.name, log_entry.data]
       bar.inc
     end
+  end
     bar.finish
 end
