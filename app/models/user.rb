@@ -18,7 +18,8 @@ class User < ActiveRecord::Base
   before_validation :email_or_player_name, :on => :create
   validates :player_name, presence: true
 
-  has_and_belongs_to_many :roles
+  has_many :roles_users
+  has_many :roles, :through => :roles_users
   has_many :access_tokens
 
   def role?(role)

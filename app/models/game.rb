@@ -13,4 +13,11 @@ class Game < ActiveRecord::Base
     raise role.inspect if role.new_record?
   end
 
+  def create_participant_role
+    role = ParticipantRole.new(name: self.name, game: self)
+    role.save  
+    raise role.inspect if role.new_record?
+  end
+
+
 end

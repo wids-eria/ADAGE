@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121217163421) do
+ActiveRecord::Schema.define(:version => 20130117194214) do
 
   create_table "access_tokens", :force => true do |t|
     t.string   "consumer_token"
@@ -44,9 +44,10 @@ ActiveRecord::Schema.define(:version => 20121217163421) do
     t.integer  "game_id"
   end
 
-  create_table "roles_users", :id => false, :force => true do |t|
+  create_table "roles_users", :force => true do |t|
     t.integer "role_id"
     t.integer "user_id"
+    t.integer "assigner_id"
   end
 
   create_table "schemas", :force => true do |t|
