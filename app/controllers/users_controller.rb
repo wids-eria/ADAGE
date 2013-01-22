@@ -13,7 +13,18 @@ class UsersController < ApplicationController
 
   def update
      @user = User.find(params[:id])
-     if @user.update_attributes(params[:user])
+     @user.attributes = params[:user]
+     @user.roles.each do |role|
+       @join = RolesUser.where(role_id: role.id, user_id: @user.id).first
+       if @join == nil
+        @join = RolesUser.new :assigner => current_user, :role => role, :user => @user 
+        @join.save
+       elsif @join.assigner_id == nil
+         @join.assigner_id = current_user.id
+         @join.save
+       end
+     end
+     if @user.save
        redirect_to user_path(@user)
      else
        redirect_to edit_user_path(@user)
