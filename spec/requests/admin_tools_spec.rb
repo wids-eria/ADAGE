@@ -39,7 +39,7 @@ describe 'Test admin tools' do
       @some_researcher.role?(Role.where(name: 'player').first).should == true
     end
 
-    it 'prevserves assigner id of other assigned roles' do
+    it 'preserves assigner id of other assigned roles' do
       sign_in_admin   
 
       @aRole = Role.where(name: 'another_game').first 
