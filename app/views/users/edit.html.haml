@@ -1,6 +1,7 @@
 %h1= @user.player_name
 = simple_form_for @user do |u|
   = u.input :consented
+  = u.association :roles, :collection => Role.where(type: nil), :as => :check_boxes
   Researcher Roles
   = u.association :roles, :collection => ResearcherRole.all, :as => :check_boxes
   = u.button :submit 
