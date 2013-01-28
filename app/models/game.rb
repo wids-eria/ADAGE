@@ -2,8 +2,12 @@ class Game < ActiveRecord::Base
 
   attr_accessible :name, :schemas
   validates :name, uniqueness: true
-  has_many :schemas
+  has_many :schemas 
+ 
+  has_many :roles
+
   after_create :create_researcher_role
+  after_create :create_participant_role
 
   protected
 

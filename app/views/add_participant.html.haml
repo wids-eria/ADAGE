@@ -1,0 +1,8 @@
+%h2= 'Find Users'
+= form_tag search_users_game_path do
+  = label_tag 'Player name begins with'
+  = text_field_tag :player_name
+  = check_box_tag :consented 
+  = submit_tag 'search'
+
+

@@ -4,15 +4,26 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @users = User.select{ |user| user.data.where(gameName: @game.name).count > 0 }
+    @users = User.select{ |user| user.role?(ParticipantRole.where(game_id: @game.id).first) }
     @average_time = 0
     if @users.count > 0
       @users.each do |user| 
-          @average_time +=  user.data.last.created_at - user.data.first.created_at
+          if user.data.count >= 2
+            @average_time +=  user.data.last.created_at - user.data.first.created_at
+          end
       end
       @average_time = @average_time/@users.count
     end
 
+  end
+
+  def search_users
+    @game = Game.find(params[:id])
+    if params[:consented] == true
+      @user = User.where(consented: true)
+    end
+    @user = User.select{ |user| user.data.where(game_name: @game.name) }
+  
   end
 
   def index
