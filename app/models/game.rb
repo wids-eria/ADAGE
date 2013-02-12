@@ -5,6 +5,8 @@ class Game < ActiveRecord::Base
   has_many :schemas 
  
   has_many :roles
+  has_one :participant_role
+  has_one :researcher_role
 
   after_create :create_researcher_role
   after_create :create_participant_role

@@ -9,6 +9,10 @@
   - @game.schemas.each do |s|
     %li
       = s.name
+
+
+  %br 
+  = render partial: 'search_users_form'
   %br
   %h1='Players'
   %h2='Total number of players: ' + @users.count.to_s

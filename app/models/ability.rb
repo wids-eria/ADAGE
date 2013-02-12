@@ -18,10 +18,14 @@ class Ability
       can :read, User do |a_user|
         user == a_user
       end
-    end
+      
+      can :manage, Game do |game|
+        user.role?(ResearcherRole.where(game_id: game.id).first)
+      end
 
-    can :read, Game do |game|
-      user.role? ResearcherRole.where(game_id: game.id).first
+      can :manage, ParticipantRole do |p_role|
+        user.role?(ResearcherRole.where(game_id: p_role.game.id).first)
+      end
     end
    
    end

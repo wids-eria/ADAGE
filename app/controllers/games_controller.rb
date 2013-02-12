@@ -4,7 +4,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @users = User.select{ |user| user.role?(ParticipantRole.where(game_id: @game.id).first) }
+    @users = RolesUser.where(role_id: @game.participant_role.id).collect{ |ru| ru.user}
     @average_time = 0
     if @users.count > 0
       @users.each do |user| 
@@ -19,11 +19,16 @@ class GamesController < ApplicationController
 
   def search_users
     @game = Game.find(params[:id])
+    @users = User.player_name_matches(params[:player_name])
     if params[:consented] == true
-      @user = User.where(consented: true)
-    end
-    @user = User.select{ |user| user.data.where(game_name: @game.name) }
-  
+      @users = @users.where(consented: true)
+    end 
+    @users = @users.select{ |user| user.data.where(gameName: @game.name).count > 0}
+    puts @users.inspect
+  end
+
+  def admin
+    @games = Game.all
   end
 
   def index
