@@ -24,7 +24,6 @@ class GamesController < ApplicationController
       @users = @users.where(consented: true)
     end 
     @users = @users.select{ |user| user.data.where(gameName: @game.name).count > 0}
-    puts @users.inspect
   end
 
   def admin

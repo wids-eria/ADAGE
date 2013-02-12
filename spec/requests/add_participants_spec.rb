@@ -20,8 +20,6 @@ describe 'add participants to a game' do
 
       check @some_player.player_name
       
-      save_and_open_page
-
       click_button 'Update Participant role'
 
 
