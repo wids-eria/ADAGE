@@ -19,7 +19,12 @@ Ada::Application.routes.draw do
     end
   end
   resources :schemas
-  resources :data
+  resources :data do 
+    collection do
+      get :data_by_version
+      get :export
+    end
+  end
   resources :users do
     collection do
       get :new_sequence

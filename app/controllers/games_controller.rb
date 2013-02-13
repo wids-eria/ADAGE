@@ -4,7 +4,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @users = RolesUser.where(role_id: @game.participant_role.id).collect{ |ru| ru.user}
+    @users = @game.users
     @average_time = 0
     if @users.count > 0
       @users.each do |user| 

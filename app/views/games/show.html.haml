@@ -3,14 +3,17 @@
   - if can? :manage, @game
     = link_to 'Edit', edit_game_path
   %br
+
+  = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
+    = 'Export all participant data'
   
 
   %h1='Game Versions'
-  - @game.schemas.each do |s|
-    %li
-      = s.name
-
-
+  - @game.schemas.each do |version|
+    = link_to data_by_version_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do 
+      = version.name
+  
+  
   %br 
   = render partial: 'search_users_form'
   %br

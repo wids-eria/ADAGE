@@ -8,6 +8,8 @@ class Game < ActiveRecord::Base
   has_one :participant_role
   has_one :researcher_role
 
+  has_many :users, :through => :participant_role
+
   after_create :create_researcher_role
   after_create :create_participant_role
 

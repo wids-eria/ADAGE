@@ -26,6 +26,25 @@ class DataController < ApplicationController
     end
   end
 
+  def data_by_version
+    @game = Game.find_by_name(params[:gameName])
+    authorize! :read, @game 
+    @data = AdaData.where(gameName: params[:gameName], schema: params[:version], user_id: params[:user_ids] ) 
+    respond_to do |format| 
+      format.csv {send_data export_csv(@data), filename: @game.name+'_'+ params[:version]+'.csv'} 
+    end
+  end
+
+  def export 
+    @game = Game.find_by_name(params[:gameName])
+    authorize! :read, @game 
+    @data = AdaData.where(gameName: params[:gameName], user_id: params[:user_ids]) 
+    respond_to do |format| 
+      format.csv {send_data export_csv(@data), filename: @game.name+'.csv'} 
+    end
+  end
+
+
   def show
     @data = AdaData.find(params[:id])
     authorize! :read, @data
@@ -46,4 +65,16 @@ class DataController < ApplicationController
     return_value = {}
     respond_with return_value, :location => ''
   end
+
+  protected 
+
+  def export_csv(data)
+    CSV.generate do |csv|
+      keys = Hash.new
+      data.each do |log_entry|
+        csv << JSON.parse(log_entry.as_document.to_json).values
+      end 
+    end 
+  end
+
 end

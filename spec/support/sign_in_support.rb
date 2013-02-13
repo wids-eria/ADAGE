@@ -34,7 +34,6 @@ module ValidUserRequestHelper
     Role.create(name: 'admin')
     @game = Fabricate :game
     @user = Fabricate :user, player_name: 'researcher', password: 'pass1234', roles: [@game.researcher_role] 
-    puts @user.roles.inspect
     visit root_url
     click_link 'login'
 
