@@ -1,11 +1,10 @@
 %h2= 'Find Users'
-= form_tag search_users_game_path do
-  = label_tag 'Player name begins with'
-  = text_field_tag :player_name
-  %br
-  = label_tag 'Consented users only'
-  = check_box_tag :consented 
-  %br
-  = submit_tag 'search'
+= simple_form_for UserSearch.new, :url => search_users_game_path do |f|
+  %p
+  = f.input :substring 
+  %p
+  = f.input :consented, :as => :boolean 
+  %p
+  = f.submit 'Search'
 
 

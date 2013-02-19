@@ -19,8 +19,10 @@ class GamesController < ApplicationController
 
   def search_users
     @game = Game.find(params[:id])
-    @users = User.player_name_matches(params[:player_name])
-    if params[:consented] == true
+    @user_search = UserSearch.new params[:user_search]
+    puts @user_search.inspect
+    @users = User.player_name_matches(@user_search.substring)
+    if @user_search.consented == '1' 
       @users = @users.where(consented: true)
     end 
     @users = @users.select{ |user| user.data.where(gameName: @game.name).count > 0}
@@ -56,5 +58,7 @@ class GamesController < ApplicationController
   def edit
     @game = Game.find(params[:id])
   end
+  
+
 
 end

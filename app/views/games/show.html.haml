@@ -1,32 +1,54 @@
-%ul
-  %h1= @game.name
-  - if can? :manage, @game
-    = link_to 'Edit', edit_game_path
-  %br
+.row
+  .span4
+    %h2= @game.name
+    - if can? :manage, @game
+      = link_to 'Edit', edit_game_path, class:'btn'
+    %br
+    = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
+      = 'Export all participant data'
 
-  = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
-    = 'Export all participant data'
-  
+  .span4
+    %h2='Game Versions'
+    %ul
+      - @game.schemas.each do |version|
+        %li
+          = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
+            = version.name
 
-  %h1='Game Versions'
-  - @game.schemas.each do |version|
-    = link_to data_by_version_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do 
-      = version.name
-  
-  
-  %br 
-  = render partial: 'search_users_form'
-  %br
-  %h1='Players'
-  %h2='Total number of players: ' + @users.count.to_s
-  %h2='Average time played: ' + @average_time.to_s
-  - @users.each do |user|
-    %li
-      = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do 
-        = user.player_name
-        = user.consented 
-        - timeplayed =  user.data.last.created_at - user.data.first.created_at
-        = timeplayed
+  .span4
+    = render partial: 'search_users_form'
+
+
+.row
+  .span12
+    %h2='Players'
+.row
+  .span6
+    %h3='Total number of players: ' + @users.count.to_s
+  .span6
+    %h3='Average time played: ' + @average_time.to_s
+.row
+  .span12
+    %table.table.table-striped 
+      %thead
+        %tr
+          %th player name
+          %th play data
+          %th consented
+          %th time played
+      %tbody
+        - @users.each do |user|
+          %tr          
+            %td
+              = user.player_name
+            %td
+              = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do
+                = user.player_name + ' data'
+            %td
+              = user.consented 
+            %td
+              - timeplayed =  user.data.last.created_at - user.data.first.created_at
+              = timeplayed
 
 
 

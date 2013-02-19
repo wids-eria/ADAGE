@@ -28,8 +28,8 @@ class DataController < ApplicationController
 
   def data_by_version
     @game = Game.find_by_name(params[:gameName])
-    authorize! :read, @game 
-    @data = AdaData.where(gameName: params[:gameName], schema: params[:version], user_id: params[:user_ids] ) 
+    authorize! :read, @game
+    @data = AdaData.where(gameName: params[:gameName], schema: params[:version]).in(user_id: params[:user_ids] ) 
     respond_to do |format| 
       format.csv {send_data export_csv(@data), filename: @game.name+'_'+ params[:version]+'.csv'} 
     end
@@ -38,7 +38,7 @@ class DataController < ApplicationController
   def export 
     @game = Game.find_by_name(params[:gameName])
     authorize! :read, @game 
-    @data = AdaData.where(gameName: params[:gameName], user_id: params[:user_ids]) 
+    @data = AdaData.where(gameName: params[:gameName]).in(user_id: params[:user_ids]) 
     respond_to do |format| 
       format.csv {send_data export_csv(@data), filename: @game.name+'.csv'} 
     end
