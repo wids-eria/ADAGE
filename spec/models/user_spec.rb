@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe User do
   describe 'create' do
+    it 'has case insensitive email and player name'
+    it 'doesnt allow two of the same email or player name'
+
     describe 'roles' do
       context 'no roles' do
         it 'should belong to player role' do

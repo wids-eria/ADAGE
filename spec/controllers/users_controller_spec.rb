@@ -31,6 +31,10 @@ describe UsersController do
       response.body.should match 'auth_token'
     end
 
+
+    it "logs in a user whos name is capitalized"
+    it "logs in a user with player name bug"
+
   end
 
 end
