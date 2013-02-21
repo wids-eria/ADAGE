@@ -1,4 +1,4 @@
 Fabricator(:game) do
   name 'CoolGameBro'
-  schemas(count: 3) { |attrs, i| Fabricate(:schema, name: "Playsquad #{i}") }
+  after_create { |game, transients| Fabricate(:schema, name: "Playsquad", game: game) }
 end

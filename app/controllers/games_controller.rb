@@ -20,7 +20,6 @@ class GamesController < ApplicationController
   def search_users
     @game = Game.find(params[:id])
     @user_search = UserSearch.new params[:user_search]
-    puts @user_search.inspect
     @users = User.player_name_matches(@user_search.substring)
     if @user_search.consented == '1' 
       @users = @users.where(consented: true)
