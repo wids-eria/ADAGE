@@ -2,8 +2,40 @@ require 'spec_helper'
 
 describe User do
   describe 'create' do
-    it 'has case insensitive email and player name'
-    it 'doesnt allow two of the same email or player name'
+    describe 'uniquness' do
+      it 'has case insensitive email' do
+        user1 = Fabricate :user, email: 'PlaYer1@email.com'
+        user2 = Fabricate.build :user, email: 'player1@email.com'
+        user2.valid?
+        user2.errors_on(:email).should_not be_empty
+      end
+
+      it 'has case insensitive player_name' do
+        user1 = Fabricate :user, player_name: 'PlaYer1'
+        user2 = Fabricate.build :user, player_name: 'player1'
+        user2.valid?
+        user2.errors_on(:player_name).should_not be_empty
+      end
+
+      it 'doesnt allow two of the same email' do
+        user1 = Fabricate :user
+        user2 = Fabricate.build :user
+
+        user2.email = user1.email
+        user2.valid?
+        user2.errors_on(:email).should_not be_empty
+      end
+
+      it 'doesnt allow two of the same player_name' do
+        user1 = Fabricate :user
+        user2 = Fabricate.build :user
+
+        user2.player_name = user1.player_name
+        user2.valid?
+        user2.errors_on(:player_name).should_not be_empty
+      end
+    end
+
 
     describe 'roles' do
       context 'no roles' do
@@ -22,6 +54,7 @@ describe User do
         end
       end
     end
+
 
     context 'when registering with player_name' do
       let(:user) { User.new }
@@ -65,6 +98,7 @@ describe User do
         user.player_name.should == "awesometron1000"
       end
     end
+
 
     context 'when registering with email' do
       let(:user) { User.new }
