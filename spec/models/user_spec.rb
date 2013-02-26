@@ -3,6 +3,13 @@ require 'spec_helper'
 describe User do
   describe 'create' do
     describe 'uniquness' do
+      it 'doesnt allow duplicates when only player name is provided' do
+        user1 = Fabricate :user, email: '', player_name: 'PlayerX'
+        lambda {
+           user2 = Fabricate :user, email: '', player_name: 'playerx'
+        }.should raise_error
+      end
+
       it 'has case insensitive email' do
         user1 = Fabricate :user, email: 'PlaYer1@email.com'
         user2 = Fabricate.build :user, email: 'player1@email.com'
