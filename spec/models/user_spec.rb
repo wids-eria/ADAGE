@@ -4,11 +4,24 @@ describe User do
   describe 'create' do
     describe 'uniquness' do
       it 'doesnt allow duplicates when only player name is provided' do
-        user1 = Fabricate :user, email: '', player_name: 'PlayerX'
+        user1 = Fabricate.build :user, email: '', player_name: 'PlayerX'
+        user1.save!
         lambda {
-           user2 = Fabricate :user, email: '', player_name: 'playerx'
+          user2 = Fabricate.build :user, email: '', player_name: 'playerx'
+          user2.save!
         }.should raise_error
       end
+
+      it 'doesnt allow duplicates when only email is provided' do
+        user1 = Fabricate.build :user, email: 'PlayerX@email.com', player_name: ''
+        user1.save!
+        lambda {
+          user2 = Fabricate.build :user, email: 'playerx@email.com', player_name: ''
+          user2.valid?
+          user2.save!
+        }.should raise_error
+      end
+
 
       it 'has case insensitive email' do
         user1 = Fabricate :user, email: 'PlaYer1@email.com'
@@ -23,6 +36,7 @@ describe User do
         user2.valid?
         user2.errors_on(:player_name).should_not be_empty
       end
+
 
       it 'doesnt allow two of the same email' do
         user1 = Fabricate :user

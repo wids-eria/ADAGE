@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   before_save :set_default_role
 
   before_validation :email_or_player_name, :on => :create
-  validates :player_name, presence: true
+  validates :player_name, presence: true, uniqueness: {case_sensitive: false}
 
   has_and_belongs_to_many :roles
   has_many :access_tokens
