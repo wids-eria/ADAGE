@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120711164247) do
+ActiveRecord::Schema.define(:version => 20130226233427) do
 
   create_table "access_tokens", :force => true do |t|
     t.string   "consumer_token"
@@ -58,10 +58,10 @@ ActiveRecord::Schema.define(:version => 20120711164247) do
     t.boolean  "consented",                             :default => false
     t.boolean  "control_group"
     t.string   "player_name",                           :default => ""
+    t.index ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
+    t.index ["email"], :name => "index_users_on_email", :unique => true
+    t.index ["player_name"], :name => "index_users_on_player_name", :unique => true, :case_sensitive => false
+    t.index ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   end
-
-  add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
-  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
-  add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
 end
