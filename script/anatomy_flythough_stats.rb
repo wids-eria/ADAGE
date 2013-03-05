@@ -1,14 +1,28 @@
 require 'csv'
 require 'progressbar'
+require 'json'
+
+class ProccessedPlayerStats
+  attr_accessor :player_name, :play_time, :distance
+
+  def initialize(name, time, dist)
+    self.player_name = name
+    self.play_time = time
+    self.distance = dist
+  end
+end
 
 class FlythroughStatistics
   def run
 
     #Get players with Anatomy Browser Data
-    players = User.all.select{|u| u.data.where(gameName: 'APA:Tracts') } 
+    ids = AdaData.where(gameName: 'APA:Tracts').distinct(:user_id)
+    players = User.where(id: ids) 
+    puts players.count
     bar = ProgressBar.new 'players', players.count
-    csv = CSV.open('csv/flythrough_stats.csv', 'w')
-    csv << ['player name', 'total playtime', 'distance', 'end x', 'end y', 'end z', 'end rotx' 'end roty', 'end rotz']
+    stats = Array.new
+    jfile = File.open('csv/flythrough_stats.json', 'w')
+    #csv << ['player name', 'total playtime', 'distance', 'end x', 'end y', 'end z', 'end rotx' 'end roty', 'end rotz']
     zero_playtime = 0
     zero_rot = 0
     zero_move = 0
@@ -39,10 +53,13 @@ class FlythroughStatistics
           zero_move_rot = zero_move_rot + 1
         end
         distance = calculate_distance(last.x, last.y, last.z, first.x, first.y, first.z)
-        csv << [player.player_name, total.to_s, distance, last.x, last.y, last.z, last.rotx, last.roty, last.rotz]
+        stats << ProccessedPlayerStats.new(player.player_name, total, distance)
+        #csv << [player.player_name, total.to_s, distance, last.x, last.y, last.z, last.rotx, last.roty, last.rotz]
       end
       bar.inc
     end
+    jfile.write(JSON.pretty_generate(stats))
+    jfile.close
     bar.finish
     puts 'total player count ' + players.count.to_s
     puts 'total with fly data ' + total_fly.to_s
@@ -50,7 +67,7 @@ class FlythroughStatistics
     puts 'zero movement ' + zero_move.to_s
     puts 'zero rotation ' + zero_rot.to_s
     puts 'zero rot and move ' + zero_move_rot.to_s
-    csv.close
+    #csv.close
     
   end
 

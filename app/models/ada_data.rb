@@ -9,6 +9,7 @@ class AdaData
   index :gameName
   index :created_at
   index :name
+  index key: 1, schema: 1
 
   def user=(user)
     self.user_id = user.id
