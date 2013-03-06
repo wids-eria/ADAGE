@@ -40,4 +40,13 @@ namespace :deploy do
   task :symlink_unity_crossdomain do
     run "ln -nfs #{deploy_to}/shared/config/crossdomain.xml #{release_path}/public/crossdomain.xml"
   end
+
+
+  task :start, :roles => :app, :except => { :no_release => true } do
+    run "cd #{current_path} && touch tmp/restart.txt"
+  end
+
+  task :restart, :roles => :app, :except => { :no_release => true } do
+    run "cd #{current_path} && touch tmp/restart.txt"
+  end
 end
