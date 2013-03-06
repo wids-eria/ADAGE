@@ -1,4 +1,4 @@
-set :rails_env, :staging
+set :rails_env, :development
 set :branch, "master"
 
 role :web, "terrordome.discovery.wisc.edu"

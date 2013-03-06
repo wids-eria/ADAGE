@@ -7,8 +7,8 @@ require 'bundler/capistrano'
 load 'deploy/assets'
 
 require 'capistrano/ext/multistage'
-set :stages, %w(production staging)
-set :default_stage, "staging"
+set :stages, %w(production development)
+set :default_stage, "development"
 
 set :application, "ada"
 set :repository,  "git@github.com:wids-eria/ada.git"
