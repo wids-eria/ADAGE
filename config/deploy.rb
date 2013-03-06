@@ -17,7 +17,7 @@ set :scm, :git
 set :user, :deploy
 ssh_options[:forward_agent] = true
 
-set :deploy_to, "/home/deploy/applications/#{application}"
+set :deploy_to, "~/applications/#{application}"
 set :deploy_via, :remote_cache
 set :use_sudo, false
 
