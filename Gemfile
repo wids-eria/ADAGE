@@ -13,6 +13,7 @@ gem 'cancan'
 gem 'omniauth'
 gem 'simple_form'
 gem 'pacecar'
+gem 'schema_plus', '0.4.1'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'

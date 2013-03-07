@@ -2,6 +2,62 @@ require 'spec_helper'
 
 describe User do
   describe 'create' do
+    describe 'uniquness' do
+      it 'doesnt allow duplicates when only player name is provided' do
+        user1 = Fabricate.build :user, email: '', player_name: 'PlayerX'
+        user1.save!
+        lambda {
+          user2 = Fabricate.build :user, email: '', player_name: 'playerx'
+          user2.save!
+        }.should raise_error
+      end
+
+      it 'doesnt allow duplicates when only email is provided' do
+        user1 = Fabricate.build :user, email: 'PlayerX@email.com', player_name: ''
+        user1.save!
+        lambda {
+          user2 = Fabricate.build :user, email: 'playerx@email.com', player_name: ''
+          user2.valid?
+          user2.save!
+        }.should raise_error
+      end
+
+
+      it 'has case insensitive email' do
+        user1 = Fabricate :user, email: 'PlaYer1@email.com'
+        user2 = Fabricate.build :user, email: 'player1@email.com'
+        user2.valid?
+        user2.errors_on(:email).should_not be_empty
+      end
+
+      it 'has case insensitive player_name' do
+        user1 = Fabricate :user, player_name: 'PlaYer1'
+        user2 = Fabricate.build :user, player_name: 'player1'
+        user2.valid?
+        user2.errors_on(:player_name).should_not be_empty
+      end
+
+
+      it 'doesnt allow two of the same email' do
+        user1 = Fabricate :user
+        user2 = Fabricate.build :user
+
+        user2.email = user1.email
+        user2.valid?
+        user2.errors_on(:email).should_not be_empty
+      end
+
+      it 'doesnt allow two of the same player_name' do
+        user1 = Fabricate :user
+        user2 = Fabricate.build :user
+
+        user2.player_name = user1.player_name
+        user2.valid?
+        user2.errors_on(:player_name).should_not be_empty
+      end
+    end
+
+
     describe 'roles' do
       context 'no roles' do
         it 'should belong to player role' do
@@ -19,6 +75,7 @@ describe User do
         end
       end
     end
+
 
     context 'when registering with player_name' do
       let(:user) { User.new }
@@ -62,6 +119,7 @@ describe User do
         user.player_name.should == "awesometron1000"
       end
     end
+
 
     context 'when registering with email' do
       let(:user) { User.new }
