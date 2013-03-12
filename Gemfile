@@ -29,6 +29,8 @@ gem 'haml'
 
 group :test, :development do
   gem 'grit'
+  gem 'colored'
+
   gem 'cucumber-rails'
   gem 'database_cleaner'
   gem 'rspec-rails'
