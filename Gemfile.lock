@@ -89,6 +89,10 @@ GEM
     ffi (1.0.11)
     gherkin (2.7.1)
       json (>= 1.4.6)
+    grit (2.5.0)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
+      posix-spawn (~> 0.3.6)
     haml (3.1.4)
     hashie (1.2.0)
     highline (1.6.9)
@@ -139,6 +143,7 @@ GEM
     pg (0.12.0)
       rake-compiler (~> 0.7)
     polyglot (0.3.3)
+    posix-spawn (0.3.6)
     pry (0.9.9.6)
       coderay (~> 1.0.5)
       method_source (~> 0.7.1)
@@ -247,6 +252,7 @@ DEPENDENCIES
   decent_exposure
   devise
   fabrication
+  grit
   haml
   jquery-rails
   kaminari
