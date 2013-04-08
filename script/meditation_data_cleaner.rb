@@ -5,8 +5,8 @@ class StandardColumns
   attr_accessor :touch_types, :stages
 
   def initialize
-    self.touch_types = AdaData.where(key: 'TouchEvent', schema: 'BETA-TESTING-2-15-2013').distinct(:touchType)
-    self.stages = AdaData.where(key: 'StagePackage', schema: 'BETA-TESTING-2-15-2013').distinct(:levelName)
+    self.touch_types = AdaData.where(key: 'TenTouchEvent', schema: 'BETA-TESTING-3-14-2013').distinct(:touchType)
+    self.stages = AdaData.where(key: 'TenStageStart', schema: 'BETA-TESTING-3-14-2013').distinct(:name)
   end
 end
 
@@ -29,7 +29,7 @@ class ShowAllPlayers
   end
   
   def column_header
-    ["player", "stage package count", "total session time", "average session time", 'stage starts', 'stage completes', 'total touches', 'pre count', 'post count', 'pre average', 'post average']
+    ["player", "total session time", "average session time", 'stage starts', 'stage completes', 'total breath cycles', 'successful cycles', 'unsuccessful cycles', 'total touches', 'pre count', 'post count', 'pre average', 'post average']
   end
 
 end
@@ -48,19 +48,20 @@ class MeditatingPlayer
 
   def run csv, s_columns
 
-    data = user.data.where(schema: 'BETA-TESTING-2-15-2013')
-   
+    data = user.data.where(schema: 'BETA-TESTING-3-14-2013')
+  
+    if data.count == 0
+     return;
+    end 
     #find this players stage packages
     
-    stage_packs = data.where(key: 'StagePackage')
-    if stage_packs.count == 0
-      return
-    end
-    stage_starts = data.where(key: 'StageStart')
-    stage_completes = data.where(key: 'LevelComplete')
-    touches = data.where(key: 'TouchEvent').map{ |x| x}.group_by{ |y| y.touchType}
-    stage_by_type = stage_packs.map{|x| x}.group_by{|y| y.levelName}
-    pre_post = data.where(key: 'SelfAssessment').map{|x| x}.group_by{ |y| y.isPrePost}
+    stage_starts = data.where(key: 'TenStageStart')
+    stage_completes = data.where(key: 'TenStageComplete')
+    breath_cycles = data.where(key: 'TenBreathCycleEnd')
+    cycles_by_success = breath_cycles.map{|x| x}.group_by{|y| y.success}
+    touches = data.where(key: 'TenTouchEvent').map{ |x| x}.group_by{ |y| y.touchType}
+    stage_by_type = stage_starts.map{|x| x}.group_by{|y| y.name}
+    pre_post = data.where(key: 'TenSelfAssessment').map{|x| x}.group_by{ |y| y.isPrePost}
     pre_count = 0
     post_count = 0
     if pre_post['Pre'] != nil
@@ -69,11 +70,21 @@ class MeditatingPlayer
     if pre_post['Post'] != nil
       post_count = pre_post['Post'].count
     end
+    successful_count = 0
+    unsuccessful_count = 0
+    if cycles_by_success[true] != nil
+      successful_count = cycles_by_success[true].count
+    end
+    if cycles_by_success[false] != nil
+      unsuccessful_count = cycles_by_success[false].count
+    end
+
     pre_avg = data.where(isPrePost: 'Pre').avg(:selfAssessmentValue)
+
     post_avg = data.where(isPrePost: 'Post').avg(:selfAssessmentValue)
 
     total_session_time = 0
-    session_times = stage_packs.map{ |x| x.sessionTime}
+    session_times = stage_completes.map{ |x| x.timeInLevel}
     session_times.each do |time| 
       total_session_time += duration_to_seconds(time)
     end
@@ -92,7 +103,8 @@ class MeditatingPlayer
         touch_totals << 0
       end
     end
-    standard_columns = [user.player_name, stage_packs.count, total_session_time, average_session_time, stage_starts.count, stage_completes.count, total_t, pre_count, post_count, pre_avg, post_avg] 
+    standard_columns = [user.player_name, total_session_time, average_session_time, stage_starts.count, stage_completes.count, breath_cycles.count, successful_count, unsuccessful_count, total_t, pre_count, post_count, pre_avg, post_avg] 
+
     
     stage_totals = Array.new
     s_columns.stages.each do |type|
