@@ -1,0 +1,86 @@
+<!DOCTYPE HTML >
+<html lang="en">
+<head>
+    
+    <title>Studio K</title>
+    <meta name="description"
+          content="">
+    
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    
+    <!-- typekit -->
+    <script type="text/javascript" src="//use.typekit.net/tbz4lac.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    
+</head>
+
+<body id="">
+
+    
+    <div class="page_wrap">
+        
+        <div class="gls_logo_for_ada"></div>
+        
+        <div class="login_container floatleft">
+            
+            <form accept-charset="UTF-8" autocomplete="off" action="/users" class="user_new floatleft" id="user_new" method="post">
+                
+                <div>
+                    <input name="utf8" type="hidden" value="&#x2713;" class="floatleft"/>
+                    <input name="authenticity_token" type="hidden" value="GFHrGaoIiJgxcTOUp0BXGnSTi6wyuFPdw3ghAx3JiLo=" class="floatleft"/>
+                </div>
+                
+                <div class="field_container">
+                    <label for="user_player_name" class="floatleft">Player Name</label>
+                    <input id="user_player_name" placeholder="Player Name" name="user[player_name]" size="30" type="text" class="floatright"/>
+                </div>
+              
+                <div class="field_container">
+                    <label for="user_email" class="floatleft">Email</label>
+                    <input id="user_email" placeholder="Email ( optional )" name="user[email]" size="30" type="email" class="floatright"/>
+                </div>
+                
+                <div class="field_container">
+                    <label for="user_password" class="floatleft">Password</label>
+                    <input id="user_password" placeholder="Password" name="user[password]" size="30" type="password" class="floatright"/>
+                </div>
+                
+                <div class="field_container">
+                    <label for="user_password_confirmation" class="floatleft">Confirm</label>
+                    <input id="user_password_confirmation" placeholder="Confirm your Password" name="user[password_confirmation]" size="30" type="password" class="floatright"/>
+                </div>
+              
+                  <div class="field_container_remember_me">
+                    
+                     <input name="commit" class="sign_in_button floatright" type="submit" value="Sign up" />
+                     
+                  </div>
+                
+            </form>
+
+        </div>
+        
+        <div class="sign_up_container">
+            <a href="/users/sign_in" class="floatleft">Sign in</a>
+            <a href="/users/password/new" class="floatright">Forgot your password?</a>
+        </div>
+    
+</div><!-- end page wrap-->
+
+
+
+
+
+<div class="footer">
+</div>
+    
+    
+<div class="clear">
+</div>
+ 
+</body>
+
+
+
+</html>

@@ -1,0 +1,45 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %title Adage 
+    %meta{:content => "", :name => "description"}/
+    %link{:href => "style.css", :rel => "stylesheet", :type => "text/css"}/
+    %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js", :type => "text/javascript"}
+    / typekit
+    %script{:src => "//use.typekit.net/tbz4lac.js", :type => "text/javascript"}
+    :javascript
+      try{Typekit.load();}catch(e){}  %body{:id => ""}
+    .page_wrap
+      .gls_logo_for_ada
+      .login_container.floatleft
+        = form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| 
+          = devise_error_messages! 
+          .field_container
+            %div#user_login.floatleft
+              = f.label 'Player name' 
+            %div.floatright
+              = f.text_field :login
+          .field_container
+            %div#user_email.floatleft
+              = f.label 'Email (optional)'
+            %div.floatright
+              = f.text_field :email
+          .field_container
+            %label#user_password.floatleft
+              = f.label :password
+            %div.floatright
+              = f.password_field :password
+          .field_container
+            %label#user_password.floatleft
+              = f.label 'Confirm'
+            %div.floatright
+              = f.password_field :password_confirmation
+          .field_container_remember_me
+            %div.floatright= f.submit "Sign up", class: 'sign_in_button'
+        
+      .sign_up_container
+        %a.floatleft{:href => "/users/sign_in"} Sign in
+        %a.floatright{:href => "/users/password/new"} Forgot your password?
+    / end page wrap
+    .footer
+    .clear

@@ -1,0 +1,31 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %title Adage 
+    %meta{:content => "", :name => "description"}/
+    %link{:href => "style.css", :rel => "stylesheet", :type => "text/css"}/
+    %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js", :type => "text/javascript"}
+    / typekit
+    %script{:src => "//use.typekit.net/tbz4lac.js", :type => "text/javascript"}
+    :javascript
+      try{Typekit.load();}catch(e){}  %body{:id => ""}
+    .page_wrap
+      .gls_logo_for_ada
+      .login_container.floatleft
+        = form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| 
+          = devise_error_messages! 
+          .field_container
+            %div#user_email.floatleft
+              = f.label :email 
+            %div.floatright
+              = f.text_field :email
+          .field_container_remember_me
+            %div.floatright= f.submit "Send me reset password instructions", class: 'sign_in_button'
+
+        
+      .sign_up_container
+        %a.floatleft{:href => "/users/sign_in"} Sign in
+        %a.floatright{:href => "/users/sign_up"} Sign up
+    / end page wrap
+    .footer
+    .clear
