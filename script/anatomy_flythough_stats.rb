@@ -22,7 +22,8 @@ class FlythroughStatistics
     bar = ProgressBar.new 'players', players.count
     stats = Array.new
     jfile = File.open('csv/flythrough_stats.json', 'w')
-    #csv << ['player name', 'total playtime', 'distance', 'end x', 'end y', 'end z', 'end rotx' 'end roty', 'end rotz']
+    csv = CSV.open('csv/flythrough_stats.csv', 'w')
+    csv << ['player name', 'total playtime', 'distance', 'no rot'] # 'end x', 'end y', 'end z', 'end rotx' 'end roty', 'end rotz']
     zero_playtime = 0
     zero_rot = 0
     zero_move = 0
@@ -34,11 +35,16 @@ class FlythroughStatistics
       if fly_data.count > 0
         total_fly = total_fly + 1
         start_time = fly_data.first.timestamp
-        end_time = fly_data.last.timestamp
+        first_session_token = fly_data.first.session_token
+        end_time = fly_data.where(session_token: first_session_token).last.timestamp
         first = fly_data.first
-        last = fly_data.last
+        last = fly_data.where(session_token: first_session_token).last
         total = end_time - start_time
+        no_rot = false
+        no_playtime = false
+        no_move_or_rot = false
         if total == 0
+          no_playtime = true
           zero_playtime = zero_playtime + 1
         end
         if fly_data.first.z == fly_data.last.z
@@ -48,13 +54,17 @@ class FlythroughStatistics
         if fly_data.first.rotz == fly_data.last.rotz
           zero_rot = zero_rot + 1
           both = both + 1
+          no_rot = true
         end
         if both == 2
+          no_move_or_rot = true
           zero_move_rot = zero_move_rot + 1
         end
         distance = calculate_distance(last.x, last.y, last.z, first.x, first.y, first.z)
         stats << ProccessedPlayerStats.new(player.player_name, total, distance)
-        #csv << [player.player_name, total.to_s, distance, last.x, last.y, last.z, last.rotx, last.roty, last.rotz]
+        unless no_move_or_rot or no_playtime
+          csv << [player.player_name, total.to_s, distance, no_rot ] #, last.x, last.y, last.z, last.rotx, last.roty, last.rotz]
+        end
       end
       bar.inc
     end
@@ -67,7 +77,7 @@ class FlythroughStatistics
     puts 'zero movement ' + zero_move.to_s
     puts 'zero rotation ' + zero_rot.to_s
     puts 'zero rot and move ' + zero_move_rot.to_s
-    #csv.close
+    csv.close
     
   end
 
