@@ -3,16 +3,16 @@
     = devise_error_messages!
     .field_container
       = f.label :player_name, 'Player name', class: 'floatleft'
-      = f.text_field :player_name, class: 'floatright'
+      = f.text_field :player_name, class: 'floatright', placeholder: 'Player Name'
     .field_container
       = f.label :email, 'Email (optional)', class: 'floatleft'
-      = f.text_field :email, class: 'floatright'
+      = f.text_field :email, class: 'floatright', placeholder: 'Email (optional)'
     .field_container
       = f.label :password, class: 'floatleft'
-      = f.password_field :password, class: 'floatright'
+      = f.password_field :password, class: 'floatright', placeholder: 'Password'
     .field_container
       = f.label :password_confirmation, 'Confirm', class: 'floatleft'
-      = f.password_field :password_confirmation, class: 'floatright'
+      = f.password_field :password_confirmation, class: 'floatright', placeholder: 'Password Confirmation'
     .field_container_remember_me
       = f.submit "Sign up", class: 'sign_in_button floatright'
 

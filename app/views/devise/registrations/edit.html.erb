@@ -13,18 +13,18 @@
     </div>
 
     <div class="field_container">
-      <%= f.label :password, class: 'floatleft' %>
+      <%= f.label :password, 'New Password', class: 'floatleft' %>
       <%= f.password_field :password, class: 'floatright', placeholder: "(leave blank if you don't want to change it)" %>
     </div>
 
     <div class="field_container">
-      <%= f.label :password_confirmation, "Password<br>Confirmation".html_safe, class: 'floatleft' %>
-      <%= f.password_field :password_confirmation, class: 'floatright' %>
+      <%= f.label :password_confirmation, "Confirmation", class: 'floatleft' %>
+      <%= f.password_field :password_confirmation, class: 'floatright', placeholder: "Password Confirmation" %>
     </div>
 
     <div class="field_container">
-      <%= f.label :current_password, "Current<br>Password".html_safe, class: 'floatleft' %>
-      <%= f.password_field :current_password, class: 'floatright', placeholder: "(we need your current password to confirm your changes)" %>
+      <%= f.label :current_password, "Current".html_safe, class: 'floatleft' %>
+      <%= f.password_field :current_password, class: 'floatright', placeholder: "(Enter current password to confirm changes)" %>
     </div>
 
     <div class="field_container_remember_me">

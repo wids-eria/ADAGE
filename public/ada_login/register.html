@@ -30,10 +30,16 @@
                     <input name="utf8" type="hidden" value="&#x2713;" class="floatleft"/>
                     <input name="authenticity_token" type="hidden" value="GFHrGaoIiJgxcTOUp0BXGnSTi6wyuFPdw3ghAx3JiLo=" class="floatleft"/>
                 </div>
+
+                <div id="error_explanation">
+                  <ul>
+                    <li>Player name can't be blank</li>
+                  </ul>
+                </div>
                 
                 <div class="field_container">
-                    <label for="user_player_name" class="floatleft">Player Name</label>
-                    <input id="user_player_name" placeholder="Player Name" name="user[player_name]" size="30" type="text" class="floatright"/>
+                    <div class="field_with_errors"><label for="user_player_name" class="floatleft">Player Name</label></div>
+                    <div class="field_with_errors"><input id="user_player_name" placeholder="Player Name" name="user[player_name]" size="30" type="text" class="floatright"/></div>
                 </div>
               
                 <div class="field_container">
