@@ -1,30 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Ada</title>
   <%= stylesheet_link_tag    "application" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+
+  <!-- typekit -->
+  <script type="text/javascript" src="//use.typekit.net/tbz4lac.js"></script>
+  <script type="text/javascript">
+      try{Typekit.load();}catch(e){};
+  </script>
 </head>
 <body>
-  <% if flash[:alert] -%> 
-    <p class="alert"><%= flash[:alert] %></p> 
-  <% end -%>
-  <% if flash[:error] -%> 
-    <p class="error"><%= flash[:error] %></p> 
-  <% end -%>
   <% if user_signed_in? %>
-    logged in as
-    <%= current_user.email %>
     <div id="userSecret" style="display:none"><%= current_user.authentication_token %></div>
-    <%= link_to 'logout', destroy_user_session_url, :method => :delete %>
-  <% else %>
-    <%= link_to 'login', new_user_session_url %>
-    |
-    <%= link_to 'register', new_user_registration_url %>
   <% end %>
 
-<%= yield %>
+  <div class="page_wrap">
+    <div class="gls_logo_for_ada"></div>
+
+    <% if flash[:alert].present? %>
+      <div class="flashbox alert"><strong>Alert</strong> <%= flash[:alert] =%></div>
+    <% end %>
+
+    <% if flash[:notice].present? %>
+      <div class="flashbox notice"><strong>Notice</strong> <%= flash[:notice] =%></div>
+    <% end %>
+
+    <% if flash[:error].present? %>
+      <div class="flashbox error"><strong>Error</strong> <%= flash[:error] =%></div>
+    <% end %>
+
+    <%= yield %>
+  </div>
+
+  <div class="footer"></div>
+  <div class="clear"></div>
 
 </body>
 </html>

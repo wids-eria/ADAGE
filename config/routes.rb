@@ -1,6 +1,6 @@
 Ada::Application.routes.draw do
   get "welcome/index"
-  get "welcome/my_page"
+  get "profile" => 'welcome#profile'
 
   devise_for :users
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post

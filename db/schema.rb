@@ -13,32 +13,12 @@
 
 ActiveRecord::Schema.define(:version => 20130226233427) do
 
-  create_table "access_tokens", :force => true do |t|
-    t.string   "consumer_token"
-    t.string   "consumer_secret"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "user_id"
-    t.integer  "client_id"
-  end
-
   create_table "clients", :force => true do |t|
     t.string   "name"
     t.string   "app_token"
     t.string   "app_secret"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "roles", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "roles_users", :id => false, :force => true do |t|
-    t.integer "role_id"
-    t.integer "user_id"
   end
 
   create_table "users", :force => true do |t|
@@ -62,6 +42,34 @@ ActiveRecord::Schema.define(:version => 20130226233427) do
     t.index ["email"], :name => "index_users_on_email", :unique => true
     t.index ["player_name"], :name => "index_users_on_player_name", :unique => true, :case_sensitive => false
     t.index ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+  end
+
+  create_table "access_tokens", :force => true do |t|
+    t.string   "consumer_token"
+    t.string   "consumer_secret"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.integer  "client_id"
+    t.index ["client_id"], :name => "index_access_tokens_on_client_id"
+    t.index ["user_id"], :name => "index_access_tokens_on_user_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "access_tokens_user_id_fkey"
+    t.foreign_key ["client_id"], "clients", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "access_tokens_client_id_fkey"
+  end
+
+  create_table "roles", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "roles_users", :id => false, :force => true do |t|
+    t.integer "role_id"
+    t.integer "user_id"
+    t.index ["role_id"], :name => "index_roles_users_on_role_id"
+    t.index ["user_id"], :name => "index_roles_users_on_user_id"
+    t.foreign_key ["role_id"], "roles", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "roles_users_role_id_fkey"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "roles_users_user_id_fkey"
   end
 
 end
