@@ -23,14 +23,17 @@ class ProccessedPlayerStats
       first_session_token = first.session_token
       first_session_data = fly_data.where(session_token: first_session_token)
       last = first_session_data.last
-      collisions = data.where(key: 'Colon Collision', session_token: first_session_token)
+      collisions = data.where(key: 'Colon Collision', session_token: first_session_token).asc(:created_at)
       self.play_time = last.timestamp - first.timestamp
       self.distance =  calculate_distance(last.x, last.y, last.z, first.x, first.y, first.z)
+      #bar = ProgressBar.new 'distance', first_session_data.count
       #(1...first_session_data.count).each do |index|
       #  i = fly_data[index]
       #  j = fly_data[index-1]
       #  self.distance = self.distance + calculate_distance(i.x, i.y, i.z, j.x, j.y, j.z)
+      #  bar.inc
       #end
+      #bar.finish
 
       if first.rotx == last.rotx and first.rotz == last.rotz and first.roty = last.roty
         self.no_rot = true
@@ -62,7 +65,7 @@ class ProccessedPlayerStats
     z = z2-z1
 
     sum = x**2 + y**2 + z**2
-    distance = Math.sqrt(sum)
+    #distance = Math.sqrt(sum)
     return distance
 
   end
