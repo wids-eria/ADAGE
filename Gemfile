@@ -27,6 +27,7 @@ gem 'haml'
 gem 'd3-rails'
 
 group :test, :development do
+  gem 'ruby-prof'
   gem 'cucumber-rails'
   gem 'database_cleaner'
   gem 'rspec-rails'
