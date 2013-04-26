@@ -19,7 +19,13 @@ class Student
       kode_logs.each do |log|
         kode_string = log.data
         kode_string = '{'+kode_string+'}'
-        kode_json = JSON.parse(kode_string.gsub("'",'"'))
+        begin
+          kode_json = JSON.parse(kode_string.gsub("'",'"'))
+        rescue
+          puts '*'*10
+          puts log.inspect
+          puts '*'*10 
+        end
         kodes << kode_json
       end
 
