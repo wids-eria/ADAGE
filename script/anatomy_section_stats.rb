@@ -21,10 +21,6 @@ class ProccessedPlayerStats
     trigger_index = 0
     distance = 0
     first_point = self.data.where(key: 'Colon Position').first
-    first_collision = self.data.where(key: 'Colon Collision').first
-    if first_collision != nil
-      trigger_index = triggers.index(first_collision.collidedWith)
-    end
     next_trigger = triggers[trigger_index]
     prev_trigger = triggers[trigger_index]
 
@@ -110,7 +106,19 @@ class ProccessedPlayerStats
         else
           #freak out this data is bogus
           #puts '********WARNING collided with ' + log.collidedWith + ' *********'
-          return false
+          col_ind = triggers.index(log.collidedWith)
+          trigger_index = col_ind + 1
+          if trigger_index > triggers.count-1
+            trigger_index = triggers.count
+          end
+          next_trigger = triggers[trigger_index]
+          back = col_ind - 1
+          if back < 0
+            back = 0
+          end
+          prev_trigger = triggers[back]
+          distance = 0
+          start_time = log.timestamp
         end
       end
       
