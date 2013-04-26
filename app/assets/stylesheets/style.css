@@ -1076,11 +1076,40 @@ a { text-decoration: none; color: black; }
 
 
 
+/* Kevins temporary flash box */
+.flashbox {
+  background-color: #95a5a6;
+  padding: 10px 20px;
+  border-radius: 2px;
+  color: #eee;
+  font-family: museo-sans;
+  text-align: center;
+  width: 400px;
+  margin-bottom: 10px;
+}
 
+.flashbox.notice {
+  background-color: #1abc9c;
+}
 
+.flashbox.alert {
+  background-color: #e74c3c;
+}
 
+/* Kevins temporary error divs */
 
+input {
+  border: 2px solid rgba(0,0,0,1) !important;
+}
 
+.field_with_errors input {
+  border: 2px solid #e74c3c !important;
+  color: #e74c3c !important;
+}
+
+.field_with_errors {
+  color: #e74c3c !important;
+}
 
 
 

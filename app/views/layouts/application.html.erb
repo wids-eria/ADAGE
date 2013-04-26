@@ -21,15 +21,15 @@
     <div class="gls_logo_for_ada"></div>
 
     <% if flash[:alert].present? %>
-      <div class="flashbox alert"><strong>Alert</strong> <%= flash[:alert] =%></div>
+      <div class="flashbox alert"><%= flash[:alert] =%></div>
     <% end %>
 
     <% if flash[:notice].present? %>
-      <div class="flashbox notice"><strong>Notice</strong> <%= flash[:notice] =%></div>
+      <div class="flashbox notice"><%= flash[:notice] =%></div>
     <% end %>
 
     <% if flash[:error].present? %>
-      <div class="flashbox error"><strong>Error</strong> <%= flash[:error] =%></div>
+      <div class="flashbox error"><%= flash[:error] =%></div>
     <% end %>
 
     <%= yield %>
