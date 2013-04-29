@@ -12,7 +12,7 @@ class ProccessedPlayerStats
 
   def crunch_numbers csvs    
     if self.data.count == 0
-      return
+      return false
     end
     toke = self.data.first.session_token
     self.data = self.data.where(session_token: toke).asc(:timestamp)
@@ -87,6 +87,10 @@ class ProccessedPlayerStats
           unless ignore or visited.include?(log.collidedWith)
             csvs[trigger_index] << [player.player_name, log.timestamp - start_time, distance, false, true, false] 
           end
+
+          unless visited.include?(log.collidedWith)
+            visited << log.collidedWith
+          end
           start_time = log.timestamp
           distance = 0
           trigger_index = trigger_index - 1
@@ -109,7 +113,7 @@ class ProccessedPlayerStats
           col_ind = triggers.index(log.collidedWith)
           trigger_index = col_ind + 1
           if trigger_index > triggers.count-1
-            trigger_index = triggers.count
+            trigger_index = triggers.count-1
           end
           next_trigger = triggers[trigger_index]
           back = col_ind - 1
@@ -119,6 +123,7 @@ class ProccessedPlayerStats
           prev_trigger = triggers[back]
           distance = 0
           start_time = log.timestamp
+          ignore = false
         end
       end
       
@@ -158,7 +163,7 @@ class FlythroughStatistics
 
     #Get players with Anatomy Browser Data
     ids = AdaData.where(gameName: 'APA:Tracts', schema: '4-3-2012').distinct(:user_id)
-    players = User.where(id: ids).limit(1000) 
+    players = User.where(id: ids) 
     puts players.count
     bar = ProgressBar.new 'players', players.count
     csvs = Array.new
