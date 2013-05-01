@@ -10,6 +10,9 @@
       <div class="editprofilelink">
         <%= link_to 'edit profile', edit_user_registration_url %>
       </div>
+      <div class="editprofilelink">
+        <%= link_to 'player stats', stats_user_path(current_user)%>
+      </div>
       <div class="logoutlink">
         <%= link_to 'logout', destroy_user_session_url, :method => :delete %>
       </div>

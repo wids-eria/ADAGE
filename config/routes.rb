@@ -14,6 +14,9 @@ Ada::Application.routes.draw do
       get :new_sequence
       post :create_sequence
     end
+    member do 
+      get :stats
+    end
   end
 
   # OAuth provider:

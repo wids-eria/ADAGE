@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   respond_to :html, :json
+  layout 'none'
 
   before_filter :authenticate_user!, except: [:authenticate_for_token]
 
@@ -10,6 +11,19 @@ class UsersController < ApplicationController
       format.html { @users = User.page params[:page] }
       format.json { render :json => User.all }
     end
+  end
+
+  def stats
+    @user = User.find(params[:id])
+    @games = @user.data.distinct(:gameName)
+    @counts = Hash.new
+    @entries_by_game = Hash.new
+    @games.each do |game|
+      game_data = @user.data.where(gameName: game)
+      @counts[game] = game_data.distinct(:session_token).count
+      @entries_by_game[game] = game_data.count
+    end
+  
   end
 
   def authenticate_for_token
