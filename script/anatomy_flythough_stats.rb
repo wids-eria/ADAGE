@@ -51,10 +51,15 @@ class ProccessedPlayerStats
   end
 
   def output_json
-    data = player.data.where(gameName: 'APA:Tracts')
+    data = player.data.where(gameName: 'APA:Tracts').asc(:created_at)
+    jfile = File.open('csv/flythrough/json/'+player_name+'.json', 'w')
+    s_data = Array.new 
     if data.count > 0
-      jfile = File.open('csv/flythrough/'+player_name+'.json', 'w')
-       jfile.write(data.to_json)
+      sessions = data.distinct(:session_token)
+      sessions.each do |session|
+        s_data << data.where(session_token: session).asc(:timestamp)
+      end
+      jfile.write(s_data.to_json)
       jfile.close
     end
   end
@@ -91,7 +96,7 @@ class FlythroughStatistics
     players.each do |player|
       pps = ProccessedPlayerStats.new(player)
       pps.crunch_numbers
-      #pps.output_json
+      pps.output_json
       if pps.fly_data != nil
           total_fly = total_fly+1
           
