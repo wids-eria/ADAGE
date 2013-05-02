@@ -16,12 +16,14 @@ class UsersController < ApplicationController
   def stats
     @user = User.find(params[:id])
     @games = @user.data.distinct(:gameName)
-    @counts = Hash.new
-    @entries_by_game = Hash.new
-    @games.each do |game|
+    @counts = Array.new
+    @entries_by_game = Array.new
+    @names = Array.new
+    @games.each_with_index do |game, i|
       game_data = @user.data.where(gameName: game)
-      @counts[game] = game_data.distinct(:session_token).count
-      @entries_by_game[game] = game_data.count
+      @names << game
+      @counts << {x: i, y: game_data.distinct(:session_token).count}
+      @entries_by_game << game_data.count
     end
   
   end
