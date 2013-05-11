@@ -52,14 +52,15 @@ class ProccessedPlayerStats
 
   def output_json
     data = player.data.where(gameName: 'APA:Tracts').asc(:created_at)
-    jfile = File.open('csv/flythrough/json/'+player_name+'.json', 'w')
+    data = data.where(key: 'Colon Position')
     s_data = Array.new 
     if data.count > 0
       sessions = data.distinct(:session_token)
-      sessions.each do |session|
-        s_data << data.where(session_token: session).asc(:timestamp)
-      end
-      jfile.write(s_data.to_json)
+      jfile = File.open('csv/flythrough/json/'+player_name+'.json', 'w')
+      #sessions.each do |session|
+      #  s_data << data.where(session_token: session).asc(:timestamp)
+      #end
+      jfile.write(data.where(session_token: sessions.first).asc(:timestamp).to_json)
       jfile.close
     end
   end
@@ -75,6 +76,28 @@ class ProccessedPlayerStats
 
   end
 
+  def quit_position csv, quit_array, position_array
+    self.fly_data = data.where(key: 'Colon Position')
+    if fly_data.count > 0
+      first = fly_data.first
+      first_session_token = first.session_token
+      first_session_data = fly_data.where(session_token: first_session_token).asc(:timestamp)
+      first = first_session_data.first
+      last = first_session_data.last
+      if first_session_data.first.timestamp != first_session_data.last.timestamp
+        unless first.x == last.x and first.z == last.z and first.y = last.y
+          last = first_session_data.last
+          csv << [self.player_name, last.x, last.y, last.z]
+          quit_array << last
+          position_array << first_session_data
+        end
+      end
+    end
+
+    
+  end
+
+ 
 
 end
 
@@ -88,6 +111,11 @@ class FlythroughStatistics
     bar = ProgressBar.new 'players', players.count
     csv = CSV.open('csv/flythrough/flythrough_stats.csv', 'w')
     csv << ['player name', 'total playtime', 'distance', 'no rot', 'no move']     
+    quit_csv = CSV.open('csv/flythrough/quit_positions.csv', 'w')
+    quit_json = File.open('csv/flythrough/quit_positions.json', 'w')
+    all_positions_json = File.open('csv/flythrough/all_positions.json', 'w')
+    position_array = Array.new
+    quit_array = Array.new
     zero_rot = 0
     zero_move = 0
     zero_move_rot = 0
@@ -96,7 +124,8 @@ class FlythroughStatistics
     players.each do |player|
       pps = ProccessedPlayerStats.new(player)
       pps.crunch_numbers
-      pps.output_json
+      pps.quit_position quit_csv, quit_array, position_array
+      #pps.output_json
       if pps.fly_data != nil
           total_fly = total_fly+1
           
@@ -132,6 +161,12 @@ class FlythroughStatistics
     puts 'zero rotation ' + zero_rot.to_s
     puts 'zero rot and move ' + zero_move_rot.to_s
     csv.close
+
+    #all_positions_json.write(position_array.flatten.to_json)
+    #all_positions_json.close
+
+    #quit_json.write(quit_array.to_json)
+    #quit_json.close 
     
   end
 

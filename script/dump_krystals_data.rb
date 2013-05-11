@@ -31,29 +31,18 @@ end
 bar.finish
 puts all_attrs.inspect
 
-#bar = ProgressBar.new 'parsing players', players.count
+bar = ProgressBar.new 'parsing players', players.count
 players.each do |play|
   data = play.data.where(gameName: 'KrystalsOfKaydor').where(schema: 'DEVELOPMENT-01-28-2013')
   if data.count > 0
     CSV.open("csv/krystals/krystals_test_"+play.email+".csv", "w") do |csv|
-      puts play.email
-      puts data.count
-      keys = Hash.new
-      data.each do |log_entry|
-        unless log_entry.key.include?('KoKPlayerMovement')
-          if keys[log_entry.key] != nil
-            keys[log_entry.key] << log_entry
-          else
-            keys[log_entry.key] = Array.new
-            keys[log_entry.key] << log_entry
-          end
-        end
-      end
+      #puts play.email
+      #puts data.count
      
-      puts all_attrs.uniq 
+      #puts all_attrs.uniq 
       csv << all_attrs.uniq
-      keys.values.each do |entries|
-        entries.each do |entry|
+      data.each do |entry|
+        unless entry.key.include?('KoKPlayerMovement')
           out = Array.new
           all_attrs.uniq.each do |attr|
             if entry.attributes.keys.include?(attr)
@@ -67,6 +56,6 @@ players.each do |play|
       end
     end
   end
- # bar.inc
+  bar.inc
 end
-#bar.finish
+bar.finish
