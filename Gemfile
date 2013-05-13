@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.1.12'
 gem 'pg'
-gem 'devise'
+gem 'devise', '1.5.4'
 gem 'passenger'
 gem 'mongoid'
 gem 'bson_ext'

@@ -77,7 +77,7 @@ GEM
     daemon_controller (0.2.6)
     database_cleaner (0.7.0)
     decent_exposure (1.0.1)
-    devise (1.5.3)
+    devise (1.5.4)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.0.3)
       warden (~> 1.1)
@@ -134,7 +134,7 @@ GEM
     omniauth (1.1.0)
       hashie (~> 1.2)
       rack
-    orm_adapter (0.0.5)
+    orm_adapter (0.0.7)
     passenger (3.0.11)
       daemon_controller (>= 0.2.5)
       fastthread (>= 1.0.1)
@@ -230,7 +230,7 @@ GEM
       execjs (>= 0.3.0)
       multi_json (>= 1.0.2)
     valuable (0.9.8)
-    warden (1.1.0)
+    warden (1.2.1)
       rack (>= 1.0)
     xpath (0.1.4)
       nokogiri (~> 1.3)
@@ -248,7 +248,7 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   decent_exposure
-  devise
+  devise (= 1.5.4)
   fabrication
   grit
   haml
