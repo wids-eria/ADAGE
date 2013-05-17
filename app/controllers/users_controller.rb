@@ -23,7 +23,7 @@ class UsersController < ApplicationController
       game_data = @user.data.where(gameName: game)
       @names << game
       @counts << {x: i, y: game_data.distinct(:session_token).count}
-      @entries_by_game << game_data.count
+      @entries_by_game << {x: i , y: game_data.count }
     end
   
   end

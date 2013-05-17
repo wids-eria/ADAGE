@@ -7,8 +7,14 @@ var graph = new Rickshaw.Graph( {
     renderer: 'bar',
     series: [{
         color: 'steelblue',
-        data: counts  
-    }]
+        data: counts,  
+        name: 'Play Sessions'
+    }
+    ]
+});
+var legend = new Rickshaw.Graph.Legend({
+    graph: graph,
+    element: document.querySelector('#chart')
 });
 
 graph.render();
