@@ -12,18 +12,13 @@ class Student
   def run csv
     
     #find all the kode entries
-    kode_logs = user.data.where(key: 'Kode', schema: '1.3.9.0')
-    revision_count = Hash.new
+    kode_logs = user.data.where(key: 'Kode')
     if kode_logs.count > 0
+      #puts user.player_name + " has " + kode_logs.count.to_s + " kode logs" 
+      #parse the kode to json
+      kodes = Array.new
       kode_logs.each do |log|
-        kode = log.kode['kode']
-        actor = kode['actorName']
-        if revision_count[actor] == nil
-          revision_count[actor] = 0 
-        else
-          revision_count[actor] = revision_count[actor] + 1
-        end
-        csv << [user.player_name, Time.at(log.timestamp.gsub(/[^0-9]/, '')[0..-4].to_i), kode['levelId'], actor, revision_count[actor], kode['pages'].count]
+        csv << [user.player_name] + log.attributes.values
       end
 
       #puts user.player_name + " successfully parsed!"
@@ -38,7 +33,6 @@ class AnalyizeKode
   def run name, students
     #bar = ProgressBar.new 'students', students.count
     csv = CSV.open("csv/kodu/"+name+".csv", "w") 
-    csv << ['player name', 'timestamp', 'Level Id', 'actor name', 'revision count', 'page count']
     students.each do |student_name|
       user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
       if user != nil
@@ -59,7 +53,7 @@ sparta = CSV.open("csv/kodu/sections/sparta.csv", 'r')
 peagle = CSV.open("csv/kodu/sections/peagle.csv", 'r')
 glacialD = CSV.open("csv/kodu/sections/glacialD.csv", 'r')
 waunakee = CSV.open("csv/kodu/sections/waunakee.csv", 'r')
-AnalyizeKode.new.run 'Sparta_kode_parsed', sparta
-AnalyizeKode.new.run 'palmyra-eagle_kode_parsed', peagle
-AnalyizeKode.new.run 'glacial_drummlin_kode_parsed', glacialD
-AnalyizeKode.new.run 'waunakee_kode_parsed', waunakee 
+AnalyizeKode.new.run 'Sparta_kode_dump', sparta
+AnalyizeKode.new.run 'palmyra-eagle_kode_dump', peagle
+AnalyizeKode.new.run 'glacial_drummlin_kode_dump', glacialD
+AnalyizeKode.new.run 'waunakee_kode_dump', waunakee 
