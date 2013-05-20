@@ -14,16 +14,34 @@ class Student
     #find all the kode entries
     kode_logs = user.data.where(key: 'Kode', schema: '1.3.9.0')
     revision_count = Hash.new
+    kode = nil
     if kode_logs.count > 0
       kode_logs.each do |log|
-        kode = log.kode['kode']
-        actor = kode['actorName']
-        if revision_count[actor] == nil
-          revision_count[actor] = 0 
+        if log.respond_to?('kode')
+          kode = log.kode['kode']
         else
-          revision_count[actor] = revision_count[actor] + 1
+          kode_string = log.data
+          kode_string = '{'+kode_string+'}'
+          kode_string = kode_string.strip
+          kode_string = kode_string.gsub('\'','"')
+          kode_string = kode_string.gsub('""','{"')
+          kode_string = kode_string.gsub("'",'"')
+          begin
+            kode = JSON.parse(kode_string)['kode']
+          rescue
+            puts "WILL NOT PARSE"
+            #puts kode_string
+          end
         end
-        csv << [user.player_name, Time.at(log.timestamp.gsub(/[^0-9]/, '')[0..-4].to_i), kode['levelId'], actor, revision_count[actor], kode['pages'].count]
+        if kode != nil
+          actor = kode['actorName']
+          if revision_count[actor] == nil
+            revision_count[actor] = 0 
+          else
+            revision_count[actor] = revision_count[actor] + 1
+          end
+          csv << [user.player_name, log.schema, Time.at(log.timestamp.gsub(/[^0-9]/, '')[0..-4].to_i), kode['levelId'], actor, revision_count[actor], kode['pages'].count]
+        end
       end
 
       #puts user.player_name + " successfully parsed!"
@@ -38,7 +56,7 @@ class AnalyizeKode
   def run name, students
     #bar = ProgressBar.new 'students', students.count
     csv = CSV.open("csv/kodu/"+name+".csv", "w") 
-    csv << ['player name', 'timestamp', 'Level Id', 'actor name', 'revision count', 'page count']
+    csv << ['player name', 'schema', 'timestamp', 'Level Id', 'actor name', 'revision count', 'page count']
     students.each do |student_name|
       user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
       if user != nil
