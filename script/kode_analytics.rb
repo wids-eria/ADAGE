@@ -40,7 +40,29 @@ class Student
           else
             revision_count[actor] = revision_count[actor] + 1
           end
-          csv << [user.player_name, log.schema, Time.at(log.timestamp.gsub(/[^0-9]/, '')[0..-4].to_i), kode['levelId'], actor, revision_count[actor], kode['pages'].count]
+          sensors = Array.new
+          actions = Array.new
+          dowhen = Array.new
+          kode['pages'].each do |page|
+            page['lines'].each do |line|
+              sensors << line['when']['sensor']
+              actions << line['do']['action']
+              dowhen << [line['when']['sensor'], line['do']['action']]
+            end
+          end
+          csv << [user.player_name, log.schema, 
+                  Time.at(log.timestamp.gsub(/[^0-9]/, '')[0..-4].to_i), 
+                  kode['levelId'], actor, 
+                  revision_count[actor], 
+                  kode['pages'].count, 
+                  sensors.count, 
+                  sensors.uniq.count,
+                  sensors.uniq.to_s,
+                  actions.count, 
+                  actions.uniq.count,
+                  actions.uniq.to_s,
+                  dowhen.to_s]
+          
         end
       end
 
@@ -56,7 +78,19 @@ class AnalyizeKode
   def run name, students
     #bar = ProgressBar.new 'students', students.count
     csv = CSV.open("csv/kodu/"+name+".csv", "w") 
-    csv << ['player name', 'schema', 'timestamp', 'Level Id', 'actor name', 'revision count', 'page count']
+    csv << ['player name', 'schema', 
+            'timestamp', 
+            'Level Id', 
+            'actor name', 
+            'revision count', 
+            'page count', 
+            'sensor count', 
+            'unique sensor count', 
+            'sensors used', 
+            'action count', 
+            'unique action count', 
+            'actions used',
+            'sensor action pairs']
     students.each do |student_name|
       user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
       if user != nil
