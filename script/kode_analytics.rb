@@ -12,9 +12,10 @@ class Student
   def run csv
     
     #find all the kode entries
-    kode_logs = user.data.where(key: 'Kode', schema: '1.3.9.0')
+    kode_logs = user.data.where(key: 'Kode')
     revision_count = Hash.new
     kode = nil
+    not_parsed = 0
     if kode_logs.count > 0
       kode_logs.each do |log|
         if log.respond_to?('kode')
@@ -23,14 +24,30 @@ class Student
           kode_string = log.data
           kode_string = '{'+kode_string+'}'
           kode_string = kode_string.strip
-          kode_string = kode_string.gsub('\'','"')
-          kode_string = kode_string.gsub('""','{"')
+          start_say = kode_string.index('sayText')
+          while start_say != nil
+            #start_say = kode_string.index('[', start_say)
+            end_say = kode_string.index('],', start_say)
+            kode_string = kode_string[0..(start_say-2)] + kode_string[(end_say+2)..-1]
+            start_say = kode_string.index('sayText')
+          end
+          start_say = kode_string.index('hearText')
+          while start_say != nil
+            #start_say = kode_string.index('[', start_say)
+            end_say = kode_string.index('],', start_say)
+            kode_string = kode_string[0..(start_say-2)] + kode_string[(end_say+2)..-1]
+            start_say = kode_string.index('hearText')
+          end
+
+          #kode_string = kode_string.gsub('\'','"')
+          #kode_string = kode_string.gsub('""','{"')
           kode_string = kode_string.gsub("'",'"')
           begin
             kode = JSON.parse(kode_string)['kode']
           rescue
             puts "WILL NOT PARSE"
-            #puts kode_string
+            puts kode_string
+            not_parsed = not_parsed + 1
           end
         end
         if kode != nil
@@ -68,6 +85,7 @@ class Student
 
       #puts user.player_name + " successfully parsed!"
     end
+    return not_parsed
   
   end
 
@@ -91,15 +109,18 @@ class AnalyizeKode
             'unique action count', 
             'actions used',
             'sensor action pairs']
+    total_lost = 0
     students.each do |student_name|
       user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
       if user != nil
-        Student.new(user).run csv
+        not_parsed = Student.new(user).run csv
+        total_lost = total_lost + not_parsed
       else
         puts student_name.first + " NOT FOUND"
       end
       #bar.inc
     end
+    puts total_lost.to_s + " entries did not parse"
     csv.close
 
   end
