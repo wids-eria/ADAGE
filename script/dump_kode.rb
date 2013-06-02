@@ -12,7 +12,7 @@ class Student
   def run csv
     
     #find all the kode entries
-    kode_logs = user.data.where(key: 'Kode')
+    kode_logs = user.data.where(gameName: 'kodu')
     if kode_logs.count > 0
       #puts user.player_name + " has " + kode_logs.count.to_s + " kode logs" 
       #parse the kode to json

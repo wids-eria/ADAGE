@@ -16,6 +16,9 @@ class Student
     revision_count = Hash.new
     kode = nil
     not_parsed = 0
+    flops = 0
+    last_actor = nil
+    last_level = nil
     if kode_logs.count > 0
       kode_logs.each do |log|
         if log.respond_to?('kode')
@@ -50,8 +53,20 @@ class Student
             not_parsed = not_parsed + 1
           end
         end
+
         if kode != nil
-          actor = kode['actorName']
+          actor = kode['actorName'] + kode['levelId']
+          level = kode['levelId']
+          #how many times have they switched back and forth between kodus while in one level
+          if last_actor != nil
+           if last_level == level
+            if last_actor != actor 
+            flops = flops + 1
+            end
+           end
+          end
+          last_actor = actor
+          last_level = level
           if revision_count[actor] == nil
             revision_count[actor] = 0 
           else
@@ -72,6 +87,7 @@ class Student
                   kode['levelId'], actor, 
                   revision_count[actor], 
                   kode['pages'].count, 
+                  flops,
                   sensors.count, 
                   sensors.uniq.count,
                   sensors.uniq.to_s,
@@ -102,6 +118,7 @@ class AnalyizeKode
             'actor name', 
             'revision count', 
             'page count', 
+            'actor switching',
             'sensor count', 
             'unique sensor count', 
             'sensors used', 
