@@ -54,7 +54,7 @@ class UsersController < ApplicationController
     end
   end
 
-  def get_data 
+  def get_data
     if params[:level] != nil
       @data = AdaData.where(user_id: params[:user_id], gameName: params[:gameName], schema: params[:schema], level: params[:level], key: params[:key])
     else
@@ -62,6 +62,35 @@ class UsersController < ApplicationController
     end
     respond_to do |format|
       format.json { render :json => @data }
+    end
+  end
+
+
+  def reset_password_form
+    @user = User.new
+  end
+
+  def reset_password
+    @user = User.with_login(params[:user][:player_name]).first
+
+    if(@user.nil?)
+      respond_to do |format|
+        format.html { flash[:alert] = "Invalid Player"; redirect_to reset_password_form_users_url }
+      end
+    else
+      # ask if my uid is teacher on studiok
+      #
+      @user.password = params[:user][:password]
+
+      if @user.save
+        respond_to do |format|
+          format.html { flash[:notice] = "Password changed!"; redirect_to reset_password_form_users_url }
+        end
+      else
+        respond_to do |format|
+          format.html { render :reset_password_form }
+        end
+      end
     end
   end
 

@@ -13,6 +13,9 @@ Ada::Application.routes.draw do
     collection do
       get :new_sequence
       post :create_sequence
+
+      get :reset_password_form
+      put :reset_password
     end
   end
 
