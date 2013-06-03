@@ -13,7 +13,7 @@ class UsersController < ApplicationController
   end
 
   def authenticate_for_token
-    @user = User.where(["lower(player_name) = :login OR lower(email) = :login", login: params[:email].strip.downcase]).first
+    @user = User.with_login(params[:email]).first
     ret = {}
     if @user != nil and @user.valid_password? params[:password]
       @auth_token = @user.authentication_token
