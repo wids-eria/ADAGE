@@ -38,6 +38,7 @@ group :test, :development do
   gem 'launchy'
   gem 'capybara'
   gem 'database_cleaner'
+  gem 'webmock'
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false

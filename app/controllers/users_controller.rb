@@ -73,30 +73,42 @@ class UsersController < ApplicationController
   def reset_password
     @user = User.with_login(params[:user][:player_name]).first
 
-    if(@user.nil?)
+    if @user.nil?
       respond_to do |format|
         format.html { flash[:alert] = "Invalid Player"; redirect_to reset_password_form_users_url }
       end
     else
-      # ask if my uid is teacher on studiok
-      #
-      @user.password = params[:user][:password]
+      if can_change_password_for? @user
+        @user.password = params[:user][:password]
 
-      if @user.save
-        respond_to do |format|
-          format.html { flash[:notice] = "Password changed!"; redirect_to reset_password_form_users_url }
+        if @user.save
+          respond_to do |format|
+            format.html { flash[:notice] = "Password Changed!"; redirect_to reset_password_form_users_url }
+          end
+        else
+          respond_to do |format|
+            format.html { render :reset_password_form }
+          end
         end
       else
         respond_to do |format|
-          format.html { render :reset_password_form }
+          format.html { flash[:alert] = "Not Authorized"; redirect_to reset_password_form_users_url }
         end
       end
     end
   end
 
+
   protected
 
   def application
     @application ||= Client.where(app_token: params[:client_id]).first
+  end
+
+
+  def can_change_password_for?(user)
+    json_body = {student_user_id: user.id}
+    auth_response = HTTParty.get("#{Rails.configuration.password_change_authorization_server}/accounts/#{current_user.id}/can_change_password_for", body: json_body)
+    return (auth_response.code == 200)
   end
 end

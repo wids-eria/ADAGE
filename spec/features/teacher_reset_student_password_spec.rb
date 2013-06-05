@@ -4,7 +4,11 @@ describe 'resetting student password' do
   let!(:student) { Fabricate :user, player_name: 'forgetful_student', password: 'a password' }
   let!(:teacher) { Fabricate :user, player_name: 'random_teacher', password: 'teachers pass' }
 
-  # stub httparty request
+  before do
+    stub_request(:any, //).to_return(:status => [200])
+  end
+
+
   it 'authorizes if teacher of student' do
     student.valid_password?('a password').should == true
 
@@ -47,9 +51,10 @@ describe 'resetting student password' do
 
   end
 
-
   it 'does not if not teacher of student' do
     student.valid_password?('a password').should == true
+
+    stub_request(:any, //).to_return(:status => [401])
 
     visit '/users/sign_in'
     fill_in 'Login',    with: 'random_teacher'
@@ -62,7 +67,7 @@ describe 'resetting student password' do
     click_on 'Update'
 
     # should have errors
-    page.should have_content 'Not your student'
+    page.should have_content 'Not Authorized'
 
     student.reload.valid_password?('a password').should   == true
     student.reload.valid_password?('new password').should == false
