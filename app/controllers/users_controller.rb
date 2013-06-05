@@ -108,7 +108,7 @@ class UsersController < ApplicationController
 
   def can_change_password_for?(user)
     json_body = {student_user_id: user.id}
-    auth_response = HTTParty.get("#{Rails.configuration.password_change_authorization_server}/accounts/#{current_user.id}/can_change_password_for", body: json_body)
+    auth_response = HTTParty.get("#{Rails.configuration.password_change_authorization_server}/accounts/#{current_user.id}/can_change_password_for.json", body: json_body)
     return (auth_response.code == 200)
   end
 end
