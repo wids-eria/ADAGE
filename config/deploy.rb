@@ -28,6 +28,7 @@ set :normalize_asset_timestamps, false
 
 after 'deploy:finalize_update', 'deploy:symlink_db'
 after 'deploy:finalize_update', 'deploy:symlink_unity_crossdomain'
+after 'deploy:finalize_update', 'deploy:symlink_external_site_config'
 
 namespace :deploy do
   desc "Symlinks the database.yml"
@@ -39,6 +40,11 @@ namespace :deploy do
   desc "Symlink crossdomain.xml"
   task :symlink_unity_crossdomain do
     run "ln -nfs #{deploy_to}/shared/config/crossdomain.xml #{release_path}/public/crossdomain.xml"
+  end
+
+  desc "Symlink external site config"
+  task :symlink_external_site_config do
+    run "ln -nfs #{deploy_to}/shared/config/initializers/external_hosts.rb #{release_path}/config/initializers/external_hosts.rb"
   end
 
 
