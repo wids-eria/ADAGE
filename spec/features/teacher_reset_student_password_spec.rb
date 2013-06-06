@@ -29,6 +29,20 @@ describe 'resetting student password' do
   end
 
 
+  it 'fills in player name from url if present' do
+    visit '/users/sign_in'
+    fill_in 'Login',    with: 'random_teacher'
+    fill_in 'Password', with: 'teachers pass'
+    click_on 'Sign in'
+
+    visit '/users/reset_password_form?user[player_name]=astudent'
+    page.find_field('Player Name').value.should == "astudent"
+
+    visit '/users/reset_password_form'
+    page.find_field('Player Name').value.should_not == "astudent"
+  end
+
+
   it 'warns if password is weak' do
     student.valid_password?('a password').should == true
 

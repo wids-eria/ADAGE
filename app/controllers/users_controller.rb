@@ -67,7 +67,7 @@ class UsersController < ApplicationController
 
 
   def reset_password_form
-    @user = User.new
+    @user = User.new params[:user]
   end
 
   def reset_password
