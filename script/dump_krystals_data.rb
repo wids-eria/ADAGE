@@ -11,7 +11,7 @@ puts types.inspect
 examples = Array.new
 bar = ProgressBar.new 'gathering types', types.count
 types.each do |type|
-  ex = AdaData.where(key: type, schema: 'DEVELOPMENT-01-28-2013').first
+  ex = AdaData.where(key: type).first
   if ex != nil
     examples << ex
   end
@@ -33,7 +33,7 @@ puts all_attrs.inspect
 
 bar = ProgressBar.new 'parsing players', players.count
 players.each do |play|
-  data = play.data.where(gameName: 'KrystalsOfKaydor').where(schema: 'DEVELOPMENT-01-28-2013')
+  data = play.data.where(gameName: 'KrystalsOfKaydor')
   if data.count > 0
     CSV.open("csv/krystals/krystals_test_"+play.email+".csv", "w") do |csv|
       #puts play.email
