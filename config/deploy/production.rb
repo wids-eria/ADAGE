@@ -1,5 +1,5 @@
 set :rails_env, :staging
-set :branch, "weepy_wifflebats"
+set :branch, "zombie_zebra"
 
 role :web, "eria-1.morgridge.net"
 role :app, "eria-1.morgridge.net"
