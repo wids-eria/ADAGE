@@ -17,6 +17,8 @@
 /config/database.yml.joytemplate
 /config/mongoid.yml
 /config/mongoid.yml.joytemplate
+/config/initializers/external_hosts.rb
+/csv/*.csv
 /*.csv
 /*.zip
 /csv

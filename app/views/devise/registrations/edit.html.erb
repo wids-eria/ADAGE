@@ -1,28 +1,39 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<div class="login_container floatleft">
+  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
+    <%= devise_error_messages! %>
 
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
-  <%= devise_error_messages! %>
+    <div class="field_container">
+      <%= f.label :player_name, class: 'floatleft' %>
+      <%= f.text_field :player_name, class: 'floatright' %>
+    </div>
 
-  <div><%= f.label :player_name %><br />
-  <%= f.text_field :player_name %></div>
+    <div class="field_container">
+      <%= f.label :email, class: 'floatleft'%>
+      <%= f.email_field :email, class: 'floatright' %>
+    </div>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email %></div>
+    <div class="field_container">
+      <%= f.label :password, 'New Password', class: 'floatleft' %>
+      <%= f.password_field :password, class: 'floatright', placeholder: "(leave blank if you don't want to change it)" %>
+    </div>
 
-  <div><%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-  <%= f.password_field :password %></div>
+    <div class="field_container">
+      <%= f.label :password_confirmation, "Confirmation", class: 'floatleft' %>
+      <%= f.password_field :password_confirmation, class: 'floatright', placeholder: "Password Confirmation" %>
+    </div>
 
-  <div><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></div>
+    <div class="field_container">
+      <%= f.label :current_password, "Current".html_safe, class: 'floatleft' %>
+      <%= f.password_field :current_password, class: 'floatright', placeholder: "(Enter current password to confirm changes)" %>
+    </div>
 
-  <div><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-  <%= f.password_field :current_password %></div>
+    <div class="field_container_remember_me">
+      <%= f.submit "Update", class: 'sign_in_button floatright' %>
+    </div>
+  <% end %>
+</div>
 
-  <div><%= f.submit "Update" %></div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<p>Unhappy? <%= link_to "Cancel my account", registration_path(resource_name), :confirm => "Are you sure?", :method => :delete %>.</p>
-
-<%= link_to "Back", :back %>
+<div class="sign_up_container">
+  <%= link_to 'Profile', profile_url, class: 'floatleft' %>
+  <%= link_to 'Logout', destroy_user_session_url, :method => :delete, class: 'floatright' %>
+</div>

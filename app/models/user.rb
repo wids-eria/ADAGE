@@ -35,10 +35,15 @@ class User < ActiveRecord::Base
     AdaData.where("user_id" => self.id)
   end
 
+
+  def self.with_login(login)
+    where(["lower(player_name) = :login OR lower(email) = :login", login: login.strip.downcase])
+  end
+
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
     login = conditions.delete(:login)
-    where(conditions).where(["lower(player_name) = :login OR lower(email) = :login", login: login.strip.downcase]).first
+    where(conditions).with_login(login).first
   end
 
   private

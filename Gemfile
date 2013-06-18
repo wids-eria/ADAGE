@@ -1,8 +1,8 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.3'
+gem 'rails', '3.1.12'
 gem 'pg'
-gem 'devise'
+gem 'devise', '1.5.4'
 gem 'passenger'
 gem 'mongoid'
 gem 'bson_ext'
@@ -14,6 +14,7 @@ gem 'omniauth'
 gem 'simple_form'
 gem 'pacecar'
 gem 'schema_plus', '0.4.1'
+gem 'httparty'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
@@ -32,12 +33,14 @@ group :test, :development do
   gem 'colored'
 
   gem 'cucumber-rails'
-  gem 'database_cleaner'
   gem 'rspec-rails'
   gem 'fabrication'
   gem 'pry'
   gem 'pry-rails'
   gem 'launchy'
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'webmock'
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false

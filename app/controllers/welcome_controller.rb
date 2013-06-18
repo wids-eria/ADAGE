@@ -1,19 +1,15 @@
 class WelcomeController < ApplicationController
   before_filter :authenticate_user!, :only => :my_page
-  
+
   def index
-    if current_user != nil
-      if current_user.role?(Role.find_by_name('admin'))
-        render 'admin'
-      elsif current_user.researcher_role?
-        render 'researcher'
-      else
-        render 'player'
-      end
+    if user_signed_in?
+      redirect_to profile_url
+    else
+      redirect_to new_user_session_url
     end
   end
 
-  def my_page
-    render :text => 'woo'
+  def profile
+    render :index
   end
 end

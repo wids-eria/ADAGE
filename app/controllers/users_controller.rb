@@ -53,7 +53,7 @@ class UsersController < ApplicationController
   end
 
   def authenticate_for_token
-    @user = User.where(["lower(player_name) = :login OR lower(email) = :login", login: params[:email].strip.downcase]).first
+    @user = User.with_login(params[:email]).first
     ret = {}
     if @user != nil and @user.valid_password? params[:password]
       @auth_token = @user.authentication_token
@@ -94,7 +94,7 @@ class UsersController < ApplicationController
     end
   end
 
-  def get_data 
+  def get_data
     if params[:level] != nil
       @data = AdaData.where(user_id: params[:user_id], gameName: params[:gameName], schema: params[:schema], level: params[:level], key: params[:key])
     else
@@ -115,6 +115,40 @@ class UsersController < ApplicationController
     end
   end
 
+
+  def reset_password_form
+    @user = User.new params[:user]
+  end
+
+  def reset_password
+    @user = User.with_login(params[:user][:player_name]).first
+
+    if @user.nil?
+      respond_to do |format|
+        format.html { flash[:alert] = "Invalid Player"; redirect_to reset_password_form_users_url }
+      end
+    else
+      if can_change_password_for? @user
+        @user.password = params[:user][:password]
+
+        if @user.save
+          respond_to do |format|
+            format.html { flash[:notice] = "Password Changed!"; redirect_to reset_password_form_users_url }
+          end
+        else
+          respond_to do |format|
+            format.html { render :reset_password_form }
+          end
+        end
+      else
+        respond_to do |format|
+          format.html { flash[:alert] = "Not Authorized"; redirect_to reset_password_form_users_url }
+        end
+      end
+    end
+  end
+
+
   protected
 
   def application
@@ -130,4 +164,10 @@ class UsersController < ApplicationController
     end 
   end
 
+
+  def can_change_password_for?(user)
+    json_body = {student_user_id: user.id}
+    auth_response = HTTParty.get("#{Rails.configuration.password_change_authorization_server}/accounts/#{current_user.id}/can_change_password_for.json", body: json_body)
+    return (auth_response.code == 200)
+  end
 end

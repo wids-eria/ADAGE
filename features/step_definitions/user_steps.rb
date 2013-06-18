@@ -62,11 +62,16 @@ Then /^I should be at the users index$/ do
   current_path.should == users_path
 end
 
-When /^I am on the user index$/ do
+Then /^I should be on my profile$/ do
+  current_path = URI.parse(current_url).path
+  current_path.should == profile_path
+end
+
+When /^I visit the user index$/ do
   visit users_path
 end
 
-When /^I am on the data index$/ do
+When /^I visit the data index$/ do
   visit data_path
 end
 
