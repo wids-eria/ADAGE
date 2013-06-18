@@ -6,7 +6,6 @@ module ValidUserRequestHelper
     Role.create(name: 'admin')
     @user = Fabricate :user, player_name: 'admin', password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'player').first] 
     visit root_url
-    click_link 'login'
 
     fill_in 'Login', with: @user.player_name
     fill_in 'Password', with: @user.password
@@ -20,7 +19,6 @@ module ValidUserRequestHelper
     Role.create(name: 'admin')
     @user = Fabricate :user, player_name: 'player', password: 'pass1234', roles: [Role.where(name: 'player').first] 
     visit root_url
-    click_link 'login'
 
     fill_in 'Login', with: @user.player_name
     fill_in 'Password', with: @user.password
@@ -35,7 +33,6 @@ module ValidUserRequestHelper
     @game = Fabricate :game
     @user = Fabricate :user, player_name: 'researcher', password: 'pass1234', roles: [@game.researcher_role] 
     visit root_url
-    click_link 'login'
 
     fill_in 'Login', with: @user.player_name
     fill_in 'Password', with: @user.password

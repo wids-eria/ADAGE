@@ -31,11 +31,11 @@ Ada::Application.routes.draw do
       get :admin
       post :create_sequence
       post :find
+      get :reset_password_form
+      put :reset_password
     end
     member do
       get :data_by_game
-      get :reset_password_form
-      put :reset_password
     end
   end
 
