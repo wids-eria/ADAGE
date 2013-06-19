@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130226233427) do
+ActiveRecord::Schema.define(:version => 20130619191407) do
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -55,6 +55,12 @@ ActiveRecord::Schema.define(:version => 20130226233427) do
     t.index ["user_id"], :name => "index_access_tokens_on_user_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "access_tokens_user_id_fkey"
     t.foreign_key ["client_id"], "clients", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "access_tokens_client_id_fkey"
+  end
+
+  create_table "games", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "roles", :force => true do |t|

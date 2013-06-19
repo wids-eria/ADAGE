@@ -1,0 +1,11 @@
+%ul
+  = @game.name
+  %br
+  = @game.created_at
+  
+  - @users.each do |user|
+    %li
+      = link_to user do 
+        = user.player_name
+        = user.consented 
+
