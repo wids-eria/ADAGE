@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130619191407) do
+ActiveRecord::Schema.define(:version => 20130619201211) do
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -61,6 +61,15 @@ ActiveRecord::Schema.define(:version => 20130619191407) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "implementations", :force => true do |t|
+    t.string   "name"
+    t.integer  "game_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["game_id"], :name => "index_implementations_on_game_id"
+    t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "implementations_game_id_fkey"
   end
 
   create_table "roles", :force => true do |t|
