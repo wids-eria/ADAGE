@@ -2,6 +2,11 @@
   = @game.name
   %br
   = @game.created_at
+
+  - @game.implementations.each do |s|
+    %li
+      = s.name
+  = render partial: 'implementations/add', locals: {game: @game} 
   
   - @users.each do |user|
     %li

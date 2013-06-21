@@ -9,6 +9,8 @@ Ada::Application.routes.draw do
   match "user/user_data" => "users#get_data" 
 
   resources :data
+  resources :games
+  resources :implementations
   resources :users, :only => [:index] do
     collection do
       get :new_sequence

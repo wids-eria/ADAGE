@@ -1,0 +1,7 @@
+%ul
+  %h1=@game.name
+  = @game.created_at
+  %br
+
+  %h1='Add a game version'
+  = render partial: 'implementations/add', locals: {game: @game} 
