@@ -8,6 +8,71 @@ class Student
   def initialize(user)
     self.user = user 
   end
+
+  def dump_kode_sequence
+    kode_logs = user.data.where(key: 'Kode')
+    if kode_logs.count > 0
+      kode_logs.each_with_index do |log, i|
+        if log.respond_to?('kode')
+          kode = log.kode['kode']
+        else
+          kode_string = log.data
+          kode_string = '{'+kode_string+'}'
+          kode_string = kode_string.strip
+          start_say = kode_string.index('sayText')
+          while start_say != nil
+            end_say = kode_string.index('],', start_say)
+            kode_string = kode_string[0..(start_say-2)] + kode_string[(end_say+2)..-1]
+            start_say = kode_string.index('sayText')
+          end
+          start_say = kode_string.index('hearText')
+          while start_say != nil
+            end_say = kode_string.index('],', start_say)
+            kode_string = kode_string[0..(start_say-2)] + kode_string[(end_say+2)..-1]
+            start_say = kode_string.index('hearText')
+          end
+
+          kode_string = kode_string.gsub("'",'"')
+          begin
+            kode = JSON.parse(kode_string)['kode']
+          rescue
+            puts "WILL NOT PARSE"
+            puts kode_string
+            not_parsed = not_parsed + 1
+          end
+        end
+
+        if kode != nil
+          out = File.open('csv/kodu/kode_sequence/'+user.player_name+'_'+i.to_s, 'w')
+          sensors = Array.new
+          actions = Array.new
+
+          kode['pages'].each do |page|
+            page['lines'].each do |line|
+              sensors << line['when']['sensor']
+              actions << line['do']['action']
+            end
+          end
+
+          puts sensors
+          puts actions
+          sensors.each do |s|
+            out << s.to_s + ' '
+          end
+          actions.each do |a|
+            out << a.to_s + ' '
+          end
+          out.close
+
+        end
+
+
+      end
+    end
+
+ 
+  
+  end
   
   def run csv
     
@@ -29,21 +94,17 @@ class Student
           kode_string = kode_string.strip
           start_say = kode_string.index('sayText')
           while start_say != nil
-            #start_say = kode_string.index('[', start_say)
             end_say = kode_string.index('],', start_say)
             kode_string = kode_string[0..(start_say-2)] + kode_string[(end_say+2)..-1]
             start_say = kode_string.index('sayText')
           end
           start_say = kode_string.index('hearText')
           while start_say != nil
-            #start_say = kode_string.index('[', start_say)
             end_say = kode_string.index('],', start_say)
             kode_string = kode_string[0..(start_say-2)] + kode_string[(end_say+2)..-1]
             start_say = kode_string.index('hearText')
           end
 
-          #kode_string = kode_string.gsub('\'','"')
-          #kode_string = kode_string.gsub('""','{"')
           kode_string = kode_string.gsub("'",'"')
           begin
             kode = JSON.parse(kode_string)['kode']
@@ -142,6 +203,14 @@ class AnalyizeKode
 
   end
 
+  def dump_kode_sequence students
+    students.each do |student_name|
+      user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
+      if user != nil
+        Student.new(user).dump_kode_sequence
+      end
+    end
+  end
 
 end
 
@@ -149,7 +218,11 @@ sparta = CSV.open("csv/kodu/sections/sparta.csv", 'r')
 peagle = CSV.open("csv/kodu/sections/peagle.csv", 'r')
 glacialD = CSV.open("csv/kodu/sections/glacialD.csv", 'r')
 waunakee = CSV.open("csv/kodu/sections/waunakee.csv", 'r')
-AnalyizeKode.new.run 'Sparta_kode_parsed', sparta
-AnalyizeKode.new.run 'palmyra-eagle_kode_parsed', peagle
-AnalyizeKode.new.run 'glacial_drummlin_kode_parsed', glacialD
-AnalyizeKode.new.run 'waunakee_kode_parsed', waunakee 
+#AnalyizeKode.new.run 'Sparta_kode_parsed', sparta
+#AnalyizeKode.new.run 'palmyra-eagle_kode_parsed', peagle
+#AnalyizeKode.new.run 'glacial_drummlin_kode_parsed', glacialD
+#AnalyizeKode.new.run 'waunakee_kode_parsed', waunakee 
+AnalyizeKode.new.dump_kode_sequence sparta 
+AnalyizeKode.new.dump_kode_sequence peagle
+AnalyizeKode.new.dump_kode_sequence glacialD
+AnalyizeKode.new.dump_kode_sequence waunakee
