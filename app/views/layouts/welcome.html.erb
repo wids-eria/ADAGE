@@ -18,6 +18,8 @@
   <% end %>
 
   <div class="page_wrap">
+    <div class="gls_logo_for_ada"></div>
+
     <% if flash[:alert].present? %>
       <div class="flashbox alert"><%= flash[:alert] =%></div>
     <% end %>
@@ -33,6 +35,8 @@
     <%= yield %>
   </div>
 
+  <div class="footer"></div>
+  <div class="clear"></div>
 
 </body>
 </html>

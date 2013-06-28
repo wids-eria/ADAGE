@@ -3,6 +3,34 @@ class UsersController < ApplicationController
 
   before_filter :authenticate_user!, except: [:authenticate_for_token]
 
+  def show
+     @user = User.find(params[:id])
+  end
+
+  def edit 
+     @user = User.find(params[:id])
+  end
+
+  def update
+     @user = User.find(params[:id])
+     @user.attributes = params[:user]
+     @user.roles.each do |role|
+       @join = RolesUser.where(role_id: role.id, user_id: @user.id).first
+       if @join == nil
+        @join = RolesUser.new :assigner => current_user, :role => role, :user => @user 
+        @join.save
+       elsif @join.assigner_id == nil
+         @join.assigner_id = current_user.id
+         @join.save
+       end
+     end
+     if @user.save
+       redirect_to user_path(@user)
+     else
+       redirect_to edit_user_path(@user)
+     end
+  end
+
   def index
     @users = User.page params[:page]
     authorize! :read, @users
@@ -65,6 +93,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def data_by_game
+    @user = User.find(params[:id])
+    @game = Game.find_by_name(params[:gameName])
+    authorize! :read, @game 
+    @data = AdaData.where(user_id: params[:id], gameName: params[:gameName]) 
+    respond_to do |format| 
+      format.csv {send_data export_csv(@data, @user.player_name), filename: @user.player_name+'_'+@game.name+'.csv'} 
+    end
+  end
 
   def reset_password_form
     @user = User.new params[:user]
@@ -105,6 +142,14 @@ class UsersController < ApplicationController
     @application ||= Client.where(app_token: params[:client_id]).first
   end
 
+  def export_csv(data, name)
+    CSV.generate do |csv|
+      keys = Hash.new
+      data.each do |log_entry|
+        csv << JSON.parse(log_entry.as_document.to_json).values
+      end 
+    end 
+  end
 
   def can_change_password_for?(user)
     json_body = {student_user_id: user.id}

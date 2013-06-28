@@ -1,0 +1,4 @@
+%h2= 'Add Participants'
+= simple_form_for @game.participant_role do |u|
+  = u.association :users, :collection => @users, :as => :check_boxes, :label_method => :player_name, :include_blank => false
+  = u.submit 'Update Participants'

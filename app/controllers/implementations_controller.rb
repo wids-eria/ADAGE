@@ -10,7 +10,7 @@ class ImplementationsController < ApplicationController
     else
       flash[:error] = 'Error adding implementation'
     end
-    redirect_to :back
+    redirect_to game_path(imp.game)  
   end
 
 end
