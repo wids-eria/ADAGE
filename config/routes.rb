@@ -8,7 +8,13 @@ Ada::Application.routes.draw do
   match "data/heatmap" => "data#heatmap"
   match "user/user_data" => "users#get_data" 
 
-  resources :data
+  resources :data do
+    collection do 
+      post :tenacity_player_stats
+      get :find_tenacity_player
+    end
+  end
+
   resources :users, :only => [:index] do
     collection do
       get :new_sequence

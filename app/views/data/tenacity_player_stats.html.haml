@@ -1,0 +1,32 @@
+%div.login_container.floatleft
+  %h1.white_text=@user.player_name
+  -if @tenacity_count > 0
+    %div.one_third.floatleft
+      %h1 Tenacity
+      %h3= 'Sessions played: ' + @tenacity_count.to_s
+      %h3= 'Total minutes played: ' + @tenacity_time.to_s
+      -@tenacity_sessions.each do |key, value|
+        %p= key
+        %p= value.to_s + " minutes"
+
+  -if @crystals_count > 0
+    %div.one_third.floatleft
+      %h1 Crystals
+      %h3= 'Sessions played: ' + @crystals_count.to_s
+      %h3= 'Total minutes played: ' + @crystals_time.to_s
+      %h3= 'Completed game: ' + @crystals_finish_count.to_s
+      -@crystals_sessions.each do |key, value|
+        %p= key
+        %p= value.to_s + " minutes"
+
+  -if @timer_count > 0
+    %div.one_third.floatleft
+      %h1 Timer
+      %h3= 'Sessions played: ' + @timer_count.to_s
+      %h3= 'Total minutes played: ' + @timer_time.to_s
+      -@timer_sessions.each do |key, value|
+        %p= key
+        %p= value.to_s + " minutes"
+
+
+  
