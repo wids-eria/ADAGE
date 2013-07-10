@@ -2,6 +2,7 @@ require "rvm/capistrano"
 
 set :rvm_ruby_string, '1.9.3'
 set :rvm_type, :system
+set :rvm_path, "/usr/local/rvm"
 
 require 'bundler/capistrano'
 load 'deploy/assets'
@@ -17,7 +18,7 @@ set :scm, :git
 set :user, :deploy
 ssh_options[:forward_agent] = true
 
-set :deploy_to, "~/applications/#{application}"
+set :deploy_to, "/home/deploy/applications/#{application}"
 set :deploy_via, :remote_cache
 set :use_sudo, false
 
