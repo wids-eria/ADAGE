@@ -83,10 +83,18 @@ class DataController < ApplicationController
       sessions = minds.distinct(:session_token)
       sessions.each do |token|
         session_logs = minds.where(session_token: token)
-        end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        @tenacity_sessions[start_time.to_s] = ((end_time - start_time)/1.minute).round 
-        @tenacity_time = @tenacity_time + @tenacity_sessions[start_time.to_s]
+        if session_logs.first.schema.include?('PRODUCTION-05-17-2013')
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+          minutes = ((end_time - start_time)/1.minute).round 
+          if @tenacity_sessions[hash] != nil
+            @tenacity_sessions[hash] =  @tenacity_sessions[hash] + minutes 
+          else
+            @tenacity_sessions[hash] = minutes
+          end
+          @tenacity_time = @tenacity_time + minutes 
+        end
       end
       @tenacity_count = sessions.count
     end
@@ -95,10 +103,19 @@ class DataController < ApplicationController
       sessions = crystals.distinct(:session_token)
       sessions.each do |token|
         session_logs = crystals.where(session_token: token)
-        end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        @crystals_sessions[start_time.to_s] = ((end_time - start_time)/1.minute).round 
-        @crystals_time = @crystals_time + @crystals_sessions[start_time.to_s]
+        if session_logs.first.schema.include?('PRODUCTION-05-29-2013')
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+          minutes = ((end_time - start_time)/1.minute).round 
+          if @crystals_sessions[hash] != nil
+            @crystals_sessions[hash] =  @crystals_sessions[hash] + minutes 
+          else
+            @crystals_sessions[hash] = minutes
+          end
+
+          @crystals_time = @crystals_time + minutes
+        end
       end
       finish_count = crystals.where(name: 'CompleteAllTheQuests').count
       finish_count = crystals.where(name: 'Do all the quests').count
@@ -115,12 +132,27 @@ class DataController < ApplicationController
           start_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
         elsif log.key == 'LogStopNormal'
           end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          @timer_sessions[start_time.to_s] = ((end_time - start_time)/1.minute).round 
-          @timer_time = @timer_time + @timer_sessions[start_time.to_s]
+          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+          minutes = ((end_time - start_time)/1.minute).round 
+          if @timer_sessions[hash] != nil
+            @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
+          else
+            @timer_sessions[hash] = minutes
+          end
+
+          @timer_time = @timer_time + minutes
+
         else
           end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          @timer_sessions[start_time.to_s + ' Non Normal completion'] = ((end_time - start_time)/1.minute).round 
-          @timer_time = @timer_time + @timer_sessions[start_time.to_s]
+          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+          minutes = ((end_time - start_time)/1.minute).round 
+          if @timer_sessions[hash] != nil
+            @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
+          else
+            @timer_sessions[hash] = minutes
+          end
+
+          @timer_time = @timer_time + minutes
         end
       end
       @timer_count = @timer_sessions.count 
