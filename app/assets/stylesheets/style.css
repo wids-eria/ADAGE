@@ -33,14 +33,16 @@ h2::selection{ color:white; text-shadow:none; background:#ce1443; }
 a::selection{ color:black; text-shadow:none; background:#ce1443; }
 
 
-h1 { }
+h1 { color:#172a40;
+ }
 h2 {
     color:#172a40;
     font-family: din-condensed-web;
     text-shadow:0px 1px 0px white;
     text-transform:uppercase;
 }
-h3 { }
+h3 { color:#172a40;
+ }
 h4 { }
 h5 { }
 
@@ -489,6 +491,8 @@ End TypeKit */
         width:273px;
         padding:20px;
         margin-bottom:20px;
+        margin-left:5px;
+        margin-right:5px;
         
         border-top:1px solid white;
         
@@ -547,7 +551,7 @@ End TypeKit */
     
     .full_width{
         
-        width:940px;
+        width:980px;
         padding:20px;
         margin-bottom:20px;
         

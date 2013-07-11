@@ -1,0 +1,32 @@
+	body {
+	  font: 10px sans-serif;
+	}
+
+	.axis path, .axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+	svg {
+		position: absolute;
+    shape-rendering: crispEdges;
+	}
+	.blueline {
+	  fill: none;
+	  stroke-width: 1.5px;
+	}
+	.redline {
+	  fill: none;
+	  stroke: red;
+	  stroke-width: 1.5px;
+	}
+	
+	.bluedot {
+	  stroke-width: 1.5px;
+    stroke: black;
+	}
+	.reddot {
+	  fill: white;
+	  stroke: red;
+	  stroke-width: 1.5px;
+	}

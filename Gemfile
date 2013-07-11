@@ -25,6 +25,7 @@ gem 'capistrano'
 gem 'capistrano-ext'
 gem 'rvm-capistrano'
 gem 'haml'
+gem 'd3-rails'
 
 group :test, :development do
   gem 'grit'
