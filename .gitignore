@@ -15,8 +15,11 @@
 /tmp
 /config/database.yml
 /config/mongoid.yml
-/csv/*
-*.csv
+/config/initializers/external_hosts.rb
+/csv/*.csv
+/*.csv
+
+
 # Ignore all os stuff
 .DS_Store
 /script/dumped_strings/*.txt

@@ -1,22 +1,27 @@
 Ada::Application.routes.draw do
   get "welcome/index"
-  get "welcome/my_page"
-  get "data/kodu_vis"
+  get "profile" => 'welcome#profile'
 
   devise_for :users
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
+  match "data/heatmap" => "data#heatmap"
+  match "user/user_data" => "users#get_data" 
 
-  resources :data
+  resources :data do
+    collection do 
+      post :tenacity_player_stats
+      get :find_tenacity_player
+    end
+  end
 
-  match 'game_data' => "data#get_data_by_game"
-  match 'user_data' => "users#get_data_by_user"
-  match 'user_kodu_activity_data' => "users#get_kodu_activity"
-  match 'user_kodu_level_info' => "users#get_kodu_level_info"
   resources :users, :only => [:index] do
     collection do
       get :new_sequence
       post :create_sequence
+
+      get :reset_password_form
+      put :reset_password
     end
   end
 

@@ -1,8 +1,8 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.3'
+gem 'rails', '3.1.12'
 gem 'pg'
-gem 'devise'
+gem 'devise', '1.5.4'
 gem 'passenger'
 gem 'mongoid'
 gem 'bson_ext'
@@ -11,8 +11,8 @@ gem 'kaminari'
 gem 'therubyracer'
 gem 'cancan'
 gem 'omniauth'
-gem 'progressbar'
-gem 'narray'
+gem 'schema_plus', '0.4.1'
+gem 'httparty'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
@@ -23,18 +23,23 @@ end
 gem 'jquery-rails'
 gem 'capistrano'
 gem 'capistrano-ext'
+gem 'rvm-capistrano'
 gem 'haml'
 gem 'd3-rails'
 
 group :test, :development do
-  gem 'ruby-prof'
+  gem 'grit'
+  gem 'colored'
+
   gem 'cucumber-rails'
-  gem 'database_cleaner'
   gem 'rspec-rails'
   gem 'fabrication'
   gem 'pry'
   gem 'pry-rails'
   gem 'launchy'
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'webmock'
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false

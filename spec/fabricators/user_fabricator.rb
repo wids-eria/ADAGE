@@ -1,5 +1,5 @@
 Fabricator(:user) do
+  player_name { sequence(:player_name) { |i| "username#{i}" } }
   email { sequence(:email) { |i| "user#{i}@example.com" } }
   password "pass1234"
-  roles [(Role.where(name: 'player').first || Role.create(name: 'player'))]
 end

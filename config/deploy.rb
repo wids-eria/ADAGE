@@ -1,31 +1,26 @@
-set :rvm_type, :system
-Deploy_host = "eria-1.morgridge.net"
+require "rvm/capistrano"
 
-require 'rvm/capistrano'
 set :rvm_ruby_string, '1.9.3'
-
-require 'capistrano/ext/multistage'
-set :stages, %w(production staging)
-set :default_stage, "staging"
+set :rvm_type, :system
+set :rvm_path, "/usr/local/rvm"
 
 require 'bundler/capistrano'
 load 'deploy/assets'
 
+require 'capistrano/ext/multistage'
+set :stages, %w(production development)
+set :default_stage, "development"
+
 set :application, "ada"
-
-set :scm, :git
 set :repository,  "git@github.com:wids-eria/ada.git"
-set :branch, "master"
-
-role :web, Deploy_host
-role :app, Deploy_host
-role :db,  Deploy_host, :primary => true # This is where Rails migrations will run
+set :scm, :git
 
 set :user, :deploy
+ssh_options[:forward_agent] = true
+
 set :deploy_to, "/home/deploy/applications/#{application}"
 set :deploy_via, :remote_cache
 set :use_sudo, false
-ssh_options[:forward_agent] = true
 
 set :normalize_asset_timestamps, false
 
@@ -34,6 +29,7 @@ set :normalize_asset_timestamps, false
 
 after 'deploy:finalize_update', 'deploy:symlink_db'
 after 'deploy:finalize_update', 'deploy:symlink_unity_crossdomain'
+after 'deploy:finalize_update', 'deploy:symlink_external_site_config'
 
 namespace :deploy do
   desc "Symlinks the database.yml"
@@ -46,6 +42,12 @@ namespace :deploy do
   task :symlink_unity_crossdomain do
     run "ln -nfs #{deploy_to}/shared/config/crossdomain.xml #{release_path}/public/crossdomain.xml"
   end
+
+  desc "Symlink external site config"
+  task :symlink_external_site_config do
+    run "ln -nfs #{deploy_to}/shared/config/initializers/external_hosts.rb #{release_path}/config/initializers/external_hosts.rb"
+  end
+
 
   task :start, :roles => :app, :except => { :no_release => true } do
     run "cd #{current_path} && touch tmp/restart.txt"

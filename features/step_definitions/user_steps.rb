@@ -2,7 +2,7 @@ Given /^a logged in admin$/ do
   @user = Fabricate(:admin, roles: [Role.create(name: 'admin'), Role.create(name: 'player')])
 
   visit new_user_session_path
-  fill_in 'Email', with: @user.email
+  fill_in 'Login', with: @user.email
   fill_in 'Password', with: @user.password
   click_button 'Sign in'
 end
@@ -11,7 +11,7 @@ Given /^a logged in player$/ do
   @user = Fabricate(:user, roles: [Role.create(name: 'player')])
 
   visit new_user_session_path
-  fill_in 'Email', with: @user.email
+  fill_in 'Login', with: @user.email
   fill_in 'Password', with: @user.password
   click_button 'Sign in'
 end
@@ -52,11 +52,16 @@ Then /^I should be at the users index$/ do
   current_path.should == users_path
 end
 
-When /^I am on the user index$/ do
+Then /^I should be on my profile$/ do
+  current_path = URI.parse(current_url).path
+  current_path.should == profile_path
+end
+
+When /^I visit the user index$/ do
   visit users_path
 end
 
-When /^I am on the data index$/ do
+When /^I visit the data index$/ do
   visit data_path
 end
 

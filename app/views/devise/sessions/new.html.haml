@@ -1,0 +1,17 @@
+.login_container.floatleft
+  = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
+    .field_container
+      = f.label :login, class: 'floatleft'
+      = f.text_field :login, class: 'floatright', placeholder: 'Playername or Email'
+    .field_container
+      = f.label :password, class: 'floatleft'
+      = f.password_field :password, class: 'floatright', placeholder: 'Password'
+    .field_container_remember_me
+      = f.submit "Sign in", class: 'sign_in_button floatright'
+      - if devise_mapping.rememberable?
+        = f.check_box :remember_me, class: 'floatright remember_me_checkbox'
+        = f.label :remember_me, class: 'floatright'
+
+.sign_up_container
+  = link_to 'Sign Up', new_user_registration_url, class: 'floatleft'
+  = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'
