@@ -1,41 +1,40 @@
 require 'csv'
-require 'progressbar'
 
-players=User.all.select{|u| u.data.where(gameName: 'KrystalsOfKaydor').count > 0 }
-#players = User.where(player_name: 'TM1')
-puts 'total players ' + players.count.to_s
-#grab all the column headers
-types = AdaData.where(gameName: 'KrystalsOfKaydor').distinct(:key)
-types.delete('KoKPlayerMovement') #for now exclude player movement.
-puts types.inspect
-examples = Array.new
-bar = ProgressBar.new 'gathering types', types.count
-types.each do |type|
-  ex = AdaData.where(key: type).first
-  if ex != nil
-    examples << ex
+player_list = CSV.open("csv/crystals/player_list.csv", 'r')
+players = Array.new
+player_list.each do |player_name|
+  player = User.where(player_name: player_name).first
+  if player != nil
+    players << player
   end
-  bar.inc
 end
-bar.finish
-puts examples.count
-puts examples.inspect
-all_attrs = Array.new
-bar = ProgressBar.new 'gathering attributes', examples.count
-examples.each do |e|
-  e.attributes.keys.each do |k|
-    all_attrs << k
-  end
-  bar.inc
-end
-bar.finish
-puts all_attrs.inspect
 
-bar = ProgressBar.new 'parsing players', players.count
+
 players.each do |play|
   data = play.data.where(gameName: 'KrystalsOfKaydor')
   if data.count > 0
-    CSV.open("csv/krystals/krystals_test_"+play.email+".csv", "w") do |csv|
+    types = data.distinct(:key)
+    types.delete('KoKPlayerMovement') #for now exclude player movement.
+    puts types.inspect
+    examples = Array.new
+    types.each do |type|
+      ex = data.where(key: type).first
+      if ex != nil
+        examples << ex
+      end
+    end
+    puts examples.count
+    puts examples.inspect
+    all_attrs = Array.new
+    examples.each do |e|
+      e.attributes.keys.each do |k|
+        all_attrs << k
+      end
+    end
+    puts all_attrs.inspect
+
+
+    CSV.open("csv/crystals/crystals_"+play.email+".csv", "w") do |csv|
       #puts play.email
       #puts data.count
      
@@ -56,6 +55,4 @@ players.each do |play|
       end
     end
   end
-  bar.inc
 end
-bar.finish

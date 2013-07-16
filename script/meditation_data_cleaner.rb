@@ -1,5 +1,5 @@
 require 'csv'
-require 'progressbar'
+#require 'progressbar'
 
 class StandardColumns
   attr_accessor :touch_types, :stages
@@ -11,19 +11,20 @@ class StandardColumns
 end
 
 class ShowAllPlayers
-  def run
-    players = User.select{|u| u.data.count > 0}
-    puts players.count
-    bar = ProgressBar.new 'players', players.count
+  def run player_list
+    #bar = ProgressBar.new 'players', player_list.count
     
-    csv = CSV.open('csv/meditation/meditation_totals.csv', 'w')
+    csv = CSV.open('csv/tenacity/tenacity_totals.csv', 'w')
     s_columns = StandardColumns.new
     csv << column_header + s_columns.touch_types + s_columns.stages
-    players.each do |user|
-        MeditatingPlayer.new(user).run csv, s_columns
-        bar.inc
+    player_list.each do |player_name|
+        user = User.where(player_name: player_name).first
+        if user != nil
+          MeditatingPlayer.new(user).run csv, s_columns
+        end
+        #bar.inc
     end
-    bar.finish
+   # bar.finish
     csv.close
 
   end
@@ -125,4 +126,6 @@ class MeditatingPlayer
 
 end
 
-ShowAllPlayers.new.run
+
+player_list = CSV.open("csv/tenacity/player_list.csv", 'r')
+ShowAllPlayers.new.run player_list
