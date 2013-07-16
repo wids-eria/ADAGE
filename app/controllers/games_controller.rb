@@ -4,7 +4,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    puts @game
+    puts @game.users.inspect
     @users = @game.users
     puts @users
     @average_time = 0
