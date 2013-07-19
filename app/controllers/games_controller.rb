@@ -4,9 +4,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    puts @game.users.inspect
     @users = @game.users
-    puts @users
     @average_time = 0
     if @users.count > 0
       @users.each do |user| 
@@ -47,8 +45,8 @@ class GamesController < ApplicationController
   end
 
   def create
-    game = Game.new(params[:game])
-    if game.save
+    @game = Game.new(params[:game])
+    if @game.save
       flash[:notice] = 'Game Added'
     else
       flash[:error] = 'Game name is not unique'

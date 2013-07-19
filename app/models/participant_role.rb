@@ -3,6 +3,6 @@ class ParticipantRole < Role
 
   attr_accessible :name, :game, :type, :user_ids
 
-    
+  has_many :assignments
   has_many :users, :through => :assignments
 end

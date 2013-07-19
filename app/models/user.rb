@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
   end
 
   def admin?
-    return !!self.roles.find_by_type('admin')
+    return !!self.roles.find_by_name('admin')
   end
 
 
