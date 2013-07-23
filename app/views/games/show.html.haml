@@ -10,7 +10,7 @@
   .span4
     %h2='Game Versions'
     %ul
-      - @game.schemas.each do |version|
+      - @game.implementations.each do |version|
         %li
           = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
             = version.name

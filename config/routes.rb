@@ -14,6 +14,8 @@ Ada::Application.routes.draw do
     collection do 
       post :tenacity_player_stats
       get :find_tenacity_player
+      get :data_by_version
+      get :export
     end
   end
 
