@@ -8,7 +8,11 @@ Ada::Application.routes.draw do
   match "data/heatmap" => "data#heatmap"
   match "user/user_data" => "users#get_data" 
 
-  resources :games
+  resources :games do
+    member do
+      post :search_users 
+    end
+  end
   resources :implementations
   resources :data do
     collection do 

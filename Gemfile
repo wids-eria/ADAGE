@@ -11,6 +11,7 @@ gem 'kaminari'
 gem 'therubyracer'
 gem 'cancan'
 gem 'omniauth'
+gem 'simple_form'
 gem 'schema_plus'
 gem 'httparty'
 

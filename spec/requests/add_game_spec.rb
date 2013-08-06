@@ -54,6 +54,7 @@ describe 'add a game' do
       click_link 'TestGame'
 
       fill_in 'implementation_name', :with => 'BETA_BUILD'
+
       click_button 'Add'
 
       page.should have_content('BETA_BUILD')

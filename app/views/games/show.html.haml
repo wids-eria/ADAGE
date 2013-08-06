@@ -1,8 +1,6 @@
 .row
   .span4
     %h2= @game.name
-    - if can? :manage, @game
-      = link_to 'Edit', edit_game_path, class:'btn'
     %br
     = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
       = 'Export all participant data'
@@ -14,6 +12,9 @@
         %li
           = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
             = version.name
+
+  .span4
+    = render partial: 'implementations/add', locals: {game: @game} 
 
   .span4
     = render partial: 'search_users_form'
