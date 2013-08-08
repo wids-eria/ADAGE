@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   validates :player_name, presence: true, uniqueness: {case_sensitive: false}
 
   has_many :assignments
-  has_many :roles, :through => :assignments
+  has_and_belongs_to_many :roles
   has_many :access_tokens
 
   def role?(role)

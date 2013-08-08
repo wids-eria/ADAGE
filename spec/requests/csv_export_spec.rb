@@ -8,6 +8,7 @@ describe 'Test the exporting of data as a csv' do
       @some_player = Fabricate :user
       @join = Assignment.new(user: @some_player, assigner: @user, role: @game.participant_role)
       @join.save
+      @some_player.roles << @game.participant_role
       @data = Fabricate :AdaData, user_id: @some_player.id, gameName: @game.name, implementation: @game.implementations.first.name
       visit game_path(@game)
  

@@ -1,8 +1,7 @@
 class ParticipantRole < Role
   belongs_to :game
 
-  attr_accessible :name, :game, :type, :user_ids
+  attr_accessible :name, :game, :type, :users
 
   has_many :assignments
-  has_many :users, :through => :assignments
 end

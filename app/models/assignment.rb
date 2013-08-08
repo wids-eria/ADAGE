@@ -8,6 +8,7 @@ class Assignment < ActiveRecord::Base
 
   attr_accessible :user, :role, :assigner  
 
+
 end
 
 

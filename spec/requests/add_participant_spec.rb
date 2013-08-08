@@ -14,18 +14,15 @@ describe 'add participants to a game' do
 
       click_link @game.name
 
-      save_and_open_page
-
       click_button 'Search'
 
-      save_and_open_page
 
       page.should have_content(@some_player.player_name)
 
       check @some_player.player_name
       
+      
       click_button 'Update Participants'
-
 
       page.should have_content(@game.name)
       page.should have_content(@some_player.player_name)
