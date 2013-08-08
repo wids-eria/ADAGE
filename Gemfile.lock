@@ -141,6 +141,7 @@ GEM
       hashie (~> 1.2)
       rack
     orm_adapter (0.0.7)
+    pacecar (1.5.3)
     passenger (3.0.11)
       daemon_controller (>= 0.2.5)
       fastthread (>= 1.0.1)
@@ -270,6 +271,7 @@ DEPENDENCIES
   launchy
   mongoid
   omniauth
+  pacecar
   passenger
   pg
   pry

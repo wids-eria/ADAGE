@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  include Pacecar
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -18,7 +19,8 @@ class User < ActiveRecord::Base
   before_validation :email_or_player_name, :on => :create
   validates :player_name, presence: true, uniqueness: {case_sensitive: false}
 
-  has_and_belongs_to_many :roles
+  has_many :assignments
+  has_many :roles, :through => :assignments
   has_many :access_tokens
 
   def role?(role)

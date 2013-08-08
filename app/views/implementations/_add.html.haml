@@ -1,7 +1,8 @@
+%h2= 'Add Version'
 = form_for Implementation.new(game: game), html: {id: "new_implementation#{game.id}"} do |s|
   %p
   = s.hidden_field :game_id
-  = s.label 'Game Version' 
+  = s.label 'name' 
   = s.text_field :name
   %p
   = s.submit 'Add'

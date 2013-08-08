@@ -48,7 +48,8 @@
             %td
               = user.consented 
             %td
-              - timeplayed =  user.data.last.created_at - user.data.first.created_at
-              = timeplayed
+              -unless user.data.empty?
+                - timeplayed =  user.data.last.created_at - user.data.first.created_at
+                = timeplayed
 
 

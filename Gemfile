@@ -14,6 +14,7 @@ gem 'omniauth'
 gem 'simple_form'
 gem 'schema_plus'
 gem 'httparty'
+gem 'pacecar'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.2'

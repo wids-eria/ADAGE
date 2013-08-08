@@ -8,6 +8,8 @@ Ada::Application.routes.draw do
   match "data/heatmap" => "data#heatmap"
   match "user/user_data" => "users#get_data" 
 
+  resources :roles
+  resources :participant_roles
   resources :games do
     member do
       post :search_users 
@@ -30,6 +32,9 @@ Ada::Application.routes.draw do
 
       get :reset_password_form
       put :reset_password
+    end
+     member do
+      get :data_by_game
     end
   end
 
