@@ -42,24 +42,4 @@ describe 'add a game' do
     end
   end
 
-  describe 'add an implementation to the game' do
-    it 'the implementation is added' do 
-      sign_in_user
-
-      visit new_game_path
-
-      fill_in 'Name', :with => 'TestGame'
-      click_button 'Add'
-
-      click_link 'TestGame'
-
-      fill_in 'implementation_name', :with => 'BETA_BUILD'
-
-      click_button 'Add'
-
-      page.should have_content('BETA_BUILD')
-    
-    end
-  end
-
 end
