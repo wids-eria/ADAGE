@@ -1,0 +1,11 @@
+- if user_signed_in?
+  .login_container.floatleft
+    .floatleft{:style => "border-left: 1px dotted #444; padding-left: 10px;"}
+      .playername
+        = current_user.player_name
+      .editprofilelink
+        = link_to 'edit profile', edit_user_registration_url
+      .logoutlink
+        = link_to 'logout', destroy_user_session_url, :method => :delete
+      -if current_user.admin?
+        = link_to 'Admin Tools', admin_users_path

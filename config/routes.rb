@@ -25,11 +25,12 @@ Ada::Application.routes.draw do
     end
   end
 
-  resources :users, :only => [:index] do
+  resources :users do
     collection do
       get :new_sequence
       post :create_sequence
-
+      post :find
+      get :admin
       get :reset_password_form
       put :reset_password
     end

@@ -15,9 +15,9 @@ class UsersController < ApplicationController
      @user = User.find(params[:id])
      @user.attributes = params[:user]
      @user.roles.each do |role|
-       @join = RolesUser.where(role_id: role.id, user_id: @user.id).first
+       @join = Assignment.where(role_id: role.id, user_id: @user.id).first
        if @join == nil
-        @join = RolesUser.new :assigner => current_user, :role => role, :user => @user 
+        @join = Assignment.new :assigner => current_user, :role => role, :user => @user 
         @join.save
        elsif @join.assigner_id == nil
          @join.assigner_id = current_user.id
@@ -39,6 +39,20 @@ class UsersController < ApplicationController
       format.json { render :json => User.all }
     end
   end
+
+
+  def find
+    @user = User.where(player_name: params[:player_name]).first
+    respond_to do |format|
+      if @user.present?
+        format.any { redirect_to user_path(@user) }
+      else
+        flash[:error] = 'Player name not found'
+        format.any { redirect_to :back }
+      end
+    end
+  end
+  
 
   def authenticate_for_token
     @user = User.with_login(params[:email]).first

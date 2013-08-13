@@ -21,7 +21,9 @@ html{
     width:100%;
 }
 
-body { }
+body { 
+    background:url(bg_tile.png);
+}
 
 
 
