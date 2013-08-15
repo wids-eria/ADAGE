@@ -2,9 +2,9 @@ require 'csv'
 
 players=User.all
 players.each do |play|
-  data = play.data.where(gameName: 'Pathfinder')
+  data = play.data.where(gameName: 'FairPlay').where(schema: 'Beta-Build-04-08-2013')
   if data.count > 0
-    CSV.open("csv/pathfinder_test_"+play.email+"_"+play.authentication_token+".csv", "w") do |csv|
+    CSV.open("csv/fairplay/pathfinder_test_"+play.email+"_"+play.authentication_token+".csv", "w") do |csv|
       puts data.count
       keys = Hash.new
       data.each do |log_entry|

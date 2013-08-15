@@ -93,9 +93,10 @@ class DataController < ApplicationController
     @crystals_sessions = Hash.new
     @timer_sessions = Hash.new
     
-    minds = @user.data.where(gameName: 'Tenacity-Meditation')
-    crystals = @user.data.where(gameName: 'KrystalsOfKaydor')
-    timers = @user.data.where(gameName: 'App Timer') 
+    minds = @user.data.where(gameName: 'Tenacity-Meditation').asc(:timestamp)
+    crystals = @user.data.where(gameName: 'KrystalsOfKaydor').asc(:timestamp)
+    timers = @user.data.where(gameName: 'App Timer').asc(:timestamp)
+
 
     if minds.count > 0
       sessions = minds.distinct(:session_token)

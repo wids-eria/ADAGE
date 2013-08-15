@@ -5,8 +5,8 @@ class StandardColumns
   attr_accessor :touch_types, :stages
 
   def initialize
-    self.touch_types = AdaData.where(key: 'TenTouchEvent', schema: 'BETA-TESTING-3-14-2013').distinct(:touchType)
-    self.stages = AdaData.where(key: 'TenStageStart', schema: 'BETA-TESTING-3-14-2013').distinct(:name)
+    self.touch_types = AdaData.where(key: 'TenTouchEvent').distinct(:touchType)
+    self.stages = AdaData.where(key: 'TenStageStart').distinct(:name)
   end
 end
 
@@ -49,7 +49,7 @@ class MeditatingPlayer
 
   def run csv, s_columns
 
-    data = user.data.where(schema: 'BETA-TESTING-3-14-2013')
+    data = user.data
   
     if data.count == 0
      return;
