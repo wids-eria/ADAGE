@@ -3,7 +3,6 @@ class ApplicationController < ActionController::Base
 
   rescue_from CanCan::AccessDenied do |exception|  
     flash[:error] = exception.message
-    puts exception.message
     redirect_to profile_url  
   end  
 
