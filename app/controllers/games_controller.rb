@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   load_and_authorize_resource  
   before_filter :authenticate_user!
+  layout 'blank'
 
   def show
     @game = Game.find(params[:id])

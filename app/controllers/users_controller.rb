@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   respond_to :html, :json
-
+  layout 'blank'
   before_filter :authenticate_user!, except: [:authenticate_for_token]
 
   def show
