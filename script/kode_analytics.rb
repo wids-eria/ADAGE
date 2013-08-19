@@ -1,6 +1,6 @@
-require 'progressbar'
 require 'json'
 require 'csv'
+require 'pathname'
 
 class Student
   attr_accessor :user
@@ -87,7 +87,9 @@ class Student
     if kode_logs.count > 0
       kode_logs.each do |log|
         if log.respond_to?('kode')
-          kode = log.kode['kode']
+          if log.kode != nil
+            kode = log.kode['kode']
+          end
         else
           kode_string = log.data
           kode_string = '{'+kode_string+'}'
@@ -115,7 +117,7 @@ class Student
           end
         end
 
-        if kode != nil
+        if kode != nil && kode['levelId'] != nil
           actor = kode['actorName'] + kode['levelId']
           level = kode['levelId']
           #how many times have they switched back and forth between kodus while in one level
@@ -144,6 +146,7 @@ class Student
             end
           end
           csv << [user.player_name, log.schema, 
+                  log.timestamp.gsub(/[^0-9]/, '')[0..-4].to_i.to_s, 
                   Time.at(log.timestamp.gsub(/[^0-9]/, '')[0..-4].to_i), 
                   kode['levelId'], actor, 
                   revision_count[actor], 
@@ -171,10 +174,10 @@ end
 class AnalyizeKode
 
   def run name, students
-    #bar = ProgressBar.new 'students', students.count
     csv = CSV.open("csv/kodu/"+name+".csv", "w") 
     csv << ['player name', 'schema', 
-            'timestamp', 
+            'Epoch Time',
+            'Human Time', 
             'Level Id', 
             'actor name', 
             'revision count', 
@@ -189,6 +192,7 @@ class AnalyizeKode
             'sensor action pairs']
     total_lost = 0
     students.each do |student_name|
+      puts "looking for player " + student_name.first
       user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
       if user != nil
         not_parsed = Student.new(user).run csv
@@ -196,7 +200,6 @@ class AnalyizeKode
       else
         puts student_name.first + " NOT FOUND"
       end
-      #bar.inc
     end
     puts total_lost.to_s + " entries did not parse"
     csv.close
@@ -207,6 +210,7 @@ class AnalyizeKode
     students.each do |student_name|
       user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
       if user != nil
+        puts "dump sequence for " + student_name
         Student.new(user).dump_kode_sequence
       end
     end
@@ -214,15 +218,11 @@ class AnalyizeKode
 
 end
 
-sparta = CSV.open("csv/kodu/sections/sparta.csv", 'r')
-peagle = CSV.open("csv/kodu/sections/peagle.csv", 'r')
-glacialD = CSV.open("csv/kodu/sections/glacialD.csv", 'r')
-waunakee = CSV.open("csv/kodu/sections/waunakee.csv", 'r')
-#AnalyizeKode.new.run 'Sparta_kode_parsed', sparta
-#AnalyizeKode.new.run 'palmyra-eagle_kode_parsed', peagle
-#AnalyizeKode.new.run 'glacial_drummlin_kode_parsed', glacialD
-#AnalyizeKode.new.run 'waunakee_kode_parsed', waunakee 
-AnalyizeKode.new.dump_kode_sequence sparta 
-AnalyizeKode.new.dump_kode_sequence peagle
-AnalyizeKode.new.dump_kode_sequence glacialD
-AnalyizeKode.new.dump_kode_sequence waunakee
+a_kode = AnalyizeKode.new
+Dir.glob('./csv/kodu/sections/*.csv') do |section_file|
+  puts section_file
+  name = Pathname.new(section_file).basename.to_s
+  file = CSV.open(section_file, 'r')
+  a_kode.run "parsed_"+name, file 
+  #a_kode.dump_kode_sequence file
+end
