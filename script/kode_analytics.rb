@@ -3,10 +3,11 @@ require 'csv'
 require 'pathname'
 
 class Student
-  attr_accessor :user
+  attr_accessor :user, :section_name
 
-  def initialize(user)
+  def initialize(user, name)
     self.user = user 
+    self.section_name = name
   end
 
   def dump_kode_sequence
@@ -75,6 +76,9 @@ class Student
   end
   
   def run csv
+
+     log_file = File.open('csv/kodu/log.txt', 'a') 
+
     
     #find all the kode entries
     kode_logs = user.data.where(key: 'Kode')
@@ -107,15 +111,39 @@ class Student
             start_say = kode_string.index('hearText')
           end
 
+          
           kode_string = kode_string.gsub("'",'"')
           begin
             kode = JSON.parse(kode_string)['kode']
           rescue
-            puts "WILL NOT PARSE"
-            puts kode_string
+            log_file << user.player_name + " " + section_name + " WILL NOT PARSE " + log.schema.to_s +   "\n"
+            log_file << "*"*10 + "\n"
+            puts "WILL NOT PARSE " + log.schema.to_s +   "\n"
             not_parsed = not_parsed + 1
+
+            #page_start = kode_string.index('pages')
+            #page_end = kode_string.index(':', page_start)
+            #kode_string = kode_string[0..page_end] + '[' + kode_string[page_end+1..-1]
+            #page_start = kode_string.index('pageNumber')
+            #page_end = kode_string.index(':', page_start)
+            #page_start = kode_string.index('pageNumber',page_end)
+            #while page_start != nil
+            #  kode_string = kode_string[0..page_start-2] + '},{' + kode_string[page_start-1..-1]
+            #  page_end = kode_string.index(':', page_start)
+            #  page_start = kode_string.index('pageNumber', page_end)
+            #end
+            #kode_string = kode_string[0..-3] + ']' + kode_string[-3..-1]
+
+            #begin
+            #  kode = JSON.parse(kode_string)['kode']
+            #rescue
+            #  puts "STILL WILL NOT PARSE"
+            #  puts kode_string
+            #end
+
           end
         end
+
 
         if kode != nil && kode['levelId'] != nil
           actor = kode['actorName'] + kode['levelId']
@@ -174,6 +202,8 @@ end
 class AnalyizeKode
 
   def run name, students
+    
+    log_file = File.open('csv/kodu/'+name+'_not_found.txt', 'w') 
     csv = CSV.open("csv/kodu/"+name+".csv", "w") 
     csv << ['player name', 'schema', 
             'Epoch Time',
@@ -194,15 +224,21 @@ class AnalyizeKode
     students.each do |student_name|
       puts "looking for player " + student_name.first
       user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
+      #this is stupid
+      if user == nil
+        temp_name = student_name.first + " "
+        user = User.where(["lower(player_name) = :login", login: temp_name]).first
+      end
       if user != nil
-        not_parsed = Student.new(user).run csv
+        not_parsed = Student.new(user, name).run csv
         total_lost = total_lost + not_parsed
       else
-        puts student_name.first + " NOT FOUND"
+        log_file << name + " : " + student_name.first + " NOT FOUND\n"
       end
     end
-    puts total_lost.to_s + " entries did not parse"
+    log_file << total_lost.to_s + " entries did not parse"
     csv.close
+    log_file.close
 
   end
 
