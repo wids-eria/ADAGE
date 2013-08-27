@@ -61,8 +61,7 @@ class DataController < ApplicationController
       end
     end
 
-    return_value = {}
-    respond_with return_value, :location => ''
+    respond_with @data
   end
 
   
