@@ -52,16 +52,28 @@ class DataController < ApplicationController
 
   def create
     @data = []
+    error = false
     if params[:data]
       params[:data].each do |datum|
         data = AdaData.new(datum)
         data.user = current_user
-        data.save
-        @data << data
+        if data.save
+          @data << data
+        else
+          error = true
+        end
       end
     end
 
-    respond_with @data
+    return_value = {}
+    if error
+      status = 400 
+    else
+      status = 201 
+    end
+    respond_to do |format|
+      format.all { redirect_to :root, :status => status} 
+    end
   end
 
   

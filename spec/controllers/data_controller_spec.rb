@@ -22,10 +22,12 @@ describe DataController do
 
     it "creates mongo records from incoming json" do
       lambda do
-        post :create, "data" => [{"one" => 1}, {"two" => 2}], "format" => "json"
+        post :create, "data" => [{"one" => 1}, {"two" => 2}]
         response.status.should be(201)
       end.should change(AdaData, :count).by(2)
       assigns(:data).first.reload.user.should == user
     end
+
   end
+
 end
