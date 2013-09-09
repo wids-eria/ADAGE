@@ -19,6 +19,25 @@ class OauthController < ApplicationController
     render :json => {:access_token => access_token.consumer_secret  }
   end
 
+  def authorize_unity
+    user = User.with_login(params[:email]).first
+    if user != nil and user.valid_password? params[:password]
+      sign_in user
+    else
+      render :json => {:error => "User not found"}
+    end
+
+    application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
+    if application.nil?
+      render :json => {:error => "Could not find application." }
+      return
+    end
+
+    access_token = current_user.access_token.create({client: application})
+    render :json => {:access_token => access_tokne.consumer_secret }
+   
+  end
+
   def failure
     render :text => "ERROR: #{params[:message]}"
   end
