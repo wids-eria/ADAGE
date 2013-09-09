@@ -33,8 +33,8 @@ class OauthController < ApplicationController
       return
     end
 
-    access_token = current_user.access_token.create({client: application})
-    render :json => {:access_token => access_tokne.consumer_secret }
+    access_token = current_user.access_tokens.create({client: application})
+    render :json => {:access_token => access_token.consumer_secret }
    
   end
 
