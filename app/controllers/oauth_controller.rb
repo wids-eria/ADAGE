@@ -1,5 +1,5 @@
 class OauthController < ApplicationController
-  before_filter :authenticate_user!, except: [:access_token, :user]
+  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity]
   skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
 
   def authorize
