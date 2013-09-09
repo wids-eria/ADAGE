@@ -44,6 +44,7 @@ Ada::Application.routes.draw do
   get '/auth/ada/access_token' => 'oauth#access_token'
   get '/auth/ada/user' => 'oauth#user'
   post '/oauth/token' => 'oauth#access_token'
+  get '/auth/authorize_unity' => 'oauth#authorize_unity'
 
   root :to => 'welcome#index'
 end
