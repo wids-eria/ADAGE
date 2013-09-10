@@ -51,6 +51,7 @@ class DataController < ApplicationController
   end
 
   def create
+
     @data = []
     error = false
     if params[:data]

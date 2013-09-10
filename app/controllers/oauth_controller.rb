@@ -25,6 +25,7 @@ class OauthController < ApplicationController
       sign_in user
     else
       render :json => {:error => "User not found"}
+      return
     end
 
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
@@ -33,7 +34,7 @@ class OauthController < ApplicationController
       return
     end
 
-    access_token = current_user.access_tokens.create({client: application})
+    access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
     render :json => {:access_token => access_token.consumer_secret }
    
   end
