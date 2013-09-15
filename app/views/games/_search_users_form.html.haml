@@ -1,0 +1,10 @@
+%h2= 'Find Users'
+= simple_form_for UserSearch.new, :url => search_users_game_path do |f|
+  %p
+  = f.input :substring 
+  %p
+  = f.input :consented, :as => :boolean 
+  %p
+  = f.submit 'Search'
+
+

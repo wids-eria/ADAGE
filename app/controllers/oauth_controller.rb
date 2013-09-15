@@ -1,5 +1,5 @@
 class OauthController < ApplicationController
-  before_filter :authenticate_user!, except: [:access_token, :user]
+  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity]
   skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
 
   def authorize
@@ -17,6 +17,26 @@ class OauthController < ApplicationController
 
     access_token = AccessToken.authenticate(params[:code], application.id)
     render :json => {:access_token => access_token.consumer_secret  }
+  end
+
+  def authorize_unity
+    user = User.with_login(params[:email]).first
+    if user != nil and user.valid_password? params[:password]
+      sign_in user
+    else
+      render :json => {:error => "User not found"}
+      return
+    end
+
+    application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
+    if application.nil?
+      render :json => {:error => "Could not find application." }
+      return
+    end
+
+    access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
+    render :json => {:access_token => access_token.consumer_secret }
+   
   end
 
   def failure

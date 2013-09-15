@@ -729,6 +729,52 @@ END HEADER */
 
 
 
+/* ADA ERROR STYLE */
+
+
+#error_explanation ul li{
+    font-family:museo-sans;
+    text-align:center;
+    color:#E74C3C;
+    font-size:12px;
+    letter-spacing:1px;
+    padding:0 0 5px 0;
+}
+
+.flashbox{
+    background-color: #95a5a6;
+    padding: 10px 16px;
+    border-radius: 2px;
+    color: #eee;
+    font-family: museo-sans;
+    text-align: center;
+    width: 400px;
+    margin-bottom: 10px;
+}
+
+.flashbox.notice{
+    border: 2px solid #04e028;
+    background: rgba(4,224,40,.25);
+}
+
+.flashbox.alert{
+    border: 2px solid #e74c3c;
+    background: rgba(231,76,60,.25);
+}
+
+
+/* END ADA ERROR STYLE */
+
+
+
+
+
+
+
+
+
+
+
 .navgation { }
    .next-posts { }
    .prev-posts { }

@@ -2,6 +2,7 @@ require "rvm/capistrano"
 
 set :rvm_ruby_string, '1.9.3'
 set :rvm_type, :system
+set :rvm_path, "/usr/local/rvm"
 
 require 'bundler/capistrano'
 load 'deploy/assets'
@@ -17,7 +18,7 @@ set :scm, :git
 set :user, :deploy
 ssh_options[:forward_agent] = true
 
-set :deploy_to, "~/applications/#{application}"
+set :deploy_to, "/home/deploy/applications/#{application}"
 set :deploy_via, :remote_cache
 set :use_sudo, false
 
@@ -28,6 +29,7 @@ set :normalize_asset_timestamps, false
 
 after 'deploy:finalize_update', 'deploy:symlink_db'
 after 'deploy:finalize_update', 'deploy:symlink_unity_crossdomain'
+after 'deploy:finalize_update', 'deploy:symlink_external_site_config'
 
 namespace :deploy do
   desc "Symlinks the database.yml"
@@ -39,6 +41,11 @@ namespace :deploy do
   desc "Symlink crossdomain.xml"
   task :symlink_unity_crossdomain do
     run "ln -nfs #{deploy_to}/shared/config/crossdomain.xml #{release_path}/public/crossdomain.xml"
+  end
+
+  desc "Symlink external site config"
+  task :symlink_external_site_config do
+    run "ln -nfs #{deploy_to}/shared/config/initializers/external_hosts.rb #{release_path}/config/initializers/external_hosts.rb"
   end
 
 

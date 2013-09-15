@@ -1,0 +1,19 @@
+<% if user_signed_in? %>
+  <div class="login_container floatleft">
+    <div class="floatleft" style="border-left: 1px dotted #444; padding-left: 10px;">
+      <div class="playername">
+        <%= current_user.player_name %>
+      </div>
+      <div class="editprofilelink">
+        <%= link_to 'edit profile', edit_user_registration_url %>
+      </div>
+      <div class="editprofilelink">
+        <%= link_to 'player stats', stats_user_path(current_user)%>
+      </div>
+      <div class="logoutlink">
+        <%= link_to 'logout', destroy_user_session_url, :method => :delete %>
+      </div>
+    </div>
+  </div>
+<% end %>
+

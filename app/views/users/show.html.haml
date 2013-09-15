@@ -1,0 +1,16 @@
+%ul
+  %h1= @user.player_name
+  %h2= @user.email
+  %h2= 'Consented: ' + @user.consented.to_s
+  - if can? :manage, @user
+    = link_to 'Edit', edit_user_path
+  %br
+  %br
+  %br
+  %h2= 'Roles:'
+  -@user.roles.each do |role|
+    %br
+    - if role.game_id != nil
+      = link_to role.game.name, game_path(role.game)
+    - else
+      = role.name
