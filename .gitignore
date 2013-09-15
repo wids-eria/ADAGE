@@ -16,6 +16,7 @@
 /config/database.yml
 /config/mongoid.yml
 /config/initializers/external_hosts.rb
+/config/initializers/omniauth.rb
 /csv/*.csv
 /*.csv
 

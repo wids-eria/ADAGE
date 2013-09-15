@@ -46,5 +46,7 @@ Ada::Application.routes.draw do
   post '/oauth/token' => 'oauth#access_token'
   get '/auth/authorize_unity' => 'oauth#authorize_unity'
 
+  get '/auth/:provider/callback', to: 'sessions#create'
+
   root :to => 'welcome#index'
 end
