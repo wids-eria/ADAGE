@@ -12,9 +12,6 @@
         = f.check_box :remember_me, class: 'floatright remember_me_checkbox'
         = f.label :remember_me, class: 'floatright'
 
-.login_container.floatleft
-  .sign_in_button.floatleft
-    = link_to 'Sign in with Facebook', '/auth/facebook'
 .sign_up_container
   = link_to 'Sign Up', new_user_registration_url, class: 'floatleft'
   = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'
