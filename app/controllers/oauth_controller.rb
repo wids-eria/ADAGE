@@ -24,7 +24,7 @@ class OauthController < ApplicationController
     if user != nil and user.valid_password? params[:password]
       sign_in user
     else
-      render :json => {:error => "User not found"}
+      redirect_to '/auth/failure', :status => 401, :message => 'incorrect player name or password'    
       return
     end
 
@@ -41,6 +41,23 @@ class OauthController < ApplicationController
 
   def failure
     render :text => "ERROR: #{params[:message]}"
+  end
+
+  def unity_user
+    unless current_user
+      redirect_to '/auth/failure', :message => 'player not found'
+    end
+
+    hash = {
+      provider: 'ADAGE',
+      uid: current_user.id.to_s,
+      player_name: current_user.player_name,
+      email: current_user.email
+    }
+    respond_to do |format|
+      format.json { render :json => hash.to_json }
+    end
+
   end
 
   def user

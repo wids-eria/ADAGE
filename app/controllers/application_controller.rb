@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
 
   def oauth_access_token
     #check the header for use of an access token
-    authorization = request.env["HTTP_AUTHORIZATION"] 
+    authorization = request.env["HTTP_AUTHORIZATION"]
     if authorization != nil
       token = authorization.split().last
       access_token = AccessToken.where(consumer_secret: token).first
