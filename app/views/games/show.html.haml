@@ -20,6 +20,8 @@
 .row
   .span12
     %h2='Players'
+  .span12
+    = link_to 'Graph something', select_graph_params_game_path(@game)
 .row
   .span6
     %h3='Total number of players: ' + @users.count.to_s

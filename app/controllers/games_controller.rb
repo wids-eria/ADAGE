@@ -18,6 +18,34 @@ class GamesController < ApplicationController
 
   end
 
+  def select_graph_params
+    @game = Game.find(params[:id]) 
+    @data = AdaData.where(gameName: @game.name)
+    @types = @data.distinct(:key)
+    if params[:graph_params] != nil
+      @graph_params = GraphParams.new(params[:graph_params])
+    else
+      @graph_params = GraphParams.new
+    end
+
+    @values = Array.new
+    if @graph_params.key != nil
+      @values = @data.where(key: @graph_params.key).last.attributes.keys
+    end 
+    
+
+  end
+
+  def value_over_time
+    
+    @game = Game.find(params[:id])
+    @players = Array.new
+    #@game.users.each do |user|
+     # user_data = user.data.where(
+  
+  
+  end
+
   def search_users
     @game = Game.find(params[:id])
     @user_search = UserSearch.new params[:user_search]

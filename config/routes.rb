@@ -13,6 +13,8 @@ Ada::Application.routes.draw do
   resources :games do
     member do
       post :search_users 
+      get :select_graph_params
+      post :value_over_time
     end
   end
   resources :implementations
