@@ -30,6 +30,7 @@ set :normalize_asset_timestamps, false
 after 'deploy:finalize_update', 'deploy:symlink_db'
 after 'deploy:finalize_update', 'deploy:symlink_unity_crossdomain'
 after 'deploy:finalize_update', 'deploy:symlink_external_site_config'
+after 'deploy:finalize_update', 'deploy:symlink_secret_token'
 
 namespace :deploy do
   desc "Symlinks the database.yml"
