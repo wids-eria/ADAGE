@@ -158,32 +158,28 @@ class DataController < ApplicationController
     if timers.count > 0
       start_time = nil
       end_time = nil
+      last_key = ''
       timers.each do |log|
         if log.key == 'LogStart'
+          last_key = log.key
           start_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
         elsif log.key == 'LogStopNormal'
-          end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-          minutes = ((end_time - start_time)/1.minute).round 
-          if @timer_sessions[hash] != nil
-            @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
-          else
-            @timer_sessions[hash] = minutes
-          end
+          if last_key != log.key 
+            end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+            hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+            minutes = ((end_time - start_time)/1.minute).round 
+            if @timer_sessions[hash] != nil
+              @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
+            else
+              @timer_sessions[hash] = minutes
+            end
 
-          @timer_time = @timer_time + minutes
+            @timer_time = @timer_time + minutes
+          end
+          last_key = log.key
 
         else
-          end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-          minutes = ((end_time - start_time)/1.minute).round 
-          if @timer_sessions[hash] != nil
-            @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
-          else
-            @timer_sessions[hash] = minutes
-          end
-
-          @timer_time = @timer_time + minutes
+          puts 'unknown log type!'
         end
       end
       @timer_count = @timer_sessions.count 

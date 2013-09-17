@@ -17,6 +17,7 @@
 /config/mongoid.yml
 /config/initializers/external_hosts.rb
 /config/initializers/omniauth.rb
+/config/initializers/secret_token.rb
 /csv/*.csv
 /*.csv
 

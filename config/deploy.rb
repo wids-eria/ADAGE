@@ -48,6 +48,12 @@ namespace :deploy do
     run "ln -nfs #{deploy_to}/shared/config/initializers/external_hosts.rb #{release_path}/config/initializers/external_hosts.rb"
   end
 
+  desc "Symlink secret_token config"
+  task :symlink_secret_token do
+    run "ln -nfs #{deploy_to}/shared/config/initializers/secret_token.rb #{release_path}/config/initializers/secret_token.rb"
+  end
+
+
 
   task :start, :roles => :app, :except => { :no_release => true } do
     run "cd #{current_path} && touch tmp/restart.txt"
