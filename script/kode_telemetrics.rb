@@ -172,7 +172,6 @@ class Student
           #if the current kode is not in the same group as the last, then log the data
           unless last_kodu.nil?
             csv << [user.player_name,
-                    level,
                     kode['timestamp'].gsub(/[^0-9]/, '')[0..-4].to_i.to_s,
                     actor,
                     total_pages,
@@ -263,7 +262,6 @@ class AnalyizeKode
     log_file = File.open('script/csv/kodu/'+name+'_not_found.txt', 'w')
     csv = CSV.open("script/csv/kodu/"+name+"", "w")
     csv << ["username",
-            "current_file",
             "timestamp",
             "current_kodu",
             "#pages",
