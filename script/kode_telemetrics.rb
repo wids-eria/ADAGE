@@ -1,4 +1,4 @@
-
+9
 require 'json'
 require 'csv'
 require 'pathname'
@@ -78,9 +78,10 @@ class Student
 
     #find all the kode entries
     kode_logs = user.data.where(key: 'Kode')
-
+    not_parsed = 0
     kodes = Array.new
     #Reform the broken JSON and parse it into a mkode object
+
     if kode_logs.count > 0
 
       kode_logs.each do |log|
@@ -125,12 +126,12 @@ class Student
     temp = Array.new
 
     #Map all kode json objects to an array of unique IDS
-    kodu_ids = kodes.map{|kode| kode['actorName']+kode['levelId']}.uniq
+    kodu_ids = kodes.map{|kode| kode['actorName'].to_s+kode['levelId'].to_s}.uniq
 
     #Group Kodu by unique level id and put it in temp
     kodu_ids.each do |id|
       kodes.each do |kode|
-        if (kode['actorName']+kode['levelId']) == id
+        if (kode['actorName'].to_s+kode['levelId'].to_s) == id
           temp << kode
         end
       end
@@ -315,7 +316,6 @@ Dir.glob('./script/csv/kodu/sections/*.csv') do |section_file|
   file = CSV.open(section_file, 'r')
   a_kode.run "parsed_"+name, file
   #a_kode.dump_kode_sequence file
-  break
 end
 
 puts "Finished"
