@@ -261,7 +261,7 @@ class AnalyizeKode
 
   def run name, students
     log_file = File.open('script/csv/kodu/'+name+'_not_found.txt', 'w')
-    csv = CSV.open("script/csv/kodu/"+name+".csv", "w")
+    csv = CSV.open("script/csv/kodu/"+name+"", "w")
     csv << ["username",
             "current_file",
             "timestamp",
