@@ -23,3 +23,7 @@
 # Ignore all os stuff
 .DS_Store
 /script/dumped_strings/*.txt
+/script/csv/
+*.sql
+dump/
+config/initializers/secret_token.rb
