@@ -120,11 +120,13 @@ class Student
             not_parsed = not_parsed + 1
           end
         end
+
       end
+
     end
 
     temp = Array.new
-
+=begin
     #Map all kode json objects to an array of unique IDS
     kodu_ids = kodes.map{|kode| kode['actorName'].to_s+kode['levelId'].to_s}.uniq
 
@@ -137,6 +139,7 @@ class Student
       end
     end
     kodes = temp
+=end
 
     revision_count = Hash.new
     kode = nil
@@ -162,44 +165,24 @@ class Student
     actions = Array.new
     dowhen = Array.new
 
-    last_kodu = nil
+
     kodes.each do |kode|
       if kode != nil && kode['levelId'] != nil
         actor = kode['actorName'] + kode['levelId']
         level = kode['levelId']
 
-        if actor != last_kodu or last_kodu.nil?
-          #if the current kode is not in the same group as the last, then log the data
-          unless last_kodu.nil?
-            csv << [user.player_name,
-                    kode['timestamp'].gsub(/[^0-9]/, '')[0..-4].to_i.to_s,
-                    actor,
-                    total_pages,
-                    max_page_length,
-                    (Float(total_kode_length)/total_pages).to_s,
-                    other_current_kodi,
-                    actions.uniq.count,
-                    sensors.uniq.count,
-                    total_kode_length,
-                    max_indentation]
-          end
+        #reinit values for each unique group with same kodu ID
+        total_kode_length = 0
+        max_indentation = 0
+        max_page_length = 0
+        total_pages = 0
+        total_indentation = 0
+        other_current_kodi = 0
 
-          #reinit values for each unique group with same kodu ID
-          last_kodu = actor
-          total_kode_length = 0
-          max_indentation = 0
-          max_page_length = 0
-          total_pages = 0
-          total_indentation = 0
-          other_current_kodi = 0
+        sensors = Array.new
+        actions = Array.new
+        dowhen = Array.new
 
-          sensors = Array.new
-          actions = Array.new
-          dowhen = Array.new
-        else
-          other_current_kodi += 1
-          endgroup = false
-        end
 
         #how many times have they switched back and forth between kodus while in one level
         if last_actor != nil
@@ -247,11 +230,18 @@ class Student
           total_kode_length += page['lines'].length
         end
 
+        csv << [user.player_name,
+        kode['timestamp'].gsub(/[^0-9]/, '')[0..-4].to_i.to_s,
+        actor,
+        total_pages,
+        max_page_length,
+        (Float(total_kode_length)/total_pages).to_s,
+        actions.uniq.count,
+        sensors.uniq.count,
+        total_kode_length,
+        max_indentation]
       end
-
-
     end
-
     return not_parsed
   end
 end
@@ -267,7 +257,6 @@ class AnalyizeKode
             "#pages",
             "max_page_length",
             "avg_page_length",
-            "#other_current_kodi",
             "#distinct_action_primitives",
             "#distinct_sensor_primitives",
             "kode_length",
