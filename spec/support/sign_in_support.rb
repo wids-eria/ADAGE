@@ -31,7 +31,7 @@ module ValidUserRequestHelper
   def sign_in_player
     Role.create(name: 'player')
     Role.create(name: 'admin')
-    @user = Fabricate :user, player_name: 'player', password: 'pass1234', roles: [Role.where(name: 'player').first] 
+    @user = Fabricate :user, player_name: 'Mock Man', email: 'mock@nomail.com', password: 'pass1234', roles: [Role.where(name: 'player').first] 
     visit root_url
 
     fill_in 'Login', with: @user.player_name

@@ -16,6 +16,7 @@ gem 'simple_form'
 gem 'schema_plus'
 gem 'httparty'
 gem 'pacecar'
+gem 'figaro'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.2'

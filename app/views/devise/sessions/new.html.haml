@@ -13,5 +13,9 @@
         = f.label :remember_me, class: 'floatright'
 
 .sign_up_container
+  .field_container
+    = link_to 'Connect with Facebook', user_omniauth_authorize_path(:facebook), class: 'floatleft'
+
+.sign_up_container
   = link_to 'Sign Up', new_user_registration_url, class: 'floatleft'
   = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'

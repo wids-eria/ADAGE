@@ -31,6 +31,7 @@ after 'deploy:finalize_update', 'deploy:symlink_db'
 after 'deploy:finalize_update', 'deploy:symlink_unity_crossdomain'
 after 'deploy:finalize_update', 'deploy:symlink_external_site_config'
 after 'deploy:finalize_update', 'deploy:symlink_secret_token'
+after 'deploy:finalize_update', 'deploy:symlink_devise'
 
 namespace :deploy do
   desc "Symlinks the database.yml"
@@ -52,6 +53,11 @@ namespace :deploy do
   desc "Symlink secret_token config"
   task :symlink_secret_token do
     run "ln -nfs #{deploy_to}/shared/config/initializers/secret_token.rb #{release_path}/config/initializers/secret_token.rb"
+  end
+
+  desc "Symlink devise config"
+  task :symlink_secret_token do
+    run "ln -nfs #{deploy_to}/shared/config/initializers/devise.rb #{release_path}/config/initializers/devise.rb"
   end
 
 

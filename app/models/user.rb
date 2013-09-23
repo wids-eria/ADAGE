@@ -3,7 +3,8 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable,
+         :recoverable, :rememberable, :trackable, :validatable, 
+         :omniauthable,
          :token_authenticatable, :authentication_keys => [:login]
 
   before_save :ensure_authentication_token
@@ -22,6 +23,7 @@ class User < ActiveRecord::Base
   has_many :assignments
   has_and_belongs_to_many :roles
   has_many :access_tokens
+  has_many :social_access_tokens
 
   def role?(role)
       return !!self.roles.find_by_name(role.name)
@@ -54,6 +56,34 @@ class User < ActiveRecord::Base
     conditions = warden_conditions.dup
     login = conditions.delete(:login)
     where(conditions).with_login(login).first
+  end
+
+  def self.find_for_facebook_oauth(auth, signed_in_resource=nil)
+    user = User.where(email: auth.info.email).first
+    
+    if user.blank?
+      password =  Devise.friendly_token[0,20]
+      user = User.create(player_name:auth.extra.raw_info.name,
+                          email:auth.info.email,
+                           password:password,
+                           password_confirm:password
+                        )
+    end
+
+
+    fb_access = user.social_access_tokens.where(provider: auth.provider)
+    if fb_access.present?
+      fb_access.update(auth.access_token, auth.expires_at)
+    else
+      fb_access = SocialAccessToken.create(
+        user: user, 
+        provider: auth.provider, 
+        uid: auth.uid, 
+        access_token: auth.credentials.token, 
+        expired_at: auth.credentials.expires_at
+      )
+    end
+    user
   end
 
   private

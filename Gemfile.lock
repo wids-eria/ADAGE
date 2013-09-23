@@ -92,6 +92,9 @@ GEM
       multipart-post (~> 1.2.0)
     fastthread (1.0.7)
     ffi (1.0.11)
+    figaro (0.7.0)
+      bundler (~> 1.0)
+      rails (>= 3, < 5)
     gherkin (2.7.1)
       json (>= 1.4.6)
     grit (2.5.0)
@@ -280,6 +283,7 @@ DEPENDENCIES
   decent_exposure
   devise (= 1.5.4)
   fabrication
+  figaro
   grit
   haml
   httparty

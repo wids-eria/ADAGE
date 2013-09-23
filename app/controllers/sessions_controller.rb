@@ -4,11 +4,6 @@ class SessionsController < ApplicationController
   
   def create 
    
-    puts '*'*20 
-    puts request.env['omniauth.auth']
-    puts '*'*20 
-    redirect_to :root
-
   end
 
 end
