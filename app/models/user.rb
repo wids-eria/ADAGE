@@ -56,6 +56,42 @@ class User < ActiveRecord::Base
     where(conditions).with_login(login).first
   end
 
+  def data_to_csv(csv, gameName)
+    keys = Hash.new
+    data = self.data.where(gameName: gameName)
+    data = data.asc(:timestamp)
+    types = data.distinct(:key)
+    examples = Array.new
+    types.each do |type|
+      ex = data.where(key: type).first
+      if ex != nil
+        examples << ex
+      end
+    end
+    all_attrs = Array.new
+    examples.each do |e|
+      e.attributes.keys.each do |k|
+        all_attrs << k
+      end
+    end
+    csv << ["player"] + all_attrs.uniq
+    data.each do |entry|
+      out = Array.new
+      out << self.player_name
+      all_attrs.uniq.each do |attr|
+        if entry.attributes.keys.include?(attr)
+          out << entry.attributes[attr]
+        else
+          out << ""
+        end
+      end
+      csv << out
+    end
+    return csv
+  end
+  
+
+
   private
 
   def update_control_group
@@ -88,4 +124,5 @@ class User < ActiveRecord::Base
       self.player_name = self.email.split("@").first
     end
   end
+
 end
