@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable, 
+         :recoverable, :rememberable, :trackable, :validatable,
          :omniauthable,
          :token_authenticatable, :authentication_keys => [:login]
 
@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
 
   attr_accessor :login
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented
+  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :guest
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   def role?(role)
       return !!self.roles.find_by_name(role.name)
   end
-  
+
   def researcher_role?
     return !!self.roles.find_by_type('ResearcherRole')
   end
@@ -37,12 +37,10 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_name('admin')
   end
 
-
-
   def data
     AdaData.where("user_id" => self.id)
   end
-  
+
   def progenitor_data
     AdaData.where("user_id" => self.id, "gameName" => "ProgenitorX")
   end
@@ -60,7 +58,7 @@ class User < ActiveRecord::Base
 
   def self.find_for_facebook_oauth(auth, signed_in_resource=nil)
     user = User.where(email: auth.info.email).first
-    
+
     if user.blank?
       password =  Devise.friendly_token[0,20]
       user = User.create(player_name:auth.extra.raw_info.name,
@@ -76,17 +74,39 @@ class User < ActiveRecord::Base
       fb_access.update(auth.access_token, auth.expires_at)
     else
       fb_access = SocialAccessToken.create(
-        user: user, 
-        provider: auth.provider, 
-        uid: auth.uid, 
-        access_token: auth.credentials.token, 
+        user: user,
+        provider: auth.provider,
+        uid: auth.uid,
+        access_token: auth.credentials.token,
         expired_at: auth.credentials.expires_at
       )
     end
     user
   end
 
+  def self.create_guest
+    #generate token since the playername and email have to be unique
+    token = SecureRandom.hex(16)
+
+    guest = User.create(
+      player_name: "Guest_"+token,
+      email: "Guest_"+token+"@example.com",
+      guest: true,
+    )
+    return guest
+  end
+
   private
+
+  #override devise password to allow guest acounts with nil passwords
+  def password_required?
+    super && !self.guest
+  end
+
+  #override devise password to allow guest acounts with nil emails
+  def email_required?
+    super && !self.guest
+  end
 
   def update_control_group
     if self.control_group.nil?

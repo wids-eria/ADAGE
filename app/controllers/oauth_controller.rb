@@ -1,6 +1,6 @@
 class OauthController < ApplicationController
-  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity]
-  skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
+  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity, :guest]
+  skip_before_filter :verify_authenticity_token, :only => [:access_token, :user, :guest]
 
   def authorize
     application = Client.where(app_token: params[:client_id]).first
@@ -24,7 +24,7 @@ class OauthController < ApplicationController
     if user != nil and user.valid_password? params[:password]
       sign_in user
     else
-      redirect_to '/auth/failure', :status => 401, :message => 'incorrect player name or password'    
+      redirect_to '/auth/failure', :status => 401, :message => 'incorrect player name or password'
       return
     end
 
@@ -36,7 +36,7 @@ class OauthController < ApplicationController
 
     access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
     render :json => {:access_token => access_token.consumer_secret }
-   
+
   end
 
   def failure
@@ -75,6 +75,34 @@ class OauthController < ApplicationController
 
     respond_to do |format|
       format.json { render :json => hash.to_json }
+    end
+  end
+
+  def guest
+    application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
+
+    unless application.nil?
+      user =  User.create_guest
+      access_token =  user.access_tokens.create({client: application})
+
+      redirect_to :failure unless user
+      hash = {
+        provider: 'ada',
+        uid: user.id.to_s,
+        info: {
+          email: user.email,
+          player_name: user.player_name,
+          token: access_token['consumer_secret'],
+          guest: true
+        }
+      }
+
+      respond_to do |format|
+        format.json { render :json => hash.to_json }
+      end
+    else
+      render :json => {:error => "Could not find application." }
+      return
     end
   end
 

@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.13'
 gem 'pg'
 gem 'devise', '1.5.4'
+gem "devise-guests", "~> 0.3.2"
 gem 'passenger'
 gem 'mongoid'
 gem 'bson_ext'
@@ -18,6 +19,7 @@ gem 'httparty'
 gem 'pacecar'
 gem 'figaro'
 
+gem 'omniauth-oauth2', '1.1.1'
 group :assets do
   gem 'sass-rails',   '~> 3.2.2'
   gem 'coffee-rails', '~> 3.2.1'

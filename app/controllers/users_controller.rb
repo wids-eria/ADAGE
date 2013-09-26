@@ -1,13 +1,13 @@
 class UsersController < ApplicationController
   respond_to :html, :json
   layout 'blank'
-  before_filter :authenticate_user!, except: [:authenticate_for_token]
+  before_filter :authenticate_user!, except: [:authenticate_for_tokens]
 
   def show
      @user = User.find(params[:id])
   end
 
-  def edit 
+  def edit
      @user = User.find(params[:id])
   end
 
@@ -17,7 +17,7 @@ class UsersController < ApplicationController
      @user.roles.each do |role|
        @join = Assignment.where(role_id: role.id, user_id: @user.id).first
        if @join == nil
-        @join = Assignment.new :assigner => current_user, :role => role, :user => @user 
+        @join = Assignment.new :assigner => current_user, :role => role, :user => @user
         @join.save
        elsif @join.assigner_id == nil
          @join.assigner_id = current_user.id
@@ -52,7 +52,7 @@ class UsersController < ApplicationController
       end
     end
   end
-  
+
 
   def authenticate_for_token
     @user = User.with_login(params[:email]).first
@@ -110,10 +110,10 @@ class UsersController < ApplicationController
   def data_by_game
     @user = User.find(params[:id])
     @game = Game.find_by_name(params[:gameName])
-    authorize! :read, @game 
-    @data = AdaData.where(user_id: params[:id], gameName: params[:gameName]) 
-    respond_to do |format| 
-      format.csv {send_data export_csv(@data, @user.player_name), filename: @user.player_name+'_'+@game.name+'.csv'} 
+    authorize! :read, @game
+    @data = AdaData.where(user_id: params[:id], gameName: params[:gameName])
+    respond_to do |format|
+      format.csv {send_data export_csv(@data, @user.player_name), filename: @user.player_name+'_'+@game.name+'.csv'}
     end
   end
 
@@ -149,7 +149,6 @@ class UsersController < ApplicationController
     end
   end
 
-
   protected
 
   def application
@@ -161,8 +160,8 @@ class UsersController < ApplicationController
       keys = Hash.new
       data.each do |log_entry|
         csv << JSON.parse(log_entry.as_document.to_json).values
-      end 
-    end 
+      end
+    end
   end
 
   def can_change_password_for?(user)
