@@ -1,4 +1,3 @@
-9
 require 'json'
 require 'csv'
 require 'pathname'
@@ -76,6 +75,7 @@ class Student
 
     log_file = File.open('script/csv/kodu/log.txt', 'a')
 
+
     #find all the kode entries
     kode_logs = user.data.where(key: 'Kode')
     not_parsed = 0
@@ -85,9 +85,12 @@ class Student
     if kode_logs.count > 0
 
       kode_logs.each do |log|
+
         if log.respond_to?('kode')
           if log.kode != nil
             kode = log.kode['kode']
+            kode['timestamp'] = log.timestamp
+            kodes << kode
           end
         else
 
@@ -110,6 +113,7 @@ class Student
           kode_string = kode_string.gsub("'",'"')
           begin
             #Add timestampe field to kode object for easier logging later
+
             kode = JSON.parse(kode_string)['kode']
             kode['timestamp'] = log.timestamp
             kodes << kode
@@ -122,7 +126,6 @@ class Student
         end
 
       end
-
     end
 
     temp = Array.new
@@ -166,6 +169,7 @@ class Student
     dowhen = Array.new
 
 
+    puts "Total Data Count:" + user.data.count.to_s + " Kode Count: "+ kode_logs.count.to_s + " Kodes Count: " +kodes.count.to_s
     kodes.each do |kode|
       if kode != nil && kode['levelId'] != nil
         actor = kode['actorName'] + kode['levelId']
@@ -268,12 +272,21 @@ class AnalyizeKode
       puts "looking for player " + student_name.first
       user = User.where(["lower(player_name) = :login", login: student_name.first.downcase]).first
 
+      #this is stupid
+      if user == nil
+        temp_name = student_name.first.downcase + " "
+        user = User.where(["lower(player_name) = :login", login: temp_name]).first
+      end
+
       if user != nil
         not_parsed = Student.new(user, name).run csv
         total_lost = total_lost + not_parsed
+
       else
         log_file << name + " : " + student_name.first + " NOT FOUND\n"
       end
+
+
     end
     log_file << total_lost.to_s + " entries did not parse"
     csv.close
