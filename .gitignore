@@ -20,6 +20,9 @@
 /config/initializers/secret_token.rb
 /csv/*.csv
 /*.csv
+/script/csv
+/dump/
+db_dump.sql
 
 
 # Ignore all os stuff
