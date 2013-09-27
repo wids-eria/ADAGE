@@ -35,8 +35,6 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_name('admin')
   end
 
-
-
   def data
     AdaData.where("user_id" => self.id)
   end
@@ -56,9 +54,12 @@ class User < ActiveRecord::Base
     where(conditions).with_login(login).first
   end
 
-  def data_to_csv(csv, gameName)
+  def data_to_csv(csv, gameName, schema='')
     keys = Hash.new
     data = self.data.where(gameName: gameName)
+    if schema.present?
+      data = data.where(schema: schema)
+    end
     data = data.asc(:timestamp)
     types = data.distinct(:key)
     examples = Array.new

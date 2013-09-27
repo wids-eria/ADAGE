@@ -110,14 +110,15 @@ class UsersController < ApplicationController
   def data_by_game
     @user = User.find(params[:id])
     @game = Game.find_by_name(params[:gameName])
-    
-    puts params 
     authorize! :read, @game 
-    out = CSV.generate do |csv|
-      @user.data_to_csv(csv, @game.name)
-    end
     respond_to do |format| 
-      format.csv {send_data out, filename: @user.player_name+'_'+@game.name+'.csv'} 
+      format.csv {
+        out = CSV.generate do |csv|
+          @user.data_to_csv(csv, @game.name)
+        end
+        send_data out, filename: @user.player_name+'_'+@game.name+'.csv'
+      } 
+      format.json { render :json => @user.data }
     end
   end
 
