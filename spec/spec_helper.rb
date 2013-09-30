@@ -64,7 +64,9 @@ OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
     'raw_info' => {
       'name' => 'Mock Man',
       'image' => '',
-      'email' => 'mock@nomail.com' }
+      'email' => 'mock@nomail.com',
+      'username' => 'mock.man.1'
+    }
   },
   'info' => {
     'email' => 'mock@nomail.com'

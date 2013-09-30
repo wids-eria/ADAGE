@@ -39,6 +39,26 @@ class OauthController < ApplicationController
    
   end
 
+  def authorize_unity_fb
+    
+    user = User.find_for_facebook_oauth(params[:fb_cookie], current_user)
+    if user.nil?
+      redirect_to '/auth/failure', :status => 401, :message => 'player not found'
+      return
+    end
+
+    application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
+    if application.nil?
+      render :json => {:error => "Could not find application." }
+      return
+    end
+
+
+    access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
+    render :json => {:access_token => access_token.consumer_secret}
+
+  end
+
   def failure
     render :text => "ERROR: #{params[:message]}"
   end
