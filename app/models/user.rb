@@ -79,10 +79,14 @@ class User < ActiveRecord::Base
     data.each do |entry|
       out = Array.new
       out << self.player_name
-      if entry.timestamp.to_s.include?('/') 
-        out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
+      if entry.respond_to?('timestamp')
+        if entry.timestamp.to_s.include?(':') 
+          out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
+        else
+          out << 'does not compute'
+        end
       else
-        out << 'does not compute'
+        out << 'no timestamp'
       end
       all_attrs.uniq.each do |attr|
         if entry.attributes.keys.include?(attr)
