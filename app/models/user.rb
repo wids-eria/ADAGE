@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
 
     guest = User.create(
       player_name: "Guest_"+token,
-      email: "Guest_"+token+"@example.com",
+      email: "Guest_"+token+"@guest.com",
       guest: true,
     )
     return guest

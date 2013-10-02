@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.13'
 gem 'pg'
 gem 'devise', '1.5.4'
-gem "devise-guests", "~> 0.3.2"
 gem 'passenger'
 gem 'mongoid'
 gem 'bson_ext'
