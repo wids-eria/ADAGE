@@ -1,5 +1,5 @@
 class OauthController < ApplicationController
-  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity]
+  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity, :authorize_unity_fb]
   skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
 
   def authorize
@@ -40,8 +40,18 @@ class OauthController < ApplicationController
   end
 
   def authorize_unity_fb
-    
-    user = User.find_for_facebook_oauth(params[:fb_cookie], current_user)
+   
+    puts '*'*20
+    puts request.env["HTTP_OMNIAUTH.AUTH"].inspect
+    puts '*'*20
+
+
+    parsed = JSON.parse(request.env["HTTP_OMNIAUTH.AUTH"]) 
+    auth = OmniAuth::AuthHash.new(parsed)
+    #auth = JSON.parse(request.env["HTTP_OMNIAUTH.AUTH"]) 
+    puts auth.inspect
+    puts auth["info"]
+    user = User.find_for_facebook_oauth(auth, current_user)
     if user.nil?
       redirect_to '/auth/failure', :status => 401, :message => 'player not found'
       return
@@ -54,7 +64,7 @@ class OauthController < ApplicationController
     end
 
 
-    access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
+    access_token = user.access_tokens.find_or_create_by_user_id(user.id, {client: application})
     render :json => {:access_token => access_token.consumer_secret}
 
   end
