@@ -4,4 +4,6 @@
   = u.association :roles, :collection => Role.where(type: nil), :as => :check_boxes
   Researcher Roles
   = u.association :roles, :collection => ResearcherRole.all, :as => :check_boxes
+  Participant Roles
+  = u.association :roles, :collection => ParticipantRole.all, :as => :check_boxes
   = u.button :submit 
