@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable, 
+         :recoverable, :rememberable, :trackable, :validatable,
          :omniauthable,
          :token_authenticatable, :authentication_keys => [:login]
 
@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   def role?(role)
       return !!self.roles.find_by_name(role.name)
   end
-  
+
   def researcher_role?
     return !!self.roles.find_by_type('ResearcherRole')
   end
@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
   def data
     AdaData.where("user_id" => self.id)
   end
-  
+
   def progenitor_data
     AdaData.where("user_id" => self.id, "gameName" => "ProgenitorX")
   end
@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
 
   def self.find_for_facebook_oauth(auth, signed_in_resource=nil)
     user = User.where(email: auth.info.email).first
-    
+
     if user.blank?
       password =  Devise.friendly_token[0,20]
       user = User.create(player_name:auth.extra.raw_info.name,
@@ -73,17 +73,42 @@ class User < ActiveRecord::Base
 
     fb_access = user.social_access_tokens.where(provider: auth.provider)
     if fb_access.present?
-      fb_access.update(auth.access_token, auth.expires_at)
+      fb_access.update_all(expired_at: Time.at(auth.credentials.expires_at),access_token: auth.credentials.token)
     else
       fb_access = SocialAccessToken.create(
-        user: user, 
-        provider: auth.provider, 
-        uid: auth.uid, 
-        access_token: auth.credentials.token, 
-        expired_at: auth.credentials.expires_at
+        user: user,
+        provider: auth.provider,
+        uid: auth.uid,
+        access_token: auth.credentials.token,
+        expired_at: Time.at(auth.credentials.expires_at)
       )
     end
     user
+  end
+
+  def self.find_for_google_oauth2(auth, signed_in_resource=nil)
+    user = User.where(email: auth.info.email).first
+
+    if user.blank?
+        user = User.create(player_name: auth.info["name"],
+             email: auth.info["email"],
+             password: Devise.friendly_token[0,20]
+            )
+    end
+      gp_access = user.social_access_tokens.where(provider: auth.provider)
+      if gp_access.present?
+        gp_access.update_all(expired_at: Time.at(auth.credentials.expires_at),access_token: auth.credentials.token)
+      else
+        gp_access = SocialAccessToken.create(
+          user: user,
+          provider: auth.provider,
+          uid: auth.uid,
+          access_token: auth.credentials.token,
+          expired_at: Time.at(auth.credentials.expires_at)
+        )
+      end
+
+      user
   end
 
   private

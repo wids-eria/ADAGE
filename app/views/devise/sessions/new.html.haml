@@ -16,6 +16,8 @@
   .field_container
     = link_to 'Connect with Facebook', user_omniauth_authorize_path(:facebook), class: 'floatleft'
 
+  .field_container
+    = link_to 'Connect with Google+', user_omniauth_authorize_path(:google_oauth2), class: 'floatleft'
 .sign_up_container
   = link_to 'Sign Up', new_user_registration_url, class: 'floatleft'
   = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'
