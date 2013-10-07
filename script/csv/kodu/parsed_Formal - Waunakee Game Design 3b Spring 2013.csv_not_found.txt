@@ -1,0 +1,16 @@
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : olson NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : nellis NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : weinman NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : nelson NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : mcsherry NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : polinsky NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : acker NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : schmitz NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : nourse NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : letterer NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : jacobsen NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : shimniok NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : meier NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : noltemeyer NOT FOUND
+parsed_Formal - Waunakee Game Design 3b Spring 2013.csv : cmckee NOT FOUND
+0 entries did not parse

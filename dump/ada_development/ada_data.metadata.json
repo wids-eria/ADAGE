@@ -1,0 +1,1 @@
+{ "options" : { "create" : "ada_data" }, "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "ns" : "ada_development.ada_data", "name" : "_id_" } ] }

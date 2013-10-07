@@ -6,8 +6,8 @@ describe 'Oauth with facebook' do
     visit root_url
     click_link 'Connect with Facebook'
 
-    page.should have_content('Mock Man')
-    @user = User.where(player_name: 'Mock Man').first
+    page.should have_content('mock.man.1')
+    @user = User.where(player_name: 'mock.man.1').first
     puts @user.social_access_tokens.where(provider: 'facebook').first.inspect
     @user.social_access_tokens.where(provider: 'facebook').first.should_not be_nil
   

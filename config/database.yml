@@ -1,0 +1,14 @@
+defaults: &DEFAULTS
+  adapter: postgresql
+  encoding: unicode
+
+development:
+  <<: *DEFAULTS
+  database: ada_staging
+
+test: &TEST
+  <<: *DEFAULTS
+  database: ada_staging
+
+cucumber:
+  <<: *TEST
