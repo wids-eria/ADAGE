@@ -21,3 +21,7 @@
 /config/mongoid.yml
 /config/initializers/external_hosts.rb
 config/initializers/secret_token.rb
+
+/scripts/csv
+*.csv
+/scripts/csv/kodu
