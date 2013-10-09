@@ -94,7 +94,6 @@ describe "Participant_Researcher_Roles" do
 
 				# Look at the final product
 				click_link 'Edit'
-				save_and_open_page
 			end
 
 			it "Assigns researcher role and then the participant role" do
@@ -122,7 +121,6 @@ describe "Participant_Researcher_Roles" do
 
 				# Check the final product
 				click_link 'Edit'
-				save_and_open_page
 			end
     end
 end
