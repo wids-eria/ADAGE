@@ -37,8 +37,6 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_name('admin')
   end
 
-
-
   def data
     AdaData.where("user_id" => self.id)
   end
@@ -111,6 +109,55 @@ class User < ActiveRecord::Base
       user
   end
 
+
+  def data_to_csv(csv, gameName, schema='')
+    keys = Hash.new
+    data = self.data.where(gameName: gameName)
+    if schema.present?
+      data = data.where(schema: schema)
+    end
+    data = data.asc(:timestamp)
+    types = data.distinct(:key)
+    examples = Array.new
+    types.each do |type|
+      ex = data.where(key: type).first
+      if ex != nil
+        examples << ex
+      end
+    end
+    all_attrs = Array.new
+    examples.each do |e|
+      e.attributes.keys.each do |k|
+        all_attrs << k
+      end
+    end
+    csv << ["player", "epoch time"] + all_attrs.uniq
+    data.each do |entry|
+      out = Array.new
+      out << self.player_name
+      if entry.respond_to?('timestamp')
+        if entry.timestamp.to_s.include?(':') 
+          out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
+        else
+          out << 'does not compute'
+        end
+      else
+        out << 'no timestamp'
+      end
+      all_attrs.uniq.each do |attr|
+        if entry.attributes.keys.include?(attr)
+          out << entry.attributes[attr]
+        else
+          out << ""
+        end
+      end
+      csv << out
+    end
+    return csv
+  end
+  
+
+
   private
 
   def update_control_group
@@ -143,4 +190,5 @@ class User < ActiveRecord::Base
       self.player_name = self.email.split("@").first
     end
   end
+
 end

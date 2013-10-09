@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130919174153) do
+ActiveRecord::Schema.define(:version => 20131003205714) do
 
   create_table "access_tokens", :force => true do |t|
     t.string   "consumer_token"
@@ -99,7 +99,7 @@ ActiveRecord::Schema.define(:version => 20130919174153) do
   end
 
   create_table "social_access_tokens", :force => true do |t|
-    t.integer  "uid"
+    t.string   "uid"
     t.string   "provider"
     t.string   "access_token"
     t.datetime "expired_at"

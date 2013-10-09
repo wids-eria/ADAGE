@@ -29,18 +29,48 @@ class DataController < ApplicationController
   def data_by_version
     @game = Game.find_by_name(params[:gameName])
     authorize! :read, @game
-    @data = AdaData.where(gameName: params[:gameName], schema: params[:version]).in(user_id: params[:user_ids] ) 
+    @user_ids = params[:user_ids]
     respond_to do |format| 
-      format.csv {send_data export_csv(@data), filename: @game.name+'_'+ params[:version]+'.csv'} 
+      format.csv {
+        out = CSV.generate do |csv|
+          @user_ids.each do |id|
+            user = User.find(id)
+            if user.present?
+              user.data_to_csv(csv, @game.name, params[:version])
+            end
+          end
+        end
+
+        send_data out, filename: @game.name+'_'+ params[:version]+'.csv'
+      } 
+      format.json {
+        data = AdaData.where(gameName: params[:gameName], schema: params[:version]).in(user_id: params[:user_ids] ) 
+        render :json => data
+      }
     end
   end
 
   def export 
     @game = Game.find_by_name(params[:gameName])
     authorize! :read, @game 
-    @data = AdaData.where(gameName: params[:gameName]).in(user_id: params[:user_ids]) 
+    @user_ids = params[:user_ids]
     respond_to do |format| 
-      format.csv {send_data export_csv(@data), filename: @game.name+'.csv'} 
+      format.csv {
+        out = CSV.generate do |csv|
+          @user_ids.each do |id|
+            user = User.find(id)
+            if user.present?
+              user.data_to_csv(csv, @game.name)
+            end
+          end
+        end
+
+        send_data out, filename: @game.name+'.csv'
+      } 
+      format.json {
+          data = AdaData.where(gameName: @game.name).in(user_id: @user_ids)
+          render :json => data
+      }
     end
   end
 
@@ -187,16 +217,5 @@ class DataController < ApplicationController
     end
 
   end
-
-  protected 
-
-  def export_csv(data)
-    CSV.generate do |csv|
-      keys = Hash.new
-      data.each do |log_entry|
-        csv << JSON.parse(log_entry.as_document.to_json).values
-      end 
-    end 
-  end
-
+  
 end

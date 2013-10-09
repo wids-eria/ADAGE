@@ -111,9 +111,14 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @game = Game.find_by_name(params[:gameName])
     authorize! :read, @game 
-    @data = AdaData.where(user_id: params[:id], gameName: params[:gameName]) 
     respond_to do |format| 
-      format.csv {send_data export_csv(@data, @user.player_name), filename: @user.player_name+'_'+@game.name+'.csv'} 
+      format.csv {
+        out = CSV.generate do |csv|
+          @user.data_to_csv(csv, @game.name)
+        end
+        send_data out, filename: @user.player_name+'_'+@game.name+'.csv'
+      } 
+      format.json { render :json => @user.data }
     end
   end
 
@@ -154,15 +159,6 @@ class UsersController < ApplicationController
 
   def application
     @application ||= Client.where(app_token: params[:client_id]).first
-  end
-
-  def export_csv(data, name)
-    CSV.generate do |csv|
-      keys = Hash.new
-      data.each do |log_entry|
-        csv << JSON.parse(log_entry.as_document.to_json).values
-      end 
-    end 
   end
 
   def can_change_password_for?(user)
