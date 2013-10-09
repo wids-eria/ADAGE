@@ -56,7 +56,7 @@ namespace :deploy do
   end
 
   desc "Symlink application config"
-  task :symlink_secret_token do
+  task :symlink_application_yml do
     run "ln -nfs #{deploy_to}/shared/config/application.yml #{release_path}/config/application.yml"
   end
 
