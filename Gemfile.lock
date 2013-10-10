@@ -54,6 +54,7 @@ GEM
       xpath (~> 0.1.4)
     childprocess (0.2.3)
       ffi (~> 1.0.6)
+    chunky_png (1.2.8)
     coderay (1.0.6)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
@@ -157,6 +158,9 @@ GEM
       rack
     omniauth-facebook (1.4.1)
       omniauth-oauth2 (~> 1.1.0)
+    omniauth-google-oauth2 (0.2.1)
+      omniauth (~> 1.0)
+      omniauth-oauth2
     omniauth-oauth2 (1.1.1)
       oauth2 (~> 0.8.0)
       omniauth (~> 1.0)
@@ -204,6 +208,10 @@ GEM
       rake
     rdoc (3.12.2)
       json (~> 1.4)
+    rqrcode (0.4.2)
+    rqrcode_png (0.1.1)
+      chunky_png
+      rqrcode
     rspec (2.7.0)
       rspec-core (~> 2.7.0)
       rspec-expectations (~> 2.7.0)
@@ -293,12 +301,14 @@ DEPENDENCIES
   mongoid
   omniauth
   omniauth-facebook
+  omniauth-google-oauth2
   pacecar
   passenger
   pg
   pry
   pry-rails
   rails (= 3.2.13)
+  rqrcode_png
   rspec-rails
   rvm-capistrano
   sass-rails (~> 3.2.2)

@@ -10,7 +10,7 @@
     %ul
       - @game.implementations.each do |version|
         %li
-          = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
+          = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do
             = version.name
 
   .span4
@@ -27,7 +27,7 @@
     %h3='Average time played: ' + @average_time.to_s
 .row
   .span12
-    %table.table.table-striped 
+    %table.table.table-striped
       %thead
         %tr
           %th player name
@@ -36,17 +36,16 @@
           %th time played
       %tbody
         - @users.each do |user|
-          %tr          
+          %tr
             %td
               = user.player_name
             %td
               = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do
                 = user.player_name + ' data'
             %td
-              = user.consented 
+              = user.consented
             %td
               -unless user.data.empty?
                 - timeplayed =  user.data.last.created_at - user.data.first.created_at
                 = timeplayed
-
-
+=image_tag @qr
