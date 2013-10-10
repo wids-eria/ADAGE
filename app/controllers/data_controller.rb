@@ -145,8 +145,8 @@ class DataController < ApplicationController
       sessions.each do |token|
         session_logs = minds.where(session_token: token)
         if session_logs.first.schema.include?('PRODUCTION-05-17-2013')
-          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
           hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
           minutes = ((end_time - start_time)/1.minute).round 
           if @tenacity_sessions[hash] != nil
@@ -165,8 +165,8 @@ class DataController < ApplicationController
       sessions.each do |token|
         session_logs = crystals.where(session_token: token)
         if session_logs.first.schema.include?('PRODUCTION-05-29-2013')
-          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
           hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
           minutes = ((end_time - start_time)/1.minute).round 
           if @crystals_sessions[hash] != nil
@@ -192,10 +192,10 @@ class DataController < ApplicationController
       timers.each do |log|
         if log.key == 'LogStart'
           last_key = log.key
-          start_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          start_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
         elsif log.key == 'LogStopNormal'
           if last_key != log.key 
-            end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+            end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
             hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
             minutes = ((end_time - start_time)/1.minute).round 
             if @timer_sessions[hash] != nil
