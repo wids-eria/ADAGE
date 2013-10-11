@@ -17,8 +17,6 @@ class GamesController < ApplicationController
       end
       @average_time = @average_time/@users.count
     end
-
-    @qr = qrcode("RAasdasdasdasdasasdsind[aosdinaosindND,")
   end
 
   def search_users

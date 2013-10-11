@@ -1,11 +1,14 @@
 namespace :abilities do
-  desc 'Safely create admin and player roles'
+  desc 'Safely create admin/player/teacher roles'
   task :create => :environment do
     if Role.where(name: 'admin').empty?
       Role.create(name: 'admin')
     end
     if Role.where(name: 'player').empty?
       Role.create(name: 'player')
+    end
+    if Role.where(name: 'teacher').empty?
+      Role.create(name: 'teacher')
     end
   end
 

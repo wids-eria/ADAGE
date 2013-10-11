@@ -6,18 +6,19 @@ Ada::Application.routes.draw do
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
   match "data/heatmap" => "data#heatmap"
-  match "user/user_data" => "users#get_data" 
+  match "user/user_data" => "users#get_data"
 
+  resources :groups
   resources :roles
   resources :participant_roles
   resources :games do
     member do
-      post :search_users 
+      post :search_users
     end
   end
   resources :implementations
   resources :data do
-    collection do 
+    collection do
       post :tenacity_player_stats
       get :find_tenacity_player
       get :data_by_version

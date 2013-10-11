@@ -19,6 +19,7 @@ gem 'httparty'
 gem 'pacecar'
 gem 'figaro'
 gem 'rqrcode_png'
+gem 'zoo_pass'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.2'
