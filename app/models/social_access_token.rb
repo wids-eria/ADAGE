@@ -6,7 +6,7 @@ class SocialAccessToken < ActiveRecord::Base
   validates :provider, presence: true
   validates :user, presence: true
 
-  def update access_token, expired_at
+  def update_token access_token, expired_at
     self.access_token = access_token
     self.expired_at = expired_at
     self.save

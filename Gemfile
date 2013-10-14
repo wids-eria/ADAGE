@@ -12,6 +12,7 @@ gem 'therubyracer'
 gem 'cancan'
 gem 'omniauth'
 gem 'omniauth-facebook'
+gem "omniauth-google-oauth2"
 gem 'simple_form'
 gem 'schema_plus'
 gem 'httparty'
@@ -45,7 +46,7 @@ group :test, :development do
   gem 'launchy'
   gem 'capybara'
   gem 'database_cleaner'
-  gem 'webmock'
+  gem 'webmock', :require => false
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false

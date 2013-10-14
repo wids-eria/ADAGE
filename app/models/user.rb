@@ -61,7 +61,7 @@ class User < ActiveRecord::Base
 
     if user.blank?
       password =  Devise.friendly_token[0,20]
-      user = User.create(player_name:auth.extra.raw_info.name,
+      user = User.create(player_name:auth.extra.raw_info.username,
                           email:auth.info.email,
                            password:password,
                            password_confirm:password
@@ -69,16 +69,16 @@ class User < ActiveRecord::Base
     end
 
 
-    fb_access = user.social_access_tokens.where(provider: auth.provider)
+    fb_access = user.social_access_tokens.where(provider: auth.provider).first
     if fb_access.present?
-      fb_access.update(auth.access_token, auth.expires_at)
+      fb_access.update_all(expired_at: Time.at(auth.credentials.expires_at),access_token: auth.credentials.token)
     else
       fb_access = SocialAccessToken.create(
         user: user,
         provider: auth.provider,
         uid: auth.uid,
         access_token: auth.credentials.token,
-        expired_at: auth.credentials.expires_at
+        expired_at: Time.at(auth.credentials.expires_at)
       )
     end
     user
@@ -98,6 +98,80 @@ class User < ActiveRecord::Base
     )
     return guest
   end
+  
+  def self.find_for_google_oauth2(auth, signed_in_resource=nil)
+    user = User.where(email: auth.info.email).first
+
+    if user.blank?
+        user = User.create(player_name: auth.info["name"],
+             email: auth.info["email"],
+             password: Devise.friendly_token[0,20]
+            )
+    end
+      gp_access = user.social_access_tokens.where(provider: auth.provider)
+      if gp_access.present?
+        gp_access.update_all(expired_at: Time.at(auth.credentials.expires_at),access_token: auth.credentials.token)
+      else
+        gp_access = SocialAccessToken.create(
+          user: user,
+          provider: auth.provider,
+          uid: auth.uid,
+          access_token: auth.credentials.token,
+          expired_at: Time.at(auth.credentials.expires_at)
+        )
+      end
+
+      user
+  end
+
+
+  def data_to_csv(csv, gameName, schema='')
+    keys = Hash.new
+    data = self.data.where(gameName: gameName)
+    if schema.present?
+      data = data.where(schema: schema)
+    end
+    data = data.asc(:timestamp)
+    types = data.distinct(:key)
+    examples = Array.new
+    types.each do |type|
+      ex = data.where(key: type).first
+      if ex != nil
+        examples << ex
+      end
+    end
+    all_attrs = Array.new
+    examples.each do |e|
+      e.attributes.keys.each do |k|
+        all_attrs << k
+      end
+    end
+    csv << ["player", "epoch time"] + all_attrs.uniq
+    data.each do |entry|
+      out = Array.new
+      out << self.player_name
+      if entry.respond_to?('timestamp')
+        if entry.timestamp.to_s.include?(':') 
+          out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
+        else
+          out << 'does not compute'
+        end
+      else
+        out << 'no timestamp'
+      end
+      all_attrs.uniq.each do |attr|
+        if entry.attributes.keys.include?(attr)
+          out << entry.attributes[attr]
+        else
+          out << ""
+        end
+      end
+      csv << out
+    end
+    return csv
+  end
+  
+
 
   private
 
@@ -141,4 +215,5 @@ class User < ActiveRecord::Base
       self.player_name = self.email.split("@").first
     end
   end
+
 end

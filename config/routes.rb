@@ -48,6 +48,7 @@ Ada::Application.routes.draw do
   post '/oauth/token' => 'oauth#access_token'
   get '/auth/failure' => 'oauth#failure'
   get '/auth/authorize_unity' => 'oauth#authorize_unity'
+  get '/auth/authorize_unity_fb' => 'oauth#authorize_unity_fb'
 
   root :to => 'welcome#index'
 end
