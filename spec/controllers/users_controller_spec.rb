@@ -12,6 +12,9 @@ describe UsersController do
 
     it "returns json containing authentication token" do
       post :authenticate_for_token, {'email' => 'Test@email.com', 'password' => 'pass1234', 'format' => 'json'}
+      puts '*'*10
+      puts response
+      puts '*'*10
       response.should be_success
       json["auth_token"].should == "abcdefg"
     end

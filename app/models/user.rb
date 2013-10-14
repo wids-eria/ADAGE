@@ -88,9 +88,12 @@ class User < ActiveRecord::Base
     #generate token since the playername and email have to be unique
     token = SecureRandom.hex(16)
 
+    name = ZooPass.generate_name
     guest = User.create(
-      player_name: "Guest_"+token,
-      email: "Guest_"+token+"@guest.com",
+      #player_name: "Guest_"+token,
+      player_name: name,
+      email: name+'@guest.com', 
+      #email: "Guest_"+token+"@guest.com",
       guest: true,
     )
     return guest
