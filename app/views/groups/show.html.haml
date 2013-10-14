@@ -1,0 +1,9 @@
+%h1.row
+  = @group.name
+= image_tag @qr
+= @group.code
+
+%ul
+  - @group.users do |user|
+    %li
+      = user.name

@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
 
   attr_accessor :login
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented
+  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :group_ids
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :roles
   has_many :access_tokens
   has_many :social_access_tokens
+  has_and_belongs_to_many :groups
 
   def role?(role)
       return !!self.roles.find_by_name(role.name)
