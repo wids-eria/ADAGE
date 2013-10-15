@@ -19,6 +19,8 @@ config/initializers/external_hosts.rb
 config/initializers/secret_token.rb
 config/application.yml
 config/initializers/secret_token.rb
+config/adjectives.txt
+config/nouns.txt
 
 
 
