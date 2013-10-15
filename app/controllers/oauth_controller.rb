@@ -1,5 +1,5 @@
 class OauthController < ApplicationController
-  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity, :authorize_unity_fb]
+  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity, :authorize_unity_fb, :guest]
   skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
 
   def authorize
@@ -105,6 +105,34 @@ class OauthController < ApplicationController
 
     respond_to do |format|
       format.json { render :json => hash.to_json }
+    end
+  end
+
+  def guest
+    application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
+
+    unless application.nil?
+      user =  User.create_guest
+      access_token =  user.access_tokens.create({client: application})
+
+      redirect_to :failure unless user
+      hash = {
+        provider: 'ada',
+        uid: user.id.to_s,
+        info: {
+          email: user.email,
+          player_name: user.player_name,
+          token: access_token['consumer_secret'],
+          guest: true
+        }
+      }
+
+      respond_to do |format|
+        format.json { render :json => hash.to_json }
+      end
+    else
+      render :json => {:error => "Could not find application." }
+      return
     end
   end
 

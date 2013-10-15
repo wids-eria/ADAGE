@@ -1,9 +1,9 @@
 class SessionsController < ApplicationController
   skip_authorization_check
-  
-  
-  def create 
-   
+
+
+  def create
+
   end
 
 end

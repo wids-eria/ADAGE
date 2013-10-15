@@ -11,7 +11,11 @@ class User < ActiveRecord::Base
 
   attr_accessor :login
   # Setup accessible (or protected) attributes for your model
+<<<<<<< HEAD
   attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :group_ids
+=======
+  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :guest
+>>>>>>> origin/ada_guests
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
@@ -89,6 +93,20 @@ class User < ActiveRecord::Base
     user
   end
 
+  def self.create_guest
+    #generate token since the playername and email have to be unique
+    name = ZooPass.generate_name
+    while User.where(player_name: name).first != nil
+      name = ZooPass.generate_name
+    end
+    guest = User.create(
+      player_name: name,
+      email: name+'@guest.com',
+      guest: true,
+    )
+    return guest
+  end
+
   def self.find_for_google_oauth2(auth, signed_in_resource=nil)
     user = User.where(email: auth.info.email).first
 
@@ -121,7 +139,63 @@ class User < ActiveRecord::Base
     end
   end
 
+  def data_to_csv(csv, gameName, schema='')
+    keys = Hash.new
+    data = self.data.where(gameName: gameName)
+    if schema.present?
+      data = data.where(schema: schema)
+    end
+    data = data.asc(:timestamp)
+    types = data.distinct(:key)
+    examples = Array.new
+    types.each do |type|
+      ex = data.where(key: type).first
+      if ex != nil
+        examples << ex
+      end
+    end
+    all_attrs = Array.new
+    examples.each do |e|
+      e.attributes.keys.each do |k|
+        all_attrs << k
+      end
+    end
+    csv << ["player", "epoch time"] + all_attrs.uniq
+    data.each do |entry|
+      out = Array.new
+      out << self.player_name
+      if entry.respond_to?('timestamp')
+        if entry.timestamp.to_s.include?(':')
+          out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
+        else
+          out << 'does not compute'
+        end
+      else
+        out << 'no timestamp'
+      end
+      all_attrs.uniq.each do |attr|
+        if entry.attributes.keys.include?(attr)
+          out << entry.attributes[attr]
+        else
+          out << ""
+        end
+      end
+      csv << out
+    end
+    return csv
+  end
+
   private
+
+  #override devise password to allow guest acounts with nil passwords
+  def password_required?
+    super && !self.guest
+  end
+
+  #override devise password to allow guest acounts with nil emails
+  def email_required?
+    super && !self.guest
+  end
 
   def update_control_group
     if self.control_group.nil?
@@ -153,4 +227,5 @@ class User < ActiveRecord::Base
       self.player_name = self.email.split("@").first
     end
   end
+
 end

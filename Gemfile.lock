@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/wids-eria/zoo_pass.git
+  revision: 512530cd1400c7a1b1f4c5bc1b925efca7cd5cde
+  branch: abstracting
+  specs:
+    zoo_pass (0.0.2)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -303,6 +310,7 @@ DEPENDENCIES
   omniauth
   omniauth-facebook
   omniauth-google-oauth2
+  omniauth-oauth2 (= 1.1.1)
   pacecar
   passenger
   pg
@@ -320,4 +328,4 @@ DEPENDENCIES
   turn (~> 0.8.3)
   uglifier (>= 1.0.3)
   webmock
-  zoo_pass
+  zoo_pass!
