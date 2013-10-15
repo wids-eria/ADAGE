@@ -34,11 +34,13 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_type('ResearcherRole')
   end
 
+  def teacher?
+    return !!self.roles.find_by_name('teacher')
+  end
+
   def admin?
     return !!self.roles.find_by_name('admin')
   end
-
-
 
   def data
     AdaData.where("user_id" => self.id)
@@ -110,6 +112,13 @@ class User < ActiveRecord::Base
       end
 
       user
+  end
+
+  def add_to_group(code)
+    @group = Group.find_by_code(code)
+    unless @group.nil?
+      self.groups << @group
+    end
   end
 
   private

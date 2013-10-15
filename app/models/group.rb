@@ -1,6 +1,9 @@
 class Group < ActiveRecord::Base
   has_and_belongs_to_many :users
-  before_save :generatecode
+  before_create :generatecode
+
+  validates_presence_of :name
+  validates_uniqueness_of :code, :name
 
   attr_accessible :name, :code, :user_ids
 
@@ -10,13 +13,20 @@ class Group < ActiveRecord::Base
     end
   end
 
-  def RemoveUser
-
+  def RemoveUser(user)
+    unless user.nil?
+      self.users.delete(user)
+    end
   end
 
   private
 
   def generatecode
-    self.code = ZooPass.generate(4)
+    #Generate zoopass until there is no collision
+    pass = ZooPass.generate(4)
+    while Group.find_by_code(pass)
+      pass = ZooPass.generate(4)
+    end
+    self.code = pass
   end
 end

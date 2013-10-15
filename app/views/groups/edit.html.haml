@@ -1,3 +1,5 @@
+%h1='Edit Group '+@group.name
 %ul
-  %h1='Edit Group '+@group.name
+  %h4.row
+    = link_to "Back", @group
   = render partial: 'form'

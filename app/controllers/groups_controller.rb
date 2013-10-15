@@ -10,7 +10,6 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     text = @group.code
     @qr = qrcode(text)
-
   end
 
   def edit
@@ -20,6 +19,7 @@ class GroupsController < ApplicationController
   def update
     @group = Group.find(params[:id])
     if @group.update_attributes params[:group]
+      flash[:notice] = 'Group Updated'
       redirect_to @group
     else
       render :edit
@@ -33,6 +33,7 @@ class GroupsController < ApplicationController
   def create
     @group = Group.new(params[:group])
     if @group.save
+      flash[:notice] = 'Group Added'
       redirect_to @group
     else
       render :new

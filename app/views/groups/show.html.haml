@@ -1,9 +1,19 @@
 %h1.row
   = @group.name
+%h4.row
+  = link_to "Edit", edit_group_path
+  = link_to "Back", groups_url
+
 = image_tag @qr
 = @group.code
 
+%h2.row
+  Players
+
+-if @group.users.count==0
+  = "No Players in Group"
+
 %ul
-  - @group.users do |user|
+  - @group.users.each do |user|
     %li
-      = user.name
+      = user.player_name
