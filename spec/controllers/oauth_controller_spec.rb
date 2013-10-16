@@ -25,5 +25,6 @@ describe OauthController do
       puts json["info"]["player_name"]
       guest.groups.count.should > 0
     end
+
   end
 end

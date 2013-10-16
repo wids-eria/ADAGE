@@ -132,7 +132,7 @@ class User < ActiveRecord::Base
 
   def add_to_group(code)
     @group = Group.find_by_code(code)
-    unless @group.nil?
+    unless @group.nil? || self.groups.include?(@group)
       self.groups << @group
     end
   end

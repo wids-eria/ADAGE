@@ -36,7 +36,6 @@ class OauthController < ApplicationController
 
     access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
     render :json => {:access_token => access_token.consumer_secret }
-
   end
 
   def authorize_unity_fb
@@ -102,6 +101,10 @@ class OauthController < ApplicationController
         player_name: user.player_name
       }
     }
+
+    unless params[:group].nil?
+      user.add_to_group(params[:group])
+    end
 
     respond_to do |format|
       format.json { render :json => hash.to_json }
