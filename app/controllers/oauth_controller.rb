@@ -127,6 +127,11 @@ class OauthController < ApplicationController
         }
       }
 
+      #If group code is present add the player to the group
+      unless params[:group].nil?
+        user.add_to_group(params[:group])
+      end
+
       respond_to do |format|
         format.json { render :json => hash.to_json }
       end
