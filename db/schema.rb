@@ -11,15 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131003205714) do
-
-  create_table "clients", :force => true do |t|
-    t.string   "name"
-    t.string   "app_token"
-    t.string   "app_secret"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
+ActiveRecord::Schema.define(:version => 20131014165930) do
 
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "",    :null => false
@@ -55,7 +47,6 @@ ActiveRecord::Schema.define(:version => 20131003205714) do
     t.integer  "client_id"
     t.index ["client_id"], :name => "fk__access_tokens_client_id", :order => {"client_id" => :asc}
     t.index ["user_id"], :name => "fk__access_tokens_user_id", :order => {"user_id" => :asc}
-    t.foreign_key ["client_id"], "clients", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_access_tokens_client_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_access_tokens_user_id"
   end
 
@@ -103,6 +94,13 @@ ActiveRecord::Schema.define(:version => 20131003205714) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "groups_users", :id => false, :force => true do |t|
+    t.integer "group_id"
+    t.integer "user_id"
+    t.index ["group_id"], :name => "fk__groups_users_group_id", :order => {"group_id" => :asc}
+    t.index ["user_id"], :name => "fk__groups_users_user_id", :order => {"user_id" => :asc}
   end
 
   create_table "implementations", :force => true do |t|
