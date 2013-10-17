@@ -18,9 +18,13 @@ class Ability
       can :read, User do |a_user|
         user == a_user
       end
+
+      if user.role? Role.find_by_name('developer')
+        can :create, Game
+      end
       
       can :manage, Game do |game|
-        user.role?(ResearcherRole.where(game_id: game.id).first)
+        user.role?(ResearcherRole.where(game_id: game.id).first) ||  user.role?(DeveloperRole.where(game_id: game.id).first)
       end
 
       can :manage, ParticipantRole do |p_role|

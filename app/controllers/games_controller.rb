@@ -49,6 +49,8 @@ class GamesController < ApplicationController
     @game = Game.new(params[:game])
     if @game.save
       flash[:notice] = 'Game Added'
+      #give the developer who created the game a developer role for the game
+      current_user.roles << @game.developer_role 
     else
       flash[:error] = 'Game name is not unique'
     end

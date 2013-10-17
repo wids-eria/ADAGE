@@ -1,0 +1,17 @@
+
+.row
+  .span12
+    %h2='Game Versions'
+    %ul
+      - @game.implementations.each do |version|
+        %li
+          = version.name
+          %br
+          = 'App Token ' + version.client.app_token
+          %br
+          = 'App Secret ' + version.client.app_secret
+          %br
+
+
+
+    = render partial: 'implementations/add', locals: {game: @game} 
