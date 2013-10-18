@@ -1,5 +1,6 @@
 class GroupsController < ApplicationController
   load_and_authorize_resource
+  skip_authorize_resource :only => :playsquads
   before_filter :authenticate_user!
   layout 'blank'
 
@@ -39,5 +40,11 @@ class GroupsController < ApplicationController
     else
       render :new
     end
+  end
+
+  def playsquads
+    @groups = Group.playsquads
+
+    authorize! :read, Group
   end
 end

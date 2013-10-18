@@ -5,8 +5,9 @@
         = current_user.player_name
       .editprofilelink
         = link_to 'edit profile', edit_user_registration_url
-      .logoutlink
-        = link_to 'logout', destroy_user_session_url, :method => :delete
       -if current_user.admin?
         = link_to 'Admin Tools', admin_users_path
-        %br= link_to 'Manage Groups', groups_path
+      -if current_user.researcher? || current_user.admin?
+        = link_to 'Groups', groups_path
+      .logoutlink
+        = link_to 'logout', destroy_user_session_url, :method => :delete

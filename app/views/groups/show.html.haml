@@ -1,11 +1,13 @@
 %h1.row
   = @group.name
-%h4.row
-  = link_to "Edit", edit_group_path
-  = link_to "Back", groups_url
 
+%h4.row
+  - if can? :update, Group
+    = link_to "Edit", edit_group_path
+  = link_to "Back", groups_path
 = image_tag @qr
-= @group.code
+%h5
+  = @group.code
 
 %h2.row
   Players

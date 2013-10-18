@@ -40,6 +40,10 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_name('teacher')
   end
 
+  def researcher?
+    return !!self.roles.find_by_name('researcher')
+  end
+
   def admin?
     return !!self.roles.find_by_name('admin')
   end

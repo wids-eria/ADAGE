@@ -1,9 +1,5 @@
 %h1.row Groups
 %h4.row
   = link_to "New" ,new_group_path
-
-%ul
-  - @groups.each do |group|
-    %li
-      = link_to group.name ,group
-      = group.users.count.to_s+" Users"
+  = link_to "Back", profile_path
+= render "list"

@@ -1,11 +1,14 @@
 class Group < ActiveRecord::Base
   has_and_belongs_to_many :users
+
   before_create :generatecode
+
+  scope :playsquads, -> { where(playsquad: 'true') }
 
   validates_presence_of :name
   validates_uniqueness_of :code, :name
 
-  attr_accessible :name, :code, :user_ids
+  attr_accessible :name, :code, :user_ids , :playsquad
 
   def AddUser(user)
     unless user.nil?
