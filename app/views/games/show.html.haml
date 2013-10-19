@@ -2,16 +2,24 @@
   .span4
     %h2= @game.name
     %br
+    Export all player data:
     = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
-      = 'Export all participant data'
+      = 'csv'
+    = link_to export_data_path('json', gameName: @game.name, user_ids: @game.user_ids) do
+      = 'json'
+
 
   .span4
     %h2='Game Versions'
     %ul
       - @game.implementations.each do |version|
         %li
+          = version.name
           = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
-            = version.name
+            = 'csv'
+          = link_to data_by_version_data_path('json', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
+            = 'json'
+
 
   .span4
     = render partial: 'search_users_form'
@@ -33,7 +41,8 @@
       %thead
         %tr
           %th player name
-          %th play data
+          %th data
+          %th data
           %th consented
           %th time played
       %tbody
@@ -43,7 +52,10 @@
               = user.player_name
             %td
               = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do
-                = user.player_name + ' data'
+                = 'csv' 
+            %td
+              = link_to data_by_game_user_path(user, 'json', gameName: @game.name) do
+                = 'json' 
             %td
               = user.consented 
             %td

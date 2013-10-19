@@ -5,21 +5,23 @@
 #   git config --global core.excludesfile ~/.gitignore_global
 
 # Ignore bundler config
-/.bundle
+.bundle
 
 # Ignore the default SQLite database.
-/db/*.sqlite3
+db/*.sqlite3
 
 # Ignore all logfiles and tempfiles.
-/log/*.log
-/tmp
-/config/database.yml
-/config/mongoid.yml
-/config/initializers/external_hosts.rb
-/csv/*.csv
-/*.csv
+log/*.log
+tmp
+config/database.yml
+config/mongoid.yml
+config/initializers/external_hosts.rb
+config/initializers/secret_token.rb
+config/application.yml
+config/initializers/secret_token.rb
 
 
-# Ignore all os stuff
-.DS_Store
-/script/dumped_strings/*.txt
+
+scripts/csv
+*.csv
+scripts/csv/kodu

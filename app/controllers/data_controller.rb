@@ -1,6 +1,7 @@
 class DataController < ApplicationController
   before_filter :authenticate_user!
   respond_to :html, :json, :csv
+  protect_from_forgery :except => :create
 
   def index
     @data = AdaData.page params[:page]
@@ -29,18 +30,48 @@ class DataController < ApplicationController
   def data_by_version
     @game = Game.find_by_name(params[:gameName])
     authorize! :read, @game
-    @data = AdaData.where(gameName: params[:gameName], schema: params[:version]).in(user_id: params[:user_ids] ) 
+    @user_ids = params[:user_ids]
     respond_to do |format| 
-      format.csv {send_data export_csv(@data), filename: @game.name+'_'+ params[:version]+'.csv'} 
+      format.csv {
+        out = CSV.generate do |csv|
+          @user_ids.each do |id|
+            user = User.find(id)
+            if user.present?
+              user.data_to_csv(csv, @game.name, params[:version])
+            end
+          end
+        end
+
+        send_data out, filename: @game.name+'_'+ params[:version]+'.csv'
+      } 
+      format.json {
+        data = AdaData.where(gameName: params[:gameName], schema: params[:version]).in(user_id: params[:user_ids] ) 
+        render :json => data
+      }
     end
   end
 
   def export 
     @game = Game.find_by_name(params[:gameName])
     authorize! :read, @game 
-    @data = AdaData.where(gameName: params[:gameName]).in(user_id: params[:user_ids]) 
+    @user_ids = params[:user_ids]
     respond_to do |format| 
-      format.csv {send_data export_csv(@data), filename: @game.name+'.csv'} 
+      format.csv {
+        out = CSV.generate do |csv|
+          @user_ids.each do |id|
+            user = User.find(id)
+            if user.present?
+              user.data_to_csv(csv, @game.name)
+            end
+          end
+        end
+
+        send_data out, filename: @game.name+'.csv'
+      } 
+      format.json {
+          data = AdaData.where(gameName: @game.name).in(user_id: @user_ids)
+          render :json => data
+      }
     end
   end
 
@@ -115,8 +146,8 @@ class DataController < ApplicationController
       sessions.each do |token|
         session_logs = minds.where(session_token: token)
         if session_logs.first.schema.include?('PRODUCTION-05-17-2013')
-          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
           hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
           minutes = ((end_time - start_time)/1.minute).round 
           if @tenacity_sessions[hash] != nil
@@ -135,8 +166,8 @@ class DataController < ApplicationController
       sessions.each do |token|
         session_logs = crystals.where(session_token: token)
         if session_logs.first.schema.include?('PRODUCTION-05-29-2013')
-          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
           hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
           minutes = ((end_time - start_time)/1.minute).round 
           if @crystals_sessions[hash] != nil
@@ -158,32 +189,28 @@ class DataController < ApplicationController
     if timers.count > 0
       start_time = nil
       end_time = nil
+      last_key = ''
       timers.each do |log|
         if log.key == 'LogStart'
-          start_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          last_key = log.key
+          start_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
         elsif log.key == 'LogStopNormal'
-          end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-          minutes = ((end_time - start_time)/1.minute).round 
-          if @timer_sessions[hash] != nil
-            @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
-          else
-            @timer_sessions[hash] = minutes
-          end
+          if last_key != log.key 
+            end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
+            hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+            minutes = ((end_time - start_time)/1.minute).round 
+            if @timer_sessions[hash] != nil
+              @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
+            else
+              @timer_sessions[hash] = minutes
+            end
 
-          @timer_time = @timer_time + minutes
+            @timer_time = @timer_time + minutes
+          end
+          last_key = log.key
 
         else
-          end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-          minutes = ((end_time - start_time)/1.minute).round 
-          if @timer_sessions[hash] != nil
-            @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
-          else
-            @timer_sessions[hash] = minutes
-          end
-
-          @timer_time = @timer_time + minutes
+          puts 'unknown log type!'
         end
       end
       @timer_count = @timer_sessions.count 
@@ -191,16 +218,5 @@ class DataController < ApplicationController
     end
 
   end
-
-  protected 
-
-  def export_csv(data)
-    CSV.generate do |csv|
-      keys = Hash.new
-      data.each do |log_entry|
-        csv << JSON.parse(log_entry.as_document.to_json).values
-      end 
-    end 
-  end
-
+  
 end

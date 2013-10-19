@@ -58,6 +58,40 @@ require 'webmock/rspec'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+OmniAuth.config.test_mode = true
+OmniAuth.config.mock_auth[:facebook] = OmniAuth::AuthHash.new({
+  'extra' => {
+    'raw_info' => {
+      'name' => 'Mock Man',
+      'image' => '',
+      'email' => 'mock@nomail.com',
+      'username' => 'mock.man.1'
+    }
+  },
+  'info' => {
+    'email' => 'mock@nomail.com',
+    'name' => 'Mock Man'
+  },
+  'uid' => '123545',
+  'provider' => 'facebook',
+  'credentials' => {'token' => 'token', 'expires_at' => Time.now()+1.day}
+})
+
+OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new({
+  'extra' => {
+    'raw_info' => {
+      'name' => 'Mock Man',
+      'image' => '',
+      'email' => 'mock@nomail.com' }
+  },
+  'info' => {
+    'email' => 'mock@nomail.com',
+    'name' => 'Mock Man'
+  },
+  'uid' => '123545',
+  'provider' => 'google_oauth2',
+  'credentials' => {'token' => 'token', 'expires_at' => Time.now()+1.day}
+})
 
 RSpec.configure do |config|
   # == Mock Framework

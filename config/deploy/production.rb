@@ -1,5 +1,5 @@
 set :rails_env, :staging
-set :branch, "romping_rhino"
+set :branch, "tardy_tapir"
 
 role :web, "eria-1.morgridge.net"
 role :app, "eria-1.morgridge.net"

@@ -2,7 +2,7 @@ Ada::Application.routes.draw do
   get "welcome/index"
   get "profile" => 'welcome#profile'
 
-  devise_for :users
+  devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
   match "data/heatmap" => "data#heatmap"
@@ -48,8 +48,12 @@ Ada::Application.routes.draw do
   get '/auth/ada/authorize' => 'oauth#authorize'
   get '/auth/ada/access_token' => 'oauth#access_token'
   get '/auth/ada/user' => 'oauth#user'
+  get '/auth/unity_user' => 'oauth#unity_user'
   post '/oauth/token' => 'oauth#access_token'
+  get '/auth/failure' => 'oauth#failure'
   get '/auth/authorize_unity' => 'oauth#authorize_unity'
+  get '/auth/authorize_unity_fb' => 'oauth#authorize_unity_fb'
+
 
   root :to => 'welcome#index'
 end

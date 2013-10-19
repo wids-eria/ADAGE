@@ -15,10 +15,21 @@ class ApplicationController < ActionController::Base
 
   def oauth_access_token
     #check the header for use of an access token
-    authorization = request.env["HTTP_AUTHORIZATION"] 
+    authorization = request.env["HTTP_AUTHORIZATION"]
+    access_token = nil
     if authorization != nil
       token = authorization.split().last
       access_token = AccessToken.where(consumer_secret: token).first
+    else
+      #check for a param with the token
+      authorization = params[:authorization_token]
+      if authorization != nil
+        access_token = AccessToken.where(consumer_secret: authorization).first
+      end
+    end
+
+
+    if access_token != nil
       sign_in access_token.user
     end
 
