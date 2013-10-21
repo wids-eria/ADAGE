@@ -59,6 +59,20 @@ module ValidUserRequestHelper
     click_button 'Sign in'
   end
   
+  def sign_in_developer
+    @player_role = Role.create(name: 'player')
+    Role.create(name: 'admin')
+    @dev_role = Role.create(name: 'developer')
+    @user = Fabricate :user, player_name: 'developer', password: 'pass1234', roles: [@dev_role ] 
+    visit root_url
+
+    fill_in 'Login', with: @user.player_name
+    fill_in 'Password', with: @user.password
+
+
+    click_button 'Sign in'
+  end
+
 
 end
 

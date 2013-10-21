@@ -21,7 +21,6 @@ describe GamesController do
   describe "#show" do
     let(:game) { Fabricate :game }
     it "returns a game and a list of users" do 
-      puts game.inspect
       get :show, :id => game.id
       response.should be_success
     end

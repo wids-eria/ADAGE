@@ -24,7 +24,11 @@ class Ability
       end
       
       can :manage, Game do |game|
-        user.role?(ResearcherRole.where(game_id: game.id).first) ||  user.role?(DeveloperRole.where(game_id: game.id).first)
+        r_role = ResearcherRole.where(game_id: game.id).first
+        d_role = DeveloperRole.where(game_id: game.id).first
+        if d_role.present? and r_role.present?
+          user.role?(r_role) ||  user.role?(d_role)
+        end
       end
 
       can :manage, ParticipantRole do |p_role|
