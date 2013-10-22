@@ -28,7 +28,7 @@ namespace :abilities do
     Game.all.each do |game|
       if game.developer_role.nil?
         puts 'creating developer role for ' + game.name
-        DeveloperRole.new(name: game.name, game: game)
+        DeveloperRole.create(name: game.name, game: game)
       end
       
     end

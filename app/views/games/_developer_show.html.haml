@@ -7,10 +7,11 @@
         %li
           = version.name
           %br
-          = 'App Token ' + version.client.app_token
-          %br
-          = 'App Secret ' + version.client.app_secret
-          %br
+          -if version.client != nil
+            = 'App Token ' + version.client.app_token
+            %br
+            = 'App Secret ' + version.client.app_secret
+            %br
 
 
 
