@@ -40,4 +40,33 @@ describe SaveController do
     
   end
 
+
+  describe "load game" do
+    
+    it "returns a saved record as json" do 
+      
+      some_json =  {"somestuff" => [{"one" => 1}, {"two" => 2}]}.to_json
+      @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
+      post :save, 'game_save' => some_json, 'app_token' => app_token 
+      response.status.should be(201)
+ 
+      @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
+      get :load, 'app_token' => app_token, :format => :json  
+      response.status.should be(200)
+      response.body.should have_content(some_json)
+    end
+
+    it "returns nothing if no saved game" do
+      @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
+      get :load, 'app_token' => app_token, :format => :json  
+      response.body.should have_content('') 
+    end
+
+    it "returns 401 when you don't have auth" do 
+      get :load, 'app_token' => app_token, :format => :json  
+      response.status.should be(401)
+    end
+  
+  end
+
 end
