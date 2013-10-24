@@ -3,6 +3,8 @@ class Client < ActiveRecord::Base
   belongs_to :implementation 
 
   attr_accessible :implementation, :name, :app_token, :app_secret
+  validates_uniqueness_of :app_token
+  validates_uniqueness_of :app_secret
 
   def generate_tokens
     self.app_token = implementation.name + '_' + SecureRandom.hex(16)
