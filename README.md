@@ -7,8 +7,8 @@ ADAGE is a set of data collection and analysis tools on a shared, open source pl
 uses big data techniques to transform clickstream data from game and design systems into 
 formative feedback for usability testing and evidence of learning.
 
-ADAGE is being developed at the [Game + Learning + Society Center](www.gameslearningsociety.org) at the University of Wiscsonsin - Madison with
-a partnership with [The Learning Games Network](www.learninggamesnetwork.org) and the [Wisconsin Institutes of Discovery](wid.wisc.edu)
+ADAGE is being developed at the [Game + Learning + Society Center](http://www.gameslearningsociety.org) at the University of Wiscsonsin - Madison with
+a partnership with [The Learning Games Network](http://www.learninggamesnetwork.org) and the [Wisconsin Institutes of Discovery](http://wid.wisc.edu)
 
 
 ###Acknowledgments 
