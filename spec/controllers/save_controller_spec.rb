@@ -14,7 +14,7 @@ describe SaveController do
     it "creates a save record from incoming json" do
       lambda do
         @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
-        post :save, 'game_save' => {"somestuff" => [{"one" => 1}, {"two" => 2}]}, 'app_token' => app_token 
+        post :save, 'save_game' => {"somestuff" => [{"one" => 1}, {"two" => 2}]}, 'app_token' => app_token 
         response.status.should be(201)
       end.should change(SaveData, :count).by(1)
       user.reload
@@ -24,17 +24,17 @@ describe SaveController do
     it "updates a save record from incoming json if the record exists" do
       lambda do
         @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
-        post :save, 'game_save' => {"somestuff" => [{"one" => 1}, {"two" => 2}]}, 'app_token' => app_token 
+        post :save, 'save_game' => {"somestuff" => [{"one" => 1}, {"two" => 2}]}, 'app_token' => app_token 
         response.status.should be(201)
       end.should change(SaveData, :count).by(1)
       lambda do
         @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
-        post :save, 'game_save' => {"somestuff" => [{"foo" => 1}, {"bar" => 2}]}, 'app_token' => app_token 
+        post :save, 'save_game' => {"somestuff" => [{"foo" => 1}, {"bar" => 2}]}, 'app_token' => app_token 
         response.status.should be(201)
       end.should_not change(SaveData, :count)
       user.saves.count.should == 1
       a_save = user.saves.where(implementation_id: game.implementations.first.id).first
-      a_save.game_save['somestuff'][0]['foo'].should == "1"
+      a_save.save_game['somestuff'][0]['foo'].should == "1"
     end
 
     
@@ -47,7 +47,7 @@ describe SaveController do
       
       some_json =  {"somestuff" => [{"one" => 1}, {"two" => 2}]}.to_json
       @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
-      post :save, 'game_save' => some_json, 'app_token' => app_token 
+      post :save, 'save_game' => some_json, 'app_token' => app_token 
       response.status.should be(201)
  
       @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret

@@ -10,7 +10,7 @@ class SaveController < ApplicationController
     if client != nil
       save_record = current_user.saves.where(implementation_id: client.implementation.id).first
       if save_record != nil
-        @save = save_record.game_save
+        @save = save_record.save_game
       end
     end
 
@@ -19,11 +19,11 @@ class SaveController < ApplicationController
 
   def save 
     error = false
-    if params[:game_save] and params[:app_token]
+    if params[:save_game] and params[:app_token]
       client = Client.where(app_token: params[:app_token]).first
       if client != nil
         game_save = current_user.saves.find_or_create_by(implementation_id: client.implementation.id)
-        game_save.write_attributes(game_save: params[:game_save])
+        game_save.write_attributes(save_game: params[:save_game])
         game_save.user = current_user
         if !game_save.save
           error = true
