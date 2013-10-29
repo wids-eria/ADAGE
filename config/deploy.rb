@@ -1,6 +1,6 @@
 require "rvm/capistrano"
 
-set :rvm_ruby_string, '1.9.3'
+set :rvm_ruby_string, '1.9.3-p194'
 set :rvm_type, :system
 set :rvm_path, "/usr/local/rvm"
 
@@ -12,7 +12,7 @@ set :stages, %w(production development)
 set :default_stage, "development"
 
 set :application, "ada"
-set :repository,  "git@github.com:wids-eria/ada.git"
+set :repository,  "git@github.com:wids-eria/ADAGE.git"
 set :scm, :git
 
 set :user, :deploy
