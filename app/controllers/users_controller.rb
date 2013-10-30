@@ -56,6 +56,36 @@ class UsersController < ApplicationController
   
   end
 
+  def session_logs
+    @user = User.find(params[:id])
+    @data = @user.data
+    if params[:gameName] != nil
+      @data = @data.where(gameName: params[:gameName])
+    end
+
+    puts 'data count: ' + @data.count.to_s
+
+    @session_times = Hash.new
+    @sessions = @data.distinct(:session_token)
+    puts @sessions.inspect
+    @sessions.each do |token|
+      session_logs = @data.where(session_token: token).asc(:timestamp)
+      if session_logs.first.ADAVersion.include?('drunken_dolphin')
+        end_time =  Time.at(session_logs.last.timestamp) #DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+        start_time = Time.at(session_logs.first.timestamp) #DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+        puts start_time
+        puts end_time
+        hash = token #start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+        minutes = ((end_time - start_time)/1.minute).round 
+        if @session_times[hash] != nil
+          @session_times[hash] =  @session_times[hash] + minutes 
+        else
+          @session_times[hash] = minutes
+        end
+      end
+    end
+  end
+
   def find
     @user = User.where(player_name: params[:player_name]).first
     respond_to do |format|

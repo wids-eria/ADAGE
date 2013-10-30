@@ -1,0 +1,7 @@
+%h1=@user.player_name
+-if @session_times != nil
+  %h3= 'Sessions played: ' + @session_times.count.to_s
+  -@session_times.each do |key, value|
+    %p= key + " : " +  value.to_s + " minutes"
+
+

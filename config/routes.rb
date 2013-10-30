@@ -36,11 +36,10 @@ Ada::Application.routes.draw do
       get :reset_password_form
       put :reset_password
     end
-     member do
+    member do
       get :data_by_game
-    end
-    member do 
       get :stats
+      get :session_logs
     end
   end
 
