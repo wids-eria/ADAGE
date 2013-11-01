@@ -1,18 +1,14 @@
 #Save Game API
 
-##post /save_game 
+##POST /save_game 
 
 Save game information as a json object. Will save one record per player per applications. First call will create the record and subsequent calls will overwrite the saved record.
 
-###request
+###Request
 <table>
     <tr> 
         <th>params</th>
         <th>description</th>
-    </tr>
-    <tr>
-        <td>authorization_token</td>
-        <td>The authorization token for the player</td>
     </tr>
     <tr>
         <td>app_token</td>
@@ -25,19 +21,15 @@ Save game information as a json object. Will save one record per player per appl
 </table>
 
 
-##get /load_game
+##GET /load_game
 
 Request a previously saved game for a player for this applicaiton.
 
-###request
+###Request
 <table>
     <tr> 
         <th>params</th>
         <th>description</th>
-    </tr>
-    <tr>
-        <td>authorization_token</td>
-        <td>The authorization token for the player</td>
     </tr>
     <tr>
         <td>app_token</td>
