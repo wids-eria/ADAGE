@@ -8,6 +8,9 @@ Ada::Application.routes.draw do
   match "data/heatmap" => "data#heatmap"
   match "user/user_data" => "users#get_data"
 
+  match "save_game" => "save#save", :via => :post
+  match "load_game" => "save#load", :via => :get
+
   resources :roles
   resources :participant_roles
   resources :games do

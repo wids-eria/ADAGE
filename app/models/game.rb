@@ -7,8 +7,10 @@ class Game < ActiveRecord::Base
   has_many :roles
   has_one :participant_role
   has_one :researcher_role
+  has_one :developer_role
 
   after_create :create_researcher_role
+  after_create :create_developer_role
   after_create :create_participant_role
   
   def users
@@ -30,6 +32,12 @@ class Game < ActiveRecord::Base
 
   def create_participant_role
     role = ParticipantRole.new(name: self.name, game: self)
+    role.save  
+    raise role.inspect if role.new_record?
+  end
+
+  def create_developer_role
+    role = DeveloperRole.new(name: self.name, game: self)
     role.save  
     raise role.inspect if role.new_record?
   end
