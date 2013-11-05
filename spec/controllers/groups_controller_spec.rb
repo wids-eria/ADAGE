@@ -3,6 +3,7 @@ require 'spec_helper'
 describe GroupsController do
   let!(:teacher_role) { Role.create(name: 'teacher') }
   let!(:admin_role) { Role.create(name: 'admin') }
+  let!(:researcher_role) { Role.create(name: 'researcher') }
   let!(:user) { Fabricate :user, password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'teacher').first] }
 
   before do

@@ -8,7 +8,7 @@ describe 'Oauth with google+' do
 
     page.should have_content('Mock Man')
     @user = User.where(player_name: 'Mock Man').first
-    puts @user.social_access_tokens.where(provider: 'google_oauth2').first.inspect
+    #puts @user.social_access_tokens.where(provider: 'google_oauth2').first.inspect
     @user.social_access_tokens.where(provider: 'google_oauth2').first.should_not be_nil
 
   end
@@ -16,6 +16,7 @@ describe 'Oauth with google+' do
   it 'merges info into existing users' do
     Role.create(name: 'player')
     Role.create(name: 'admin')
+    Role.create(name: 'researcher')
     @user = Fabricate :user, player_name: 'Mock Man', email: 'mock@nomail.com', password: 'pass1234', roles: [Role.where(name: 'player').first]
     visit root_url
 

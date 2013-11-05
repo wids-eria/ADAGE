@@ -28,12 +28,8 @@ class Ability
       end
     end
 
-
     if user.role? Role.find_by_name('researcher')
-      can :read, Group
-      can :update, Group
-      can :create, Group
+     can [:read,:update,:create], Group
     end
-
    end
 end

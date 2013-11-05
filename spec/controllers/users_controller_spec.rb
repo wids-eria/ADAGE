@@ -5,6 +5,7 @@ describe UsersController do
   describe "unity login" do
     let!(:player_role) { Role.create(name: 'player') }
     let!(:admin_role)  { Role.create(name: 'admin')  }
+    let!(:researcher_role) { Role.create(name: 'researcher') }
     let (:roles) { [Role.where(name: 'admin').first, Role.where(name: 'player').first] }
     let!(:user)  { Fabricate :user, player_name: 'TestPlayer', email: 'Test@email.com', authentication_token: 'abcdefg', password: 'pass1234', roles: roles }
     let (:json)  { JSON.parse(response.body) }
