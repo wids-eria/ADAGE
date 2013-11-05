@@ -52,6 +52,10 @@ class User < ActiveRecord::Base
     AdaData.where("user_id" => self.id)
   end
 
+  def saves
+    SaveData.where("user_id" => self.id)
+  end
+
   def progenitor_data
     AdaData.where("user_id" => self.id, "gameName" => "ProgenitorX")
   end

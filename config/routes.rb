@@ -13,6 +13,10 @@ Ada::Application.routes.draw do
     # get :playsquads
     end
   end
+
+  match "save_game" => "save#save", :via => :post
+  match "load_game" => "save#load", :via => :get
+
   resources :roles
   resources :participant_roles
 
