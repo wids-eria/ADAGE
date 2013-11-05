@@ -9,7 +9,6 @@ describe OauthController do
     it "creates guest accounts!" do 
       post :guest, {'client_id' => client_app.app_token, 'client_secret' => client_app.app_secret, 'format' => 'json'}
       response.should be_success
-      puts response.body
       puts json["info"]["player_name"]
       json["info"]["guest"].should == true
     end
