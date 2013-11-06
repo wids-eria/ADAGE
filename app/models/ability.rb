@@ -7,6 +7,7 @@ class Ability
     cannot :manage, AdaData
     cannot :manage, User
     cannot :manage, Game
+    cannot :manage, Group
 
     if user.role? Role.find_by_name('admin')
       can :manage, :all
@@ -40,7 +41,5 @@ class Ability
         user.role?(ResearcherRole.where(game_id: p_role.game.id).first)
       end
     end
-
-
    end
 end
