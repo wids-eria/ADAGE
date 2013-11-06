@@ -133,6 +133,7 @@ class OauthController < ApplicationController
     end
   end
 
+
   def guest
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
 
@@ -142,16 +143,13 @@ class OauthController < ApplicationController
 
       redirect_to :failure unless user
 
-      render :json => {:access_token => access_token.consumer_secret}
-
       #If group code is present add the player to the group
       unless params[:group].nil?
         user.add_to_group(params[:group])
       end
 
-      respond_to do |format|
-        format.json { render :json => hash.to_json }
-      end
+      render :json => {:access_token => access_token.consumer_secret}
+
     else
       render :json => {:error => "Could not find application." }
       return
