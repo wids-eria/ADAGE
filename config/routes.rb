@@ -46,7 +46,7 @@ Ada::Application.routes.draw do
   get '/auth/ada/authorize' => 'oauth#authorize'
   get '/auth/ada/access_token' => 'oauth#access_token'
   get '/auth/ada/user' => 'oauth#user'
-  post '/auth/ada/guest' => 'oauth#guest'
+  post '/auth/guest' => 'oauth#guest'
   get '/auth/adage_user' => 'oauth#adage_user'
   post '/oauth/token' => 'oauth#access_token'
   get '/auth/failure' => 'oauth#failure'

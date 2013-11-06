@@ -8,7 +8,7 @@ Clients of ADAGE will need to register to obtain an application token and applic
 
 When using the [Unity 3D based ADAGE client](https://github.com/wids-eria/adage_unity_client) The following API calls are used. These are available for other clients to use to authenticate registered clients as well.
 
-##POST /authorize_unity
+##POST /auth/authorize_unity
 
 Authorize an application and player through a resource owner password credentials grant
 
@@ -39,7 +39,7 @@ Authorize an application and player through a resource owner password credential
 ###Response
 The player's authorization token
 
-##POST /authorize_unity_fb
+##POST /auth/authorize_unity_fb
 Authorize or create a player based off of an OAuth response recived in the Unity client. The OAuth Response should be passed in the header in typical OAuth fashion.
 
 ###Request
@@ -61,7 +61,7 @@ Authorize or create a player based off of an OAuth response recived in the Unity
 ###Response
 The player's authorization token
 
-##POST /authorize_brainpop
+##POST /auth/authorize_brainpop
 create or find and authorize an ADAGE account based on a brainpop login id.
 
 ###Request
@@ -87,7 +87,7 @@ create or find and authorize an ADAGE account based on a brainpop login id.
 ###Response
 The player's authorization token
 
-##POST /guest
+##POST /auth/guest
 creates and authorizes a guest account
 
 ###Request
@@ -112,7 +112,7 @@ The player's authorization token
 
 
 
-##POST /adage_user
+##POST /auth/adage_user
 Get information about the current unity user. Typically called after authentication or on app start to get information for display and reference such as email or player_name.
 
 ###Response
