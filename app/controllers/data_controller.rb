@@ -116,7 +116,6 @@ class DataController < ApplicationController
   def tenacity_player_stats
 
     player_name = params[:player_name]
-    puts player_name
 
     @user = User.where(player_name: player_name).first
     if @user == nil
