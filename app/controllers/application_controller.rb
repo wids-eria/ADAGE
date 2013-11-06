@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
       access_token = AccessToken.where(consumer_secret: token).first
     else
       #check for a param with the token
+      puts params[:authorization_token]
       authorization = params[:authorization_token]
       if authorization != nil
         access_token = AccessToken.where(consumer_secret: authorization).first

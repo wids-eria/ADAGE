@@ -61,8 +61,58 @@ Authorize or create a player based off of an OAuth response recived in the Unity
 ###Response
 The player's authorization token
 
+##POST /authorize_brainpop
+create or find and authorize an ADAGE account based on a brainpop login id.
 
-##GET /unity_user
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>The application's id assigned through the ADAGE developer portal</td>
+    </tr>
+	 <tr>
+        <td>client_secret</td>
+        <td>The application's secret</td>
+    </tr>
+    <tr>
+    	<td>player_id</td>
+    	<td>The brainpop id for a player</td>
+   	</tr>
+</table>
+
+###Response
+The player's authorization token
+
+##POST /guest
+creates and authorizes a guest account
+
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>The application's id assigned through the ADAGE developer portal</td>
+    </tr>
+	 <tr>
+        <td>client_secret</td>
+        <td>The application's secret</td>
+    </tr>
+</table>
+
+###Response
+The player's authorization token
+
+
+
+
+##POST /adage_user
 Get information about the current unity user. Typically called after authentication or on app start to get information for display and reference such as email or player_name.
 
 ###Response
@@ -88,5 +138,9 @@ JSON containing the player information
     <tr>
         <td>player_name</td>
         <td>the current players name</td>
+    </tr>
+    <tr>
+        <td>guest</td>
+        <td>Is this a guest account</td>
     </tr>
 </table>

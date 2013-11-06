@@ -101,6 +101,26 @@ class User < ActiveRecord::Base
     )
     return guest
   end
+
+  def self.find_for_brainpop_auth(player_id, signed_in_resource=nil)
+   
+    access_token = SocialAccessToken.where(provider: 'brainpop', uid: player_id).first
+    user = nil 
+    if access_token == nil
+      user = User.create_guest
+      access_token = SocialAccessToken.create(
+        user: user,
+        provider: 'brainpop',
+        uid: player_id,
+        access_token: player_id
+      )
+    else
+      user = access_token.user
+    end
+
+    return user
+
+  end
   
   def self.find_for_google_oauth2(auth, signed_in_resource=nil)
     user = User.where(email: auth.info.email).first
