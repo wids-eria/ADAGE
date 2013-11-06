@@ -21,6 +21,11 @@ class Ability
 
       if user.role? Role.find_by_name('developer')
         can :create, Game
+        can [:read,:update,:create], Group
+      end
+
+      if user.role? Role.find_by_name('researcher')
+       can [:read,:update,:create], Group
       end
 
       can :manage, Game do |game|
@@ -36,8 +41,6 @@ class Ability
       end
     end
 
-    if user.role? Role.find_by_name('researcher')
-     can [:read,:update,:create], Group
-    end
+
    end
 end

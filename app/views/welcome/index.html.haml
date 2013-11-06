@@ -7,7 +7,7 @@
         = link_to 'edit profile', edit_user_registration_url
       -if current_user.admin?
         = link_to 'Admin Tools', admin_users_path
-      -if current_user.researcher? || current_user.admin?
+      -if can? :read, Group
         .groups
           = link_to 'Groups', groups_path
       .logoutlink
