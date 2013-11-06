@@ -11,7 +11,9 @@ class User < ActiveRecord::Base
 
   attr_accessor :login
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented
+
+  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :guest, :group_ids
+
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
@@ -24,6 +26,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :roles
   has_many :access_tokens
   has_many :social_access_tokens
+  has_and_belongs_to_many :groups
 
   def role?(role)
       return !!self.roles.find_by_name(role.name)
@@ -33,12 +36,24 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_type('ResearcherRole')
   end
 
+  def teacher?
+    return !!self.roles.find_by_name('teacher')
+  end
+
+  def researcher?
+    return !!self.roles.find_by_name('researcher')
+  end
+
   def admin?
     return !!self.roles.find_by_name('admin')
   end
 
   def data
     AdaData.where("user_id" => self.id)
+  end
+
+  def saves
+    SaveData.where("user_id" => self.id)
   end
 
   def progenitor_data
@@ -84,6 +99,20 @@ class User < ActiveRecord::Base
     user
   end
 
+  def self.create_guest
+    #generate token since the playername and email have to be unique
+    name = ZooPass.generate_name
+    while User.where(player_name: name).first != nil
+      name = ZooPass.generate_name
+    end
+    guest = User.create(
+      player_name: name,
+      email: name+'@guest.com',
+      guest: true,
+    )
+    return guest
+  end
+
   def self.find_for_google_oauth2(auth, signed_in_resource=nil)
     user = User.where(email: auth.info.email).first
 
@@ -109,6 +138,12 @@ class User < ActiveRecord::Base
       user
   end
 
+  def add_to_group(code)
+    @group = Group.find_by_code(code)
+    unless @group.nil? || self.groups.include?(@group)
+      self.groups << @group
+    end
+  end
 
   def data_to_csv(csv, gameName, schema='')
     keys = Hash.new
@@ -136,7 +171,7 @@ class User < ActiveRecord::Base
       out = Array.new
       out << self.player_name
       if entry.respond_to?('timestamp')
-        if entry.timestamp.to_s.include?(':') 
+        if entry.timestamp.to_s.include?(':')
           out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
         else
           out << 'does not compute'
@@ -155,10 +190,18 @@ class User < ActiveRecord::Base
     end
     return csv
   end
-  
-
 
   private
+
+  #override devise password to allow guest acounts with nil passwords
+  def password_required?
+    super && !self.guest
+  end
+
+  #override devise password to allow guest acounts with nil emails
+  def email_required?
+    super && !self.guest
+  end
 
   def update_control_group
     if self.control_group.nil?

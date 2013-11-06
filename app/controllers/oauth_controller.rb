@@ -1,5 +1,5 @@
 class OauthController < ApplicationController
-  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity, :authorize_unity_fb]
+  before_filter :authenticate_user!, except: [:access_token, :user, :authorize_unity, :authorize_unity_fb, :guest]
   skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
 
   def authorize
@@ -24,7 +24,7 @@ class OauthController < ApplicationController
     if user != nil and user.valid_password? params[:password]
       sign_in user
     else
-      redirect_to '/auth/failure', :status => 401, :message => 'incorrect player name or password'    
+      redirect_to '/auth/failure', :status => 401, :message => 'incorrect player name or password'
       return
     end
 
@@ -36,19 +36,18 @@ class OauthController < ApplicationController
 
     access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
     render :json => {:access_token => access_token.consumer_secret }
-   
   end
 
   def authorize_unity_fb
-   
+
     puts '*'*20
     puts request.env["HTTP_OMNIAUTH.AUTH"].inspect
     puts '*'*20
 
 
-    parsed = JSON.parse(request.env["HTTP_OMNIAUTH.AUTH"]) 
+    parsed = JSON.parse(request.env["HTTP_OMNIAUTH.AUTH"])
     auth = OmniAuth::AuthHash.new(parsed)
-    #auth = JSON.parse(request.env["HTTP_OMNIAUTH.AUTH"]) 
+    #auth = JSON.parse(request.env["HTTP_OMNIAUTH.AUTH"])
     puts auth.inspect
     puts auth["info"]
     user = User.find_for_facebook_oauth(auth, current_user)
@@ -103,8 +102,45 @@ class OauthController < ApplicationController
       }
     }
 
+    unless params[:group].nil?
+      user.add_to_group(params[:group])
+    end
+
     respond_to do |format|
       format.json { render :json => hash.to_json }
+    end
+  end
+
+  def guest
+    application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
+
+    unless application.nil?
+      user =  User.create_guest
+      access_token =  user.access_tokens.create({client: application})
+
+      redirect_to :failure unless user
+      hash = {
+        provider: 'ada',
+        uid: user.id.to_s,
+        info: {
+          email: user.email,
+          player_name: user.player_name,
+          token: access_token['consumer_secret'],
+          guest: true
+        }
+      }
+
+      #If group code is present add the player to the group
+      unless params[:group].nil?
+        user.add_to_group(params[:group])
+      end
+
+      respond_to do |format|
+        format.json { render :json => hash.to_json }
+      end
+    else
+      render :json => {:error => "Could not find application." }
+      return
     end
   end
 

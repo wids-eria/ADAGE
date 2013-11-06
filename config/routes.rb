@@ -6,18 +6,28 @@ Ada::Application.routes.draw do
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
   match "data/heatmap" => "data#heatmap"
-  match "user/user_data" => "users#get_data" 
+  match "user/user_data" => "users#get_data"
+
+  resources :groups do
+    collection do
+    # get :playsquads
+    end
+  end
+
+  match "save_game" => "save#save", :via => :post
+  match "load_game" => "save#load", :via => :get
 
   resources :roles
   resources :participant_roles
+
   resources :games do
     member do
-      post :search_users 
+      post :search_users
     end
   end
   resources :implementations
   resources :data do
-    collection do 
+    collection do
       post :tenacity_player_stats
       get :find_tenacity_player
       get :data_by_version
@@ -43,12 +53,12 @@ Ada::Application.routes.draw do
   get '/auth/ada/authorize' => 'oauth#authorize'
   get '/auth/ada/access_token' => 'oauth#access_token'
   get '/auth/ada/user' => 'oauth#user'
+  post '/auth/ada/guest' => 'oauth#guest'
   get '/auth/unity_user' => 'oauth#unity_user'
   post '/oauth/token' => 'oauth#access_token'
   get '/auth/failure' => 'oauth#failure'
   get '/auth/authorize_unity' => 'oauth#authorize_unity'
   get '/auth/authorize_unity_fb' => 'oauth#authorize_unity_fb'
-
 
   root :to => 'welcome#index'
 end
