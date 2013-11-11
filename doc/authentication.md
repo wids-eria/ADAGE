@@ -109,7 +109,44 @@ creates and authorizes a guest account
 ###Response
 The player's authorization token
 
+##POST /auth/client_side_create_user
+creates and authorizes a account with player created credentials
 
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>The application's id assigned through the ADAGE developer portal</td>
+    </tr>
+	 <tr>
+        <td>client_secret</td>
+        <td>The application's secret</td>
+    </tr>
+    <tr>
+        <td>player_name</td>
+        <td>player name</td>
+    </tr>
+
+	<tr>
+        <td>email (optional)</td>
+        <td>players email</td>
+    </tr>
+    <tr>
+        <td>password</td>
+        <td>the password</td>
+    </tr>
+	<tr>
+        <td>password_confirm</td>
+        <td>The password again</td>
+    </tr>
+</table>
+
+###Response
+The player's authorization token
 
 
 ##POST /auth/adage_user
