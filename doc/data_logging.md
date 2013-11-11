@@ -16,8 +16,8 @@ Place to log click stream data from games. This will accept lists of JSON data. 
         <td>Token that identifies the client application</td>
     </tr>
     <tr>
-        <td>save_game</td>
-        <td>A JSON object containing what will be saved</td>
+        <td>data</td>
+        <td>a list of ADAGE data logs to be logged</td>
     </tr>
 </table>
 
