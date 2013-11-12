@@ -1,0 +1,21 @@
+%h1.row
+  = @group.name
+
+%h4.row
+  - if can? :update, Group
+    = link_to "Edit", edit_group_path
+  = link_to "Back", groups_path
+= image_tag @qr
+%h5
+  = @group.code
+
+%h2.row
+  Players
+
+-if @group.users.count==0
+  = "No Players in Group"
+
+%ul
+  - @group.users.each do |user|
+    %li
+      = user.player_name

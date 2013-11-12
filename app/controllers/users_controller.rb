@@ -8,7 +8,7 @@ class UsersController < ApplicationController
      @user = User.find(params[:id])
   end
 
-  def edit 
+  def edit
      @user = User.find(params[:id])
   end
 
@@ -18,7 +18,7 @@ class UsersController < ApplicationController
      @user.roles.each do |role|
        @join = Assignment.where(role_id: role.id, user_id: @user.id).first
        if @join == nil
-        @join = Assignment.new :assigner => current_user, :role => role, :user => @user 
+        @join = Assignment.new :assigner => current_user, :role => role, :user => @user
         @join.save
        elsif @join.assigner_id == nil
          @join.assigner_id = current_user.id
@@ -98,6 +98,8 @@ class UsersController < ApplicationController
     end
   end
   
+
+
   def authenticate_for_token
     @user = User.with_login(params[:email]).first
     ret = {}
@@ -197,7 +199,6 @@ class UsersController < ApplicationController
       end
     end
   end
-
 
   protected
 

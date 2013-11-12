@@ -1,6 +1,6 @@
 require 'csv'
 
-player_list = CSV.open("csv/crystals/player_list.csv", 'r')
+player_list = CSV.open("csv/tenacity/crystals_players.csv", 'r')
 players = Array.new
 player_list.each do |player_name|
   player = User.where(player_name: player_name).first
@@ -11,7 +11,7 @@ end
 
 
 players.each do |play|
-  data = play.data.where(gameName: 'KrystalsOfKaydor')
+  data = play.data.where(gameName: 'KrystalsOfKaydor').asc(:timestamp)
   if data.count > 0
     types = data.distinct(:key)
     types.delete('KoKPlayerMovement') #for now exclude player movement.
@@ -34,7 +34,7 @@ players.each do |play|
     puts all_attrs.inspect
 
 
-    CSV.open("csv/crystals/crystals_"+play.email+".csv", "w") do |csv|
+    CSV.open("csv/tenacity/crystals_"+play.email+".csv", "w") do |csv|
       #puts play.email
       #puts data.count
      

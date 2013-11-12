@@ -11,14 +11,14 @@ describe 'Test the exporting of data as a csv' do
       @some_player.roles << @game.participant_role
       @data = Fabricate :AdaData, user_id: @some_player.id, gameName: @game.name, implementation: @game.implementations.first.name
       visit game_path(@game)
- 
-      click_link 'Export all participant data'  
-      
+
+      click_link 'Export all participant data'
+
       visit game_path(@game)
-      click_link @game.implementations.first.name  
-      
+      click_link @game.implementations.first.name
+
       visit game_path(@game)
-      click_link @game.users.first.player_name + ' data' 
+      click_link @game.users.first.player_name + ' data'
     end
   end
 end

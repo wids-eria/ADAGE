@@ -8,7 +8,10 @@
 .bundle
 
 # Ignore the default SQLite database.
+
 db/*.sqlite3
+dump
+db_dump.sql
 
 # Ignore all logfiles and tempfiles.
 log/*.log
@@ -19,8 +22,8 @@ config/initializers/external_hosts.rb
 config/initializers/secret_token.rb
 config/application.yml
 config/initializers/secret_token.rb
-
-
+config/adjectives.txt
+config/nouns.txt
 
 scripts/csv
 *.csv
