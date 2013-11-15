@@ -11,7 +11,7 @@ class OauthController < ApplicationController
   def access_token
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
     if application.nil?
-      render :json => {:error => "Could not find application." }
+      render :json => {:error => "Could not find application." }, :status => 401
       return
     end
 
@@ -23,7 +23,7 @@ class OauthController < ApplicationController
   def client_side_create_user
       application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
       if application.nil?
-        render :json => {:error => "Could not find application." }
+        render :json => {:error => "Could not find application." }, :status => 401
         return
       end
 
@@ -33,13 +33,13 @@ class OauthController < ApplicationController
         if user != nil and user.valid_password? params[:password]
           sign_in user
         else
-          redirect_to '/auth/failure', :status => 401, :message => 'incorrect player name or password'
+          render :json => {:error => "Incorrect player name or password." }, :status => 401
           return
         end
       else
         user = User.new(player_name: params[:player_name], email: params[:email], password: params[:password], password_confirm: params[:password_confirm])
         unless user.save!
-           redirect_to '/auth/failure', :status => 401, :message => user.errors
+           render :json => {:error => user.errors }, :status => 401
            return
         end
         sign_in user
@@ -57,13 +57,13 @@ class OauthController < ApplicationController
     if user != nil and user.valid_password? params[:password]
       sign_in user
     else
-      redirect_to '/auth/failure', :status => 401, :message => 'incorrect player name or password'
+      render :json => {:error => "Incorrect player name or password." }, :status => 401
       return
     end
 
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
     if application.nil?
-      render :json => {:error => "Could not find application." }
+      render :json => {:error => "Could not find application." }, :status => 401
       return
     end
 
@@ -80,13 +80,13 @@ class OauthController < ApplicationController
 
     user = User.find_for_facebook_oauth(auth, current_user)
     if user.nil?
-      redirect_to '/auth/failure', :status => 401, :message => 'player not found'
+      render :json => {:error => "Player not found." }, :status => 401
       return
     end
 
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
     if application.nil?
-      render :json => {:error => "Could not find application." }
+      render :json => {:error => "Could not find application." }, :status => 401
       return
     end
 
@@ -100,13 +100,13 @@ class OauthController < ApplicationController
 
     user = User.find_for_brainpop_auth(params[:player_id], current_user)
     if user.nil?
-      redirect_to '/auth/failure', :status => 401, :message => 'player not found'
+      render :json => {:error => "Player not found." }, :status => 401
       return
     end
 
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
     if application.nil?
-      render :json => {:error => "Could not find application." }
+      render :json => {:error => "Could not find application." }, :status => 401
       return
     end
 
@@ -123,7 +123,7 @@ class OauthController < ApplicationController
 
   def adage_user
     unless current_user
-      redirect_to '/auth/failure', :message => 'player not found'
+      render :json => {:error => "Player not found." }, :status => 401
     end
 
     hash = {
@@ -180,7 +180,7 @@ class OauthController < ApplicationController
       render :json => {:access_token => access_token.consumer_secret}
 
     else
-      render :json => {:error => "Could not find application." }
+      render :json => {:error => "Could not find application." }, :status => 401
       return
     end
   end
