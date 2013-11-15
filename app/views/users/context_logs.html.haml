@@ -1,0 +1,8 @@
+%h1=@user.player_name
+-@context_starts.each do |key, value|
+  %p= key.to_s + " : " +  value.to_s + " starts"
+-@context_ends.each do |key, value|
+  %p= key.to_s + " : " +  value.to_s + " ends"
+-@context_list.each do |value|
+  %p= value
+

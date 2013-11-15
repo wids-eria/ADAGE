@@ -50,6 +50,7 @@ Ada::Application.routes.draw do
       get :data_by_game
       get :stats
       get :session_logs
+      get :context_logs
     end
   end
 

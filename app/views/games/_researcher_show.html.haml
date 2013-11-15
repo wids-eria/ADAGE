@@ -56,7 +56,6 @@
               = user.consented
             %td
               -unless user.data.empty?
-                - timeplayed =  user.data.last.created_at - user.data.first.created_at
-                = timeplayed
-
+                = link_to session_logs_user_path(user, gameName: @game.name) do
+                  = 'playtime graph'
 

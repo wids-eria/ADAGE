@@ -45,28 +45,27 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @games = @user.data.distinct(:gameName)
     @counts = Array.new
-    @entries_by_game = Array.new
     @names = Array.new
     @games.each_with_index do |game, i|
       game_data = @user.data.where(gameName: game)
       @names << game
       @counts << {x: i, y: game_data.distinct(:session_token).count}
-      @entries_by_game << {x: i , y: game_data.count }
     end
+    puts @counts.inspect
   
   end
 
   def session_logs
     @user = User.find(params[:id])
-    @data = @user.data
+    @data = @user.data.asc(:timestamp)
     if params[:gameName] != nil
-      @data = @data.where(gameName: params[:gameName])
+      @data = @data.where(gameName: params[:gameName]).asc(:timestamp)
     end
 
     puts 'data count: ' + @data.count.to_s
 
     @session_times = Hash.new
-    @sessions = @data.distinct(:session_token)
+    @sessions = @data.distinct(:session_token).sort
     puts @sessions.inspect
     @sessions.each do |token|
       session_logs = @data.where(session_token: token).asc(:timestamp)
@@ -75,15 +74,106 @@ class UsersController < ApplicationController
         start_time = Time.at(session_logs.first.timestamp) #DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
         puts start_time
         puts end_time
-        hash = token #start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+        hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
         minutes = ((end_time - start_time)/1.minute).round 
         if @session_times[hash] != nil
-          @session_times[hash] =  @session_times[hash] + minutes 
+          @session_times[hash] << minutes 
         else
-          @session_times[hash] = minutes
+          @session_times[hash] = Array.new
+          @session_times[hash] << minutes
+        end
+      end
+
+      if session_logs.first.ADAVersion.include?('bodacious_bonobo')
+        end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+        start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+        puts start_time
+        puts end_time
+        hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
+        minutes = ((end_time - start_time)/1.minute).round 
+        if @session_times[hash] != nil
+          @session_times[hash] <<  minutes 
+        else
+          @session_times[hash] = Array.new
+          @session_times[hash] << minutes
+        end
+
+      end 
+    end
+
+    @playtimes = Array.new
+    @names = Array.new
+    count = 0
+    max_data = 0
+    @session_times.each do |key, value|
+      puts 'key: ' + key.to_s
+      puts 'value ' + value.to_s
+      vcount = 0
+      value.each do |minutes|
+        if @playtimes[vcount] == nil
+          @playtimes << DataSeries.new
+        end
+        puts @playtimes[vcount].data.inspect
+        @playtimes[vcount].data << {x: count, y: minutes}
+        if max_data < @playtimes[vcount].data.count
+          max_data = @playtimes[vcount].data.count
+        end
+        vcount = vcount + 1
+      end
+      @names << key
+      count = count + 1
+    end
+
+    #needed because rickshaw is stupid
+    @playtimes.each do |series|
+      current_count = series.data.count
+      puts "max " + max_data.to_s
+      if current_count < max_data
+        puts "current " + current_count.to_s
+        (current_count...max_data).each do |foo|
+          series.data << {x: foo, y: 0}
+        end
+      end
+      puts "final " + series.data.count.to_s
+    end
+
+
+    puts @playtimes.to_json
+  end
+
+
+  def context_logs
+    @user = User.find(params[:id])
+    @data = @user.data.asc(:timestamp)
+    if params[:gameName] != nil
+      @data = @data.where(gameName: params[:gameName]).asc(:timestamp)
+    end
+
+    puts 'data count: ' + @data.count.to_s
+
+    contexts = @data.where(ada_base_types: 'ADAGEContext').asc(:timestamp)
+
+    @context_starts = Hash.new(0)
+    @context_ends = Hash.new(0)
+    @context_success = Hash.new(0)
+    context_stack = Array.new
+    @context_list = Array.new
+    
+    contexts.each do |q|
+      if q.ada_base_types.include?('ADAGEContextStart')
+        unless context_stack.include?(q.name)
+          context_stack << q.name
+          @context_starts[q.name] = @context_starts[q.name] + 1 
+        end
+      else
+        if context_stack.include?(q.name)
+          context_stack = context_stack.delete(q.name)
+          @context_ends[q.name] = @context_ends[q.name] + 1 
+          @context_list << q.name
         end
       end
     end
+  
   end
 
   def find

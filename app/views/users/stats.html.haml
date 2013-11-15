@@ -2,7 +2,6 @@
 .h1='Total log entries ' + @user.data.count.to_s
 %script
   != "counts = #{@counts.to_json};"
-  != "entries_by_game = #{@entries_by_game.to_json};"
-%script{src: 'assets/test_rickshaw.js', type: 'text/javascript'}
+%script{src: '/assets/test_rickshaw.js', type: 'text/javascript'}
 %div{id: 'chart'}
 
