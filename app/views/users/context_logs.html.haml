@@ -1,8 +1,17 @@
+
 %h1=@user.player_name
+%script
+  != "contexts = #{@contexts.to_json};"
+%script{src: '/assets/context_graph.js', type: 'text/javascript'}
+%div{id: 'context_graph'}
+
+
+
 -@context_starts.each do |key, value|
   %p= key.to_s + " : " +  value.to_s + " starts"
 -@context_ends.each do |key, value|
   %p= key.to_s + " : " +  value.to_s + " ends"
 -@context_list.each do |value|
   %p= value
+
 

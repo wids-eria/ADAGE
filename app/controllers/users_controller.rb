@@ -158,6 +158,7 @@ class UsersController < ApplicationController
     @context_success = Hash.new(0)
     context_stack = Array.new
     @context_list = Array.new
+
     
     contexts.each do |q|
       if q.ada_base_types.include?('ADAGEContextStart')
@@ -173,6 +174,18 @@ class UsersController < ApplicationController
         end
       end
     end
+
+    start_series = DataSeries.new 
+    end_series = DataSeries.new
+    count = 0
+    @context_starts.each do |key, value|
+      start_series.data << {x: count, y: value}
+      end_series.data << {x: count, y: @context_ends[key]}
+      count = count + 1
+    end
+
+    @contexts = [start_series, end_series]
+    puts @contexts.to_json
   
   end
 
