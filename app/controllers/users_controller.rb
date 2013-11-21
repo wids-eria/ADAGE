@@ -178,9 +178,11 @@ class UsersController < ApplicationController
     start_series = DataSeries.new 
     end_series = DataSeries.new
     count = 0
+    @context_names = Array.new
     @context_starts.each do |key, value|
       start_series.data << {x: count, y: value}
       end_series.data << {x: count, y: @context_ends[key]}
+      @context_names << key
       count = count + 1
     end
 

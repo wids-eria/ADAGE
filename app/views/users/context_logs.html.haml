@@ -1,9 +1,14 @@
 
 %h1=@user.player_name
+
+%h2 contexts 
+
 %script
   != "contexts = #{@contexts.to_json};"
+  != "context_names = #{@context_names.to_json};"
 %script{src: '/assets/context_graph.js', type: 'text/javascript'}
 %div{id: 'context_graph'}
+%div{id: 'x_axis'}
 
 
 
