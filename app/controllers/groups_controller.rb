@@ -10,7 +10,7 @@ class GroupsController < ApplicationController
 
   def show
     @group = Group.find(params[:id])
-    text = @group.code
+    text = ActiveSupport::JSON.encode({ group: @group.code })
     @qr = qrcode(text)
   end
 

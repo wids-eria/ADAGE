@@ -45,11 +45,11 @@ class OauthController < ApplicationController
         sign_in user
       end
 
-        
+
     access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
     render :json => {:access_token => access_token.consumer_secret }
 
-  
+
   end
 
   def authorize_unity
@@ -176,6 +176,8 @@ class OauthController < ApplicationController
       unless params[:group].nil?
         user.add_to_group(params[:group])
       end
+
+      sign_in user
 
       render :json => {:access_token => access_token.consumer_secret}
 
