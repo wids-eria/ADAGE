@@ -104,6 +104,10 @@ creates and authorizes a guest account
         <td>client_secret</td>
         <td>The application's secret</td>
     </tr>
+    <tr>
+        <td>group (Optional)</td>
+        <td>Id of a group that you want this user to be added to. If you have scaned a group QR this is where you pass it in.</td>
+    </tr>
 </table>
 
 ###Response
@@ -179,5 +183,5 @@ JSON containing the player information
     <tr>
         <td>guest</td>
         <td>Is this a guest account</td>
-    </tr>
+    </tr>    
 </table>
