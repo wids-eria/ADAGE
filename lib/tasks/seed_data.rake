@@ -29,7 +29,7 @@ namespace :seed_data do
                  'key' => 'FGPlayerEvent',
                  'ADAGEVirtualContext' => adage_vc,
                  'ADAGEPositionalContext' => adage_pc,
-                 'user_id' => 1
+                 'user_id' => rand.rand(1...User.all.count)
                   }
 
     adage_start = {'gameName' => 'Fake Game',
@@ -67,7 +67,7 @@ namespace :seed_data do
      (0..100).each do |i|
         data = AdaData.new(types[rand.rand(0...types.count)])
         data.session_token = start_time.to_s
-        data.timestamp = (start_time + (1.minute * rand.rand(1..20))).to_i
+        data.timestamp = (start_time + (1.minute * rand.rand(1..50))).to_i
         if data.key.include?('FGQuest')
           data.name = quest_names[rand.rand(0...quest_names.count)]  
         end

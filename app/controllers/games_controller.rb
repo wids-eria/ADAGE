@@ -7,14 +7,20 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
     @users = @game.users
     @average_time = 0
+    @playtimes = DataGroup.new
     if @users.count > 0
       @users.each do |user|
           if user.data.count >= 2
             @average_time +=  user.data.last.created_at - user.data.first.created_at
           end
+          session_times = user.session_information(@game.name)
+          @playtimes.chart_js_add_to_data_group(session_times)
       end
       @average_time = @average_time/@users.count
     end
+
+
+
   end
 
   def select_graph_params

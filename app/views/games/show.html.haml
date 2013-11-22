@@ -1,8 +1,20 @@
 %h2= @game.name
 %br
 
+%script
+  != "playtimes = #{@playtimes.to_json};"
+%script{src: '/assets/session_chart.js', type: 'text/javascript'}
+%canvas{id: 'playtime_chart', width: 800, height: 500}
+
+
+
+
 - if current_user.role?(@game.developer_role) || current_user.admin?
   = render partial: 'developer_show'
 
 - if current_user.role?(@game.researcher_role) || current_user.admin?
   = render partial: 'researcher_show'
+
+
+
+

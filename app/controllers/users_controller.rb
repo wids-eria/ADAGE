@@ -57,88 +57,15 @@ class UsersController < ApplicationController
 
   def session_logs
     @user = User.find(params[:id])
-    @data = @user.data.asc(:timestamp)
-    if params[:gameName] != nil
-      @data = @data.where(gameName: params[:gameName]).asc(:timestamp)
-    end
+    
+    @session_times = @user.session_information(params[:gameName])
 
-    puts 'data count: ' + @data.count.to_s
-
-    @session_times = Hash.new
-    @sessions = @data.distinct(:session_token).sort
-    puts @sessions.inspect
-    @sessions.each do |token|
-      session_logs = @data.where(session_token: token).asc(:timestamp)
-      if session_logs.first.ADAVersion.include?('drunken_dolphin')
-        end_time =  Time.at(session_logs.last.timestamp) #DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        start_time = Time.at(session_logs.first.timestamp) #DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        puts start_time
-        puts end_time
-        hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-        minutes = ((end_time - start_time)/1.minute).round 
-        if @session_times[hash] != nil
-          @session_times[hash] << minutes 
-        else
-          @session_times[hash] = Array.new
-          @session_times[hash] << minutes
-        end
-      end
-
-      if session_logs.first.ADAVersion.include?('bodacious_bonobo')
-        end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        puts start_time
-        puts end_time
-        hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-        minutes = ((end_time - start_time)/1.minute).round 
-        if @session_times[hash] != nil
-          @session_times[hash] <<  minutes 
-        else
-          @session_times[hash] = Array.new
-          @session_times[hash] << minutes
-        end
-
-      end 
-    end
-
-    @playtimes = Array.new
-    @names = Array.new
-    count = 0
-    max_data = 0
-    @session_times.each do |key, value|
-      puts 'key: ' + key.to_s
-      puts 'value ' + value.to_s
-      vcount = 0
-      value.each do |minutes|
-        if @playtimes[vcount] == nil
-          @playtimes << DataSeries.new
-        end
-        puts @playtimes[vcount].data.inspect
-        @playtimes[vcount].data << {x: count, y: minutes}
-        if max_data < @playtimes[vcount].data.count
-          max_data = @playtimes[vcount].data.count
-        end
-        vcount = vcount + 1
-      end
-      @names << key
-      count = count + 1
-    end
-
-    #needed because rickshaw is stupid
-    @playtimes.each do |series|
-      current_count = series.data.count
-      puts "max " + max_data.to_s
-      if current_count < max_data
-        puts "current " + current_count.to_s
-        (current_count...max_data).each do |foo|
-          series.data << {x: foo, y: 0}
-        end
-      end
-      puts "final " + series.data.count.to_s
-    end
-
+    @playtimes = DataGroup.new
+    @playtimes.chart_js_add_to_data_group(@session_times)
 
     puts @playtimes.to_json
+    
+
   end
 
 

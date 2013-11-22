@@ -212,6 +212,61 @@ class User < ActiveRecord::Base
     return csv
   end
 
+
+  #returns session for this player
+  def session_information(gameName= nil, gameVersion= nil)
+    data = self.data.asc(:timestamp)
+    if gameName != nil
+      data = data.where(gameName: gameName).asc(:timestamp)
+    end
+
+    if gameVersion != nil
+      data = data.where(gameVersion: gameVersion) + data.where(schema: gameVersion) 
+    end
+
+    puts 'data count: ' + data.count.to_s
+
+    session_times = Hash.new
+    sessions = data.distinct(:session_token).sort
+    puts sessions.inspect
+    sessions.each do |token|
+      session_logs = data.where(session_token: token).asc(:timestamp)
+      if session_logs.first.ADAVersion.include?('drunken_dolphin')
+        end_time =  Time.at(session_logs.last.timestamp)  
+        start_time = Time.at(session_logs.first.timestamp)  
+        puts start_time
+        puts end_time
+        hash = start_time  
+        minutes = ((end_time - start_time)/1.minute).round 
+        if session_times[hash] != nil
+          session_times[hash] = minutes 
+        else
+          session_times[hash] = minutes
+        end
+      end
+
+      if session_logs.first.ADAVersion.include?('bodacious_bonobo')
+        end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+        start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+        puts start_time
+        puts end_time
+        hash = start_time  
+        minutes = ((end_time - start_time)/1.minute).round 
+        if session_times[hash] != nil
+          session_times[hash] =  minutes 
+        else
+          session_times[hash] = minutes
+        end
+
+      end 
+    end
+
+    return session_times
+
+  
+  
+  end
+
   private
 
   #override devise password to allow guest acounts with nil passwords
