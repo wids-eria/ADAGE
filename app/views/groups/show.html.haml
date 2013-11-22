@@ -6,6 +6,7 @@
     = link_to "Edit", edit_group_path
   = link_to "Back", groups_path
 = image_tag @qr
+= link_to "Download", @qr, target: "_blank", download: @group.name+"-login-"+DateTime.now().strftime("%F")+".png"
 %h5
   = @group.code
 
