@@ -1,6 +1,6 @@
 require "rvm/capistrano"
 
-set :rvm_ruby_string, '1.9.3'
+set :rvm_ruby_string, '1.9.3-p194'
 set :rvm_type, :system
 set :rvm_path, "/usr/local/rvm"
 
@@ -12,7 +12,7 @@ set :stages, %w(production development)
 set :default_stage, "development"
 
 set :application, "ada"
-set :repository,  "git@github.com:wids-eria/ada.git"
+set :repository,  "git@github.com:wids-eria/ADAGE.git"
 set :scm, :git
 
 set :user, :deploy
@@ -31,7 +31,8 @@ after 'deploy:finalize_update', 'deploy:symlink_db'
 after 'deploy:finalize_update', 'deploy:symlink_unity_crossdomain'
 after 'deploy:finalize_update', 'deploy:symlink_external_site_config'
 after 'deploy:finalize_update', 'deploy:symlink_secret_token'
-after 'deploy:finalize_update', 'deploy:symlink_devise'
+after 'deploy:finalize_update', 'deploy:symlink_application_yml'
+after 'deploy:finalize_update', 'deploy:symlink_word_lists'
 
 namespace :deploy do
   desc "Symlinks the database.yml"
@@ -55,9 +56,15 @@ namespace :deploy do
     run "ln -nfs #{deploy_to}/shared/config/initializers/secret_token.rb #{release_path}/config/initializers/secret_token.rb"
   end
 
-  desc "Symlink devise config"
-  task :symlink_secret_token do
-    run "ln -nfs #{deploy_to}/shared/config/initializers/devise.rb #{release_path}/config/initializers/devise.rb"
+  desc "Symlink application config"
+  task :symlink_application_yml do
+    run "ln -nfs #{deploy_to}/shared/config/application.yml #{release_path}/config/application.yml"
+  end
+
+  desc "Symlink word lists"
+  task :symlink_word_lists do
+    run "ln -nfs #{deploy_to}/shared/config/adjectives.txt #{release_path}/config/adjectives.txt"
+    run "ln -nfs #{deploy_to}/shared/config/nouns.txt #{release_path}/config/nouns.txt"
   end
 
 

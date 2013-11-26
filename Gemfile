@@ -12,11 +12,13 @@ gem 'therubyracer'
 gem 'cancan'
 gem 'omniauth'
 gem 'omniauth-facebook'
+gem "omniauth-google-oauth2"
 gem 'simple_form'
 gem 'schema_plus'
 gem 'httparty'
 gem 'pacecar'
 gem 'figaro'
+gem 'zoo_pass', git: 'git://github.com/wids-eria/zoo_pass.git', branch: 'abstracting'
 
 gem 'omniauth-oauth2', '1.1.1'
 group :assets do
@@ -44,7 +46,7 @@ group :test, :development do
   gem 'launchy'
   gem 'capybara'
   gem 'database_cleaner'
-  gem 'webmock'
+  gem 'webmock', :require => false
 
   # Pretty printed test output
   gem 'turn', '~> 0.8.3', :require => false

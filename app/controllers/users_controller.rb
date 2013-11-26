@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   respond_to :html, :json
   layout 'blank'
-  before_filter :authenticate_user!, except: [:authenticate_for_tokens]
+  before_filter :authenticate_user!, except: [:authenticate_for_token]
 
   def show
      @user = User.find(params[:id])
@@ -110,10 +110,15 @@ class UsersController < ApplicationController
   def data_by_game
     @user = User.find(params[:id])
     @game = Game.find_by_name(params[:gameName])
-    authorize! :read, @game
-    @data = AdaData.where(user_id: params[:id], gameName: params[:gameName])
-    respond_to do |format|
-      format.csv {send_data export_csv(@data, @user.player_name), filename: @user.player_name+'_'+@game.name+'.csv'}
+    authorize! :read, @game 
+    respond_to do |format| 
+      format.csv {
+        out = CSV.generate do |csv|
+          @user.data_to_csv(csv, @game.name)
+        end
+        send_data out, filename: @user.player_name+'_'+@game.name+'.csv'
+      } 
+      format.json { render :json => @user.data }
     end
   end
 
@@ -153,15 +158,6 @@ class UsersController < ApplicationController
 
   def application
     @application ||= Client.where(app_token: params[:client_id]).first
-  end
-
-  def export_csv(data, name)
-    CSV.generate do |csv|
-      keys = Hash.new
-      data.each do |log_entry|
-        csv << JSON.parse(log_entry.as_document.to_json).values
-      end
-    end
   end
 
   def can_change_password_for?(user)

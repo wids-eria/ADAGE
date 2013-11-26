@@ -8,6 +8,9 @@ Ada::Application.routes.draw do
   match "data/heatmap" => "data#heatmap"
   match "user/user_data" => "users#get_data"
 
+  match "save_game" => "save#save", :via => :post
+  match "load_game" => "save#load", :via => :get
+
   resources :roles
   resources :participant_roles
   resources :games do
@@ -48,6 +51,7 @@ Ada::Application.routes.draw do
   post '/oauth/token' => 'oauth#access_token'
   get '/auth/failure' => 'oauth#failure'
   get '/auth/authorize_unity' => 'oauth#authorize_unity'
+  get '/auth/authorize_unity_fb' => 'oauth#authorize_unity_fb'
 
   root :to => 'welcome#index'
 end
