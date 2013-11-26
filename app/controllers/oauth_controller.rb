@@ -149,7 +149,10 @@ class OauthController < ApplicationController
       uid: user.id.to_s,
       info: {
         email: user.email,
-        player_name: user.player_name
+        player_name: user.player_name,
+
+        #This is stupid but here for backwards compatability
+        auth: user.authentication_token,
       }
     }
 

@@ -25,6 +25,10 @@ config/initializers/secret_token.rb
 config/adjectives.txt
 config/nouns.txt
 
+# Ignore all os stuff
+.DS_Store
+/script/dumped_strings/*.txt
+
 scripts/csv
 *.csv
 scripts/csv/kodu
