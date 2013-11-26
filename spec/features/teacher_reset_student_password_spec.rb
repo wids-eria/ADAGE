@@ -6,8 +6,11 @@ describe 'resetting student password' do
 
   before do
     stub_request(:any, //).to_return(:status => [200])
+    Role.create(name: 'teacher')
+    Role.create(name: 'researcher')
+    Role.create(name: 'developer')
+    Role.create(name: 'admin')
   end
-
 
   it 'authorizes if teacher of student' do
     student.valid_password?('a password').should == true

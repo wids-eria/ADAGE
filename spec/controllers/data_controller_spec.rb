@@ -3,6 +3,7 @@ require 'spec_helper'
 describe DataController do
   let!(:player_role) { Role.create(name: 'player') }
   let!(:admin_role) { Role.create(name: 'admin') }
+  let!(:researcher_role) { Role.create(name: 'researcher') }
   let!(:user) { Fabricate :user, password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'player').first] }
   let!(:game) { Fabricate :game }
   let!(:access_token) {Fabricate :access_token, user: user, client: game.implementations.first.client}

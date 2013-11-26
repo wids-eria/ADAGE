@@ -13,9 +13,9 @@
       - @game.implementations.each do |version|
         %li
           = version.name
-          = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
+          = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do
             = 'csv'
-          = link_to data_by_version_data_path('json', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
+          = link_to data_by_version_data_path('json', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do
             = 'json'
 
 
@@ -33,7 +33,7 @@
     %h3='Average time played: ' + @average_time.to_s
 .row
   .span12
-    %table.table.table-striped 
+    %table.table.table-striped
       %thead
         %tr
           %th player name
@@ -43,17 +43,17 @@
           %th time played
       %tbody
         - @users.each do |user|
-          %tr          
+          %tr
             %td
               = user.player_name
             %td
               = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do
-                = 'csv' 
+                = 'csv'
             %td
               = link_to data_by_game_user_path(user, 'json', gameName: @game.name) do
-                = 'json' 
+                = 'json'
             %td
-              = user.consented 
+              = user.consented
             %td
               -unless user.data.empty?
                 - timeplayed =  user.data.last.created_at - user.data.first.created_at

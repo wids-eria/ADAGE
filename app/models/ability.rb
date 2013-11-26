@@ -7,8 +7,9 @@ class Ability
     cannot :manage, AdaData
     cannot :manage, User
     cannot :manage, Game
+    cannot :manage, Group
 
-    if user.role? Role.find_by_name('admin') 
+    if user.role? Role.find_by_name('admin')
       can :manage, :all
     elsif user.role? Role.find_by_name('player')
       can :create, AdaData
@@ -21,8 +22,13 @@ class Ability
 
       if user.role? Role.find_by_name('developer')
         can :create, Game
+        can [:read,:update,:create], Group
       end
-      
+
+      if user.role? Role.find_by_name('researcher')
+       can [:read,:update,:create], Group
+      end
+
       can :manage, Game do |game|
         r_role = ResearcherRole.where(game_id: game.id).first
         d_role = DeveloperRole.where(game_id: game.id).first
@@ -35,6 +41,5 @@ class Ability
         user.role?(ResearcherRole.where(game_id: p_role.game.id).first)
       end
     end
-   
    end
 end

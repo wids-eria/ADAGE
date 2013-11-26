@@ -8,7 +8,7 @@ Clients of ADAGE will need to register to obtain an application token and applic
 
 When using the [Unity 3D based ADAGE client](https://github.com/wids-eria/adage_unity_client) The following API calls are used. These are available for other clients to use to authenticate registered clients as well.
 
-##POST /authorize_unity
+##POST /auth/authorize_unity
 
 Authorize an application and player through a resource owner password credentials grant
 
@@ -39,7 +39,7 @@ Authorize an application and player through a resource owner password credential
 ###Response
 The player's authorization token
 
-##POST /authorize_unity_fb
+##POST /auth/authorize_unity_fb
 Authorize or create a player based off of an OAuth response recived in the Unity client. The OAuth Response should be passed in the header in typical OAuth fashion.
 
 ###Request
@@ -61,8 +61,99 @@ Authorize or create a player based off of an OAuth response recived in the Unity
 ###Response
 The player's authorization token
 
+##POST /auth/authorize_brainpop
+create or find and authorize an ADAGE account based on a brainpop login id.
 
-##GET /unity_user
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>The application's id assigned through the ADAGE developer portal</td>
+    </tr>
+	 <tr>
+        <td>client_secret</td>
+        <td>The application's secret</td>
+    </tr>
+    <tr>
+    	<td>player_id</td>
+    	<td>The brainpop id for a player</td>
+   	</tr>
+</table>
+
+###Response
+The player's authorization token
+
+##POST /auth/guest
+creates and authorizes a guest account
+
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>The application's id assigned through the ADAGE developer portal</td>
+    </tr>
+	 <tr>
+        <td>client_secret</td>
+        <td>The application's secret</td>
+    </tr>
+    <tr>
+        <td>group (Optional)</td>
+        <td>Id of a group that you want this user to be added to. If you have scaned a group QR this is where you pass it in.</td>
+    </tr>
+</table>
+
+###Response
+The player's authorization token
+
+##POST /auth/client_side_create_user
+creates and authorizes a account with player created credentials
+
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>client_id</td>
+        <td>The application's id assigned through the ADAGE developer portal</td>
+    </tr>
+	 <tr>
+        <td>client_secret</td>
+        <td>The application's secret</td>
+    </tr>
+    <tr>
+        <td>player_name</td>
+        <td>player name</td>
+    </tr>
+
+	<tr>
+        <td>email (optional)</td>
+        <td>players email</td>
+    </tr>
+    <tr>
+        <td>password</td>
+        <td>the password</td>
+    </tr>
+	<tr>
+        <td>password_confirm</td>
+        <td>The password again</td>
+    </tr>
+</table>
+
+###Response
+The player's authorization token
+
+
+##POST /auth/adage_user
 Get information about the current unity user. Typically called after authentication or on app start to get information for display and reference such as email or player_name.
 
 ###Response
@@ -89,4 +180,8 @@ JSON containing the player information
         <td>player_name</td>
         <td>the current players name</td>
     </tr>
+    <tr>
+        <td>guest</td>
+        <td>Is this a guest account</td>
+    </tr>    
 </table>

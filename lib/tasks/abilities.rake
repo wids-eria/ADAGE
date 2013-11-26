@@ -1,5 +1,6 @@
 namespace :abilities do
-  desc 'Safely create admin, player and developer roles'
+
+  desc 'Safely create admin, player, teacher, researcher, and developer roles'
   task :create => :environment do
     if Role.where(name: 'admin').empty?
       Role.create(name: 'admin')
@@ -7,10 +8,15 @@ namespace :abilities do
     if Role.where(name: 'player').empty?
       Role.create(name: 'player')
     end
+    if Role.where(name: 'teacher').empty?
+      Role.create(name: 'teacher')
+    end
+    if Role.where(name: 'researcher').empty?
+      Role.create(name: 'researcher')
+    end
     if Role.where(name: 'developer').empty?
       Role.create(name: 'developer')
     end
-
   end
 
   desc 'Add the player roles to all users'
@@ -30,7 +36,7 @@ namespace :abilities do
         puts 'creating developer role for ' + game.name
         DeveloperRole.create(name: game.name, game: game)
       end
-      
+
     end
   end
 

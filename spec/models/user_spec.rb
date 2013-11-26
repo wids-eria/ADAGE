@@ -165,5 +165,21 @@ describe User do
       end
 
     end
+
+    context "when adding user to group" do
+      let!(:user) { Fabricate :user, password: 'pass1234'}
+      let(:group) { Fabricate :group, name: 'TestGroup' }
+
+      it 'should add player to group' do
+        user.add_to_group(group.code)
+        user.groups.count.should == 1
+      end
+
+      it 'doesnt add player to same group' do
+        user.add_to_group(group.code)
+        user.add_to_group(group.code)
+        user.groups.count.should == 1
+      end
+    end
   end
 end

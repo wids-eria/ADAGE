@@ -11,33 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131015214850) do
-
-  create_table "games", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  create_table "implementations", :force => true do |t|
-    t.string   "name"
-    t.integer  "game_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-    t.index ["game_id"], :name => "fk__implementations_game_id", :order => {"game_id" => :asc}
-    t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_implementations_game_id"
-  end
-
-  create_table "clients", :force => true do |t|
-    t.string   "name"
-    t.string   "app_token"
-    t.string   "app_secret"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-    t.integer  "implementation_id"
-    t.index ["implementation_id"], :name => "fk__clients_implementation_id", :order => {"implementation_id" => :asc}
-    t.foreign_key ["implementation_id"], "implementations", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_clients_implementation_id"
-  end
+ActiveRecord::Schema.define(:version => 20131018184315) do
 
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "",    :null => false
@@ -73,8 +47,13 @@ ActiveRecord::Schema.define(:version => 20131015214850) do
     t.integer  "client_id"
     t.index ["client_id"], :name => "fk__access_tokens_client_id", :order => {"client_id" => :asc}
     t.index ["user_id"], :name => "fk__access_tokens_user_id", :order => {"user_id" => :asc}
-    t.foreign_key ["client_id"], "clients", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_access_tokens_client_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_access_tokens_user_id"
+  end
+
+  create_table "games", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "roles", :force => true do |t|
@@ -100,6 +79,41 @@ ActiveRecord::Schema.define(:version => 20131015214850) do
     t.foreign_key ["assigner_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_assigner_id"
     t.foreign_key ["role_id"], "roles", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_role_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_user_id"
+  end
+
+  create_table "implementations", :force => true do |t|
+    t.string   "name"
+    t.integer  "game_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.index ["game_id"], :name => "fk__implementations_game_id", :order => {"game_id" => :asc}
+    t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_implementations_game_id"
+  end
+
+  create_table "clients", :force => true do |t|
+    t.string   "name"
+    t.string   "app_token"
+    t.string   "app_secret"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "implementation_id"
+    t.index ["implementation_id"], :name => "fk__clients_implementation_id", :order => {"implementation_id" => :asc}
+    t.foreign_key ["implementation_id"], "implementations", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_clients_implementation_id"
+  end
+
+  create_table "groups", :force => true do |t|
+    t.string   "code"
+    t.string   "name"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+    t.boolean  "playsquad",  :default => true
+  end
+
+  create_table "groups_users", :id => false, :force => true do |t|
+    t.integer "group_id"
+    t.integer "user_id"
+    t.index ["group_id"], :name => "fk__groups_users_group_id", :order => {"group_id" => :asc}
+    t.index ["user_id"], :name => "fk__groups_users_user_id", :order => {"user_id" => :asc}
   end
 
   create_table "roles_users", :id => false, :force => true do |t|

@@ -3,6 +3,7 @@ require 'spec_helper'
 describe GamesController do
   let!(:player_role) { Role.create(name: 'player') }
   let!(:admin_role) { Role.create(name: 'admin') }
+  let!(:researcher_role) { Role.create(name: 'researcher') }
   let!(:user) { Fabricate :user, password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'player').first] }
 
   before do
@@ -20,7 +21,8 @@ describe GamesController do
 
   describe "#show" do
     let(:game) { Fabricate :game }
-    it "returns a game and a list of users" do 
+
+    it "returns a game and a list of users" do
       get :show, :id => game.id
       response.should be_success
     end
