@@ -24,10 +24,11 @@
 /dump/
 db_dump.sql
 
-
 # Ignore all os stuff
 .DS_Store
 /script/dumped_strings/*.txt
 
 # Ignore application configuration
 /config/application.yml
+/config/nouns.txt
+/config/adjectives.txt
