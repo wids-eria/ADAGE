@@ -25,6 +25,10 @@ Ada::Application.routes.draw do
       post :search_users 
       get :select_graph_params
       post :value_over_time
+      get :statistics
+      get :sessions
+      get :developer_tools
+      get :researcher_tools
     end
   end
   resources :implementations
@@ -34,6 +38,8 @@ Ada::Application.routes.draw do
       get :find_tenacity_player
       get :data_by_version
       get :export
+      get :session_logs
+      get :context_logs
     end
   end
 

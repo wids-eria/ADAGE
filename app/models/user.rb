@@ -236,7 +236,7 @@ class User < ActiveRecord::Base
         start_time = Time.at(session_logs.first.timestamp)  
         puts start_time
         puts end_time
-        hash = start_time  
+        hash = start_time
         minutes = ((end_time - start_time)/1.minute).round 
         if session_times[hash] != nil
           session_times[hash] = minutes 
@@ -262,9 +262,54 @@ class User < ActiveRecord::Base
     end
 
     return session_times
+  end
 
-  
-  
+  def context_information(game_name= nil, game_version=nil)
+    data = self.data.asc(:timestamp)
+    if game_name != nil
+      data = data.where(gameName: game_name).asc(:timestamp)
+    end
+
+    if game_version != nil
+      data = data.where(gameVersion: game_version) + data.where(schema: game_version) 
+    end
+
+    puts 'data count: ' + data.count.to_s
+
+    contexts = data.where(ada_base_types: 'ADAGEContext').asc(:timestamp)
+
+    context_starts = Hash.new(0)
+    context_ends = Hash.new(0)
+    context_success = Hash.new(0)
+    context_fail = Hash.new(0)
+    context_stack = Array.new
+
+    
+    contexts.each do |q|
+      if q.ada_base_types.include?('ADAGEContextStart')
+        unless context_stack.include?(q.name)
+          context_stack << q.name
+          context_starts[q.name+'_start'] = context_starts[q.name+'_start'] + 1 
+        end
+      else
+        if context_stack.include?(q.name)
+          context_stack = context_stack.delete(q.name)
+          context_ends[q.name+'_end'] = context_ends[q.name+'_end'] + 1 
+          if q.respond_to?('success')
+            puts q.success
+            if q.success == true
+              context_success[q.name+'_success'] = context_success[q.name+'_success'] + 1
+            else
+              context_fail[q.name+'_fail'] = context_fail[q.name+'_fail'] + 1
+            end  
+          end
+        end
+      end
+    end
+
+    return [context_starts, context_ends, context_success, context_fail]
+
+
   end
 
   private

@@ -1,4 +1,5 @@
 class GamesController < ApplicationController
+  respond_to :html, :json, :csv
   load_and_authorize_resource
   before_filter :authenticate_user!
   layout 'blank'
@@ -6,22 +7,34 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     @users = @game.users
-    @average_time = 0
-    @playtimes = DataGroup.new
-    if @users.count > 0
-      @users.each do |user|
-          if user.data.count >= 2
-            @average_time +=  user.data.last.created_at - user.data.first.created_at
-          end
-          session_times = user.session_information(@game.name)
-          @playtimes.chart_js_add_to_data_group(session_times)
-      end
-      @average_time = @average_time/@users.count
-    end
-
-
-
   end
+  
+
+  def developer_tools
+    @game = Game.find(params[:id])
+    @users = @game.users
+  end
+
+  def researcher_tools
+    @game = Game.find(params[:id])
+    @users = @game.users
+  end
+
+
+
+  def statistics
+    @game = Game.find(params[:id])
+    @logs = AdaData.where(gameName: @game.name)
+    @num_users = @logs.distinct(:user_id).count
+  end
+
+  def sessions
+    @game = Game.find(params[:id])
+    @users = @game.users
+    
+    redirect_to session_logs_data_path(game_id: params[:id], user_ids: @game.user_ids) 
+  end
+
 
   def select_graph_params
     @game = Game.find(params[:id]) 

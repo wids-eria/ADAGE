@@ -2,7 +2,7 @@ namespace :seed_data do
   desc 'Creates fake data from a fake game so we can test data tools locally'
   task :create => :environment do
   
-    rand = Random.new
+    rand = Random.new(Time.now.to_i)
 
     adage_context = {'name' => 'find_a_candy', 'parent_name' => 'find_a_candy'}
     
@@ -29,7 +29,7 @@ namespace :seed_data do
                  'key' => 'FGPlayerEvent',
                  'ADAGEVirtualContext' => adage_vc,
                  'ADAGEPositionalContext' => adage_pc,
-                 'user_id' => rand.rand(1...User.all.count)
+                 'user_id' => rand.rand(1..User.all.count)
                   }
 
     adage_start = {'gameName' => 'Fake Game',
@@ -63,9 +63,11 @@ namespace :seed_data do
      start_time = Time.now - rand.rand(0..5) * 1.days
      types = [adage_base, adage_start, adage_end]
      quest_names = ['Find the Thing', 'Resuce the Prince', 'slay the dragon']
-     success = [true, false]
+     success = [true, false, true, false, true, false]
      (0..100).each do |i|
         data = AdaData.new(types[rand.rand(0...types.count)])
+        data.user_id = rand.rand(1..User.all.count)
+        puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
         data.timestamp = (start_time + (1.minute * rand.rand(1..50))).to_i
         if data.key.include?('FGQuest')
@@ -73,7 +75,7 @@ namespace :seed_data do
         end
 
         if data.key.include?('FGQuestEnd')
-          data.success = quest_names[rand.rand(0...success.count)]  
+          data.success = success[rand.rand(0...success.count)]  
         end
         data.save
      end

@@ -3,7 +3,7 @@ class DataSeries
   include ActiveModel::Conversion
   extend  ActiveModel::Naming
 
-  attr_accessor :data
+  attr_accessor :data, :player_name, :user_id
 
   def initialize(attributes = {})
     self.data = Array.new
