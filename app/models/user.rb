@@ -276,38 +276,35 @@ class User < ActiveRecord::Base
 
     puts 'data count: ' + data.count.to_s
 
-    contexts = data.where(ada_base_types: 'ADAGEContext').asc(:timestamp)
+    context_logs = data.where(ada_base_types: 'ADAGEContext').asc(:timestamp)
 
-    context_starts = Hash.new(0)
-    context_ends = Hash.new(0)
-    context_success = Hash.new(0)
-    context_fail = Hash.new(0)
+    contexts = Hash.new(0)
     context_stack = Array.new
 
     
-    contexts.each do |q|
+    context_logs.each do |q|
       if q.ada_base_types.include?('ADAGEContextStart')
         unless context_stack.include?(q.name)
           context_stack << q.name
-          context_starts[q.name+'_start'] = context_starts[q.name+'_start'] + 1 
+          contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1 
         end
       else
         if context_stack.include?(q.name)
           context_stack = context_stack.delete(q.name)
-          context_ends[q.name+'_end'] = context_ends[q.name+'_end'] + 1 
+          contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1 
           if q.respond_to?('success')
             puts q.success
             if q.success == true
-              context_success[q.name+'_success'] = context_success[q.name+'_success'] + 1
+              contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
             else
-              context_fail[q.name+'_fail'] = context_fail[q.name+'_fail'] + 1
+              contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
             end  
           end
         end
       end
     end
 
-    return [context_starts, context_ends, context_success, context_fail]
+    return contexts
 
 
   end

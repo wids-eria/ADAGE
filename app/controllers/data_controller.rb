@@ -57,10 +57,8 @@ class DataController < ApplicationController
     @data_group = DataGroup.new
     if @users.count > 0
       @users.each do |user|
-        hashes = user.context_information(@game.name)
-        hashes.each do |h|
-         @data_group.add_to_group(h, user)
-        end
+        contexts = user.context_information(@game.name)
+        @data_group.add_to_group(contexts, user)
       end
     end
 

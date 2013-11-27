@@ -32,15 +32,15 @@ class DataGroup
       labels = labels.uniq.sort! 
 
 
-      rand = Random.new
 
       self.series.each do |data_hash| 
+        rand = Random.new(data_hash.user_id)
         data_series = Array.new
         data_hash.data.each do |key, value|
           data_series[labels.index(key)] = value
         end
         datasets << {
-        fillColor: "rgba(" + (data_hash.user_id * 10).to_s + ", 220, 220 ,0.5)",
+        fillColor: "rgba(" + (rand.rand(0...220)).to_s + ", 220,"  + (rand.rand(0...220)).to_s +  ",0.5)",
         strokeColor: "rgba(220,220,220,1)",
         data: data_series}
       end
