@@ -5,6 +5,7 @@
 %h3= 'Total Sessions Played ' + @session_count.to_s 
 %h3= 'Average Session Length ' +  @average_time.to_s
 
+=link_to 'Export as CSV', session_logs_data_path(params: params, format: 'csv')
 
 %script
   != "playtimes = #{@playtimes.to_json};"

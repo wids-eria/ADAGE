@@ -35,6 +35,13 @@ class GamesController < ApplicationController
     redirect_to session_logs_data_path(game_id: params[:id], user_ids: @game.user_ids) 
   end
 
+  def contexts
+    @game = Game.find(params[:id])
+    @users = @game.users
+    
+    redirect_to context_logs_data_path(game_id: params[:id], user_ids: @game.user_ids) 
+  end
+
 
   def select_graph_params
     @game = Game.find(params[:id]) 

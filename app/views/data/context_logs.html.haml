@@ -3,6 +3,7 @@
 
 %h3 Virtual Context Information
 
+=link_to 'Export as CSV', context_logs_data_path(params: params, format: 'csv')
 
 %script
   != "playtimes = #{@chart_info.to_json};"

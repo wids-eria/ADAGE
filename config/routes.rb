@@ -27,6 +27,7 @@ Ada::Application.routes.draw do
       post :value_over_time
       get :statistics
       get :sessions
+      get :contexts
       get :developer_tools
       get :researcher_tools
     end
