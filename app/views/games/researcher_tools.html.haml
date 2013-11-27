@@ -44,6 +44,7 @@
           %th data
           %th consented
           %th time played
+          %th context info
       %tbody
         - @users.each do |user|
           %tr
@@ -61,4 +62,8 @@
               -unless user.data.empty?
                 = link_to session_logs_user_path(user, gameName: @game.name) do
                   = 'playtime graph'
+            %td
+              -unless user.data.empty?
+                = link_to context_logs_user_path(user, gameName: @game.name) do
+                  = 'context graph'
 

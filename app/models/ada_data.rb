@@ -5,10 +5,10 @@ class AdaData
   field :game, type: String
   field :user_id, type: Integer
 
-  index :user_id
-  index :gameName
-  index :created_at
-  index :name
+  index user_id: 1
+  index gameName: 1
+  index created_at: 1
+  index name: 1
   index key: 1, schema: 1
 
   def user=(user)

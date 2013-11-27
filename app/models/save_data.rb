@@ -5,9 +5,9 @@ class SaveData
   field :implementation_id, type: Integer
   field :user_id, type: Integer
   
-  index :user_id
-  index :implementation_id 
-  index :created_at
+  index user_id: 1
+  index implementation_id: 1 
+  index created_at: 1
 
   def user=(user)
     self.user_id = user.id

@@ -231,34 +231,38 @@ class User < ActiveRecord::Base
     puts sessions.inspect
     sessions.each do |token|
       session_logs = data.where(session_token: token).asc(:timestamp)
-      if session_logs.first.ADAVersion.include?('drunken_dolphin')
-        end_time =  Time.at(session_logs.last.timestamp)  
-        start_time = Time.at(session_logs.first.timestamp)  
-        puts start_time
-        puts end_time
-        hash = start_time
-        minutes = ((end_time - start_time)/1.minute).round 
-        if session_times[hash] != nil
-          session_times[hash] = minutes 
-        else
-          session_times[hash] = minutes
+      if session_logs.first.respond_to?('ADAVersion')
+      
+        if session_logs.first.ADAVersion.include?('drunken_dolphin')
+          end_time =  Time.at(session_logs.last.timestamp)  
+          start_time = Time.at(session_logs.first.timestamp)  
+          puts start_time
+          puts end_time
+          hash = start_time
+          minutes = ((end_time - start_time)/1.minute).round 
+          if session_times[hash] != nil
+            session_times[hash] = minutes 
+          else
+            session_times[hash] = minutes
+          end
         end
+
+        if session_logs.first.ADAVersion.include?('bodacious_bonobo')
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          puts start_time
+          puts end_time
+          hash = start_time  
+          minutes = ((end_time - start_time)/1.minute).round 
+          if session_times[hash] != nil
+            session_times[hash] =  minutes 
+          else
+            session_times[hash] = minutes
+          end
+
+        end 
       end
 
-      if session_logs.first.ADAVersion.include?('bodacious_bonobo')
-        end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-        puts start_time
-        puts end_time
-        hash = start_time  
-        minutes = ((end_time - start_time)/1.minute).round 
-        if session_times[hash] != nil
-          session_times[hash] =  minutes 
-        else
-          session_times[hash] = minutes
-        end
-
-      end 
     end
 
     return session_times
@@ -276,14 +280,14 @@ class User < ActiveRecord::Base
 
     puts 'data count: ' + data.count.to_s
 
-    context_logs = data.where(ada_base_types: 'ADAGEContext').asc(:timestamp)
+    context_logs = data.where(:ada_base_types.in => ['ADAGEContext', 'ADAStartUnit', 'ADAEndUnit']).asc(:timestamp)
 
     contexts = Hash.new(0)
     context_stack = Array.new
 
     
     context_logs.each do |q|
-      if q.ada_base_types.include?('ADAGEContextStart')
+      if q.ada_base_types.include?('ADAGEContextStart') or q.ada_base_types.include?('ADAGEStartUnit') 
         unless context_stack.include?(q.name)
           context_stack << q.name
           contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1 
