@@ -11,6 +11,8 @@ gem 'kaminari'
 gem 'therubyracer'
 gem 'cancan'
 gem 'omniauth'
+gem 'rickshaw_rails'
+gem 'chart-js-rails'
 gem 'omniauth-facebook'
 gem "omniauth-google-oauth2"
 gem 'simple_form'

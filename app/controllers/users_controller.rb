@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   respond_to :html, :json
+
   layout 'blank'
   before_filter :authenticate_user!, except: [:authenticate_for_token]
 
@@ -39,7 +40,83 @@ class UsersController < ApplicationController
       format.json { render :json => User.all }
     end
   end
+  
+  def stats
+    @user = User.find(params[:id])
+    @games = @user.data.distinct(:gameName)
+    @counts = Array.new
+    @names = Array.new
+    @games.each_with_index do |game, i|
+      game_data = @user.data.where(gameName: game)
+      @names << game
+      @counts << {x: i, y: game_data.distinct(:session_token).count}
+    end
+    puts @counts.inspect
+  
+  end
 
+  def session_logs
+    @user = User.find(params[:id])
+    
+    @session_times = @user.session_information(params[:gameName])
+
+    @playtimes = DataGroup.new
+    @playtimes.chart_js_add_to_data_group(@session_times)
+
+    puts @playtimes.to_json
+    
+
+  end
+
+
+  def context_logs
+    @user = User.find(params[:id])
+    @data = @user.data.asc(:timestamp)
+    if params[:gameName] != nil
+      @data = @data.where(gameName: params[:gameName]).asc(:timestamp)
+    end
+
+    puts 'data count: ' + @data.count.to_s
+
+    contexts = @data.where(ada_base_types: 'ADAGEContext').asc(:timestamp)
+
+    @context_starts = Hash.new(0)
+    @context_ends = Hash.new(0)
+    @context_success = Hash.new(0)
+    context_stack = Array.new
+    @context_list = Array.new
+
+    
+    contexts.each do |q|
+      if q.ada_base_types.include?('ADAGEContextStart')
+        unless context_stack.include?(q.name)
+          context_stack << q.name
+          @context_starts[q.name] = @context_starts[q.name] + 1 
+        end
+      else
+        if context_stack.include?(q.name)
+          context_stack = context_stack.delete(q.name)
+          @context_ends[q.name] = @context_ends[q.name] + 1 
+          @context_list << q.name
+        end
+      end
+    end
+
+    start_series = DataSeries.new 
+    end_series = DataSeries.new
+    count = 0
+    @context_names = Array.new
+    @context_starts.each do |key, value|
+      start_series.data << {x: count, y: value}
+      end_series.data << {x: count, y: @context_ends[key]}
+      @context_names << key
+      count = count + 1
+    end
+
+    @contexts = [start_series, end_series]
+    puts @contexts.to_json
+  
+  end
 
   def find
     @user = User.where(player_name: params[:player_name]).first
@@ -52,6 +129,7 @@ class UsersController < ApplicationController
       end
     end
   end
+  
 
 
   def authenticate_for_token

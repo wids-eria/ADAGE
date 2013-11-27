@@ -35,6 +35,7 @@ class ApplicationController < ActionController::Base
     return qr.to_img.resize(width,height).to_data_url
   end
 
+  
   protected
 
   def oauth_access_token
@@ -58,4 +59,6 @@ class ApplicationController < ActionController::Base
     end
 
   end
+
+   
 end

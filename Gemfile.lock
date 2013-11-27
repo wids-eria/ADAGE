@@ -59,6 +59,8 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (~> 2.0)
       xpath (~> 0.1.4)
+    chart-js-rails (0.0.4)
+      railties (~> 3.1)
     childprocess (0.2.3)
       ffi (~> 1.0.6)
     chunky_png (1.2.9)
@@ -215,6 +217,8 @@ GEM
       rake
     rdoc (3.12.2)
       json (~> 1.4)
+    rickshaw_rails (1.2.0)
+      railties (>= 3.1.0)
     rqrcode (0.4.2)
     rqrcode_png (0.1.2)
       chunky_png
@@ -290,6 +294,7 @@ DEPENDENCIES
   capistrano
   capistrano-ext
   capybara
+  chart-js-rails
   coffee-rails (~> 3.2.1)
   colored
   cucumber-rails
@@ -316,6 +321,7 @@ DEPENDENCIES
   pry
   pry-rails
   rails (= 3.2.13)
+  rickshaw_rails
   rqrcode_png
   rspec-rails
   rvm-capistrano
