@@ -2,6 +2,7 @@ class DataController < ApplicationController
   before_filter :authenticate_user!
   respond_to :html, :json, :csv
   protect_from_forgery :except => :create
+  layout 'blank'
 
   def index
     @data = AdaData.page params[:page]
@@ -9,13 +10,7 @@ class DataController < ApplicationController
     respond_with @data
   end
 
-  def recent
-    @data = AdaData.where(gameName: "APA:Tracts").where(:created_at.gt => params[:since]).where(key: "Colon Position")
-    respond_to do |format|
-      format.json { render :json => @data }
-    end
-  end
-
+  
   def heatmap
     if params[:level] != nil
       @data = AdaData.where(gameName: params[:gameName]).where(level: params[:level]).where(:created_at.gt => params[:since]).where(key: params[:key]).where(schema: params[:schema])
@@ -26,6 +21,58 @@ class DataController < ApplicationController
       format.json { render :json => @data }
     end
   end
+
+  def session_logs
+    @game = Game.find(params[:game_id])
+    @users = User.where(id: params[:user_ids])
+    @average_time = 0
+    @session_count = 0
+    @data_group = DataGroup.new
+    if @users.count > 0
+      @users.each do |user|
+          session_times = user.session_information(@game.name)
+          @data_group.add_to_group(session_times, user)
+          session_times.each do |key, value|
+            @average_time = @average_time + value
+          end
+          @session_count = @session_count + session_times.count
+      end
+      if @session_count > 0
+        @average_time = @average_time/@session_count
+      end
+    end
+
+    @playtimes = @data_group.to_chart_js
+
+    respond_to do |format|
+      format.json {render :json => @data_group.to_json} 
+      format.html {render}
+      format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
+    end
+  end
+
+  def context_logs
+    @game = Game.find(params[:game_id])
+    @users = User.where(id: params[:user_ids])
+    @data_group = DataGroup.new
+    if @users.count > 0
+      @users.each do |user|
+        contexts = user.context_information(@game.name)
+        @data_group.add_to_group(contexts, user)
+      end
+    end
+
+    @chart_info = @data_group.to_chart_js
+    respond_to do |format|
+      format.json {render :json => @data_group.to_json} 
+      format.html {render}
+      format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
+    end
+
+
+  end
+
+  
 
   def data_by_version
     @game = Game.find_by_name(params[:gameName])
@@ -116,7 +163,6 @@ class DataController < ApplicationController
   def tenacity_player_stats
 
     player_name = params[:player_name]
-    puts player_name
 
     @user = User.where(player_name: player_name).first
     if @user == nil

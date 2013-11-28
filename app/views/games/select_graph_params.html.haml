@@ -1,0 +1,14 @@
+%h1='Select an event and attribute'
+= simple_form_for @graph_params, :url => select_graph_params_game_path do |f|
+  %p
+  = f.select :key, @types
+  %p
+  = f.submit 'update'
+
+= simple_form_for @graph_params, :url => value_over_time_game_path do |f|
+  %p
+  = f.select :value_field, @values
+  %p
+  = f.submit 'graph'
+
+

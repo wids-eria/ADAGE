@@ -11,7 +11,9 @@ class User < ActiveRecord::Base
 
   attr_accessor :login
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented
+
+  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :guest, :group_ids
+
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
@@ -24,6 +26,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :roles
   has_many :access_tokens
   has_many :social_access_tokens
+  has_and_belongs_to_many :groups
 
   def role?(role)
       return !!self.roles.find_by_name(role.name)
@@ -33,12 +36,24 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_type('ResearcherRole')
   end
 
+  def teacher?
+    return !!self.roles.find_by_name('teacher')
+  end
+
+  def researcher?
+    return !!self.roles.find_by_name('researcher')
+  end
+
   def admin?
     return !!self.roles.find_by_name('admin')
   end
 
   def data
     AdaData.where("user_id" => self.id)
+  end
+
+  def saves
+    SaveData.where("user_id" => self.id)
   end
 
   def progenitor_data
@@ -84,6 +99,41 @@ class User < ActiveRecord::Base
     user
   end
 
+  def self.create_guest
+    #generate token since the playername and email have to be unique
+    name = ZooPass.generate_name
+    while User.where(player_name: name).first != nil
+      name = ZooPass.generate_name
+    end
+    guest = User.create(
+      player_name: name,
+      email: name+'@guest.com',
+      guest: true,
+    )
+    return guest
+  end
+
+
+  def self.find_for_brainpop_auth(player_id, signed_in_resource=nil)
+
+    access_token = SocialAccessToken.where(provider: 'brainpop', uid: player_id).first
+    user = nil
+    if access_token == nil
+      user = User.create_guest
+      access_token = SocialAccessToken.create(
+        user: user,
+        provider: 'brainpop',
+        uid: player_id,
+        access_token: player_id
+      )
+    else
+      user = access_token.user
+    end
+
+    return user
+
+  end
+
   def self.find_for_google_oauth2(auth, signed_in_resource=nil)
     user = User.where(email: auth.info.email).first
 
@@ -109,6 +159,12 @@ class User < ActiveRecord::Base
       user
   end
 
+  def add_to_group(code)
+    @group = Group.find_by_code(code)
+    unless @group.nil? || self.groups.include?(@group)
+      self.groups << @group
+    end
+  end
 
   def data_to_csv(csv, gameName, schema='')
     keys = Hash.new
@@ -136,7 +192,7 @@ class User < ActiveRecord::Base
       out = Array.new
       out << self.player_name
       if entry.respond_to?('timestamp')
-        if entry.timestamp.to_s.include?(':') 
+        if entry.timestamp.to_s.include?(':')
           out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
         else
           out << 'does not compute'
@@ -155,10 +211,119 @@ class User < ActiveRecord::Base
     end
     return csv
   end
-  
 
+
+  #returns session for this player
+  def session_information(gameName= nil, gameVersion= nil)
+    data = self.data.asc(:timestamp)
+    if gameName != nil
+      data = data.where(gameName: gameName).asc(:timestamp)
+    end
+
+    if gameVersion != nil
+      data = data.where(gameVersion: gameVersion) + data.where(schema: gameVersion) 
+    end
+
+    puts 'data count: ' + data.count.to_s
+
+    session_times = Hash.new
+    sessions = data.distinct(:session_token).sort
+    puts sessions.inspect
+    sessions.each do |token|
+      session_logs = data.where(session_token: token).asc(:timestamp)
+      if session_logs.first.respond_to?('ADAVersion')
+      
+        if session_logs.first.ADAVersion.include?('drunken_dolphin')
+          end_time =  Time.at(session_logs.last.timestamp)  
+          start_time = Time.at(session_logs.first.timestamp)  
+          puts start_time
+          puts end_time
+          hash = start_time
+          minutes = ((end_time - start_time)/1.minute).round 
+          if session_times[hash] != nil
+            session_times[hash] = minutes 
+          else
+            session_times[hash] = minutes
+          end
+        end
+
+        if session_logs.first.ADAVersion.include?('bodacious_bonobo')
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          puts start_time
+          puts end_time
+          hash = start_time  
+          minutes = ((end_time - start_time)/1.minute).round 
+          if session_times[hash] != nil
+            session_times[hash] =  minutes 
+          else
+            session_times[hash] = minutes
+          end
+
+        end 
+      end
+
+    end
+
+    return session_times
+  end
+
+  def context_information(game_name= nil, game_version=nil)
+    data = self.data.asc(:timestamp)
+    if game_name != nil
+      data = data.where(gameName: game_name).asc(:timestamp)
+    end
+
+    if game_version != nil
+      data = data.where(gameVersion: game_version) + data.where(schema: game_version) 
+    end
+
+    puts 'data count: ' + data.count.to_s
+
+    context_logs = data.where(:ada_base_types.in => ['ADAGEContext', 'ADAStartUnit', 'ADAEndUnit']).asc(:timestamp)
+
+    contexts = Hash.new(0)
+    context_stack = Array.new
+
+    
+    context_logs.each do |q|
+      if q.ada_base_types.include?('ADAGEContextStart') or q.ada_base_types.include?('ADAGEStartUnit') 
+        unless context_stack.include?(q.name)
+          context_stack << q.name
+          contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1 
+        end
+      else
+        if context_stack.include?(q.name)
+          context_stack = context_stack.delete(q.name)
+          contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1 
+          if q.respond_to?('success')
+            puts q.success
+            if q.success == true
+              contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
+            else
+              contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+            end  
+          end
+        end
+      end
+    end
+
+    return contexts
+
+
+  end
 
   private
+
+  #override devise password to allow guest acounts with nil passwords
+  def password_required?
+    super && !self.guest
+  end
+
+  #override devise password to allow guest acounts with nil emails
+  def email_required?
+    super && !self.guest
+  end
 
   def update_control_group
     if self.control_group.nil?

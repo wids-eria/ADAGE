@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   respond_to :html, :json
+
   layout 'blank'
   before_filter :authenticate_user!, except: [:authenticate_for_token]
 
@@ -7,7 +8,7 @@ class UsersController < ApplicationController
      @user = User.find(params[:id])
   end
 
-  def edit 
+  def edit
      @user = User.find(params[:id])
   end
 
@@ -17,7 +18,7 @@ class UsersController < ApplicationController
      @user.roles.each do |role|
        @join = Assignment.where(role_id: role.id, user_id: @user.id).first
        if @join == nil
-        @join = Assignment.new :assigner => current_user, :role => role, :user => @user 
+        @join = Assignment.new :assigner => current_user, :role => role, :user => @user
         @join.save
        elsif @join.assigner_id == nil
          @join.assigner_id = current_user.id
@@ -39,7 +40,37 @@ class UsersController < ApplicationController
       format.json { render :json => User.all }
     end
   end
+  
+  def stats
+    @user = User.find(params[:id])
+    @games = @user.data.distinct(:gameName)
+    @counts = Array.new
+    @names = Array.new
+    @games.each_with_index do |game, i|
+      game_data = @user.data.where(gameName: game)
+      @names << game
+      @counts << {x: i, y: game_data.distinct(:session_token).count}
+    end
+    puts @counts.inspect
+  
+  end
 
+  def session_logs
+    @user = User.find(params[:id])
+    @game = Game.where(name: params[:gameName]).first
+    
+    redirect_to session_logs_data_path(game_id: @game.id, user_ids: [@user.id]) 
+
+  end
+
+
+  def context_logs
+    @user = User.find(params[:id])
+    @game = Game.where(name: params[:gameName]).first
+    
+    redirect_to context_logs_data_path(game_id: @game.id, user_ids: [@user.id]) 
+
+  end
 
   def find
     @user = User.where(player_name: params[:player_name]).first
@@ -53,6 +84,7 @@ class UsersController < ApplicationController
     end
   end
   
+
 
   def authenticate_for_token
     @user = User.with_login(params[:email]).first
@@ -153,7 +185,6 @@ class UsersController < ApplicationController
       end
     end
   end
-
 
   protected
 

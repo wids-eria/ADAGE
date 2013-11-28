@@ -1,64 +1,28 @@
-.row
-  .span4
-    %h2= @game.name
+%h2= @game.name
+%br
+
+= link_to 'Game Statistics', statistics_game_path(@game)
+%br
+
+- if current_user.role?(@game.developer_role) || current_user.admin?
+  %h3 Developers
+  = link_to 'Developer Tools', developer_tools_game_path(@game) 
+  %br
+
+- if current_user.role?(@game.researcher_role) || current_user.admin?
+  %h3 Researchers
+  = link_to 'Participant management tools', researcher_tools_game_path(@game) 
+  %br
+  - if @users.count > 0
+    = link_to 'Participant session information', sessions_game_path(@game) 
     %br
-    Export all player data:
-    = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
-      = 'csv'
-    = link_to export_data_path('json', gameName: @game.name, user_ids: @game.user_ids) do
-      = 'json'
+  - if @users.count > 0
+    = link_to 'Participant context information', contexts_game_path(@game) 
+    %br
 
 
-  .span4
-    %h2='Game Versions'
-    %ul
-      - @game.implementations.each do |version|
-        %li
-          = version.name
-          = link_to data_by_version_data_path('csv', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
-            = 'csv'
-          = link_to data_by_version_data_path('json', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do 
-            = 'json'
 
 
-  .span4
-    = render partial: 'search_users_form'
 
-
-.row
-  .span12
-    %h2='Players'
-.row
-  .span6
-    %h3='Total number of players: ' + @users.count.to_s
-  .span6
-    %h3='Average time played: ' + @average_time.to_s
-.row
-  .span12
-    %table.table.table-striped 
-      %thead
-        %tr
-          %th player name
-          %th data
-          %th data
-          %th consented
-          %th time played
-      %tbody
-        - @users.each do |user|
-          %tr          
-            %td
-              = user.player_name
-            %td
-              = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do
-                = 'csv' 
-            %td
-              = link_to data_by_game_user_path(user, 'json', gameName: @game.name) do
-                = 'json' 
-            %td
-              = user.consented 
-            %td
-              -unless user.data.empty?
-                - timeplayed =  user.data.last.created_at - user.data.first.created_at
-                = timeplayed
 
 

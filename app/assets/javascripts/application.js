@@ -6,4 +6,5 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require d3
+//= require rickshaw_with_d3
+//= require chart
