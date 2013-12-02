@@ -228,16 +228,14 @@ class User < ActiveRecord::Base
 
     session_times = Hash.new
     sessions = data.distinct(:session_token).sort
-    puts sessions.inspect
+    data = data.entries
     sessions.each do |token|
-      session_logs = data.where(session_token: token).asc(:timestamp)
+      session_logs = data.select{ |d| d.session_token.include?(token) }
       if session_logs.first.respond_to?('ADAVersion')
       
         if session_logs.first.ADAVersion.include?('drunken_dolphin')
           end_time =  Time.at(session_logs.last.timestamp)  
           start_time = Time.at(session_logs.first.timestamp)  
-          puts start_time
-          puts end_time
           hash = start_time
           minutes = ((end_time - start_time)/1.minute).round 
           if session_times[hash] != nil
@@ -269,7 +267,7 @@ class User < ActiveRecord::Base
   end
 
   def context_information(game_name= nil, game_version=nil)
-    data = self.data.asc(:timestamp)
+    data = self.data
     if game_name != nil
       data = data.where(gameName: game_name).asc(:timestamp)
     end
@@ -278,9 +276,16 @@ class User < ActiveRecord::Base
       data = data.where(gameVersion: game_version) + data.where(schema: game_version) 
     end
 
-    puts 'data count: ' + data.count.to_s
+    data = data.entries
 
-    context_logs = data.where(:ada_base_types.in => ['ADAGEContext', 'ADAStartUnit', 'ADAEndUnit']).asc(:timestamp)
+    
+    if data.first.respond_to?('ADAVersion')
+      if data.first.ADAVersion.include?('drunken_dolphin')
+        context_logs = data.select { |l| l.ada_base_types.include?('ADAGEContext') }
+      else
+        context_logs = data.select { |l| l.ada_base_type.include?('ADAStartUnit') or l.ada_base_type.include?('ADAEndUnit') }
+      end
+    end
 
     contexts = Hash.new(0)
     context_stack = Array.new
