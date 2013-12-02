@@ -234,8 +234,8 @@ class User < ActiveRecord::Base
       if session_logs.first.respond_to?('ADAVersion')
       
         if session_logs.first.ADAVersion.include?('drunken_dolphin')
-          end_time =  Time.at(session_logs.last.timestamp)  
-          start_time = Time.at(session_logs.first.timestamp)  
+          end_time =  Time.at(session_logs.last.timestamp.to_i)  
+          start_time = Time.at(session_logs.first.timestamp.to_i)  
           hash = start_time
           minutes = ((end_time - start_time)/1.minute).round 
           if session_times[hash] != nil
