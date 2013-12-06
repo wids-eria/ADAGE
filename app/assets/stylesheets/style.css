@@ -1127,6 +1127,7 @@ input {
 
     background-color: white;
     border-bottom: 1px solid #30394d;
+
 }
 
 #adminbar a{
@@ -1136,6 +1137,28 @@ input {
     width: 80px;
 }
 
+#adminbar:empty{display: none;}
 
+.game{
+    font-size: 12pt;
+}
 
+#games{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: -20px;
+    margin-bottom: -20px;
 
+    padding-left: 20px;
+
+    float: right;
+    border-left: 1px solid white;
+    width: 130px;
+}
+
+.more{
+    padding-top: 10px;
+    font-size: 10pt;
+    margin: 0 auto;
+    text-align: center;
+}

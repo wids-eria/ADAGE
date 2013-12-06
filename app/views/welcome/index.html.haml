@@ -15,3 +15,6 @@
         = link_to 'edit profile', edit_user_registration_url
       .logoutlink
         = link_to 'logout', destroy_user_session_url, :method => :delete
+
+    .floatright
+      = render 'games/list'
