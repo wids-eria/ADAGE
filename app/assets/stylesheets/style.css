@@ -1119,6 +1119,23 @@ input {
 }
 
 
+#adminbar{
+    width: 110%;
+    margin-top: -20px;
+    margin-left: -20px;
+    margin-bottom: 15px;
+
+    background-color: white;
+    border-bottom: 1px solid #30394d;
+}
+
+#adminbar a{
+    font-size: 0.8em;
+    margin-left: 5px;
+    padding: 2px;
+    width: 80px;
+}
+
 
 
 
