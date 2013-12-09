@@ -1,0 +1,12 @@
+-if @games.length > 0
+  #games
+    %span Games
+    -@games.first(5).each do |game|
+      -if can? :read, game
+        .game
+          = link_to game do
+            = game.name
+            %br
+    -if @games.length >= 5
+      .more
+        = link_to 'View all', games_path

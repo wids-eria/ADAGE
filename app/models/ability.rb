@@ -32,9 +32,15 @@ class Ability
       can :manage, Game do |game|
         r_role = ResearcherRole.where(game_id: game.id).first
         d_role = DeveloperRole.where(game_id: game.id).first
+
         if d_role.present? and r_role.present?
           user.role?(r_role) ||  user.role?(d_role)
         end
+      end
+
+      #If the user is just a player remove the manage Game abilities.
+      unless user.role? Role.find_by_name('developer') or user.role? Role.find_by_name('researcher')
+        cannot :manage, Game
       end
 
       can :manage, ParticipantRole do |p_role|
