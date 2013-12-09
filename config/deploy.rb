@@ -8,7 +8,7 @@ require 'bundler/capistrano'
 load 'deploy/assets'
 
 require 'capistrano/ext/multistage'
-set :stages, %w(production development)
+set :stages, %w(production staging development)
 set :default_stage, "development"
 
 set :application, "ada"

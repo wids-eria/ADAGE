@@ -216,6 +216,112 @@ class User < ActiveRecord::Base
     return csv
   end
 
+
+  #returns session for this player
+  def session_information(gameName= nil, gameVersion= nil)
+    data = self.data.asc(:timestamp)
+    if gameName != nil
+      data = data.where(gameName: gameName).asc(:timestamp)
+    end
+
+    if gameVersion != nil
+      data = data.where(gameVersion: gameVersion) + data.where(schema: gameVersion) 
+    end
+
+    puts 'data count: ' + data.count.to_s
+
+    session_times = Hash.new
+    sessions = data.distinct(:session_token).sort
+    data = data.entries
+    sessions.each do |token|
+      session_logs = data.select{ |d| d.session_token.include?(token) }
+      if session_logs.first.respond_to?('ADAVersion')
+      
+        if session_logs.first.ADAVersion.include?('drunken_dolphin')
+          end_time =  Time.at(session_logs.last.timestamp.to_i)  
+          start_time = Time.at(session_logs.first.timestamp.to_i)  
+          hash = start_time
+          minutes = ((end_time - start_time)/1.minute).round 
+          if session_times[hash] != nil
+            session_times[hash] = minutes 
+          else
+            session_times[hash] = minutes
+          end
+        end
+
+        if session_logs.first.ADAVersion.include?('bodacious_bonobo')
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+          puts start_time
+          puts end_time
+          hash = start_time  
+          minutes = ((end_time - start_time)/1.minute).round 
+          if session_times[hash] != nil
+            session_times[hash] =  minutes 
+          else
+            session_times[hash] = minutes
+          end
+
+        end 
+      end
+
+    end
+
+    return session_times
+  end
+
+  def context_information(game_name= nil, game_version=nil)
+    data = self.data
+    if game_name != nil
+      data = data.where(gameName: game_name).asc(:timestamp)
+    end
+
+    if game_version != nil
+      data = data.where(gameVersion: game_version) + data.where(schema: game_version) 
+    end
+
+    data = data.entries
+
+    
+    if data.first.respond_to?('ADAVersion')
+      if data.first.ADAVersion.include?('drunken_dolphin')
+        context_logs = data.select { |l| l.ada_base_types.include?('ADAGEContext') }
+      else
+        context_logs = data.select { |l| l.ada_base_type.include?('ADAStartUnit') or l.ada_base_type.include?('ADAEndUnit') }
+      end
+    end
+
+    contexts = Hash.new(0)
+    context_stack = Array.new
+
+    
+    context_logs.each do |q|
+      if q.ada_base_types.include?('ADAGEContextStart') or q.ada_base_types.include?('ADAGEStartUnit') 
+        unless context_stack.include?(q.name)
+          context_stack << q.name
+          contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1 
+        end
+      else
+        if context_stack.include?(q.name)
+          context_stack = context_stack.delete(q.name)
+          contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1 
+          if q.respond_to?('success')
+            puts q.success
+            if q.success == true
+              contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
+            else
+              contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+            end  
+          end
+        end
+      end
+    end
+
+    return contexts
+
+
+  end
+
   private
 
   #override devise password to allow guest acounts with nil passwords

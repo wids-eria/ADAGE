@@ -1,4 +1,5 @@
 class GamesController < ApplicationController
+  respond_to :html, :json, :csv
   load_and_authorize_resource
   before_filter :authenticate_user!
   layout 'blank'
@@ -6,15 +7,68 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     @users = @game.users
-    @average_time = 0
-    if @users.count > 0
-      @users.each do |user|
-          if user.data.count >= 2
-            @average_time +=  user.data.last.created_at - user.data.first.created_at
-          end
-      end
-      @average_time = @average_time/@users.count
+  end
+  
+
+  def developer_tools
+    @game = Game.find(params[:id])
+    @users = @game.users
+  end
+
+  def researcher_tools
+    @game = Game.find(params[:id])
+    @users = @game.users
+  end
+
+
+
+  def statistics
+    @game = Game.find(params[:id])
+    @logs = AdaData.where(gameName: @game.name)
+    @num_users = @logs.distinct(:user_id).count
+  end
+
+  def sessions
+    @game = Game.find(params[:id])
+    @users = @game.users
+    
+    redirect_to session_logs_data_path(game_id: params[:id], user_ids: @game.user_ids) 
+  end
+
+  def contexts
+    @game = Game.find(params[:id])
+    @users = @game.users
+    
+    redirect_to context_logs_data_path(game_id: params[:id], user_ids: @game.user_ids) 
+  end
+
+
+  def select_graph_params
+    @game = Game.find(params[:id]) 
+    @data = AdaData.where(gameName: @game.name)
+    @types = @data.distinct(:key)
+    if params[:graph_params] != nil
+      @graph_params = GraphParams.new(params[:graph_params])
+    else
+      @graph_params = GraphParams.new
     end
+
+    @values = Array.new
+    if @graph_params.key != nil
+      @values = @data.where(key: @graph_params.key).last.attributes.keys
+    end 
+    
+
+  end
+
+  def value_over_time
+    
+    @game = Game.find(params[:id])
+    @players = Array.new
+    #@game.users.each do |user|
+     # user_data = user.data.where(
+  
+  
   end
 
   def search_users

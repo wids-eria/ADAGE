@@ -22,7 +22,14 @@ Ada::Application.routes.draw do
 
   resources :games do
     member do
-      post :search_users
+      post :search_users 
+      get :select_graph_params
+      post :value_over_time
+      get :statistics
+      get :sessions
+      get :contexts
+      get :developer_tools
+      get :researcher_tools
     end
   end
   resources :implementations
@@ -32,6 +39,8 @@ Ada::Application.routes.draw do
       get :find_tenacity_player
       get :data_by_version
       get :export
+      get :session_logs
+      get :context_logs
     end
   end
 
@@ -44,8 +53,11 @@ Ada::Application.routes.draw do
       get :reset_password_form
       put :reset_password
     end
-     member do
+    member do
       get :data_by_game
+      get :stats
+      get :session_logs
+      get :context_logs
     end
   end
 

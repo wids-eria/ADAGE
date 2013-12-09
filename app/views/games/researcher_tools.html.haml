@@ -1,3 +1,6 @@
+%h2= @game.name
+%br
+
 .row
   .span4
     Export all player data:
@@ -41,6 +44,7 @@
           %th data
           %th consented
           %th time played
+          %th context info
       %tbody
         - @users.each do |user|
           %tr
@@ -56,7 +60,10 @@
               = user.consented
             %td
               -unless user.data.empty?
-                - timeplayed =  user.data.last.created_at - user.data.first.created_at
-                = timeplayed
-
+                = link_to session_logs_user_path(user, gameName: @game.name) do
+                  = 'playtime graph'
+            %td
+              -unless user.data.empty?
+                = link_to context_logs_user_path(user, gameName: @game.name) do
+                  = 'context graph'
 
