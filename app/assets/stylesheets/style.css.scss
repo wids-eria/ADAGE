@@ -1148,8 +1148,8 @@ $margin-offset: -20px;
 
     float: right;
     border-left: 1px solid white;
-    width: 130px;
-
+    width: auto;
+    min-width: 100px;
     .game{
         font-size: 12pt;
     }
