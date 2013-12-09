@@ -3,7 +3,7 @@
     #adminbar
       -if current_user.admin?
         = link_to 'Admin Tools', admin_users_path
-      -if current_user.admin?
+      -if can? :manage, Game
         = link_to 'Games', games_path
       -if can? :read, Group
         = link_to 'Groups', groups_path

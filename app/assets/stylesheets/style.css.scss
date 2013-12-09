@@ -1124,7 +1124,6 @@ $margin-offset: -20px;
     margin-bottom: 15px;
 
     background-color: white;
-    border-bottom: 1px solid #30394d;
 
 
     a{
@@ -1133,6 +1132,7 @@ $margin-offset: -20px;
         padding: 2px;
         width: 80px;
     }
+
     &:empty{
         display: none;
     }

@@ -1,0 +1,13 @@
+#nav
+  %ul.nav.nav-pills
+    %li
+      = link_to 'Home', profile_path
+    -if current_user.admin?
+      %li
+        = link_to 'Admin Tools', admin_users_path
+    -if can? :manage, Game
+      %li
+        = link_to 'Games', games_path
+    -if can? :read, Group
+      %li
+        = link_to 'Groups', groups_path
