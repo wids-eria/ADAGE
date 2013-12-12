@@ -23,17 +23,22 @@ class OauthController < ApplicationController
   def client_side_create_user
       application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
       if application.nil?
-        render :json => {:error => "Could not find application." }, :status => 401
+        render :json => {:errors => ["Could not find application."] }, :status => 401
         return
       end
 
       user = User.with_login(params[:player_name]).first
       if user != nil
         user = User.with_login(params[:email]).first
-        if user != nil and user.valid_password? params[:password]
-          sign_in user
+        if user != nil 
+          if user.valid_password? params[:password]
+            sign_in user
+          else
+            render :json => {:errors => ["Invalid Password."] }, :status => 401
+            return
+          end
         else
-          render :json => {:error => "Incorrect player name or password." }, :status => 401
+          render :json => {:errors => ["Player not found."] }, :status => 401
           return
         end
       else
@@ -54,16 +59,21 @@ class OauthController < ApplicationController
 
   def authorize_unity
     user = User.with_login(params[:email]).first
-    if user != nil and user.valid_password? params[:password]
-      sign_in user
+    if user != nil
+      if user.valid_password? params[:password]
+        sign_in user
+      else
+        render :json => {:errors => ["Invalid Password."] }, :status => 401
+        return
+      end
     else
-      render :json => {:error => "Incorrect player name or password." }, :status => 401
+      render :json => {:errors => ["Player not found."] }, :status => 401
       return
     end
 
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
     if application.nil?
-      render :json => {:error => "Could not find application." }, :status => 401
+      render :json => {:errors => ["Could not find application."] }, :status => 401
       return
     end
 
@@ -80,13 +90,13 @@ class OauthController < ApplicationController
 
     user = User.find_for_facebook_oauth(auth, current_user)
     if user.nil?
-      render :json => {:error => "Player not found." }, :status => 401
+      render :json => {:errors => ["Player not found."] }, :status => 401
       return
     end
 
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
     if application.nil?
-      render :json => {:error => "Could not find application." }, :status => 401
+      render :json => {:errors => ["Could not find application."] }, :status => 401
       return
     end
 
@@ -100,13 +110,13 @@ class OauthController < ApplicationController
 
     user = User.find_for_brainpop_auth(params[:player_id], current_user)
     if user.nil?
-      render :json => {:error => "Player not found." }, :status => 401
+      render :json => {:errors => ["Player not found."] }, :status => 401
       return
     end
 
     application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
     if application.nil?
-      render :json => {:error => "Could not find application." }, :status => 401
+      render :json => {:errors => ["Could not find application."] }, :status => 401
       return
     end
 
@@ -123,7 +133,7 @@ class OauthController < ApplicationController
 
   def adage_user
     unless current_user
-      render :json => {:error => "Player not found." }, :status => 401
+      render :json => {:errors => ["Player not found."] }, :status => 401
     end
 
     hash = {
