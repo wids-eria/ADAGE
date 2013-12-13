@@ -27,7 +27,7 @@ class OauthController < ApplicationController
         return
       end
 
-      user = User.new(player_name: params[:player_name], email: params[:email], password: params[:password], password_confirm: params[:password_confirm])
+      user = User.new(player_name: params[:player_name], email: params[:email], password: params[:password], password_confirmation: params[:password_confirm])
       unless user.save
          render :json => {:errors => user.errors.full_messages }, :status => 401
          return
