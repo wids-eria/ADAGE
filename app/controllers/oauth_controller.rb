@@ -27,28 +27,12 @@ class OauthController < ApplicationController
         return
       end
 
-      user = User.with_login(params[:player_name]).first
-      if user != nil
-        user = User.with_login(params[:email]).first
-        if user != nil 
-          if user.valid_password? params[:password]
-            sign_in user
-          else
-            render :json => {:errors => ["Invalid Password."] }, :status => 401
-            return
-          end
-        else
-          render :json => {:errors => ["Player not found."] }, :status => 401
-          return
-        end
-      else
-        user = User.new(player_name: params[:player_name], email: params[:email], password: params[:password], password_confirm: params[:password_confirm])
-        unless user.save
-           render :json => {:errors => user.errors.full_messages }, :status => 401
-           return
-        end
-        sign_in user
+      user = User.new(player_name: params[:player_name], email: params[:email], password: params[:password], password_confirm: params[:password_confirm])
+      unless user.save
+         render :json => {:errors => user.errors.full_messages }, :status => 401
+         return
       end
+      sign_in user
 
 
     access_token = current_user.access_tokens.find_or_create_by_user_id(current_user.id, {client: application})
