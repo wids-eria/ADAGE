@@ -299,7 +299,17 @@ class User < ActiveRecord::Base
 
     
     context_logs.each do |q|
-      if q.ada_base_types.include?('ADAGEContextStart') or q.ada_base_types.include?('ADAGEUnitStart') 
+      start = false
+      if q.ADAVersion.include?('drunken_dolphin')
+        if q.ada_base_types.include?('ADAGEContextStart')
+          start = true
+        end
+      else 
+        if q.ada_base_type.include?('ADAGEUnitStart') 
+          start = true
+        end
+      end
+      if start 
         unless context_stack.include?(q.name)
           puts "open " + q.name
           context_stack << q.name
