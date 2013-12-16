@@ -287,7 +287,7 @@ class User < ActiveRecord::Base
       if data.first.ADAVersion.include?('drunken_dolphin')
         context_logs = data.select { |l| l.ada_base_types.include?('ADAGEContext') }
       else
-        context_logs = data.select { |l| l.ada_base_type.include?('ADAStartUnit') or l.ada_base_type.include?('ADAEndUnit') }
+        context_logs = data.select { |l| l.ada_base_type.include?('ADAUnitStart') or l.ada_base_type.include?('ADAUnitEnd') }
       end
     end
 
@@ -299,7 +299,7 @@ class User < ActiveRecord::Base
 
     
     context_logs.each do |q|
-      if q.ada_base_types.include?('ADAGEContextStart') or q.ada_base_types.include?('ADAGEStartUnit') 
+      if q.ada_base_types.include?('ADAGEContextStart') or q.ada_base_types.include?('ADAGEUnitStart') 
         unless context_stack.include?(q.name)
           puts "open " + q.name
           context_stack << q.name
