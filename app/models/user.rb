@@ -305,7 +305,7 @@ class User < ActiveRecord::Base
           start = true
         end
       else 
-        if q.ada_base_type.include?('ADAGEUnitStart') 
+        if q.ada_base_type.include?('ADAUnitStart') 
           start = true
         end
       end
