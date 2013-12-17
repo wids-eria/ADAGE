@@ -19,7 +19,7 @@ namespace :mongo_migrate do
             end
 
             if total != db[gamename].find.count
-                puts "Warning! Only " + db[gamename].find.count.to_s + "/" + total.to_s + " records transferred"
+                puts "Warning! " + db[gamename].find.count.to_s + " records found, expected " + total.to_s
             end
         end
     end
@@ -41,7 +41,7 @@ namespace :mongo_migrate do
 
         #Compare total game records to AdaData count to  ake sure none are missing
         if total == db[:ada_data].find.count
-            puts "Removing AdaData"
+           # puts "Removing AdaData"
         else
             puts "Did not remove AdaData: Total game records do not equal AdaData totals " + db[:ada_data].find.count.to_s + "/" + total.to_s
         end
