@@ -291,8 +291,6 @@ class User < ActiveRecord::Base
       end
     end
 
-    puts "context count"
-    puts context_logs.count
 
     contexts = Hash.new(0)
     context_stack = Array.new
@@ -300,6 +298,7 @@ class User < ActiveRecord::Base
     
     context_logs.each do |q|
       start = false
+      puts context_stack.inspect
       if q.ADAVersion.include?('drunken_dolphin')
         if q.ada_base_types.include?('ADAGEContextStart')
           start = true
@@ -311,14 +310,12 @@ class User < ActiveRecord::Base
       end
       if start 
         unless context_stack.include?(q.name)
-          puts "open " + q.name
           context_stack << q.name
           contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1 
         end
       else
         if context_stack.include?(q.name)
-          puts "close " + q.name
-          context_stack = context_stack.delete(q.name)
+          context_stack.delete(q.name)
           contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1 
           if q.respond_to?('success')
             puts q.success
