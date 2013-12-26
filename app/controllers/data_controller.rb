@@ -142,7 +142,9 @@ class DataController < ApplicationController
           error = true
         end
       end
-    end
+    else
+     error = true
+    end 
 
     return_value = {}
     if error

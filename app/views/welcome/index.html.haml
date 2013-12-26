@@ -1,14 +1,20 @@
 - if user_signed_in?
   .login_container.floatleft
+    #adminbar
+      -if current_user.admin?
+        = link_to 'Admin Tools', admin_users_path
+      -if can? :manage, Game
+        = link_to 'Games', games_path
+      -if can? :read, Group
+        = link_to 'Groups', groups_path
+
     .floatleft{:style => "border-left: 1px dotted #444; padding-left: 10px;"}
       .playername
         = current_user.player_name
       .editprofilelink
         = link_to 'edit profile', edit_user_registration_url
-      -if current_user.admin?
-        = link_to 'Admin Tools', admin_users_path
-      -if can? :read, Group
-        .groups
-          = link_to 'Groups', groups_path
       .logoutlink
         = link_to 'logout', destroy_user_session_url, :method => :delete
+
+    .floatright
+      = render 'games/list'

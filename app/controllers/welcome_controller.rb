@@ -10,6 +10,14 @@ class WelcomeController < ApplicationController
   end
 
   def profile
+
+    @games = Array.new
+    Game.all.each do |game|
+      if can? :read, game
+        @games << game
+      end
+    end
+
     render :index
   end
 end
