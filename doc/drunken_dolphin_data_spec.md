@@ -113,6 +113,10 @@ The structure for the start and end of contexts are the same but seperated for f
        <td>parent_name</td>
        <td>name of an context that is parent to this context if there is one. Can be null.</td>
     </tr>
+    <tr>
+       <td>success</td>
+       <td>Set if this context has a notion of success</td>
+    </tr>
 </table>
 
 ###ADAGEGameEvent

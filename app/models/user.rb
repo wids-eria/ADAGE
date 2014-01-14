@@ -287,23 +287,35 @@ class User < ActiveRecord::Base
       if data.first.ADAVersion.include?('drunken_dolphin')
         context_logs = data.select { |l| l.ada_base_types.include?('ADAGEContext') }
       else
-        context_logs = data.select { |l| l.ada_base_type.include?('ADAStartUnit') or l.ada_base_type.include?('ADAEndUnit') }
+        context_logs = data.select { |l| l.ada_base_type.include?('ADAUnitStart') or l.ada_base_type.include?('ADAUnitEnd') }
       end
     end
+
 
     contexts = Hash.new(0)
     context_stack = Array.new
 
     
     context_logs.each do |q|
-      if q.ada_base_types.include?('ADAGEContextStart') or q.ada_base_types.include?('ADAGEStartUnit') 
+      start = false
+      puts context_stack.inspect
+      if q.ADAVersion.include?('drunken_dolphin')
+        if q.ada_base_types.include?('ADAGEContextStart')
+          start = true
+        end
+      else 
+        if q.ada_base_type.include?('ADAUnitStart') 
+          start = true
+        end
+      end
+      if start 
         unless context_stack.include?(q.name)
           context_stack << q.name
           contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1 
         end
       else
         if context_stack.include?(q.name)
-          context_stack = context_stack.delete(q.name)
+          context_stack.delete(q.name)
           contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1 
           if q.respond_to?('success')
             puts q.success
