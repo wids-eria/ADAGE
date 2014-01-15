@@ -8,7 +8,7 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
     @users = @game.users
   end
-  
+
 
   def developer_tools
     @game = Game.find(params[:id])
@@ -31,20 +31,20 @@ class GamesController < ApplicationController
   def sessions
     @game = Game.find(params[:id])
     @users = @game.users
-    
-    redirect_to session_logs_data_path(game_id: params[:id], user_ids: @game.user_ids) 
+
+    redirect_to session_logs_data_path(game_id: params[:id], user_ids: @game.user_ids)
   end
 
   def contexts
     @game = Game.find(params[:id])
     @users = @game.users
-    
-    redirect_to context_logs_data_path(game_id: params[:id], user_ids: @game.user_ids) 
+
+    redirect_to context_logs_data_path(game_id: params[:id], user_ids: @game.user_ids)
   end
 
 
   def select_graph_params
-    @game = Game.find(params[:id]) 
+    @game = Game.find(params[:id])
     @data = AdaData.where(gameName: @game.name)
     @types = @data.distinct(:key)
     if params[:graph_params] != nil
@@ -56,19 +56,19 @@ class GamesController < ApplicationController
     @values = Array.new
     if @graph_params.key != nil
       @values = @data.where(key: @graph_params.key).last.attributes.keys
-    end 
-    
+    end
+
 
   end
 
   def value_over_time
-    
+
     @game = Game.find(params[:id])
     @players = Array.new
     #@game.users.each do |user|
      # user_data = user.data.where(
-  
-  
+
+
   end
 
   def search_users
@@ -78,7 +78,7 @@ class GamesController < ApplicationController
     if @user_search.consented == '1'
       @users = @users.where(consented: true)
     end
-    @users = @users.select{ |user| user.data.where(gameName: @game.name).count > 0}
+    @users = @users.select{ |user| user.data(gameName: @game.name).count > 0}
   end
 
   def admin

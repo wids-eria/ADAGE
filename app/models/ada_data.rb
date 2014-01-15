@@ -21,6 +21,10 @@ class AdaData
     User.find(self.user_id)
   end
 
+  def self.with_game(gameName = "ada_data")
+    with(collection: gameName.to_s.gsub(' ', '_'))
+  end
+
   def set_collection
     with(collection: self.gameName.to_s.gsub(' ', '_'))
   end
