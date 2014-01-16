@@ -23,8 +23,25 @@ class GamesController < ApplicationController
   def statistics
     @game = Game.find(params[:id])
 
+    map = %Q{
+       function(){
+          emit(
+           this.user_id,
+           {user_id: this.user_id}
+          );
+       }
+    }
+
+    reduce = %Q{
+      function(key, values){
+        return values[0];
+      }
+    }
+
+    @num_users = AdaData.with_game(@game.name).only(:user_id).map_reduce(map,reduce).out(inline: true).counts["output"]
+
     @log_count = AdaData.with_game(@game.name).only(:_id).count
-    @num_users = AdaData.with_game(@game.name).only(:user_id).group_by{ |log| log.user_id}.count
+    #@num_users = AdaData.with_game(@game.name).only(:user_id).distinct(:user_id).count
   end
 
   def sessions
