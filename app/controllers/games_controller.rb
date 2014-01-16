@@ -20,12 +20,10 @@ class GamesController < ApplicationController
     @users = @game.users
   end
 
-
-
   def statistics
     @game = Game.find(params[:id])
-    @logs = AdaData.where(gameName: @game.name)
-    @num_users = @logs.distinct(:user_id).count
+    @log_count = AdaData.with_game(@game.name).only(:_id).count
+    @num_users = AdaData.with_game(@game.name).distinct(:user_id).count
   end
 
   def sessions
