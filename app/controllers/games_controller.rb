@@ -23,8 +23,13 @@ class GamesController < ApplicationController
   def statistics
     @game = Game.find(params[:id])
 
+    first =  '{ $group: { _id: "$user_id"} }'
+    second =   '{ $group: { _id: null, count: { $sum: 1 } } }'
+    @count = AdaData.with_game(@game.name).collection.aggregate("$group" => { "_id" => "$user_id", count: {"$sum" =>  1} }).size
+   # @count = AdaData.with_game(@game.name).only(:user_id).aggregate("$group" => { "_id" => "$user_id", count: {"$sum" =>  1} })
     @log_count = AdaData.with_game(@game.name).only(:_id).count
     @num_users = AdaData.with_game(@game.name).only(:user_id).distinct(:user_id).count
+    @num_users = AdaData.with_game(@game.name).only(:user_id).distinct(:user_id).size
   end
 
   def sessions

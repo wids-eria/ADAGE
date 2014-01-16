@@ -5,6 +5,7 @@ gem 'pg'
 gem 'devise', '1.5.4'
 gem 'passenger'
 gem 'mongoid'
+
 gem 'bson_ext'
 gem 'decent_exposure'
 gem 'kaminari'
