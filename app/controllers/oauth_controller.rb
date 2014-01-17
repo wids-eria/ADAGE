@@ -22,7 +22,7 @@ class OauthController < ApplicationController
 
   def client_side_create_user
       application = Client.where(app_token: params[:client_id], app_secret: params[:client_secret]).first
-      if application.nil?
+      if application == nil
         render :json => {:errors => ["Could not find application."] }, :status => 401
         return
       end

@@ -46,11 +46,13 @@ describe OauthController do
     it "if they already exist it logs them in" do
       user = Fabricate :user, password: 'foobar!'
       post :client_side_create_user, {'client_id' => client_app.app_token, 'client_secret' => client_app.app_secret, 'player_name' => user.player_name, 'email' => user.email, 'password' => 'foobar!', 'password_confirm' => 'foobar!'}
+      json = JSON.parse(response.body)
       json['access_token'].should_not be_nil
     end
 
     it "returns errors if the info is not right" do
       post :client_side_create_user
+      json = JSON.parse(response.body)
       json['access_token'].should be_nil
     end
   
