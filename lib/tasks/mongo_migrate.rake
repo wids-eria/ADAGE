@@ -3,7 +3,8 @@ namespace :mongo_migrate do
     task :split => :environment do
 
         db = Mongoid::Sessions.default
-        db.use :ada_staging
+        db.use :ada_development
+
         collection = db[:ada_data]
 
         games = collection.find.distinct(:gameName)
