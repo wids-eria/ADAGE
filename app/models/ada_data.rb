@@ -2,6 +2,8 @@ class AdaData
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  before_validation :set_collection
+
   field :game, type: String
   field :user_id, type: Integer
 
@@ -19,4 +21,11 @@ class AdaData
     User.find(self.user_id)
   end
 
+  def self.with_game(gameName = "ada_data")
+    with(collection: gameName.to_s.gsub(' ', '_'))
+  end
+
+  def set_collection
+    with(collection: self.gameName.to_s.gsub(' ', '_'))
+  end
 end
