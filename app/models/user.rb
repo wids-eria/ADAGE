@@ -277,17 +277,17 @@ class User < ActiveRecord::Base
     end
 
     if game_version != nil
-      data = data.where(gameVersion: game_version) + data.where(schema: game_version)
+      data = data(game_name).where(gameVersion: game_version) + data(game_name).where(schema: game_version)
     end
 
-    data = data.entries
+    data = data(game_name).entries
 
 
     if data.first.respond_to?('ADAVersion')
       if data.first.ADAVersion.include?('drunken_dolphin')
-        context_logs = data.select { |l| l.ada_base_types.include?('ADAGEContext') }
+        context_logs = data(game_name).select { |l| l.ada_base_types.include?('ADAGEContext') }
       else
-        context_logs = data.select { |l| l.ada_base_type.include?('ADAUnitStart') or l.ada_base_type.include?('ADAUnitEnd') }
+        context_logs = data(game_name).select { |l| l.ada_base_type.include?('ADAUnitStart') or l.ada_base_type.include?('ADAUnitEnd') }
       end
     end
 
