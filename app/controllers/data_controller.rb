@@ -10,7 +10,7 @@ class DataController < ApplicationController
     respond_with @data
   end
 
-  
+
   def heatmap
     if params[:level] != nil
       @data = AdaData.where(gameName: params[:gameName]).where(level: params[:level]).where(:created_at.gt => params[:since]).where(key: params[:key]).where(schema: params[:schema])
@@ -45,7 +45,7 @@ class DataController < ApplicationController
     @playtimes = @data_group.to_chart_js
 
     respond_to do |format|
-      format.json {render :json => @data_group.to_json} 
+      format.json {render :json => @data_group.to_json}
       format.html {render}
       format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
     end
@@ -55,16 +55,77 @@ class DataController < ApplicationController
     @game = Game.find(params[:game_id])
     @users = User.where(id: params[:user_ids])
     @data_group = DataGroup.new
+
+    logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).asc(:gameName,:user_id,:timestamp)
+    logs = logs.entries
+
+    if logs.first.respond_to?('ADAVersion')
+      if logs.first.ADAVersion.include?('drunken_dolphin')
+        context_logs = logs.select { |l| l.ada_base_types.include?('ADAGEContext') }
+      else
+        context_logs = logs.select { |l| l.ada_base_type.include?('ADAUnitStart') or l.ada_base_type.include?('ADAUnitEnd') }
+      end
+    end
+
+    last_user = nil
+    user_index = 0
+    contexts = Hash.new(0)
+    context_stack = Array.new
+    context_logs.each do |q|
+      if last_user.nil? or q["user_id"] != last_user
+
+        if last_user != nil
+          @data_group.add_to_group(contexts, @users[user_index])
+          user_index += 1
+        end
+        last_user = q["user_id"]
+        contexts = Hash.new(0)
+        context_stack = Array.new
+      end
+
+      start = false
+      if q.ADAVersion.include?('drunken_dolphin')
+        if q.ada_base_types.include?('ADAGEContextStart')
+          start = true
+        end
+      else
+        if q.ada_base_type.include?('ADAUnitStart')
+          start = true
+        end
+      end
+      if start
+        unless context_stack.include?(q.name)
+          context_stack << q.name
+          contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1
+        end
+      else
+        if context_stack.include?(q.name)
+          context_stack.delete(q.name)
+          contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
+          if q.respond_to?('success')
+            if q.success == true
+              contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
+            else
+              contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+            end
+          end
+        end
+      end
+    end
+
+=begin
+
     if @users.count > 0
       @users.each do |user|
         contexts = user.context_information(@game.name)
         @data_group.add_to_group(contexts, user)
       end
     end
+=end
 
     @chart_info = @data_group.to_chart_js
     respond_to do |format|
-      format.json {render :json => @data_group.to_json} 
+      format.json {render :json => @data_group.to_json}
       format.html {render}
       format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
     end
@@ -72,13 +133,13 @@ class DataController < ApplicationController
 
   end
 
-  
+
 
   def data_by_version
     @game = Game.find_by_name(params[:gameName])
     authorize! :read, @game
     @user_ids = params[:user_ids]
-    respond_to do |format| 
+    respond_to do |format|
       format.csv {
         out = CSV.generate do |csv|
           @user_ids.each do |id|
@@ -90,19 +151,19 @@ class DataController < ApplicationController
         end
 
         send_data out, filename: @game.name+'_'+ params[:version]+'.csv'
-      } 
+      }
       format.json {
-        data = AdaData.where(gameName: params[:gameName], schema: params[:version]).in(user_id: params[:user_ids] ) 
+        data = AdaData.where(gameName: params[:gameName], schema: params[:version]).in(user_id: params[:user_ids] )
         render :json => data
       }
     end
   end
 
-  def export 
+  def export
     @game = Game.find_by_name(params[:gameName])
-    authorize! :read, @game 
+    authorize! :read, @game
     @user_ids = params[:user_ids]
-    respond_to do |format| 
+    respond_to do |format|
       format.csv {
         out = CSV.generate do |csv|
           @user_ids.each do |id|
@@ -114,9 +175,9 @@ class DataController < ApplicationController
         end
 
         send_data out, filename: @game.name+'.csv'
-      } 
+      }
       format.json {
-          data = AdaData.where(gameName: @game.name).in(user_id: @user_ids)
+          data = AdaData.with_game(@game.name).in(user_id: @user_ids)
           render :json => data
       }
     end
@@ -144,20 +205,20 @@ class DataController < ApplicationController
       end
     else
      error = true
-    end 
+    end
 
     return_value = {}
     if error
-      status = 400 
+      status = 400
     else
-      status = 201 
+      status = 201
     end
     respond_to do |format|
-      format.all { redirect_to :root, :status => status} 
+      format.all { redirect_to :root, :status => status}
     end
   end
 
-  
+
   def find_tenacity_player
   end
 
@@ -183,10 +244,10 @@ class DataController < ApplicationController
     @tenacity_sessions = Hash.new
     @crystals_sessions = Hash.new
     @timer_sessions = Hash.new
-    
-    minds = @user.data.where(gameName: 'Tenacity-Meditation').asc(:timestamp)
-    crystals = @user.data.where(gameName: 'KrystalsOfKaydor').asc(:timestamp)
-    timers = @user.data.where(gameName: 'App Timer').asc(:timestamp)
+
+    minds = @user.data('Tenacity-Meditation').asc(:timestamp)
+    crystals = @user.data('KrystalsOfKaydor').asc(:timestamp)
+    timers = @user.data('App Timer').asc(:timestamp)
 
 
     if minds.count > 0
@@ -194,16 +255,16 @@ class DataController < ApplicationController
       sessions.each do |token|
         session_logs = minds.where(session_token: token)
         if session_logs.first.schema.include?('PRODUCTION-05-17-2013')
-          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
-          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
-          hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-          minutes = ((end_time - start_time)/1.minute).round 
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
+          hash = start_time.month.to_s + "/" + start_time.day.to_s  + "/" + start_time.year.to_s
+          minutes = ((end_time - start_time)/1.minute).round
           if @tenacity_sessions[hash] != nil
-            @tenacity_sessions[hash] =  @tenacity_sessions[hash] + minutes 
+            @tenacity_sessions[hash] =  @tenacity_sessions[hash] + minutes
           else
             @tenacity_sessions[hash] = minutes
           end
-          @tenacity_time = @tenacity_time + minutes 
+          @tenacity_time = @tenacity_time + minutes
         end
       end
       @tenacity_count = sessions.count
@@ -214,12 +275,12 @@ class DataController < ApplicationController
       sessions.each do |token|
         session_logs = crystals.where(session_token: token)
         if session_logs.first.schema.include?('PRODUCTION-05-29-2013')
-          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
-          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
-          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-          minutes = ((end_time - start_time)/1.minute).round 
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
+          hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s
+          minutes = ((end_time - start_time)/1.minute).round
           if @crystals_sessions[hash] != nil
-            @crystals_sessions[hash] =  @crystals_sessions[hash] + minutes 
+            @crystals_sessions[hash] =  @crystals_sessions[hash] + minutes
           else
             @crystals_sessions[hash] = minutes
           end
@@ -241,14 +302,14 @@ class DataController < ApplicationController
       timers.each do |log|
         if log.key == 'LogStart'
           last_key = log.key
-          start_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
+          start_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
         elsif log.key == 'LogStopNormal'
-          if last_key != log.key 
-            end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime 
-            hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s 
-            minutes = ((end_time - start_time)/1.minute).round 
+          if last_key != log.key
+            end_time =  DateTime.strptime(log.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
+            hash = start_time.month.to_s  + "/" + start_time.day.to_s  + "/" + start_time.year.to_s
+            minutes = ((end_time - start_time)/1.minute).round
             if @timer_sessions[hash] != nil
-              @timer_sessions[hash] =  @timer_sessions[hash] + minutes 
+              @timer_sessions[hash] =  @timer_sessions[hash] + minutes
             else
               @timer_sessions[hash] = minutes
             end
@@ -261,10 +322,10 @@ class DataController < ApplicationController
           puts 'unknown log type!'
         end
       end
-      @timer_count = @timer_sessions.count 
+      @timer_count = @timer_sessions.count
 
     end
 
   end
-  
+
 end

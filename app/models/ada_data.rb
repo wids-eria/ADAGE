@@ -26,6 +26,10 @@ class AdaData
   end
 
   def set_collection
-    with(collection: self.gameName.to_s.gsub(' ', '_'))
+    if self.gameName.nil?
+      with(collection: "ada_data")
+    else
+      with(collection: self.gameName.to_s.gsub(' ', '_'))
+    end
   end
 end

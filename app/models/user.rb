@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_name('admin')
   end
 
-  def data(gameName = "ada_data")
+  def data(gameName)
     AdaData.with_game(gameName).where("user_id" => self.id)
   end
 
@@ -234,15 +234,14 @@ class User < ActiveRecord::Base
   #returns session for this player
   def session_information(gameName= nil, gameVersion= nil)
     data = self.data(gameName).asc(:timestamp)
+
     if gameName != nil
-      data = data(gameName: gameName).asc(:timestamp)
+      data = data.asc(:timestamp)
     end
 
     if gameVersion != nil
       data = data.where(gameVersion: gameVersion) + data.where(schema: gameVersion)
     end
-
-    puts 'data count: ' + data.count.to_s
 
     session_times = Hash.new
     sessions = data.distinct(:session_token).sort
@@ -284,8 +283,9 @@ class User < ActiveRecord::Base
 
   def context_information(game_name= nil, game_version=nil)
     data = self.data(game_name)
+
     if game_name != nil
-      data = data(game_name).asc(:timestamp)
+      data = data.asc(:timestamp)
     end
 
     if game_version != nil
@@ -293,7 +293,6 @@ class User < ActiveRecord::Base
     end
 
     data = data.entries
-
 
     if data.first.respond_to?('ADAVersion')
       if data.first.ADAVersion.include?('drunken_dolphin')
@@ -307,42 +306,39 @@ class User < ActiveRecord::Base
     contexts = Hash.new(0)
     context_stack = Array.new
 
-
-    context_logs.each do |q|
-      start = false
-      puts context_stack.inspect
-      if q.ADAVersion.include?('drunken_dolphin')
-        if q.ada_base_types.include?('ADAGEContextStart')
-          start = true
+    if context_logs
+      context_logs.each do |q|
+        start = false
+        if q.ADAVersion.include?('drunken_dolphin')
+          if q.ada_base_types.include?('ADAGEContextStart')
+            start = true
+          end
+        else
+          if q.ada_base_type.include?('ADAUnitStart')
+            start = true
+          end
         end
-      else
-        if q.ada_base_type.include?('ADAUnitStart')
-          start = true
-        end
-      end
-      if start
-        unless context_stack.include?(q.name)
-          context_stack << q.name
-          contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1
-        end
-      else
-        if context_stack.include?(q.name)
-          context_stack.delete(q.name)
-          contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
-          if q.respond_to?('success')
-            if q.success == true
-              contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
-            else
-              contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+        if start
+          unless context_stack.include?(q.name)
+            context_stack << q.name
+            contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1
+          end
+        else
+          if context_stack.include?(q.name)
+            context_stack.delete(q.name)
+            contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
+            if q.respond_to?('success')
+              if q.success == true
+                contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
+              else
+                contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+              end
             end
           end
         end
       end
     end
-
     return contexts
-
-
   end
 
   private
