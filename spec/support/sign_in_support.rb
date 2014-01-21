@@ -55,11 +55,11 @@ module ValidUserRequestHelper
 
   def sign_in_researcher_with_game
     Role.create(name: 'player')
-    Role.create(name: 'researcher')
+    @researcher = Role.create(name: 'researcher')
     Role.create(name: 'admin')
     Role.create(name: 'developer')
     @game = Fabricate :game
-    @user = Fabricate :user, player_name: 'researcher', password: 'pass1234', roles: [@game.researcher_role]
+    @user = Fabricate :user, player_name: 'researcher', password: 'pass1234', roles: [@game.researcher_role, @researcher]
     visit root_url
 
     fill_in 'Login', with: @user.player_name

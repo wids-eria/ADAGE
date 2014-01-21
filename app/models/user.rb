@@ -99,6 +99,11 @@ class User < ActiveRecord::Base
         access_token: auth.credentials.token,
         expired_at: Time.at(auth.credentials.expires_at)
       )
+      group = Group.find_by_name("facebook")
+      if group != nil
+        user.add_to_group(group.code)
+      end
+
     end
     user
   end
@@ -130,6 +135,10 @@ class User < ActiveRecord::Base
         uid: player_id,
         access_token: player_id
       )
+      group = Group.find_by_name("brainpop")
+      if group != nil
+        user.add_to_group(group.code)
+      end
     else
       user = access_token.user
     end
@@ -158,6 +167,11 @@ class User < ActiveRecord::Base
           access_token: auth.credentials.token,
           expired_at: Time.at(auth.credentials.expires_at)
         )
+        group = Group.find_by_name("google")
+        if group != nil
+          user.add_to_group(group.code)
+        end
+
       end
 
       user
@@ -252,8 +266,6 @@ class User < ActiveRecord::Base
         if session_logs.first.ADAVersion.include?('bodacious_bonobo')
           end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time
           start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time
-          puts start_time
-          puts end_time
           hash = start_time
           minutes = ((end_time - start_time)/1.minute).round
           if session_times[hash] != nil
@@ -318,7 +330,6 @@ class User < ActiveRecord::Base
           context_stack.delete(q.name)
           contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
           if q.respond_to?('success')
-            puts q.success
             if q.success == true
               contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
             else
