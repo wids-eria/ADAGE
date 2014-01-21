@@ -284,7 +284,6 @@ class User < ActiveRecord::Base
 
     if data.first.respond_to?('ADAVersion')
       if data.first.ADAVersion.include?('drunken_dolphin')
-        puts "AD"
         context_logs = data.select { |l| l.ada_base_types.include?('ADAGEContext') }
       else
         context_logs = data.select { |l| l.ada_base_type.include?('ADAUnitStart') or l.ada_base_type.include?('ADAUnitEnd') }
@@ -298,7 +297,7 @@ class User < ActiveRecord::Base
     if context_logs
       context_logs.each do |q|
         start = false
-        puts context_stack.inspect
+        #puts context_stack.inspect
         if q.ADAVersion.include?('drunken_dolphin')
           if q.ada_base_types.include?('ADAGEContextStart')
             start = true
@@ -318,7 +317,7 @@ class User < ActiveRecord::Base
             context_stack.delete(q.name)
             contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
             if q.respond_to?('success')
-              puts q.success
+              #puts q.success
               if q.success == true
                 contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
               else

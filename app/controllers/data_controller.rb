@@ -55,12 +55,73 @@ class DataController < ApplicationController
     @game = Game.find(params[:game_id])
     @users = User.where(id: params[:user_ids])
     @data_group = DataGroup.new
+
+    logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).asc(:gameName,:user_id,:timestamp)
+    logs = logs.entries
+
+    if logs.first.respond_to?('ADAVersion')
+      if logs.first.ADAVersion.include?('drunken_dolphin')
+        context_logs = logs.select { |l| l.ada_base_types.include?('ADAGEContext') }
+      else
+        context_logs = logs.select { |l| l.ada_base_type.include?('ADAUnitStart') or l.ada_base_type.include?('ADAUnitEnd') }
+      end
+    end
+
+    last_user = nil
+    user_index = 0
+    contexts = Hash.new(0)
+    context_stack = Array.new
+    context_logs.each do |q|
+      if last_user.nil? or q["user_id"] != last_user
+
+        if last_user != nil
+          @data_group.add_to_group(contexts, @users[user_index])
+          user_index += 1
+        end
+        last_user = q["user_id"]
+        contexts = Hash.new(0)
+        context_stack = Array.new
+      end
+
+      start = false
+      if q.ADAVersion.include?('drunken_dolphin')
+        if q.ada_base_types.include?('ADAGEContextStart')
+          start = true
+        end
+      else
+        if q.ada_base_type.include?('ADAUnitStart')
+          start = true
+        end
+      end
+      if start
+        unless context_stack.include?(q.name)
+          context_stack << q.name
+          contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1
+        end
+      else
+        if context_stack.include?(q.name)
+          context_stack.delete(q.name)
+          contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
+          if q.respond_to?('success')
+            if q.success == true
+              contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
+            else
+              contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+            end
+          end
+        end
+      end
+    end
+
+=begin
+
     if @users.count > 0
       @users.each do |user|
         contexts = user.context_information(@game.name)
         @data_group.add_to_group(contexts, user)
       end
     end
+=end
 
     @chart_info = @data_group.to_chart_js
     respond_to do |format|
@@ -116,7 +177,7 @@ class DataController < ApplicationController
         send_data out, filename: @game.name+'.csv'
       }
       format.json {
-          data = AdaData.where(gameName: @game.name).in(user_id: @user_ids)
+          data = AdaData.with_game(@game.name).in(user_id: @user_ids)
           render :json => data
       }
     end
@@ -184,9 +245,9 @@ class DataController < ApplicationController
     @crystals_sessions = Hash.new
     @timer_sessions = Hash.new
 
-    minds = @user.data.where(gameName: 'Tenacity-Meditation').asc(:timestamp)
-    crystals = @user.data.where(gameName: 'KrystalsOfKaydor').asc(:timestamp)
-    timers = @user.data.where(gameName: 'App Timer').asc(:timestamp)
+    minds = @user.data('Tenacity-Meditation').asc(:timestamp)
+    crystals = @user.data('KrystalsOfKaydor').asc(:timestamp)
+    timers = @user.data('App Timer').asc(:timestamp)
 
 
     if minds.count > 0
