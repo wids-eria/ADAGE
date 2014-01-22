@@ -66,15 +66,13 @@ class DataController < ApplicationController
     context_logs = logs.entries
 
     last_user = nil
-    user_index = 0
     contexts = Hash.new(0)
     context_stack = Array.new
     context_logs.each do |q|
       if last_user.nil? or q["user_id"] != last_user
 
         if last_user != nil
-          @data_group.add_to_group(contexts, @users[user_index])
-          user_index += 1
+          @data_group.add_to_group(contexts, User.find(q["user_id"]))
         end
         last_user = q["user_id"]
         contexts = Hash.new(0)
