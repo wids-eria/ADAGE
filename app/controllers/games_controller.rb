@@ -44,7 +44,7 @@ class GamesController < ApplicationController
 
   def select_graph_params
     @game = Game.find(params[:id])
-    @data = AdaData.where(gameName: @game.name)
+    @data = AdaData.with_game(@game.name)
     @types = @data.distinct(:key)
     if params[:graph_params] != nil
       @graph_params = GraphParams.new(params[:graph_params])

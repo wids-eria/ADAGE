@@ -13,9 +13,9 @@ class DataController < ApplicationController
 
   def heatmap
     if params[:level] != nil
-      @data = AdaData.where(gameName: params[:gameName]).where(level: params[:level]).where(:created_at.gt => params[:since]).where(key: params[:key]).where(schema: params[:schema])
+      @data = AdaData.with_game(params[:gameName]).where(level: params[:level]).where(:created_at.gt => params[:since]).where(key: params[:key]).where(schema: params[:schema])
     else
-      @data = AdaData.where(gameName: params[:gameName]).where(:created_at.gt => params[:since]).where(key: params[:key]).where(schema: params[:schema])
+      @data = AdaData.with_game(params[:gameName]).where(:created_at.gt => params[:since]).where(key: params[:key]).where(schema: params[:schema])
     end
     respond_to do |format|
       format.json { render :json => @data }
@@ -56,16 +56,14 @@ class DataController < ApplicationController
     @users = User.where(id: params[:user_ids])
     @data_group = DataGroup.new
 
-    logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).asc(:gameName,:user_id,:timestamp)
-    logs = logs.entries
 
-    if logs.first.respond_to?('ADAVersion')
-      if logs.first.ADAVersion.include?('drunken_dolphin')
-        context_logs = logs.select { |l| l.ada_base_types.include?('ADAGEContext') }
-      else
-        context_logs = logs.select { |l| l.ada_base_type.include?('ADAUnitStart') or l.ada_base_type.include?('ADAUnitEnd') }
-      end
+    if AdaData.with_game(@game.name).first.ADAVersion.include?('drunken_dolphin')
+      logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_types.in => ['ADAGEContextStart','ADAGEContextEnd'])
+    else
+      logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_type.in => ['ADAUnitStart','ADAUnitEnd'])
     end
+
+    context_logs = logs.entries
 
     last_user = nil
     user_index = 0
@@ -114,7 +112,6 @@ class DataController < ApplicationController
     end
 
 =begin
-
     if @users.count > 0
       @users.each do |user|
         contexts = user.context_information(@game.name)
@@ -129,11 +126,7 @@ class DataController < ApplicationController
       format.html {render}
       format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
     end
-
-
   end
-
-
 
   def data_by_version
     @game = Game.find_by_name(params[:gameName])
@@ -153,7 +146,7 @@ class DataController < ApplicationController
         send_data out, filename: @game.name+'_'+ params[:version]+'.csv'
       }
       format.json {
-        data = AdaData.where(gameName: params[:gameName], schema: params[:version]).in(user_id: params[:user_ids] )
+        data = AdaData.with_game(params[:gameName]).where(schema: params[:version]).in(user_id: params[:user_ids] )
         render :json => data
       }
     end
