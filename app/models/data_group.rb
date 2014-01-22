@@ -28,11 +28,8 @@ class DataGroup
       datasets = Array.new
       labels = Array.new
 
-
       labels = series.map { |hash| hash.data.keys }.flatten
       labels = labels.uniq.sort!
-
-
 
       self.series.each do |data_hash|
         rand = Random.new(data_hash.user_id)

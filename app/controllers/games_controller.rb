@@ -77,7 +77,7 @@ class GamesController < ApplicationController
     if @user_search.consented == '1'
       @users = @users.where(consented: true)
     end
-    @users = @users.select{ |user| user.data(gameName: @game.name).count > 0}
+    @users = @users.select{ |user| user.data(@game.name).count > 0}
   end
 
   def admin
