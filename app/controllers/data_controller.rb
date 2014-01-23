@@ -28,6 +28,7 @@ class DataController < ApplicationController
     @average_time = 0
     @session_count = 0
     @data_group = DataGroup.new
+
     if @users.count > 0
       @users.each do |user|
           session_times = user.session_information(@game.name)
@@ -56,59 +57,60 @@ class DataController < ApplicationController
     @users = User.where(id: params[:user_ids])
     @data_group = DataGroup.new
 
-
-    if AdaData.with_game(@game.name).first.ADAVersion.include?('drunken_dolphin')
-      logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_types.in => ['ADAGEContextStart','ADAGEContextEnd'])
-    else
-      logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_type.in => ['ADAUnitStart','ADAUnitEnd'])
-    end
-
-    context_logs = logs.entries
-
-    last_user = nil
-    contexts = Hash.new(0)
-    context_stack = Array.new
-    context_logs.each do |q|
-      if last_user.nil? or q["user_id"] != last_user
-
-        if last_user != nil
-          @data_group.add_to_group(contexts, User.find(q["user_id"]))
-        end
-        last_user = q["user_id"]
-        contexts = Hash.new(0)
-        context_stack = Array.new
+    if AdaData.with_game(@game.name).first.respond_to?('ADAVersion')
+      if AdaData.with_game(@game.name).first.ADAVersion.include?('drunken_dolphin')
+        logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_types.in => ['ADAGEContextStart','ADAGEContextEnd'])
+      else
+        logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_type.in => ['ADAUnitStart','ADAUnitEnd'])
       end
 
-      start = false
-      if q.ADAVersion.include?('drunken_dolphin')
-        if q.ada_base_types.include?('ADAGEContextStart')
-          start = true
+      context_logs = logs.entries
+
+      last_user = nil
+      contexts = Hash.new(0)
+      context_stack = Array.new
+      context_logs.each do |q|
+        if last_user.nil? or q["user_id"] != last_user
+
+          if last_user != nil
+            @data_group.add_to_group(contexts, User.find(q["user_id"]))
+          end
+          last_user = q["user_id"]
+          contexts = Hash.new(0)
+          context_stack = Array.new
         end
-      else
-        if q.ada_base_type.include?('ADAUnitStart')
-          start = true
+
+        start = false
+        if q.ADAVersion.include?('drunken_dolphin')
+          if q.ada_base_types.include?('ADAGEContextStart')
+            start = true
+          end
+        else
+          if q.ada_base_type.include?('ADAUnitStart')
+            start = true
+          end
         end
-      end
-      if start
-        unless context_stack.include?(q.name)
-          context_stack << q.name
-          contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1
-        end
-      else
-        if context_stack.include?(q.name)
-          context_stack.delete(q.name)
-          contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
-          if q.respond_to?('success')
-            if q.success == true
-              contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
-            else
-              contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+        if start
+          unless context_stack.include?(q.name)
+            context_stack << q.name
+            contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1
+          end
+        else
+          if context_stack.include?(q.name)
+            context_stack.delete(q.name)
+            contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
+            if q.respond_to?('success')
+              if q.success == true
+                contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
+              else
+                contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+              end
             end
           end
         end
       end
-    end
 
+    end
 =begin
     if @users.count > 0
       @users.each do |user|
