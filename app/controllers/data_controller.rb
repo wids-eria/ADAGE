@@ -54,71 +54,63 @@ class DataController < ApplicationController
 
   def context_logs
     @game = Game.find(params[:game_id])
-    @users = User.where(id: params[:user_ids])
+    @users = User.where(id: params[:user_ids]).order(:id)
     @data_group = DataGroup.new
 
-    if AdaData.with_game(@game.name).first.respond_to?('ADAVersion')
-      if AdaData.with_game(@game.name).first.ADAVersion.include?('drunken_dolphin')
-        logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_types.in => ['ADAGEContextStart','ADAGEContextEnd'])
-      else
-        logs =  AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_type.in => ['ADAUnitStart','ADAUnitEnd'])
-      end
+    map = %Q{
+      function(){
+        var data = {}
 
-      context_logs = logs.entries
+        var append = "";
+        if(this.ADAVersion.indexOf("drunken_dolphin")>0){
+          if(this.ada_base_types.indexOf("ADAGEContextStart") >0) append = "start";
+          if(this.ada_base_types.indexOf("ADAGEContextEnd") >0) append = "end";
+        }else{
+          if(this.ada_base_types.indexOf("ADAUnitStart") >0) append = "start";
+          if(this.ada_base_types.indexOf("ADAUnitEnd") >0) append = "end";
+        }
 
-      last_user = nil
-      contexts = Hash.new(0)
-      context_stack = Array.new
-      context_logs.each do |q|
-        if last_user.nil? or q["user_id"] != last_user
+        data[this.name+"_"+append] = 1;
 
-          if last_user != nil
-            @data_group.add_to_group(contexts, User.find(q["user_id"]))
-          end
-          last_user = q["user_id"]
-          contexts = Hash.new(0)
-          context_stack = Array.new
-        end
+        if(this.success != null){
+          append = "fail";
+          if(this.success){
+            append = "success";
+          }
 
-        start = false
-        if q.ADAVersion.include?('drunken_dolphin')
-          if q.ada_base_types.include?('ADAGEContextStart')
-            start = true
-          end
-        else
-          if q.ada_base_type.include?('ADAUnitStart')
-            start = true
-          end
-        end
-        if start
-          unless context_stack.include?(q.name)
-            context_stack << q.name
-            contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1
-          end
-        else
-          if context_stack.include?(q.name)
-            context_stack.delete(q.name)
-            contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
-            if q.respond_to?('success')
-              if q.success == true
-                contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
-              else
-                contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
-              end
-            end
-          end
-        end
-      end
+          data[this.name+"_"+append] = 1;
+        }
+        emit(this.user_id,data);
+      }
+    }
 
+    reduce = %Q{
+      function(key,values){
+        var results = {};
+
+        function merge(a,b){
+          for(var k in b){
+            if(!b.hasOwnProperty(k)){
+              continue;
+            }
+            a[k] = (a[k] || 0) + b[k];
+          }
+        }
+
+        values.forEach(function(value){
+          merge(results,value);
+        });
+        return results;
+      }
+    }
+
+    logs = AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_types.in => ['ADAGEContextStart','ADAGEContextEnd']).map_reduce(map,reduce).out(inline:1)
+
+    index = 0
+    logs.each do |log|
+      @data_group.add_to_group(log["value"], @users[index])
+      index += 1
     end
-=begin
-    if @users.count > 0
-      @users.each do |user|
-        contexts = user.context_information(@game.name)
-        @data_group.add_to_group(contexts, user)
-      end
-    end
-=end
 
     @chart_info = @data_group.to_chart_js
     respond_to do |format|
