@@ -104,7 +104,7 @@ class DataController < ApplicationController
       }
     }
 
-    if AdaData.with_game(@game.name).first.ADAVersion.include?('drunken_dolphin')
+    if AdaData.with_game(@game.name).in(user_id: params[:user_ids]).exists(ADAVersion: true).first.ADAVersion.include?('drunken_dolphin')
       logs = AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_types.in => ['ADAGEContextStart','ADAGEContextEnd']).map_reduce(map,reduce).out(inline:1)
     else
      logs = AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_type.in => ['ADAUnitStart','ADAUnitEnd']).map_reduce(map,reduce).out(inline:1)
