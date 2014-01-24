@@ -65,12 +65,13 @@ class DataController < ApplicationController
         if(this.ADAVersion == "drunken_dolphin"){
           if(this.ada_base_types.indexOf("ADAGEContextStart") >0) append = "start";
           if(this.ada_base_types.indexOf("ADAGEContextEnd") >0) append = "end";
+          data[this.name+"_"+append] = 1;
         }else{
           if(this.ada_base_type.indexOf("ADAUnitStart") >0) append = "start";
           if(this.ada_base_type.indexOf("ADAUnitEnd") >0) append = "end";
+          data[this.name+"_"+append] = 1;
         }
 
-        data[this.name+"_"+append] = 1;
 
         if(this.success != null){
           append = "fail";
