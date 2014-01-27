@@ -1,16 +1,16 @@
 namespace :seed_data do
   desc 'Creates fake data from a fake game so we can test data tools locally'
   task :create => :environment do
-  
+
     rand = Random.new(Time.now.to_i)
 
     adage_context = {'name' => 'find_a_candy', 'parent_name' => 'find_a_candy'}
-    
+
     adage_vc =    {
                     'active_units' =>  ['forest', 'find_a_candy'],
                     'level' => 'super awesome level'
                   }
-    adage_pc =    
+    adage_pc =
                   {
                     'x' => rand.rand(0...100),
                     'y' => rand.rand(0...100),
@@ -22,7 +22,7 @@ namespace :seed_data do
 
     adage_base = {'gameName' => 'Fake Game',
                  'gameVersion' => 'development',
-                 'ADAVersion' => 'drunken_dolphin', 
+                 'ADAVersion' => 'drunken_dolphin',
                  'timestamp' => Time.now.to_i,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEGameEvent', 'ADAGEPlayerEvent'],
@@ -34,7 +34,7 @@ namespace :seed_data do
 
     adage_start = {'gameName' => 'Fake Game',
                  'gameVersion' => 'development',
-                 'ADAVersion' => 'drunken_dolphin', 
+                 'ADAVersion' => 'drunken_dolphin',
                  'timestamp' => Time.now.to_i,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEContext', 'ADAGEContextStart'],
@@ -47,7 +47,7 @@ namespace :seed_data do
 
     adage_end = {'gameName' => 'Fake Game',
                  'gameVersion' => 'development',
-                 'ADAVersion' => 'drunken_dolphin', 
+                 'ADAVersion' => 'drunken_dolphin',
                  'timestamp' => Time.now.to_i,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEContext', 'ADAGEContextEnd'],
@@ -65,20 +65,20 @@ namespace :seed_data do
      quest_names = ['Find the Thing', 'Resuce the Prince', 'slay the dragon']
      success = [true, false, true, false, true, false]
      (0..100).each do |i|
-        data = AdaData.new(types[rand.rand(0...types.count)])
+        data = AdaData.with_game("Fake_Game").new(types[rand.rand(0...types.count)])
         data.user_id = rand.rand(1..User.all.count)
         puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
         data.timestamp = (start_time + (1.minute * rand.rand(1..50))).to_i
         if data.key.include?('FGQuest')
-          data.name = quest_names[rand.rand(0...quest_names.count)]  
+          data.name = quest_names[rand.rand(0...quest_names.count)]
         end
 
         if data.key.include?('FGQuestEnd')
-          data.success = success[rand.rand(0...success.count)]  
+          data.success = success[rand.rand(0...success.count)]
         end
         data.save
      end
-  
+
   end
 end

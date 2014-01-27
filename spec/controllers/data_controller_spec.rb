@@ -21,35 +21,32 @@ describe DataController do
   describe "data collector" do
 
     it "creates mongo records from incoming json using single token auth" do
-      lambda do
-        post :create, "data" => [{"one" => 1}, {"two" => 2}], "auth_token" => user.authentication_token
-        response.status.should be(201)
-      end.should change(AdaData, :count).by(2)
-      assigns(:data).first.reload.user.should == user
+      old_count = user.data("Fake Game").count 
+      post :create, "data" => [{"gameName" => "Fake Game"}], "auth_token" => user.authentication_token
+      response.status.should be(201)
+      user.data("Fake Game").count.should be(old_count + 1)
     end
     
     it "creates mongo records from incoming json using header oauth authorization" do
-      lambda do
-        @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
-        post :create, {"data" => [{"one" => 1}, {"two" => 2}]}
-        response.status.should be(201)
-      end.should change(AdaData, :count).by(2)
-      assigns(:data).first.reload.user.should == user
+      old_count = user.data("Fake Game").count 
+      @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
+      post :create, {"data" => [{"gameName" => "Fake Game"}]}
+      response.status.should be(201)
+      user.data("Fake Game").count.should be(old_count + 1)
     end
     
     it "creates mongo records from incoming json using param oauth authorization" do
-      lambda do
-        post :create, "data" => [{"one" => 1}, {"two" => 2}], 'authorization_token' => user.access_tokens.first.consumer_secret
-        response.status.should be(201)
-      end.should change(AdaData, :count).by(2)
-      assigns(:data).first.reload.user.should == user
+      old_count = user.data("Fake Game").count 
+      post :create, "data" => [{"gameName" => "Fake Game"}], 'authorization_token' => user.access_tokens.first.consumer_secret
+      response.status.should be(201)
+      user.data("Fake Game").count.should be(old_count + 1)
     end
 
     it "does not allow posting data without authorization" do
-      lambda do
-        post :create, "data" => [{"one" => 1}, {"two" => 2}]
-        response.status.should_not be(201)
-      end.should_not change(AdaData, :count).by(2)
+      old_count = AdaData.with_game("Fake Game").count
+      post :create, {"data" => [{"gameName" => "Fake Game"}]}
+      response.status.should_not be(201)
+      AdaData.with_game("Fake Game").count.should be(old_count)
     end
 
   end

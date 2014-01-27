@@ -1,5 +1,5 @@
 class DataGroup
-  
+
   include ActiveModel::Validations
   include ActiveModel::Conversion
   extend  ActiveModel::Naming
@@ -21,19 +21,17 @@ class DataGroup
     self.series << data_series
   end
 
+
   def to_chart_js
 
       chart_js_blob = Hash.new
       datasets = Array.new
       labels = Array.new
 
-
       labels = series.map { |hash| hash.data.keys }.flatten
-      labels = labels.uniq.sort! 
+      labels = labels.uniq.sort!
 
-
-
-      self.series.each do |data_hash| 
+      self.series.each do |data_hash|
         rand = Random.new(data_hash.user_id)
         data_series = Array.new
         data_hash.data.each do |key, value|
@@ -50,12 +48,12 @@ class DataGroup
 
       return chart_js_blob
 
-    
+
   end
 
-  def to_csv 
+  def to_csv
     labels = series.map { |hash| hash.data.keys }.flatten
-    labels = labels.uniq.sort! 
+    labels = labels.uniq.sort!
 
     out = CSV.generate do |csv|
       csv << ['player_name', 'player_id'] + labels

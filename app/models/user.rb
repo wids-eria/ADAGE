@@ -52,8 +52,8 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_name('admin')
   end
 
-  def data
-    AdaData.where("user_id" => self.id)
+  def data(gameName)
+    AdaData.with_game(gameName).where("user_id" => self.id)
   end
 
   def saves
@@ -61,7 +61,7 @@ class User < ActiveRecord::Base
   end
 
   def progenitor_data
-    AdaData.where("user_id" => self.id, "gameName" => "ProgenitorX")
+    AdaData.with_game("ProgenitorX").where("user_id" => self.id)
   end
 
 
@@ -99,6 +99,11 @@ class User < ActiveRecord::Base
         access_token: auth.credentials.token,
         expired_at: Time.at(auth.credentials.expires_at)
       )
+      group = Group.find_by_name("facebook")
+      if group != nil
+        user.add_to_group(group.code)
+      end
+
     end
     user
   end
@@ -130,6 +135,10 @@ class User < ActiveRecord::Base
         uid: player_id,
         access_token: player_id
       )
+      group = Group.find_by_name("brainpop")
+      if group != nil
+        user.add_to_group(group.code)
+      end
     else
       user = access_token.user
     end
@@ -158,6 +167,11 @@ class User < ActiveRecord::Base
           access_token: auth.credentials.token,
           expired_at: Time.at(auth.credentials.expires_at)
         )
+        group = Group.find_by_name("google")
+        if group != nil
+          user.add_to_group(group.code)
+        end
+
       end
 
       user
@@ -172,7 +186,7 @@ class User < ActiveRecord::Base
 
   def data_to_csv(csv, gameName, schema='')
     keys = Hash.new
-    data = self.data.where(gameName: gameName)
+    data = self.data(gameName)
     if schema.present?
       data = data.where(schema: schema)
     end
@@ -219,16 +233,15 @@ class User < ActiveRecord::Base
 
   #returns session for this player
   def session_information(gameName= nil, gameVersion= nil)
-    data = self.data.asc(:timestamp)
+    data = self.data(gameName).asc(:timestamp)
+
     if gameName != nil
-      data = data.where(gameName: gameName).asc(:timestamp)
+      data = data.asc(:timestamp)
     end
 
     if gameVersion != nil
-      data = data.where(gameVersion: gameVersion) + data.where(schema: gameVersion) 
+      data = data.where(gameVersion: gameVersion) + data.where(schema: gameVersion)
     end
-
-    puts 'data count: ' + data.count.to_s
 
     session_times = Hash.new
     sessions = data.distinct(:session_token).sort
@@ -236,33 +249,31 @@ class User < ActiveRecord::Base
     sessions.each do |token|
       session_logs = data.select{ |d| d.session_token.include?(token) }
       if session_logs.first.respond_to?('ADAVersion')
-      
+
         if session_logs.first.ADAVersion.include?('drunken_dolphin')
-          end_time =  Time.at(session_logs.last.timestamp.to_i)  
-          start_time = Time.at(session_logs.first.timestamp.to_i)  
+          end_time =  Time.at(session_logs.last.timestamp.to_i)
+          start_time = Time.at(session_logs.first.timestamp.to_i)
           hash = start_time
-          minutes = ((end_time - start_time)/1.minute).round 
+          minutes = ((end_time - start_time)/1.minute).round
           if session_times[hash] != nil
-            session_times[hash] = minutes 
+            session_times[hash] = minutes
           else
             session_times[hash] = minutes
           end
         end
 
         if session_logs.first.ADAVersion.include?('bodacious_bonobo')
-          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-          puts start_time
-          puts end_time
-          hash = start_time  
-          minutes = ((end_time - start_time)/1.minute).round 
+          end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time
+          start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time
+          hash = start_time
+          minutes = ((end_time - start_time)/1.minute).round
           if session_times[hash] != nil
-            session_times[hash] =  minutes 
+            session_times[hash] =  minutes
           else
             session_times[hash] = minutes
           end
 
-        end 
+        end
       end
 
     end
@@ -271,18 +282,18 @@ class User < ActiveRecord::Base
   end
 
   def context_information(game_name= nil, game_version=nil)
-    data = self.data
+    data = self.data(game_name)
+
     if game_name != nil
-      data = data.where(gameName: game_name).asc(:timestamp)
+      data = data.asc(:timestamp)
     end
 
     if game_version != nil
-      data = data.where(gameVersion: game_version) + data.where(schema: game_version) 
+      data = data.where(gameVersion: game_version) + data.where(schema: game_version)
     end
 
     data = data.entries
 
-    
     if data.first.respond_to?('ADAVersion')
       if data.first.ADAVersion.include?('drunken_dolphin')
         context_logs = data.select { |l| l.ada_base_types.include?('ADAGEContext') }
@@ -295,43 +306,39 @@ class User < ActiveRecord::Base
     contexts = Hash.new(0)
     context_stack = Array.new
 
-    
-    context_logs.each do |q|
-      start = false
-      puts context_stack.inspect
-      if q.ADAVersion.include?('drunken_dolphin')
-        if q.ada_base_types.include?('ADAGEContextStart')
-          start = true
+    if context_logs
+      context_logs.each do |q|
+        start = false
+        if q.ADAVersion.include?('drunken_dolphin')
+          if q.ada_base_types.include?('ADAGEContextStart')
+            start = true
+          end
+        else
+          if q.ada_base_type.include?('ADAUnitStart')
+            start = true
+          end
         end
-      else 
-        if q.ada_base_type.include?('ADAUnitStart') 
-          start = true
-        end
-      end
-      if start 
-        unless context_stack.include?(q.name)
-          context_stack << q.name
-          contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1 
-        end
-      else
-        if context_stack.include?(q.name)
-          context_stack.delete(q.name)
-          contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1 
-          if q.respond_to?('success')
-            puts q.success
-            if q.success == true
-              contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
-            else
-              contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
-            end  
+        if start
+          unless context_stack.include?(q.name)
+            context_stack << q.name
+            contexts[q.name+'_start'] = contexts[q.name+'_start'] + 1
+          end
+        else
+          if context_stack.include?(q.name)
+            context_stack.delete(q.name)
+            contexts[q.name+'_end'] = contexts[q.name+'_end'] + 1
+            if q.respond_to?('success')
+              if q.success == true
+                contexts[q.name+'_success'] = contexts[q.name+'_success'] + 1
+              else
+                contexts[q.name+'_fail'] = contexts[q.name+'_fail'] + 1
+              end
+            end
           end
         end
       end
     end
-
     return contexts
-
-
   end
 
   private

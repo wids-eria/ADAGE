@@ -10,6 +10,8 @@ formative feedback for usability testing and evidence of learning.
 ADAGE is being developed at the [Game + Learning + Society Center](http://www.gameslearningsociety.org) at the University of Wiscsonsin - Madison with
 a partnership with [The Learning Games Network](http://www.learninggamesnetwork.org) and the [Wisconsin Institutes of Discovery](http://wid.wisc.edu)
 
+[More documentation.](https://github.com/wids-eria/ADAGE/tree/master/doc)
+
 
 ###Acknowledgments 
 This work was made possible by a grant from the National Science Foundation (DRL-1119383)

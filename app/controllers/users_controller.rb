@@ -40,7 +40,7 @@ class UsersController < ApplicationController
       format.json { render :json => User.all }
     end
   end
-  
+
   def stats
     @user = User.find(params[:id])
     @games = @user.data.distinct(:gameName)
@@ -52,14 +52,14 @@ class UsersController < ApplicationController
       @counts << {x: i, y: game_data.distinct(:session_token).count}
     end
     puts @counts.inspect
-  
+
   end
 
   def session_logs
     @user = User.find(params[:id])
     @game = Game.where(name: params[:gameName]).first
-    
-    redirect_to session_logs_data_path(game_id: @game.id, user_ids: [@user.id]) 
+
+    redirect_to session_logs_data_path(game_id: @game.id, user_ids: [@user.id])
 
   end
 
@@ -67,8 +67,8 @@ class UsersController < ApplicationController
   def context_logs
     @user = User.find(params[:id])
     @game = Game.where(name: params[:gameName]).first
-    
-    redirect_to context_logs_data_path(game_id: @game.id, user_ids: [@user.id]) 
+
+    redirect_to context_logs_data_path(game_id: @game.id, user_ids: [@user.id])
 
   end
 
@@ -83,7 +83,7 @@ class UsersController < ApplicationController
       end
     end
   end
-  
+
 
 
   def authenticate_for_token
@@ -130,9 +130,9 @@ class UsersController < ApplicationController
 
   def get_data
     if params[:level] != nil
-      @data = AdaData.where(user_id: params[:user_id], gameName: params[:gameName], schema: params[:schema], level: params[:level], key: params[:key])
+      @data = AdaData.with_game(params[:gameName]).where(user_id: params[:user_id], schema: params[:schema], level: params[:level], key: params[:key])
     else
-      @data = AdaData.where(user_id: params[:user_id], gameName: params[:gameName], schema: params[:schema], key: params[:key])
+      @data = AdaData.with_game(params[:gameName]).where(user_id: params[:user_id], schema: params[:schema], key: params[:key])
     end
     respond_to do |format|
       format.json { render :json => @data }
@@ -142,14 +142,14 @@ class UsersController < ApplicationController
   def data_by_game
     @user = User.find(params[:id])
     @game = Game.find_by_name(params[:gameName])
-    authorize! :read, @game 
-    respond_to do |format| 
+    authorize! :read, @game
+    respond_to do |format|
       format.csv {
         out = CSV.generate do |csv|
           @user.data_to_csv(csv, @game.name)
         end
         send_data out, filename: @user.player_name+'_'+@game.name+'.csv'
-      } 
+      }
       format.json { render :json => @user.data }
     end
   end

@@ -59,11 +59,11 @@
             %td
               = user.consented
             %td
-              -unless user.data.empty?
+              -unless user.data(@game.name).empty?
                 = link_to session_logs_user_path(user, gameName: @game.name) do
                   = 'playtime graph'
             %td
-              -unless user.data.empty?
+              -unless user.data(@game.name).empty?
                 = link_to context_logs_user_path(user, gameName: @game.name) do
                   = 'context graph'
 

@@ -16,6 +16,10 @@ Ada::Application.routes.draw do
 
   match "save_game" => "save#save", :via => :post
   match "load_game" => "save#load", :via => :get
+  
+  match "game_version_data/save" => 'gv#save', :via => :post
+  match "game_version_data/delete" => 'gv#delete', :via => :post
+  match "game_version_data" => 'gv#show', :via => :get
 
   resources :roles
   resources :participant_roles
