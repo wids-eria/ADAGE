@@ -188,14 +188,14 @@ class User < ActiveRecord::Base
     keys = Hash.new
     data = nil 
     if schema.present?
-      data = self.data(gameName).where(schema: schema).asc(:timestamp)
+      data = self.data(gameName).where(schema: schema).asc(:timestamp).entries
     else
-      data = self.data(gameName).asc(:timestamp)
+      data = self.data(gameName).asc(:timestamp).entries
     end
     types = self.data(gameName).distinct(:key)
     examples = Array.new
     types.each do |type|
-      ex = data.where(key: type).first
+      ex = data.select{ |d| d.key.include?(type)}.first
       if ex != nil
         examples << ex
       end
