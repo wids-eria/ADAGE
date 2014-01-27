@@ -282,7 +282,7 @@ class DataController < ApplicationController
           @crystals_time = @crystals_time + minutes
         end
       end
-      crystals_quests = crystals.select{ |d| d.key.include?('KoKQuestComplete') }
+      crystals_quests = crystals.select{ |d| d.key.include?('KoKQuestEnd') }
       finish_count = crystals_quests.select{ |d| d.name.include?('CompleteAllTheQuests')}.count
       finish_count = crystals_quests.select{ |d| d.name.include?('Do all the quests')}.count
       @crystals_count = sessions.count
