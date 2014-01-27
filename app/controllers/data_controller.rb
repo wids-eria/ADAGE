@@ -240,13 +240,14 @@ class DataController < ApplicationController
 
     minds = @user.data('Tenacity-Meditation').asc(:timestamp)
     crystals = @user.data('KrystalsOfKaydor').asc(:timestamp)
-    timers = @user.data('App Timer').asc(:timestamp)
+    timers = @user.data('App Timer').asc(:timestamp).entries
 
 
     if minds.count > 0
       sessions = minds.distinct(:session_token)
+      minds = minds.entries
       sessions.each do |token|
-        session_logs = minds.where(session_token: token)
+        session_logs = minds.select{ |d| d.session_token.include?(token) } #minds.where(session_token: token)
         if session_logs.first.schema.include?('PRODUCTION-05-17-2013')
           end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
           start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
@@ -265,8 +266,9 @@ class DataController < ApplicationController
 
     if crystals.count > 0
       sessions = crystals.distinct(:session_token)
+      crystals = crystals.entries
       sessions.each do |token|
-        session_logs = crystals.where(session_token: token)
+        session_logs = crystals.select{ |d|  d.session_token.include?(token) } 
         if session_logs.first.schema.include?('PRODUCTION-05-29-2013')
           end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
           start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
