@@ -63,11 +63,11 @@ class DataController < ApplicationController
 
         var append = "";
         if(this.ADAVersion == "drunken_dolphin"){
-          if(this.ada_base_types.indexOf("ADAGEContextStart") >0) append = "start";
-          if(this.ada_base_types.indexOf("ADAGEContextEnd") >0) append = "end";
+          if(this.ada_base_types.indexOf("ADAGEContextStart") > -1) append = "start";
+          if(this.ada_base_types.indexOf("ADAGEContextEnd") > -1 ) append = "end";
         }else{
-          if(this.ada_base_type.indexOf("ADAUnitStart") >0) append = "start";
-          if(this.ada_base_type.indexOf("ADAUnitEnd") >0) append = "end";
+          if(this.ada_base_type.indexOf("ADAUnitStart") > -1) append = "start";
+          if(this.ada_base_type.indexOf("ADAUnitEnd") > -1) append = "end";
         }
 
         if(append != "") data[this.name+"_"+append] = 1;
