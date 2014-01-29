@@ -195,7 +195,7 @@ class User < ActiveRecord::Base
     types = self.data(gameName).distinct(:key)
     examples = Array.new
     types.each do |type|
-      ex = data.select{ |d| d.key.include?(type)}.first
+      ex = data.select{ |d| d.key.include?(type)}.last
       if ex != nil
         examples << ex
       end
