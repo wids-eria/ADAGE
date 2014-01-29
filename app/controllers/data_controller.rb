@@ -71,8 +71,8 @@ class DataController < ApplicationController
         start_time = Time.at(log["value"]["start"]).to_i
         end_time = Time.at(log["value"]["end"]).to_i
       else
-        start_time = DateTime.strptime(log["value"]["start"], "%m/%d/%Y %H:%M:%S").to_time
-        end_time = DateTime.strptime(log["value"]["end"], "%m/%d/%Y %H:%M:%S").to_time
+        start_time = DateTime.strptime(log["value"]["start"].to_i, "%m/%d/%Y %H:%M:%S").to_time
+        end_time = DateTime.strptime(log["value"]["end"].to_i, "%m/%d/%Y %H:%M:%S").to_time
       end
 
       minutes = (end_time - start_time)/1.minute.round
