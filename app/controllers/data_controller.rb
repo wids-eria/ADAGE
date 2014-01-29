@@ -24,25 +24,67 @@ class DataController < ApplicationController
 
   def session_logs
     @game = Game.find(params[:game_id])
-    @users = User.where(id: params[:user_ids])
-    @average_time = 0
-    @session_count = 0
+    @users = User.where(id: params[:user_ids]).order(:id)
     @data_group = DataGroup.new
 
-    if @users.count > 0
-      @users.each do |user|
-          session_times = user.session_information(@game.name)
-          @data_group.add_to_group(session_times, user)
-          session_times.each do |key, value|
-            @average_time = @average_time + value
-          end
-          @session_count = @session_count + session_times.count
+    map = %Q{
+      function(){
+        var key = {user_id: this.user_id,session: this.session_token};
+        var data = {start:this.timestamp,end:this.timestamp};
+        emit(key,data);
+      }
+    }
+
+    reduce = %Q{
+      function(key,values){
+        var results = {start: null,end:0};
+
+        values.forEach(function(value){
+            if(results.start == null || value.end <results.end) results.start = value.start;
+            if(value.end>results.end) results.end = value.end;
+        });
+
+        return results;
+      }
+    }
+
+    #Check for the ADAVersion for compatability before all the processing
+    drunken_dolphin = AdaData.with_game(@game.name).where(:ADAVersion.exists=>true).first.ADAVersion.include?('drunken_dolphin')
+    logs = AdaData.with_game(@game.name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(:ADAVersion.exists=>true).map_reduce(map,reduce).out(inline:1)
+
+    sessions_played = 0
+    total_session_length = 0
+
+    last_user = -1
+    index = -1
+    session_time = Hash.new
+    logs.each do |log|
+      log_user = log["_id"]["user_id"].to_i
+      if(log_user != last_user)
+        #If the log is for a different user add to data_groups and initalize variables for the new user
+        @data_group.add_to_group(session_time, @users[index])
+        session_time = Hash.new
+        last_user = log_user
+        index += 1
       end
-      if @session_count > 0
-        @average_time = @average_time/@session_count
+      if drunken_dolphin
+        start_time = Time.at(log["value"]["start"]).to_i
+        end_time = Time.at(log["value"]["end"]).to_i
+      else
+        start_time = DateTime.strptime(log["value"]["start"], "%m/%d/%Y %H:%M:%S").to_time
+        end_time = DateTime.strptime(log["value"]["end"], "%m/%d/%Y %H:%M:%S").to_time
       end
+
+      minutes = (end_time - start_time)/1.minute.round
+      session_time[start_time] = minutes
+
+      total_session_length += minutes
+      sessions_played += 1
     end
 
+
+    @average_time = total_session_length/sessions_played
+    @session_count = sessions_played
     @playtimes = @data_group.to_chart_js
 
     respond_to do |format|
