@@ -150,7 +150,7 @@ class UsersController < ApplicationController
         end
         send_data out, filename: @user.player_name+'_'+@game.name+'.csv'
       }
-      format.json { render :json => @user.data }
+      format.json { render :json => @user.data(@game.name) }
     end
   end
 
