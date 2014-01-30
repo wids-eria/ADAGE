@@ -22,6 +22,20 @@ class DataController < ApplicationController
     end
   end
 
+
+  def get_events 
+    
+    if params[:app_token] != nil
+    client = Client.find(params[:app_token])
+    end
+
+    if client != nil
+      @data = AdaData.with_game(client.game).where(gameVersion: app_token).where(session_token: params[:session_token]).where(:timestamp.gt => params[:timestamp]).where(key: params[:event])
+    end
+    respond_with @data    
+
+  end
+
   def session_logs
     @game = Game.find(params[:game_id])
     @users = User.where(id: params[:user_ids])
