@@ -40,8 +40,8 @@ class DataController < ApplicationController
         var results = {start: null,end:0};
 
         values.forEach(function(value){
-            if(results.start == null || value.end <results.end) results.start = value.start;
-            if(value.end>results.end) results.end = value.end;
+            if(results.start == null) results.start = value.start;
+            results.end = value.end;
         });
 
         return results;
@@ -49,8 +49,8 @@ class DataController < ApplicationController
     }
 
     #Check for the ADAVersion for compatability before all the processing
-    drunken_dolphin = AdaData.with_game(@game.name).where(:ADAVersion.exists=>true).first.ADAVersion.include?('drunken_dolphin')
-    logs = AdaData.with_game(@game.name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(:ADAVersion.exists=>true).map_reduce(map,reduce).out(inline:1)
+    drunken_dolphin = AdaData.with_game(@game.name).only(:_id,:ADAVersion).where(:ADAVersion.exists=>true).first.ADAVersion.include?('drunken_dolphin')
+    logs = AdaData.with_game(@game.name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).only(:ADAVersion,:timestamp,:user_id,:session_token).where(:ADAVersion.exists=>true).map_reduce(map,reduce).out(inline:1)
 
     sessions_played = 0
     total_session_length = 0
@@ -71,8 +71,8 @@ class DataController < ApplicationController
         start_time = Time.at(log["value"]["start"]).to_i
         end_time = Time.at(log["value"]["end"]).to_i
       else
-        start_time = DateTime.strptime(log["value"]["start"].to_i, "%m/%d/%Y %H:%M:%S").to_time
-        end_time = DateTime.strptime(log["value"]["end"].to_i, "%m/%d/%Y %H:%M:%S").to_time
+        start_time = DateTime.strptime(log["value"]["start"], "%m/%d/%Y %H:%M:%S").to_time.to_i
+        end_time = DateTime.strptime(log["value"]["end"], "%m/%d/%Y %H:%M:%S").to_time.to_i
       end
 
       minutes = (end_time - start_time)/1.minute.round
