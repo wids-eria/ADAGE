@@ -168,7 +168,7 @@ class UsersController < ApplicationController
         since = 0
       end
       
-      data = @user.data(client.game.name).where(key: params[:key]).where(:timestamp.gt => params[:since]).asc(:timestamp).entries
+      data = @user.data(client.implementation.game.name).where(key: params[:key]).where(:timestamp.gt => params[:since]).asc(:timestamp).entries
       values = Hash.new(0)
       logs.each_with_index do |log, i|
         values[i] = data[params[:field_name]]
