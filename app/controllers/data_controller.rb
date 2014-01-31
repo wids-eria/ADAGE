@@ -49,7 +49,8 @@ class DataController < ApplicationController
     }
 
     #Check for the ADAVersion for compatability before all the processing
-    drunken_dolphin = AdaData.with_game(@game.name).only(:_id,:ADAVersion).where(:ADAVersion.exists=>true).first.ADAVersion.include?('drunken_dolphin')
+    log = AdaData.with_game(@game.name).only(:_id,:ADAVersion).where(:ADAVersion.exists=>true).first
+    drunken_dolphin = log.ADAVersion.include?('drunken_dolphin')
     logs = AdaData.with_game(@game.name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).only(:ADAVersion,:timestamp,:user_id,:session_token).where(:ADAVersion.exists=>true).map_reduce(map,reduce).out(inline:1)
 
     sessions_played = 0
