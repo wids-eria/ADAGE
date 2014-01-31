@@ -40,7 +40,7 @@ class DataController < ApplicationController
 
         values.forEach(function(value){
             if(results.start == null) results.start = value.start;
-             if(value.end > results.end)  results.end = value.end;
+            results.end = value.end;
         });
 
         return results;
@@ -50,11 +50,11 @@ class DataController < ApplicationController
     @data_group = DataGroup.new
     @average_time = 0
     @session_count = 0
-
     #Check for the ADAVersion for compatability before all the processing
-    version = AdaData.with_game(@game.name).only(:_id,:ADAVersion).where(:ADAVersion.exists=>true).first.ADAVersion
-    if version
-      drunken_dolphin = version.include?('drunken_dolphin')
+    log = AdaData.with_game(@game.name).only(:_id,:ADAVersion).where(:ADAVersion.exists=>true).first
+
+    unless log.nil?
+      drunken_dolphin = log.ADAVersion.include?('drunken_dolphin')
       logs = AdaData.with_game(@game.name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).only(:ADAVersion,:timestamp,:user_id,:session_token).where(:ADAVersion.exists=>true).map_reduce(map,reduce).out(inline:1)
 
       sessions_played = 0
@@ -92,7 +92,6 @@ class DataController < ApplicationController
       @average_time = total_session_length/sessions_played
       @session_count = sessions_played
     end
-
     @playtimes = @data_group.to_chart_js
 
     respond_to do |format|
