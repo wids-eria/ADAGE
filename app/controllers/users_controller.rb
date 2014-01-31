@@ -177,6 +177,7 @@ class UsersController < ApplicationController
       @data_group = DataGroup.new
       @data_group.add_to_group(values, @user)
 
+      @playtimes = @data_group.to_chart_js
       respond_to do |format|
         format.json {render :json => @data_group.to_json}
         format.html {render}
