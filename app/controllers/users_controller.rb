@@ -170,8 +170,10 @@ class UsersController < ApplicationController
       
       data = @user.data(client.implementation.game.name).where(key: params[:key]).where(:timestamp.gt => params[:since]).asc(:timestamp).entries
       values = Hash.new(0)
+      puts data.count
       data.each_with_index do |log, i|
-        values[i] = data[params[:field_name]]
+        values[i] = log[params[:field_name]]
+        puts values[i]
       end
 
       @data_group = DataGroup.new
