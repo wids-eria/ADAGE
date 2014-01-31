@@ -40,7 +40,7 @@ class DataController < ApplicationController
 
         values.forEach(function(value){
             if(results.start == null) results.start = value.start;
-            results.end = value.end;
+            if(value.end > results.end) results.end = value.end;
         });
 
         return results;
@@ -73,7 +73,6 @@ class DataController < ApplicationController
           index += 1
         end
 
-        #can't convert string to num
         if drunken_dolphin
           start_time = Time.at(log["value"]["start"]).to_i
           end_time = Time.at(log["value"]["end"]).to_i
