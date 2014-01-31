@@ -145,7 +145,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
 
     if params[:app_token] != nil
-      client = Client.where(app_token: params[:app_token])
+      client = Client.where(app_token: params[:app_token]).first
     end
 
     if client != nil
