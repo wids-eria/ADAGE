@@ -1,0 +1,10 @@
+%h3 
+
+=link_to 'Export as CSV', get_key_values_user_path(params: params, format: 'csv')
+
+%script
+  != "playtimes = #{@chart_info.to_json};"
+%script{src: '/assets/bar_chart.js', type: 'text/javascript'}
+%canvas{id: 'playtime_chart', width: 1000, height: 500}
+
+
