@@ -35,7 +35,7 @@ class DataGroup
         rand = Random.new(data_hash.user_id)
         data_series = Array.new
         data_hash.data.each do |key, value|
-          data_series[labels.index(key)] = value
+          data_series[labels.index(key)] = value.to_i
         end
         datasets << {
         fillColor: "rgba(" + (rand.rand(0...220)).to_s + ", 220,"  + (rand.rand(0...220)).to_s +  ",0.5)",

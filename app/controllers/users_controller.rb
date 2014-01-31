@@ -170,10 +170,8 @@ class UsersController < ApplicationController
       
       data = @user.data(client.implementation.game.name).where(key: params[:key]).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
       values = Hash.new(0)
-      puts data.count
       data.each_with_index do |log, i|
         values[i] = log[params[:field_name]]
-        puts values[i]
       end
 
       @data_group = DataGroup.new
@@ -182,7 +180,7 @@ class UsersController < ApplicationController
       respond_to do |format|
         format.json {render :json => @data_group.to_json}
         format.html {render}
-        format.csv { send_data @data_group.to_csv, filename: @game.name+"_"+current_user.player_name+".csv" }
+        format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
       end
 
     end
