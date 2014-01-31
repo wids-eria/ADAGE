@@ -153,22 +153,22 @@ class UsersController < ApplicationController
       since = params[:time_range]
       
       if params[:time_range].include?("day")
-        since = Time.now - 1.day
+        since = (Time.now - 1.day).to_i
       end
 
       if params[:time_range].include?("week")
-        since = Time.now - 1.week
+        since = (Time.now - 1.week).to_i
       end
 
       if params[:time_range].include?("month")
-        since = Time.now - 1.month
+        since = (Time.now - 1.month).to_i
       end
 
       if params[:time_range].include?("all")
         since = 0
       end
       
-      data = @user.data(client.implementation.game.name).where(key: params[:key]).asc(:timestamp).entries
+      data = @user.data(client.implementation.game.name).where(key: params[:key]).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
       values = Hash.new(0)
       puts data.count
       data.each_with_index do |log, i|
