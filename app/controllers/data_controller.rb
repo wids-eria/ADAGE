@@ -40,7 +40,7 @@ class DataController < ApplicationController
 
         values.forEach(function(value){
             if(results.start == null) results.start = value.start;
-            if(value.end > results.end) results.end = value.end;
+            results.end = value.end;
         });
 
         return results;
@@ -73,19 +73,22 @@ class DataController < ApplicationController
           index += 1
         end
 
-        if drunken_dolphin
-          start_time = Time.at(log["value"]["start"]).to_i
-          end_time = Time.at(log["value"]["end"]).to_i
-        else
-          start_time = DateTime.strptime(log["value"]["start"], "%m/%d/%Y %H:%M:%S").to_time.to_i
-          end_time = DateTime.strptime(log["value"]["end"], "%m/%d/%Y %H:%M:%S").to_time.to_i
+        begin
+          if drunken_dolphin
+            start_time = Time.at(log["value"]["start"]).to_i
+            end_time = Time.at(log["value"]["end"]).to_i
+          else
+            start_time = DateTime.strptime(log["value"]["start"], "%m/%d/%Y %H:%M:%S").to_time.to_i
+            end_time = DateTime.strptime(log["value"]["end"], "%m/%d/%Y %H:%M:%S").to_time.to_i
+          end
+          minutes = (end_time - start_time)/1.minute.round
+          session_time[start_time] = minutes
+
+          total_session_length += minutes
+          sessions_played += 1
+        rescue
+           raise "Cannot Graph Data: format does not match drunken_dolphin or bodacious bonobo specifications!"
         end
-
-        minutes = (end_time - start_time)/1.minute.round
-        session_time[start_time] = minutes
-
-        total_session_length += minutes
-        sessions_played += 1
       end
 
       @average_time = total_session_length/sessions_played
