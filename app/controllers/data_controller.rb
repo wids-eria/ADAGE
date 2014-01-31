@@ -26,7 +26,7 @@ class DataController < ApplicationController
   def get_events 
     
     if params[:app_token] != nil
-    client = Client.find(params[:app_token])
+    client = Client.where(app_token: params[:app_token])
     end
 
     if client != nil

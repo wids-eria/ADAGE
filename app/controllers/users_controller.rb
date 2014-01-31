@@ -139,6 +139,54 @@ class UsersController < ApplicationController
     end
   end
 
+
+  def get_key_values 
+    
+    @user = User.find(params[:id])
+
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token])
+    end
+
+    if client != nil
+
+      since = params[:time_range]
+      
+      if params[:time_range].include?("day")
+        since = Time.now - 1.day
+      end
+
+      if params[:time_range].include?("week")
+        since = Time.now - 1.week
+      end
+
+      if params[:time_range].include?("month")
+        since = Time.now - 1.month
+      end
+
+      if params[:time_range].include?("all")
+        since = 0
+      end
+      
+      data = @user.data(client.game.name).where(key: params[:key]).where(:timestamp.gt => params[:since]).asc(:timestamp).entries
+      values = Hash.new(0)
+      logs.each_with_index do |log, i|
+        values[i] = data[params[:field_name]]
+      end
+
+      @data_group = DataGroup.new
+      @data_group.add_to_group(values, @user)
+
+      respond_to do |format|
+        format.json {render :json => @data_group.to_json}
+        format.html {render}
+        format.csv { send_data @data_group.to_csv, filename: @game.name+"_"+current_user.player_name+".csv" }
+      end
+
+    end
+ 
+  end
+
   def data_by_game
     @user = User.find(params[:id])
     @game = Game.find_by_name(params[:gameName])

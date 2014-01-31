@@ -63,6 +63,7 @@ Ada::Application.routes.draw do
       get :stats
       get :session_logs
       get :context_logs
+      get :get_key_values
     end
   end
 
