@@ -113,15 +113,15 @@ class DataController < ApplicationController
         var data = {}
 
         var append = "";
-        if(this.ADAVersion.indexOf("drunken_dolphin")>0){
+        if(this.ADAVersion == "drunken_dolphin"){
           if(this.ada_base_types.indexOf("ADAGEContextStart") >0) append = "start";
           if(this.ada_base_types.indexOf("ADAGEContextEnd") >0) append = "end";
         }else{
-          if(this.ada_base_types.indexOf("ADAUnitStart") >0) append = "start";
-          if(this.ada_base_types.indexOf("ADAUnitEnd") >0) append = "end";
+          if(this.ada_base_type.indexOf("ADAUnitStart") >0) append = "start";
+          if(this.ada_base_type.indexOf("ADAUnitEnd") >0) append = "end";
         }
 
-        data[this.name+"_"+append] = 1;
+        if(append != "") data[this.name+"_"+append] = 1;
 
         if(this.success != null){
           append = "fail";
@@ -155,12 +155,20 @@ class DataController < ApplicationController
       }
     }
 
-    logs = AdaData.with_game(@game.name).in(user_id: params[:user_ids]).any_of(:ada_base_types.in => ['ADAGEContextStart','ADAGEContextEnd']).map_reduce(map,reduce).out(inline:1)
+    log = AdaData.with_game(@game.name).exists(ADAVersion: true).first
 
-    index = 0
-    logs.each do |log|
-      @data_group.add_to_group(log["value"], @users[index])
-      index += 1
+    if log
+      if log.ADAVersion == 'drunken_dolphin'
+        logs = AdaData.with_game(@game.name).in(user_id: params[:user_ids]).exists(ADAVersion: true).only(:user_id,:ada_base_types,:ADAVersion).any_of(:ada_base_types.in => ['ADAGEContextStart','ADAGEContextEnd']).map_reduce(map,reduce).out(inline:1)
+      else
+       logs = AdaData.with_game(@game.name).in(user_id: params[:user_ids]).exists(ADAVersion: true).only(:user_id,:ada_base_type,:ADAVersion).any_of(:ada_base_type.in => ['ADAUnitStart','ADAUnitEnd']).map_reduce(map,reduce).out(inline:1)
+      end
+
+      index = 0
+      logs.each do |log|
+        @data_group.add_to_group(log["value"], @users[index])
+        index += 1
+      end
     end
 
     @chart_info = @data_group.to_chart_js
