@@ -103,6 +103,9 @@ class DataController < ApplicationController
         rescue
            raise "Cannot Graph Data: format does not match drunken_dolphin or bodacious bonobo specifications!"
         end
+
+        #add the last user
+        @data_group.add_to_group(session_time, @users[index])
       end
 
       @average_time = total_session_length/sessions_played
