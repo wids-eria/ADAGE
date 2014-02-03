@@ -1,5 +1,5 @@
 set :rails_env, :staging
-set :branch, "master"
+set :branch, fetch(:branch, "master")
 
 role :web, "gls-staging-1.discovery.wisc.edu"
 role :app, "gls-staging-1.discovery.wisc.edu"
