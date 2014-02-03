@@ -184,15 +184,16 @@ class User < ActiveRecord::Base
 
   def data_to_csv(csv, gameName, schema='')
     keys = Hash.new
-    data = self.data(gameName)
+    data = nil 
     if schema.present?
-      data = data.where(schema: schema)
+      data = self.data(gameName).where(schema: schema).asc(:timestamp).entries
+    else
+      data = self.data(gameName).asc(:timestamp).entries
     end
-    data = data.asc(:timestamp)
-    types = data.distinct(:key)
+    types = self.data(gameName).distinct(:key)
     examples = Array.new
     types.each do |type|
-      ex = data.where(key: type).first
+      ex = data.select{ |d| d.key.include?(type)}.last
       if ex != nil
         examples << ex
       end

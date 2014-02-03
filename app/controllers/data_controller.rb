@@ -22,6 +22,20 @@ class DataController < ApplicationController
     end
   end
 
+
+  def get_events 
+    
+    if params[:app_token] != nil
+    client = Client.where(app_token: params[:app_token])
+    end
+
+    if client != nil
+      @data = AdaData.with_game(client.game).where(gameVersion: app_token).where(session_token: params[:session_token]).where(:timestamp.gt => params[:timestamp]).where(key: params[:event])
+    end
+    respond_with @data    
+
+  end
+
   def session_logs
     @game = Game.find(params[:game_id])
     @users = User.where(id: params[:user_ids]).order(:id)
@@ -114,11 +128,11 @@ class DataController < ApplicationController
 
         var append = "";
         if(this.ADAVersion == "drunken_dolphin"){
-          if(this.ada_base_types.indexOf("ADAGEContextStart") >0) append = "start";
-          if(this.ada_base_types.indexOf("ADAGEContextEnd") >0) append = "end";
+          if(this.ada_base_types.indexOf("ADAGEContextStart") > -1) append = "start";
+          if(this.ada_base_types.indexOf("ADAGEContextEnd") > -1 ) append = "end";
         }else{
-          if(this.ada_base_type.indexOf("ADAUnitStart") >0) append = "start";
-          if(this.ada_base_type.indexOf("ADAUnitEnd") >0) append = "end";
+          if(this.ada_base_type.indexOf("ADAUnitStart") > -1) append = "start";
+          if(this.ada_base_type.indexOf("ADAUnitEnd") > -1) append = "end";
         }
 
         if(append != "") data[this.name+"_"+append] = 1;
@@ -289,15 +303,15 @@ class DataController < ApplicationController
     @crystals_sessions = Hash.new
     @timer_sessions = Hash.new
 
-    minds = @user.data('Tenacity-Meditation').asc(:timestamp)
-    crystals = @user.data('KrystalsOfKaydor').asc(:timestamp)
-    timers = @user.data('App Timer').asc(:timestamp)
+    minds = @user.data('Tenacity-Meditation').asc(:timestamp).entries
+    crystals = @user.data('KrystalsOfKaydor').asc(:timestamp).entries
+    timers = @user.data('App Timer').asc(:timestamp).entries
 
 
     if minds.count > 0
-      sessions = minds.distinct(:session_token)
+      sessions = @user.data('Tenacity-Meditation').distinct(:session_token)
       sessions.each do |token|
-        session_logs = minds.where(session_token: token)
+        session_logs = minds.select{ |d| d.session_token.include?(token) } #minds.where(session_token: token)
         if session_logs.first.schema.include?('PRODUCTION-05-17-2013')
           end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
           start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
@@ -315,9 +329,10 @@ class DataController < ApplicationController
     end
 
     if crystals.count > 0
-      sessions = crystals.distinct(:session_token)
+      sessions = @user.data('KrystalsOfKaydor').distinct(:session_token)
+      crystals = crystals.entries
       sessions.each do |token|
-        session_logs = crystals.where(session_token: token)
+        session_logs = crystals.select{ |d|  d.session_token.include?(token) } 
         if session_logs.first.schema.include?('PRODUCTION-05-29-2013')
           end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
           start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
@@ -332,8 +347,8 @@ class DataController < ApplicationController
           @crystals_time = @crystals_time + minutes
         end
       end
-      finish_count = crystals.where(name: 'CompleteAllTheQuests').count
-      finish_count = crystals.where(name: 'Do all the quests').count
+      crystals_quests = crystals.select{ |d| d.key.include?('KoKObjectiveEnd') }
+      finish_count = crystals_quests.select{ |d| d.name.include?('Do all the quests')}.count
       @crystals_count = sessions.count
       @crystals_finish_count = finish_count
 

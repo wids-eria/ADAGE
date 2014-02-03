@@ -133,6 +133,55 @@ class UsersController < ApplicationController
     end
   end
 
+
+  def get_key_values 
+    
+    @user = User.find(params[:id])
+
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client != nil
+
+      since = params[:time_range]
+      
+      if params[:time_range].include?("day")
+        since = (Time.now - 1.day).to_i
+      end
+
+      if params[:time_range].include?("week")
+        since = (Time.now - 1.week).to_i
+      end
+
+      if params[:time_range].include?("month")
+        since = (Time.now - 1.month).to_i
+      end
+
+      if params[:time_range].include?("all")
+        since = 0
+      end
+      
+      data = @user.data(client.implementation.game.name).where(key: params[:key]).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
+      values = Hash.new(0)
+      data.each_with_index do |log, i|
+        values[i] = log[params[:field_name]]
+      end
+
+      @data_group = DataGroup.new
+      @data_group.add_to_group(values, @user)
+
+      @chart_info = @data_group.to_chart_js
+      respond_to do |format|
+        format.json {render :json => @data_group.to_json}
+        format.html {render}
+        format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
+      end
+
+    end
+ 
+  end
+
   def data_by_game
     @user = User.find(params[:id])
     @game = Game.find_by_name(params[:gameName])
@@ -144,7 +193,7 @@ class UsersController < ApplicationController
         end
         send_data out, filename: @user.player_name+'_'+@game.name+'.csv'
       }
-      format.json { render :json => @user.data }
+      format.json { render :json => @user.data(@game.name) }
     end
   end
 
