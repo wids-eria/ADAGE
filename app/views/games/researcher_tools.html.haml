@@ -43,6 +43,7 @@
           %th data
           %th data
           %th consented
+          %th last played
           %th time played
           %th context info
       %tbody
@@ -58,6 +59,8 @@
                 = 'json'
             %td
               = user.consented
+            %td
+              = Time.at(user[:last_playtime]).strftime("%m/%d at %I:%M%p")
             %td
               -unless user.data(@game.name).empty?
                 = link_to session_logs_user_path(user, gameName: @game.name) do
