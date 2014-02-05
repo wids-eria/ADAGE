@@ -1,6 +1,15 @@
 %h2= @game.name
 %br
 
+:javascript
+  $(document).ready(function() {
+    $('#data').dynatable({
+      features:{
+        paginate: false,
+        recordCount: false
+      }
+    });
+  });
 .row
   .span4
     Export all player data:
@@ -36,7 +45,7 @@
     %h3='Average time played: ' + @average_time.to_s
 .row
   .span12
-    %table.table.table-striped
+    %table.table.table-striped#data
       %thead
         %tr
           %th player name

@@ -20,9 +20,8 @@ class GamesController < ApplicationController
     @users = @game.users
 
     @users.each do |user|
-      user[:last_playtime] = AdaData.with_game(@game.name).order_by(:timestamp.asc).where(user_id: user[:id]).last[:timestamp]
+      user[:last_playtime] = AdaData.with_game(@game.name).only(:user_id,:timestamp).order_by(:timestamp.asc).where(user_id: user[:id]).last[:timestamp]
     end
-
   end
 
   def statistics
