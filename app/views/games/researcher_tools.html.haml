@@ -48,13 +48,12 @@
     %table.table.table-striped#data
       %thead
         %tr
-          %th player name
-          %th data
-          %th data
-          %th consented
-          %th last played
-          %th time played
-          %th context info
+          %th Player name
+          %th Data
+          %th Consented
+          %th Last played
+          %th Time played
+          %th Context info
       %tbody
         - @users.each do |user|
           %tr
@@ -63,7 +62,6 @@
             %td
               = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do
                 = 'csv'
-            %td
               = link_to data_by_game_user_path(user, 'json', gameName: @game.name) do
                 = 'json'
             %td

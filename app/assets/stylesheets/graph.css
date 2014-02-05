@@ -7,11 +7,6 @@
 	display: block;
 	overflow: hidden;
 }
-.dynatable-search{
-  float:right;
-
-}
-
 /* ticks */
 
 .rickshaw_graph .x_tick {

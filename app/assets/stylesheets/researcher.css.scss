@@ -1,0 +1,23 @@
+@mixin rounded($radius) {
+  -webkit-border-radius: $radius !important;
+     -moz-border-radius: $radius !important;
+      -ms-border-radius: $radius;
+       -o-border-radius: $radius;
+          border-radius: $radius !important;
+}
+
+.dynatable-search{
+  float:right;
+}
+
+td a{
+  margin-right: 4px;
+}
+
+table#data{
+  border: 1px solid #ddd;
+}
+
+thead{
+  @include rounded(5px);
+}
