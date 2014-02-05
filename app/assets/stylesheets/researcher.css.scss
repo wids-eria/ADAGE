@@ -17,7 +17,3 @@ td a{
 table#data{
   border: 1px solid #ddd;
 }
-
-thead{
-  @include rounded(5px);
-}

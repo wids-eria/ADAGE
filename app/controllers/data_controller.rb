@@ -23,8 +23,8 @@ class DataController < ApplicationController
   end
 
 
-  def get_events 
-    
+  def get_events
+
     if params[:app_token] != nil
     client = Client.where(app_token: params[:app_token])
     end
@@ -32,7 +32,7 @@ class DataController < ApplicationController
     if client != nil
       @data = AdaData.with_game(client.game).where(gameVersion: app_token).where(session_token: params[:session_token]).where(:timestamp.gt => params[:timestamp]).where(key: params[:event])
     end
-    respond_with @data    
+    respond_with @data
 
   end
 
@@ -110,6 +110,7 @@ class DataController < ApplicationController
 
       @average_time = total_session_length/sessions_played
       @session_count = sessions_played
+      @total_time = total_session_length
     end
     @playtimes = @data_group.to_chart_js
 
@@ -335,7 +336,7 @@ class DataController < ApplicationController
       sessions = @user.data('KrystalsOfKaydor').distinct(:session_token)
       crystals = crystals.entries
       sessions.each do |token|
-        session_logs = crystals.select{ |d|  d.session_token.include?(token) } 
+        session_logs = crystals.select{ |d|  d.session_token.include?(token) }
         if session_logs.first.schema.include?('PRODUCTION-05-29-2013')
           end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
           start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
