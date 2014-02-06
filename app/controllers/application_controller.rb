@@ -54,6 +54,8 @@ class ApplicationController < ActionController::Base
       since = 0
     end
 
+    return since.to_s
+
   end
 
   
