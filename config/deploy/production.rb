@@ -1,5 +1,5 @@
 set :rails_env, :production
-set :branch, "eager_eldrad"
+set :branch, fetch(:branch, "eager_eldrad")
 
 role :web, "eria-1.morgridge.net"
 role :app, "eria-1.morgridge.net"

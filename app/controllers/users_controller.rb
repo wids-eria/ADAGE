@@ -52,7 +52,6 @@ class UsersController < ApplicationController
       @counts << {x: i, y: game_data.distinct(:session_token).count}
     end
     puts @counts.inspect
-
   end
 
   def session_logs
@@ -60,9 +59,7 @@ class UsersController < ApplicationController
     @game = Game.where(name: params[:gameName]).first
 
     redirect_to session_logs_data_path(game_id: @game.id, user_ids: [@user.id])
-
   end
-
 
   def context_logs
     @user = User.find(params[:id])
@@ -83,8 +80,6 @@ class UsersController < ApplicationController
       end
     end
   end
-
-
 
   def authenticate_for_token
     @user = User.with_login(params[:email]).first
@@ -113,7 +108,6 @@ class UsersController < ApplicationController
     @user_sequence = UserSequence.new params[:user_sequence]
 
     if @user_sequence.valid?
-
       @user_sequence.create_users!
 
       respond_to do |format|

@@ -5,8 +5,7 @@ class GameVersionData
   field :implementation_id, type: Integer
   field :game_id, type: Integer
 
-  
-  index implementation_id: 1 
+  index implementation_id: 1
   index created_at: 1
 
   def game=(game)

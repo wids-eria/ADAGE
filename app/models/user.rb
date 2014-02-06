@@ -122,7 +122,6 @@ class User < ActiveRecord::Base
     return guest
   end
 
-
   def self.find_for_brainpop_auth(player_id, signed_in_resource=nil)
 
     access_token = SocialAccessToken.where(provider: 'brainpop', uid: player_id).first
@@ -144,7 +143,6 @@ class User < ActiveRecord::Base
     end
 
     return user
-
   end
 
   def self.find_for_google_oauth2(auth, signed_in_resource=nil)
