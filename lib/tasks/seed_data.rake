@@ -4,6 +4,16 @@ namespace :seed_data do
 
     rand = Random.new(Time.now.to_i)
 
+    client_token = ''
+    game = Game.where(name: 'Fake Game').first
+    if game != nil
+      imp = game.implementations.first
+      if imp != nil
+        client_token = imp.client.app_token
+      end
+    
+    end
+
     adage_context = {'name' => 'find_a_candy', 'parent_name' => 'find_a_candy'}
 
     adage_vc =    {
@@ -21,7 +31,7 @@ namespace :seed_data do
                   }
 
     adage_base = {'gameName' => 'Fake Game',
-                 'gameVersion' => 'development',
+                 'gameVersion' => client_token,
                  'ADAVersion' => 'drunken_dolphin',
                  'timestamp' => Time.now.to_i,
                  'session_token' => Time.now.to_s,
@@ -33,7 +43,7 @@ namespace :seed_data do
                   }
 
     adage_start = {'gameName' => 'Fake Game',
-                 'gameVersion' => 'development',
+                 'gameVersion' => client_token,
                  'ADAVersion' => 'drunken_dolphin',
                  'timestamp' => Time.now.to_i,
                  'session_token' => Time.now.to_s,
@@ -46,7 +56,7 @@ namespace :seed_data do
                   }
 
     adage_end = {'gameName' => 'Fake Game',
-                 'gameVersion' => 'development',
+                 'gameVersion' => client_token,
                  'ADAVersion' => 'drunken_dolphin',
                  'timestamp' => Time.now.to_i,
                  'session_token' => Time.now.to_s,
@@ -69,7 +79,7 @@ namespace :seed_data do
         data.user_id = rand.rand(1..User.all.count)
         puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
-        data.timestamp = (start_time + (1.minute * rand.rand(1..50))).to_i
+        data.timestamp = (start_time + (1.minute * rand.rand(1..50))).to_i.to_s
         if data.key.include?('FGQuest')
           data.name = quest_names[rand.rand(0...quest_names.count)]
         end

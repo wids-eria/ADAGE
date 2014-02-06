@@ -35,6 +35,27 @@ class ApplicationController < ActionController::Base
     return qr.to_img.resize(width,height).to_data_url
   end
 
+  def time_range_to_epoch(time_range)
+    since = time_range
+
+    if time_range.include?("day")
+      since = (Time.now - 1.day).to_i
+    end
+
+    if time_range.include?("week")
+      since = (Time.now - 1.week).to_i
+    end
+
+    if time_range.include?("month")
+      since = (Time.now - 1.month).to_i
+    end
+
+    if time_range.include?("all")
+      since = 0
+    end
+
+  end
+
   
   protected
 

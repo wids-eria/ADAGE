@@ -184,6 +184,32 @@ class User < ActiveRecord::Base
     end
   end
 
+  def data_field_values(game_name, key, since, field, step=0)
+
+    data = self.data(game_name).where(key: key).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
+    puts data.count
+    values = Hash.new(0)
+    data.each_with_index do |log, i|
+      values[key+'_'+i.to_s] = log[field]
+    end
+
+    return values
+  end 
+
+  def data_time_between(game_name, key, since)
+  
+    data = self.data(game_name).where(key: key).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
+    values = Hash.new(0)
+    data.each_with_index do |log, i|
+      if i > 0
+        values[key+'_'+i.to_s] = log.timestamp.to_i - data[i-1].timestamp.to_i
+      end
+    end
+
+    return values
+
+  end
+
   def data_to_csv(csv, gameName, schema='')
     keys = Hash.new
     data = nil 
