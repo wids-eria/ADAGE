@@ -70,7 +70,6 @@ class OauthController < ApplicationController
     auth = OmniAuth::AuthHash.new(parsed)
 
     puts auth.inspect
-    puts auth["info"]
 
     user = User.find_for_facebook_oauth(auth, current_user)
     if user.nil?
