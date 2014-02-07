@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
     if user.blank?
       password =  Devise.friendly_token[0,20]
       user = User.create(player_name:auth.extra.raw_info.username,
-                          email:auth.email,
+                          email:auth.info.email,
                            password:password,
                            password_confirm:password
                         )
