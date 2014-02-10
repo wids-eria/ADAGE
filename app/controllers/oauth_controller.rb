@@ -67,7 +67,10 @@ class OauthController < ApplicationController
 
   def authorize_unity_fb
 
-    parsed = JSON.parse(params["omniauth.auth"])
+    puts request.env.inspect
+
+    parsed = JSON.parse(request.env["ominauth.auth"])
+    #parsed = JSON.parse(params["omniauth.auth"])
     auth = OmniAuth::AuthHash.new(parsed)
 
     puts auth.inspect
