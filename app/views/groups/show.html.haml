@@ -32,7 +32,7 @@
   =simple_form_for 'player_group',url: add_user_group_path(@group), html: {method: :put,id: :players}, remote: true  do |f|
 
     .modal-body
-      = f.collection_check_boxes :user_ids, User.order(:player_name).all, :id, :player_name
+      = f.collection_check_boxes :user_ids, @users, :id, :player_name
 
     .modal-footer
       = f.submit 'Update Participants', class: "btn btn-primary"
@@ -48,7 +48,7 @@
         html += '<li>'+user.player_name+'</li>';
       });
       $("#users").html(html);
-      $('.modal-body').prepend('<div class="success">' + data.message +'</div>');
-      $('.modal-body .success').fadeOut(2500);
+      $('.modal-body').before('<div class="success">' + data.message +'</div>');
+      $('.success').fadeOut(2000);
     });
   });
