@@ -76,7 +76,7 @@ Ada::Application.routes.draw do
   post '/oauth/token' => 'oauth#access_token'
   get '/auth/failure' => 'oauth#failure'
   post '/auth/authorize_unity' => 'oauth#authorize_unity'
-  post '/auth/authorize_unity_fb' => 'oauth#authorize_unity_fb'
+  get '/auth/authorize_unity_fb' => 'oauth#authorize_unity_fb'
   post '/auth/authorize_brainpop' => 'oauth#authorize_brainpop'
   post '/auth/register' => 'oauth#client_side_create_user'
 
