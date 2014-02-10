@@ -17,7 +17,7 @@
 -if @group.users.count==0
   = "No Players in Group"
 
-%ul
+%ul#users
   - @group.users.each do |user|
     %li
       = user.player_name
@@ -32,41 +32,21 @@
   =simple_form_for 'player_group',url: add_user_group_path(@group), html: {method: :put,id: :players}, remote: true  do |f|
 
     .modal-body
-      = f.collection_check_boxes :user_ids, User.all, :id, :player_name
+      = f.collection_check_boxes :user_ids, User.order(:player_name).all, :id, :player_name
 
     .modal-footer
       = f.submit 'Update Participants', class: "btn btn-primary"
       %button.btn{"aria-hidden" => "true", "data-dismiss" => "modal"} Close
 
-
-
 :javascript
   $(document).ready(function() {
-    $('.modal-body').dynatable({
-      table:{
-        bodyRowSelector: 'span',
-        rowReader: function(index, item, record) {
-          var $item = $(item);
-          record.name = $item.find('.collection_check_boxes').text();
-        }
-      },
-      features:{
-        paginate: true,
-        recordCount: true,
-        search: true,
-        pushState: false,
-      },
-      inputs: {
-        queries: null,
-        processingText: ''
-      }
-    });
-
-
     $('form#players')
-    .bind('ajax:error',function(evt, data, status, xhr){
-    })
+    .bind('ajax:error',function(evt, data, status, xhr){})
     .bind('ajax:success', function(evt, data, status, error){
-      alert(data.message);
+      var html = '';
+      data.users.forEach(function(user){
+        html += '<li>'+user.player_name+'</li>';
+      });
+      $("#users").html(html);
     });
   });

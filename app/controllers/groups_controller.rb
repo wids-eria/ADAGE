@@ -49,13 +49,21 @@ class GroupsController < ApplicationController
   end
 
   def add_user
-    puts params[:player_group][:user_ids]
+    @group = Group.find(params[:id])
 
-
-
+    count = 0
+    puts  params[:player_group][:user_ids]
+    params[:player_group][:user_ids].each do |user_id|
+      if not user_id.blank?
+        user = User.find(user_id)
+        if user && user.add_to_group(@group.code)
+          count += 1
+        end
+      end
+    end
 
     respond_to do |format|
-      format.json {render json: {message: "Added ",users: []},status: :ok}
+      format.json {render json: {count: count,users: @group.users},status: :ok}
     end
   end
 end
