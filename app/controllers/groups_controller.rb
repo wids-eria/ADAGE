@@ -47,4 +47,15 @@ class GroupsController < ApplicationController
 
     authorize! :read, Group
   end
+
+  def add_user
+    puts params[:player_group][:user_ids]
+
+
+
+
+    respond_to do |format|
+      format.json {render json: {message: "Added ",users: []},status: :ok}
+    end
+  end
 end

@@ -73,9 +73,9 @@ class DataController < ApplicationController
 
       sessions_played = 0
       total_session_length = 0
-
       last_user = -1
       index = -1
+
       session_time = Hash.new
       logs.each do |log|
         log_user = log["_id"]["user_id"].to_i

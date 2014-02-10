@@ -1,9 +1,9 @@
 @mixin rounded($radius) {
-  -webkit-border-radius: $radius !important;
-     -moz-border-radius: $radius !important;
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
       -ms-border-radius: $radius;
        -o-border-radius: $radius;
-          border-radius: $radius !important;
+          border-radius: $radius;
 }
 
 .dynatable-search{
@@ -16,4 +16,14 @@ td a{
 
 table#data{
   border: 1px solid #ddd;
+}
+
+form{
+  margin: 0 !important;
+}
+
+
+span input{
+  float: left;
+  margin-right: 5px !important;
 }
