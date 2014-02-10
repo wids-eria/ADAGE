@@ -63,7 +63,7 @@ class GroupsController < ApplicationController
     end
 
     respond_to do |format|
-      format.json {render json: {count: count,users: @group.users},status: :ok}
+      format.json {render json: {message: "Successfully added "+ count.to_s() +" new players.",users: @group.users},status: :ok}
     end
   end
 end

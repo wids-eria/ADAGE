@@ -22,8 +22,15 @@ form{
   margin: 0 !important;
 }
 
-
 span input{
   float: left;
   margin-right: 5px !important;
+}
+
+.success{
+  background-color: #61C762;
+  padding: 4px;
+  margin: 1px;
+  text-align: center;
+  @include rounded(3px);
 }

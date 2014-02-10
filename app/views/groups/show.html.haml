@@ -48,5 +48,7 @@
         html += '<li>'+user.player_name+'</li>';
       });
       $("#users").html(html);
+      $('.modal-body').prepend('<div class="success">' + data.message +'</div>');
+      $('.modal-body .success').fadeOut(2500);
     });
   });
