@@ -21,8 +21,6 @@
   - @group.users.each do |user|
     %li
       = user.player_name
-
-
 #myModal.modal.hide.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
   .modal-header
     %button.close{"aria-hidden" => "true", "data-dismiss" => "modal", :type => "button"} ×
@@ -32,6 +30,9 @@
   =simple_form_for 'player_group',url: add_user_group_path(@group), html: {method: :put,id: :players}, remote: true  do |f|
 
     .modal-body
+      #searchbox
+        <label>Search</label>
+        <input id="search" type="text"></input>
       = f.collection_check_boxes :user_ids, @users, :id, :player_name
 
     .modal-footer
@@ -51,4 +52,20 @@
       $('.modal-body').before('<div class="success">' + data.message +'</div>');
       $('.success').fadeOut(2000);
     });
+
+    $("#search").keyup(function(){
+      var search = $("#search").val();
+      if(search){
+        $.each($(".modal-body span label"),function(key,value){
+          if($(this).is(":contains("+search+")")){
+            $(this).parent().show();
+          }else{
+            $(this).parent().hide();
+          }
+        });
+      }else{
+        $(".modal-body span").show();
+      }
+    });
+
   });

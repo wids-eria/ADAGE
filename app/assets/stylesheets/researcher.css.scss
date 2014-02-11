@@ -34,3 +34,13 @@ span input{
   text-align: center;
   @include rounded(3px);
 }
+
+#searchbox{
+  label{
+    float:left;
+    padding: 5px;
+  }
+  #search{
+    display: block;
+  }
+}
