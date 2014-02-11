@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
 
     fb_access = user.social_access_tokens.where(provider: auth.provider).first
     if fb_access.present?
-      fb_access.update_all(expired_at: Time.now,access_token: auth.credentials.token)
+      fb_access.update_token(auth.credentials.token, Time.now)
     else
       fb_access = SocialAccessToken.create(
         user: user,
