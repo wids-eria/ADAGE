@@ -1,3 +1,5 @@
+@import 'mixins';
+
 body{
   width: 100%;
   margin: 0;
@@ -6,4 +8,17 @@ body{
 .page_wrap{
   width: 1080px;
   margin: 0 auto;
+}
+
+table{
+  border: 1px solid #ddd;
+  @include rounded(4px);
+
+  th{
+    font-size: 1.2em;
+
+    &:first-letter{
+      text-transform: capitalize;
+    }
+  }
 }
