@@ -198,7 +198,7 @@ class DataController < ApplicationController
   end
 
   def data_by_version
-    @game = Game.find_by_name(params[:gameName])
+    @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     @user_ids = params[:user_ids]
     respond_to do |format|
@@ -222,7 +222,7 @@ class DataController < ApplicationController
   end
 
   def export
-    @game = Game.find_by_name(params[:gameName])
+    @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     @user_ids = params[:user_ids]
     respond_to do |format|

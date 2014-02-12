@@ -134,8 +134,8 @@ class UsersController < ApplicationController
   end
 
 
-  def get_key_values 
-    
+  def get_key_values
+
     @user = User.find(params[:id])
 
     if params[:app_token] != nil
@@ -145,7 +145,7 @@ class UsersController < ApplicationController
     if client != nil
 
       since = params[:time_range]
-      
+
       if params[:time_range].include?("day")
         since = (Time.now - 1.day).to_i
       end
@@ -161,7 +161,7 @@ class UsersController < ApplicationController
       if params[:time_range].include?("all")
         since = 0
       end
-      
+
       data = @user.data(client.implementation.game.name).where(key: params[:key]).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
       values = Hash.new(0)
       data.each_with_index do |log, i|
@@ -179,12 +179,12 @@ class UsersController < ApplicationController
       end
 
     end
- 
+
   end
 
   def data_by_game
     @user = User.find(params[:id])
-    @game = Game.find_by_name(params[:gameName])
+    @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     respond_to do |format|
       format.csv {
