@@ -8,3 +8,5 @@
 //= require jquery_ujs
 //= require rickshaw_with_d3
 //= require chart
+//= require jquery.dynatable
+//= require bootstrap

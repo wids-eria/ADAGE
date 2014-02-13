@@ -1,0 +1,40 @@
+@import 'mixins';
+
+.dynatable-search{
+  float:right;
+}
+
+td a{
+  margin-right: 4px;
+}
+
+table#data{
+  border: 1px solid #ddd;
+}
+
+form{
+  margin: 0 !important;
+}
+
+span input{
+  float: left;
+  margin-right: 5px !important;
+}
+
+.success{
+  background-color: #61C762;
+  padding: 4px;
+  margin: 4px;
+  text-align: center;
+  @include rounded(3px);
+}
+
+#searchbox{
+  label{
+    float:left;
+    padding: 5px;
+  }
+  #search{
+    display: block;
+  }
+}

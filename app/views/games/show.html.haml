@@ -1,4 +1,11 @@
-%h2= @game.name
+%h2#game
+  = @game.name
+  %span.stat
+    %label Users
+    = @num_users
+  %span.stat
+    %label Logs
+    = @log_count
 %br
 
 = link_to 'Game Statistics', statistics_game_path(@game)
@@ -6,18 +13,18 @@
 
 - if current_user.role?(@game.developer_role) || current_user.admin?
   %h3 Developers
-  = link_to 'Developer Tools', developer_tools_game_path(@game) 
+  = link_to 'Developer Tools', developer_tools_game_path(@game)
   %br
 
 - if current_user.role?(@game.researcher_role) || current_user.admin?
   %h3 Researchers
-  = link_to 'Participant management tools', researcher_tools_game_path(@game) 
+  = link_to 'Participant management tools', researcher_tools_game_path(@game)
   %br
   - if @users.count > 0
-    = link_to 'Participant session information', sessions_game_path(@game) 
+    = link_to 'Participant session information', sessions_game_path(@game)
     %br
   - if @users.count > 0
-    = link_to 'Participant context information', contexts_game_path(@game) 
+    = link_to 'Participant context information', contexts_game_path(@game)
     %br
 
 

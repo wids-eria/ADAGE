@@ -23,8 +23,8 @@ class DataController < ApplicationController
   end
 
 
-  def get_events 
-    
+  def get_events
+
     if params[:app_token] != nil
     client = Client.where(app_token: params[:app_token]).first
     end
@@ -37,9 +37,7 @@ class DataController < ApplicationController
       @data = AdaData.with_game(client.implementation.game.name).where(:timestamp.gt => since).where(key: params[:event_name])
     end
 
-    @result = Hash.new
-    @result['data'] = @data
-    respond_with @result    
+    respond_with @data
 
   end
 
@@ -80,9 +78,9 @@ class DataController < ApplicationController
 
       sessions_played = 0
       total_session_length = 0
-
       last_user = -1
       index = -1
+
       session_time = Hash.new
       logs.each do |log|
         log_user = log["_id"]["user_id"].to_i
@@ -117,6 +115,7 @@ class DataController < ApplicationController
 
       @average_time = total_session_length/sessions_played
       @session_count = sessions_played
+      @total_time = total_session_length
     end
     @playtimes = @data_group.to_chart_js
 
@@ -204,7 +203,7 @@ class DataController < ApplicationController
   end
 
   def data_by_version
-    @game = Game.find_by_name(params[:gameName])
+    @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     @user_ids = params[:user_ids]
     respond_to do |format|
@@ -228,7 +227,7 @@ class DataController < ApplicationController
   end
 
   def export
-    @game = Game.find_by_name(params[:gameName])
+    @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     @user_ids = params[:user_ids]
     respond_to do |format|
@@ -342,7 +341,7 @@ class DataController < ApplicationController
       sessions = @user.data('KrystalsOfKaydor').distinct(:session_token)
       crystals = crystals.entries
       sessions.each do |token|
-        session_logs = crystals.select{ |d|  d.session_token.include?(token) } 
+        session_logs = crystals.select{ |d|  d.session_token.include?(token) }
         if session_logs.first.schema.include?('PRODUCTION-05-29-2013')
           end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime
           start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time.localtime

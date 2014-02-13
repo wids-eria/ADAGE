@@ -1,6 +1,15 @@
 %h2= @game.name
 %br
 
+:javascript
+  $(document).ready(function() {
+    $('#data').dynatable({
+      features:{
+        paginate: false,
+        recordCount: false
+      }
+    });
+  });
 .row
   .span4
     Export all player data:
@@ -36,15 +45,15 @@
     %h3='Average time played: ' + @average_time.to_s
 .row
   .span12
-    %table.table.table-striped
+    %table.table.table-striped#data
       %thead
         %tr
-          %th player name
-          %th data
-          %th data
-          %th consented
-          %th time played
-          %th context info
+          %th Player name
+          %th Data
+          %th Consented
+          %th Last played
+          %th Time played
+          %th Context info
       %tbody
         - @users.each do |user|
           %tr
@@ -53,11 +62,12 @@
             %td
               = link_to data_by_game_user_path(user, 'csv', gameName: @game.name) do
                 = 'csv'
-            %td
               = link_to data_by_game_user_path(user, 'json', gameName: @game.name) do
                 = 'json'
             %td
               = user.consented
+            %td
+              = Time.at(user.instance_variable_get("@last_playtime")).strftime("%m/%d at %I:%M%p")
             %td
               -unless user.data(@game.name).empty?
                 = link_to session_logs_user_path(user, gameName: @game.name) do

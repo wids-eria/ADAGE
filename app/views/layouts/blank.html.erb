@@ -5,6 +5,8 @@
   <%= stylesheet_link_tag    "bootstrap" %>
   <%= stylesheet_link_tag    "graph" %>
   <%= stylesheet_link_tag    "detail" %>
+  <%= stylesheet_link_tag    "researcher" %>
+  <%= stylesheet_link_tag    "main" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 
@@ -15,14 +17,16 @@
   </script>
 </head>
 
-<%= render "welcome/nav" %>
+<body>
 
-<body class="offset1">
   <% if user_signed_in? %>
     <div id="userSecret" style="display:none"><%= current_user.authentication_token %></div>
   <% end %>
 
   <div class="page_wrap">
+    <div id="nav">
+      <%= render "welcome/nav" %>
+    </div>
     <% if flash[:alert].present? %>
       <div class="flashbox alert"><%= flash[:alert] =%></div>
     <% end %>
