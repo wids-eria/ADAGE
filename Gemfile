@@ -16,7 +16,6 @@ gem 'chart-js-rails'
 gem 'omniauth-facebook'
 gem "omniauth-google-oauth2"
 gem 'simple_form'
-
 gem 'schema_plus'
 
 gem 'httparty'
