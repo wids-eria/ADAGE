@@ -15,11 +15,8 @@ class GroupsController < ApplicationController
     @users = User.select("id,player_name").all
 
     sql = "Select id,player_name from users"
-    results = ActiveRecord::Base.connection.execute(sql)
-    #puts @users
-    results.each do |record|
-
-    end
+    results = ActiveRecord::Base.connection.execute(sql).to_a
+    @users = []
   end
 
   def edit
