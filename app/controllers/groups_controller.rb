@@ -13,16 +13,7 @@ class GroupsController < ApplicationController
     text = ActiveSupport::JSON.encode({ group: @group.code })
     @qr = qrcode(text)
     @users = User.select("id,player_name").all
-
-    sql = "Select id,player_name from users"
-    results = ActiveRecord::Base.connection.execute(sql)
     @users = []
-    results.each do |record|
-      user = User.new
-      user.id = record["id"]
-      user.player_name = record["player_name"]
-      @users << user
-    end
   end
 
   def edit
