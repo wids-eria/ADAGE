@@ -7,6 +7,9 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     @users = @game.users
+
+    @log_count = AdaData.with_game(@game.name).only(:_id).size
+    @num_users = AdaData.with_game(@game.name).only(:user_id).distinct(:user_id).size
   end
 
 
