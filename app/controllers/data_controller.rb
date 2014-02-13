@@ -26,14 +26,18 @@ class DataController < ApplicationController
   def get_events
 
     if params[:app_token] != nil
-    client = Client.where(app_token: params[:app_token])
+    client = Client.where(app_token: params[:app_token]).first
     end
+
 
     if client != nil
-      @data = AdaData.with_game(client.game).where(gameVersion: app_token).where(session_token: params[:session_token]).where(:timestamp.gt => params[:timestamp]).where(key: params[:event])
-    end
-    respond_with @data
 
+      since = time_range_to_epoch(params[:time_range])
+
+      @data = AdaData.with_game(client.implementation.game.name).where(:timestamp.gt => since).where(key: params[:event_name])
+    end
+
+    respond_with @data
   end
 
   def session_logs

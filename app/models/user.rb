@@ -80,7 +80,7 @@ class User < ActiveRecord::Base
 
     if user.blank?
       password =  Devise.friendly_token[0,20]
-      user = User.create(player_name:auth.extra.raw_info.username,
+      user = User.create(player_name:auth.info.username,
                           email:auth.info.email,
                            password:password,
                            password_confirm:password
@@ -90,14 +90,14 @@ class User < ActiveRecord::Base
 
     fb_access = user.social_access_tokens.where(provider: auth.provider).first
     if fb_access.present?
-      fb_access.update_all(expired_at: Time.at(auth.credentials.expires_at),access_token: auth.credentials.token)
+      fb_access.update_token(auth.credentials.token, Time.now)
     else
       fb_access = SocialAccessToken.create(
         user: user,
         provider: auth.provider,
         uid: auth.uid,
         access_token: auth.credentials.token,
-        expired_at: Time.at(auth.credentials.expires_at)
+        expired_at: Time.now
       )
       group = Group.find_by_name("facebook")
       if group != nil
@@ -182,6 +182,33 @@ class User < ActiveRecord::Base
       return true
     end
     return false
+
+  end
+
+  def data_field_values(game_name, key, since, field, step=0)
+
+    data = self.data(game_name).where(key: key).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
+    puts data.count
+    values = Hash.new(0)
+    data.each_with_index do |log, i|
+      values[key+'_'+i.to_s] = log[field]
+    end
+
+    return values
+  end
+
+  def data_time_between(game_name, key, since)
+
+    data = self.data(game_name).where(key: key).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
+    values = Hash.new(0)
+    data.each_with_index do |log, i|
+      if i > 0
+        values[key+'_'+i.to_s] = log.timestamp.to_i - data[i-1].timestamp.to_i
+      end
+    end
+
+    return values
+
   end
 
   def data_to_csv(csv, gameName, schema='')

@@ -1,6 +1,7 @@
 class OauthController < ApplicationController
   before_filter :authenticate_user!, except: [:client_side_create_user, :access_token, :user, :authorize_unity, :authorize_unity_fb, :guest, :authorize_brainpop]
   skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
+  respond_to :html, :json
 
   def authorize
     application = Client.where(app_token: params[:client_id]).first
@@ -66,11 +67,10 @@ class OauthController < ApplicationController
   end
 
   def authorize_unity_fb
-    parsed = JSON.parse(request.env["HTTP_OMNIAUTH.AUTH"])
-    auth = OmniAuth::AuthHash.new(parsed)
+
+    auth = OmniAuth::AuthHash.new(params["omniauth"])
 
     puts auth.inspect
-    puts auth["info"]
 
     user = User.find_for_facebook_oauth(auth, current_user)
     if user.nil?
