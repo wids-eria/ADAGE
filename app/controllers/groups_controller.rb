@@ -12,7 +12,7 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     text = ActiveSupport::JSON.encode({ group: @group.code })
     @qr = qrcode(text)
-    @users = User.order(:player_name).first
+    @users = [User.order(:player_name).first]
   end
 
   def edit
