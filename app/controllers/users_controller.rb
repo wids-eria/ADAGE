@@ -145,8 +145,9 @@ class UsersController < ApplicationController
     if client != nil
 
       since = time_range_to_epoch(params[:time_range])
+      bin = time_range_to_bin(params[:bin])
      
-      values = @user.data_field_values(client.implementation.game.name, params[:key], since, params[:field_name])
+      values = @user.data_field_values(client.implementation.game.name, params[:key], since, params[:field_name], bin)
 
       @data_group = DataGroup.new
       @data_group.add_to_group(values, @user)
