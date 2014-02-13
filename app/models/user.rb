@@ -179,7 +179,9 @@ class User < ActiveRecord::Base
     @group = Group.find_by_code(code)
     unless @group.nil? || self.groups.include?(@group)
       self.groups << @group
+      return true
     end
+    return false
   end
 
   def data_field_values(game_name, key, since, field, bin_time_range=1.hour)
@@ -217,7 +219,7 @@ class User < ActiveRecord::Base
 
   def data_to_csv(csv, gameName, schema='')
     keys = Hash.new
-    data = nil 
+    data = nil
     if schema.present?
       data = self.data(gameName).where(schema: schema).asc(:timestamp).entries
     else

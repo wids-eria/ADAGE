@@ -12,6 +12,7 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     text = ActiveSupport::JSON.encode({ group: @group.code })
     @qr = qrcode(text)
+    @users = User.order(:player_name).all
   end
 
   def edit
@@ -46,5 +47,23 @@ class GroupsController < ApplicationController
     @groups = Group.playsquads
 
     authorize! :read, Group
+  end
+
+  def add_user
+    @group = Group.find(params[:id])
+
+    count = 0
+    params[:player_group][:user_ids].each do |user_id|
+      if not user_id.blank?
+        user = User.find(user_id)
+        if user && user.add_to_group(@group.code)
+          count += 1
+        end
+      end
+    end
+
+    respond_to do |format|
+      format.json {render json: {message: "Successfully added "+ count.to_s() +" new players.",users: @group.users},status: :ok}
+    end
   end
 end

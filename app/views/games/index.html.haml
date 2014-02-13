@@ -1,12 +1,12 @@
 %table.table.table-striped
   %thead
-    %tr 
-      %th game
+    %tr
+      %th games
   %tbody
     - @games.each do |game|
       %tr
         %td
-          = link_to game do 
+          = link_to game do
             = game.name
             %br
 

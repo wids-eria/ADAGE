@@ -7,6 +7,9 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     @users = @game.users
+
+    @log_count = AdaData.with_game(@game.name).only(:_id).size
+    @num_users = AdaData.with_game(@game.name).only(:user_id).distinct(:user_id).size
   end
 
 
@@ -18,6 +21,10 @@ class GamesController < ApplicationController
   def researcher_tools
     @game = Game.find(params[:id])
     @users = @game.users
+
+    @users.each do |user|
+      user.instance_variable_set("@last_playtime", AdaData.with_game(@game.name).only(:user_id,:timestamp).order_by(:timestamp.asc).where(user_id: user[:id]).last[:timestamp])
+    end
   end
 
   def statistics

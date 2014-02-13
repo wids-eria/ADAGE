@@ -9,14 +9,14 @@ Ada::Application.routes.draw do
   match "user/user_data" => "users#get_data"
 
   resources :groups do
-    collection do
-    # get :playsquads
+    member do
+      put :add_user
     end
   end
 
   match "save_game" => "save#save", :via => :post
   match "load_game" => "save#load", :via => :get
-  
+
   match "game_version_data/save" => 'gv#save', :via => :post
   match "game_version_data/delete" => 'gv#delete', :via => :post
   match "game_version_data" => 'gv#show', :via => :get
@@ -26,7 +26,7 @@ Ada::Application.routes.draw do
 
   resources :games do
     member do
-      post :search_users 
+      post :search_users
       get :select_graph_params
       post :value_over_time
       get :statistics

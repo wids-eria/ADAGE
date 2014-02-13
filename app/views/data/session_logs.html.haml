@@ -1,7 +1,9 @@
 %h2= @game.name
 %br
 
-%h3= 'Total Participants ' + @users.count.to_s
+%h3= if @users.count == 1 then  'Player ' + @users[0].player_name end
+%h3= if @users.count == 1 then 'Total Time Played ' +  @total_time.to_s + " minutes" end
+%h3= if @users.count > 1 then  'Total Participants ' + @users.count.to_s end
 %h3= 'Total Sessions Played ' + @session_count.to_s
 %h3= 'Average Session Length ' +  @average_time.to_s
 

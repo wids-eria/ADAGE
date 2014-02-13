@@ -134,8 +134,8 @@ class UsersController < ApplicationController
   end
 
 
-  def get_key_values 
-    
+  def get_key_values
+
     @user = User.find(params[:id])
 
     if params[:app_token] != nil
@@ -148,7 +148,6 @@ class UsersController < ApplicationController
       bin = time_range_to_bin(params[:bin])
      
       values = @user.data_field_values(client.implementation.game.name, params[:key], since, params[:field_name], bin)
-
       @data_group = DataGroup.new
       @data_group.add_to_group(values, @user)
 
@@ -160,12 +159,12 @@ class UsersController < ApplicationController
       end
 
     end
- 
+
   end
 
   def data_by_game
     @user = User.find(params[:id])
-    @game = Game.find_by_name(params[:gameName])
+    @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     respond_to do |format|
       format.csv {

@@ -1,0 +1,46 @@
+@import 'mixins';
+
+body{
+  width: 100%;
+  margin: 0;
+}
+
+.page_wrap{
+  width: 1080px;
+  margin: 0 auto;
+}
+
+table{
+  border: 1px solid #ddd;
+  @include rounded(4px);
+
+  th{
+    font-size: 1.2em;
+
+    &:first-letter{
+      text-transform: capitalize;
+    }
+  }
+}
+
+
+//Game Views
+h2#game{
+  font-size: 2.4em;
+  span.stat{
+    padding-left: 10px;
+    line-height: 40px;
+    display: inline-block;
+    font-size: 1.2rem;
+    margin: 2px;
+    color: #3a87ad;
+
+    label{
+      letter-spacing: 0.02em;
+      font-size: 1.3rem;
+      color: #333;
+      display: inline-block;
+      margin-right: 5px;    }
+  }
+
+}
