@@ -5,7 +5,7 @@ This guide will walk you through installation of a local ADAGE server on either 
 This assumes you have git installed already.
 
 1. Fork the ADAGE repository and clone your fork locally.
-2. Cd into the newly created ADGAE directory. 
+2. Cd into the newly created ADAGE directory. 
 3. Install the required version of Ruby. We recommend the use of the Ruby Version Manager (rvm) to keep track of your Ruby versions. If you do not have rvm installed you can find directions on installing it [here](https://rvm.io/rvm/install) or to quickly install rvm and rails try this:
 	
 	```\curl -L https://get.rvm.io | bash -s stable --rails```
