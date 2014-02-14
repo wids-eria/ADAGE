@@ -12,8 +12,14 @@ This assumes you have git installed already.
 
 	```rvm install ruby-1.9.3-p194```
 
-4. Install MongoDB
-5. Install Postgress
+4. Install MongoDB. On Mac it is easiest to use Homebrew
+	
+	```brew install mongodb```
+	
+5. Install Postgres. Again on a Mac use Hombrew
+
+	```brew install postgresql```
+
 6. Install Bundler
 	
 	```gem install bundler```
@@ -56,7 +62,12 @@ This assumes you have git installed already.
 	
 	```cp config/initializers/secret_token.rb.template```
 	
-2. Create a secret token with rake secret and copy the output into config/initializers/secret_token.rb 
+2. Create a secret token 
+
+	```rake secret```
+	
+	```copy the token it generates and replace the CHANGE ME! text in config/initializers/secret_token.rb```
+	
 3. Create and set up the database 
 
 	```rake db:setup```
