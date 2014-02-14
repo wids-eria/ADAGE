@@ -58,6 +58,29 @@ class ApplicationController < ActionController::Base
 
   end
 
+  def time_range_to_bin(time_range)
+    
+    if time_range.include?("day")
+      since = 1.day
+    end
+
+    if time_range.include?("week")
+      since = 1.week
+    end
+
+    if time_range.include?("month")
+      since = 1.month
+    end
+
+    if time_range.include?("hour")
+      since = 1.hour
+    end
+
+    return since
+
+  
+  end
+
   
   protected
 
