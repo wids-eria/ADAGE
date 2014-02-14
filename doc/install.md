@@ -28,9 +28,17 @@ This assumes you have git installed already.
 	
 	```update_rubygems```
 
-7. ```gem install libv8 -v '3.16.14.0'```
-8. ```gem install therubyracer```
-9. ```bundle install```
+7. Install libv8 
+	
+	```gem install libv8 -v '3.16.14.0'```
+
+8. Install ruby racer 
+
+	```gem install therubyracer```
+
+9. Install the bundle 
+
+	```bundle install```
 
 ###Install complete so take a break then come back for server setup!
 
