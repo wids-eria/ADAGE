@@ -38,7 +38,6 @@ class DataController < ApplicationController
     end
 
     respond_with @data
-
   end
 
   def session_logs
