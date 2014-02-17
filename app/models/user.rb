@@ -97,7 +97,7 @@ class User < ActiveRecord::Base
         provider: auth.provider,
         uid: auth.uid,
         access_token: auth.credentials.token,
-        expired_at: Time.now 
+        expired_at: Time.now
       )
       group = Group.find_by_name("facebook")
       if group != nil
@@ -182,6 +182,7 @@ class User < ActiveRecord::Base
       return true
     end
     return false
+
   end
 
   def data_field_values(game_name, key, since, field, bin_time_range=1.hour)
@@ -201,10 +202,10 @@ class User < ActiveRecord::Base
     end
 
     return values
-  end 
+  end
 
   def data_time_between(game_name, key, since)
-  
+
     data = self.data(game_name).where(key: key).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
     values = Hash.new(0)
     data.each_with_index do |log, i|

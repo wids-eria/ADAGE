@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.13'
 gem 'pg'
 gem 'devise', '1.5.4'
-gem 'passenger'
 gem 'mongoid'
 
 gem 'bson_ext'
@@ -18,6 +17,7 @@ gem 'omniauth-facebook'
 gem "omniauth-google-oauth2"
 gem 'simple_form'
 gem 'schema_plus'
+
 gem 'httparty'
 gem 'pacecar'
 gem 'figaro'
