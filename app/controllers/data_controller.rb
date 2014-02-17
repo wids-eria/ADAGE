@@ -37,8 +37,11 @@ class DataController < ApplicationController
       @data = AdaData.with_game(client.implementation.game.name).where(:timestamp.gt => since).where(key: params[:event_name])
     end
 
-    respond_with @data
 
+    @result = Hash.new
+    @result['data'] = @data
+    respond_with @result    
+    
   end
 
   def session_logs
