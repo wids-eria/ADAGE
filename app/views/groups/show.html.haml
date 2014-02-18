@@ -81,6 +81,7 @@
       $("#modal").fadeIn(100);
     })
     .bind('ajax:success', function(evt, data, status, error){
+      ich.grabTemplates();
       data = jQuery.parseJSON(data)[0];
       $("#user_checkboxes").html('');
       //Add all the user search results to the div
