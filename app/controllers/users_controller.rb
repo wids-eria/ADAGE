@@ -35,11 +35,21 @@ class UsersController < ApplicationController
   def index
     @users = User.page params[:page]
     authorize! :read, @users
+
+    if params[:player_name].blank?
+      @users = User.order(:player_name).page(params[:page])
+    else
+      @users = User.where("player_name like ?", '%'+params[:player_name]+'%').order(:player_name).page(params[:page])
+    end
+
     respond_to do |format|
       format.html { @users = User.page params[:page] }
-      format.json { render :json => User.all }
+      format.json { render :json => @users }
+      format.js  { render json: {users: @users,page: params[:page]} }
     end
   end
+
+
 
   def stats
     @user = User.find(params[:id])

@@ -1,5 +1,18 @@
 @import 'mixins';
 
+
+.hide{display:none;}
+.loader{
+  background-repeat: no-repeat;
+  width: auto;
+  height: auto;
+  padding: 10px;
+
+}
+
+
+
+
 body{
   width: 100%;
   margin: 0;
@@ -43,4 +56,17 @@ h2#game{
       margin-right: 5px;    }
   }
 
+}
+
+#user_checkboxes{
+  padding:10px;
+}
+
+#pagination{
+  width: 160px;
+  margin: 0 auto;
+  padding:4px;
+  .pagination{
+    margin: 0;
+  }
 }

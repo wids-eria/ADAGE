@@ -10,3 +10,4 @@
 //= require chart
 //= require jquery.dynatable
 //= require bootstrap
+//= require ICanHaz.min

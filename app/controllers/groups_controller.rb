@@ -12,7 +12,8 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     text = ActiveSupport::JSON.encode({ group: @group.code })
     @qr = qrcode(text)
-    @users = User.select("id,player_name").all
+    @users = User.select("id,player_name").order(:player_name).page(params[:page])
+
   end
 
   def edit

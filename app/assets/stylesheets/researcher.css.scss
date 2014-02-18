@@ -33,8 +33,27 @@ span input{
   label{
     float:left;
     padding: 5px;
+    margin-right: 5px;
   }
   #search{
     display: block;
+  }
+}
+
+.modal-body #modal{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(41, 41, 41, 0.27);
+  display: none;
+  .loader{
+    position:absolute; top:0; bottom:0; left:0; right:0;
+    margin:auto;
+    height:auto;
+    width:auto;
+    display: block;
+    opacity: 0.6;
   }
 }
