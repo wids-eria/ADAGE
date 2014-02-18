@@ -34,14 +34,14 @@ class DataController < ApplicationController
 
       since = time_range_to_epoch(params[:time_range])
 
-      @data = AdaData.with_game(client.implementation.game.name).where(:timestamp.gt => since).where(key: params[:event_name])
+      @data = AdaData.with_game(client.implementation.game.name).where(:timestamp.gt => since).in(key: params[:event_name])
     end
 
 
     @result = Hash.new
     @result['data'] = @data
-    respond_with @result    
-    
+    respond_with @result
+
   end
 
   def session_logs
