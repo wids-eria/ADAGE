@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  include Kaminari::ActionViewExtension
   respond_to :html, :json
 
   layout 'blank'
@@ -42,10 +43,13 @@ class UsersController < ApplicationController
       @users = User.where("player_name like ?", '%'+params[:player_name]+'%').order(:player_name).page(params[:page])
     end
 
+    #Rendering the kaminari pagination here and sending it back via ajax because kaminari has no good way to update remote links
+    pagination =  view_context.paginate @users,remote: true, params: {controller: 'users', action: 'index'},  outer_window: 0 , window: 2
+
     respond_to do |format|
       format.html { @users = User.page params[:page] }
       format.json { render :json => @users }
-      format.js  { render json: {users: @users,page: params[:page]} }
+      format.js  { render json: [users: @users,page: params[:page],pagination: pagination] }
     end
   end
 

@@ -38,7 +38,7 @@
       #user_checkboxes
         = f.collection_check_boxes :user_ids, @users, :id, :player_name
       #pagination
-        = paginate @users,remote: true, params: {controller: 'users', action: 'index'}
+        = paginate @users,remote: true, params: {controller: 'users', action: 'index'},  outer_window: 0 , window: 2
 
     .modal-footer
       = f.submit 'Update Participants', class: "btn btn-primary", id: "submit"
@@ -56,7 +56,7 @@
 :javascript
   $(document).ready(function() {
     $('form#players')
-    .bind('ajax:error',function(evt, data, status, xhr){})
+    .bind('ajax:error',function(evt, data, status, xhr){$("#modal").hide();})
     .bind('ajax:complete',function(xhr, status){$("#modal").hide();})
     .bind('ajax:success', function(evt, data, status, error){
       $("#modal").hide();
@@ -70,6 +70,8 @@
         $('.modal-body').before('<div class="success">' + data.message +'</div>');
         $('.success').fadeOut(2000);
       }
+
+      $("#modal").hide();
     });
 
     $("#pagination")
@@ -79,20 +81,41 @@
       $("#modal").fadeIn(100);
     })
     .bind('ajax:success', function(evt, data, status, error){
-      data = jQuery.parseJSON(data);
-      page = data.page;
-      data = data.users;
+      data = jQuery.parseJSON(data)[0];
       $("#user_checkboxes").html('');
-
+      //Add all the user search results to the div
       var temp = '';
-      for (var key in data) {
-        temp = ich.user(data[key]);
+      for (var key in data.users) {
+        temp = ich.user(data.users[key]);
         $("#user_checkboxes").append(temp);
+      }
+
+      if(data.users.length <=0 ) $("#user_checkboxes").html('No Results Found!');
+      $("#pagination").html(data.pagination);
+      $("#modal").hide();
+    })
+
+    $("#apply_search")
+    .click(function(){
+      var name =  $("#search").val();
+      var url = location.protocol + "//" + location.host+"/users?page=1";
+      if(name) url += "&player_name="+name;
+
+      $.get(url, function( data ) {
+        $("#pagination").trigger("ajax:success",data);
+      },'script');
+      $("#modal").fadeIn(100);
+    });
+
+    $("#search").keyup(function(e){
+      if(e.keyCode == 13)
+      {
+        $("#apply_search").click();
       }
     });
 
-    $("#apply_search").click(function(){
-      $('.pagination > span > a:first').click();
-      $("#modal").hide();
+    //Surpress keyenter for Update button
+    $("input").keypress(function(e){
+      if(e.keyCode == 13) return false;
     });
   });
