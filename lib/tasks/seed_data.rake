@@ -1,9 +1,11 @@
 namespace :seed_data do
   desc 'Cleans fake data from Fake Game'
   task :clean => :environment do
+    db = Mongoid::Sessions.default
+    collection = db['Fake Game']
+    collection.drop
 
   end
-
 
   desc 'Creates fake data from a fake game so we can test data tools locally'
   task :create => :environment do
@@ -81,7 +83,7 @@ namespace :seed_data do
      quest_names = ['Find the Thing', 'Resuce the Prince', 'slay the dragon']
      success = [true, false, true, false, true, false]
      (0..100).each do |i|
-        data = AdaData.with_game("Fake_Game").new(types[rand.rand(0...types.count)])
+        data = AdaData.with_game("fake_game").new(types[rand.rand(0...types.count)])
         data.user_id = rand.rand(1..User.all.count)
         puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
