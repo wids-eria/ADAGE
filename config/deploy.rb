@@ -33,7 +33,6 @@ after 'deploy:finalize_update', 'deploy:symlink_external_site_config'
 after 'deploy:finalize_update', 'deploy:symlink_secret_token'
 after 'deploy:finalize_update', 'deploy:symlink_application_yml'
 after 'deploy:finalize_update', 'deploy:symlink_word_lists'
-after 'deploy:finalize_update', 'deploy:clean_assets'
 
 namespace :deploy do
   desc "Symlinks the database.yml"
@@ -66,11 +65,6 @@ namespace :deploy do
   task :symlink_word_lists do
     run "ln -nfs #{deploy_to}/shared/config/adjectives.txt #{release_path}/config/adjectives.txt"
     run "ln -nfs #{deploy_to}/shared/config/nouns.txt #{release_path}/config/nouns.txt"
-  end
-
-  desc "Clean assets"
-  task :clean_assets do
-    run "bundle exec rake assets:clean"
   end
 
 
