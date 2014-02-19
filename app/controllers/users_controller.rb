@@ -158,30 +158,10 @@ class UsersController < ApplicationController
 
     if client != nil
 
-      since = params[:time_range]
-
-      if params[:time_range].include?("day")
-        since = (Time.now - 1.day).to_i
-      end
-
-      if params[:time_range].include?("week")
-        since = (Time.now - 1.week).to_i
-      end
-
-      if params[:time_range].include?("month")
-        since = (Time.now - 1.month).to_i
-      end
-
-      if params[:time_range].include?("all")
-        since = 0
-      end
-
-      data = @user.data(client.implementation.game.name).where(key: params[:key]).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
-      values = Hash.new(0)
-      data.each_with_index do |log, i|
-        values[i] = log[params[:field_name]]
-      end
-
+      since = time_range_to_epoch(params[:time_range])
+      bin = time_range_to_bin(params[:bin])
+     
+      values = @user.data_field_values(client.implementation.game.name, params[:key], since, params[:field_name], bin)
       @data_group = DataGroup.new
       @data_group.add_to_group(values, @user)
 

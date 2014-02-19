@@ -1,4 +1,4 @@
-#Drunken_Dolphin Client Data Specification
+#Client Data Specification
 
 This document specifies the structures that all data logged to ADAGE should be derived from. Game clients can inheret from and add their own fields where needed but all generic ADAGE tools are built to work based on the fields from the base ADAGE data specifications.
 

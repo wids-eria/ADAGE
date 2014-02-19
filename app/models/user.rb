@@ -185,13 +185,20 @@ class User < ActiveRecord::Base
 
   end
 
-  def data_field_values(game_name, key, since, field, step=0)
+  def data_field_values(game_name, key, since, field, bin_time_range=1.hour)
+
 
     data = self.data(game_name).where(key: key).where(:timestamp.gt => since.to_s).asc(:timestamp).entries
-    puts data.count
     values = Hash.new(0)
+    count = ((Time.now - Time.at(since.to_i))/bin_time_range).round
+    (0...count).each do |i|
+      label = Time.at(since.to_i) + (i*bin_time_range)
+      values[key +' '+ label.utc.to_s] = 0
+    end
     data.each_with_index do |log, i|
-      values[key+'_'+i.to_s] = log[field]
+      bin = ((Time.at(log.timestamp.to_i) - Time.at(since.to_i))/bin_time_range).round
+      label = Time.at(since.to_i) + (bin*bin_time_range)
+      values[key+' '+ label.utc.to_s] = values[key+' '+ label.utc.to_s] + log[field].to_i
     end
 
     return values
