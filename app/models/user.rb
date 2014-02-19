@@ -6,13 +6,13 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable,
          :omniauthable,
          :token_authenticatable, :authentication_keys => [:login]
-
+  paginates_per 10
   before_save :ensure_authentication_token
 
   attr_accessor :login
   # Setup accessible (or protected) attributes for your model
 
-  attr_accessible :email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :guest, :group_ids
+  attr_accessible :id,:email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :guest, :group_ids
 
 
   # for pathfinder, remove when sso is complete

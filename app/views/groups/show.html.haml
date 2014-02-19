@@ -9,7 +9,6 @@
 = link_to "Download", @qr, target: "_blank", download: @group.name+"-login-"+DateTime.now().strftime("%F")+".png"
 %h5
   = @group.code
-
 %h2.row
   %span Players
   <a href="#myModal" role="button" class="btn" data-toggle="modal">Add Players</a>
@@ -31,40 +30,92 @@
 
     .modal-body
       #searchbox
-        <label>Search</label>
+        %label.btn#apply_search Search
         <input id="search" type="text"></input>
-      = f.collection_check_boxes :user_ids, @users, :id, :player_name
+
+      #modal=image_tag "ajax.gif",class: 'loader hide'
+
+      #user_checkboxes
+        = f.collection_check_boxes :user_ids, @users, :id, :player_name
+      #pagination
+        = paginate @users,remote: true, params: {controller: 'users', action: 'index'},  outer_window: 0 , window: 2
 
     .modal-footer
-      = f.submit 'Update Participants', class: "btn btn-primary"
+      = f.submit 'Update Participants', class: "btn btn-primary", id: "submit"
       %button.btn{"aria-hidden" => "true", "data-dismiss" => "modal"} Close
+
+
+:plain
+  <script id="user" type="text/html">
+    <span>
+      <input id="player_group_user_ids_{{ id }}" name="player_group[user_ids][]" type="checkbox" value="{{ id }}">
+      <label class="collection_check_boxes" for="player_group_user_ids_{{ id }}">{{ player_name }}</label>
+    </span>
+  </script>
 
 :javascript
   $(document).ready(function() {
     $('form#players')
-    .bind('ajax:error',function(evt, data, status, xhr){})
+    .bind('ajax:error',function(evt, data, status, xhr){$("#modal").hide();})
+    .bind('ajax:complete',function(xhr, status){$("#modal").hide();})
     .bind('ajax:success', function(evt, data, status, error){
+      $("#modal").hide();
       var html = '';
-      data.users.forEach(function(user){
-        html += '<li>'+user.player_name+'</li>';
-      });
-      $("#users").html(html);
-      $('.modal-body').before('<div class="success">' + data.message +'</div>');
-      $('.success').fadeOut(2000);
+      //Add new users to player list
+      if(data.users != undefined){
+        data.users.forEach(function(user){
+          html += '<li>'+user.player_name+'</li>';
+        });
+        $("#users").html(html);
+        $('.modal-body').before('<div class="success">' + data.message +'</div>');
+        $('.success').fadeOut(2000);
+      }
+
+      $("#modal").hide();
     });
 
-    $("#search").keyup(function(){
-      var search = $("#search").val();
-      if(search){
-        $.each($(".modal-body span label"),function(key,value){
-          if($(this).is(":contains("+search+")")){
-            $(this).parent().show();
-          }else{
-            $(this).parent().hide();
-          }
-        });
-      }else{
-        $(".modal-body span").show();
+    $("#pagination")
+    .bind('ajax:beforeSend',function(event,xhr, settings){
+      var name =  $("#search").val();
+      if(name) settings.url += '&player_name='+name;
+      $("#modal").fadeIn(100);
+    })
+    .bind('ajax:success', function(evt, data, status, error){
+      data = jQuery.parseJSON(data)[0];
+      $("#user_checkboxes").html('');
+      //Add all the user search results to the div
+      var temp = '';
+      for (var key in data.users) {
+        temp = ich.user(data.users[key],true);
+        $("#user_checkboxes").append(temp);
       }
+
+      if(data.users.length <=0 ) $("#user_checkboxes").html('No Results Found!');
+      $("#pagination").html(data.pagination);
+      $("#modal").hide();
+    })
+
+    $("#apply_search")
+    .click(function(){
+      var name =  $("#search").val();
+      var url = location.protocol + "//" + location.host+"/users?page=1";
+      if(name) url += "&player_name="+name;
+
+      $.get(url, function( data ) {
+        $("#pagination").trigger("ajax:success",data);
+      },'script');
+      $("#modal").fadeIn(100);
+    });
+
+    $("#search").keyup(function(e){
+      if(e.keyCode == 13)
+      {
+        $("#apply_search").click();
+      }
+    });
+
+    //Surpress keyenter for Update button
+    $("input").keypress(function(e){
+      if(e.keyCode == 13) return false;
     });
   });
