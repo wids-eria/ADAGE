@@ -1,4 +1,10 @@
 namespace :seed_data do
+  desc 'Cleans fake data from Fake Game'
+  task :clean => :environment do
+
+  end
+
+
   desc 'Creates fake data from a fake game so we can test data tools locally'
   task :create => :environment do
 
@@ -11,7 +17,7 @@ namespace :seed_data do
       if imp != nil
         client_token = imp.client.app_token
       end
-    
+
     end
 
     adage_context = {'name' => 'find_a_candy', 'parent_name' => 'find_a_candy'}

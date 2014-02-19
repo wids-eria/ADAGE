@@ -13,4 +13,21 @@ namespace :mongo do
           collection.indexes.create(timestamp: 1)
         end
     end
+
+    desc "Convert Mongo collection names to lowercase for case insensitivte querying"
+    task :lowercase_collections  => :environment do
+        db = Mongoid::Sessions.default
+
+        db.collections.each do |coll|
+          session = Mongoid.default_session
+          database_name = session.options[:database]
+          begin
+            if from != to
+              session.with(database: 'admin').command(renameCollection: "#{database_name}.#{from}", to: "#{database_name}.#{to}")
+            end
+          rescue
+            puts "Cannot convert collection #{from} to #{to}"
+          end
+        end
+    end
 end
