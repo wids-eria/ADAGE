@@ -4,12 +4,13 @@ namespace :mongo do
         db = Mongoid::Sessions.default
 
         Game.all.each do |game|
-          gamename = game.name.to_s.gsub(' ', '_')
+          gamename = game.name.to_s.gsub(' ', '_').downcase
           collection = db[gamename]
           collection.indexes.create(name: 1)
           collection.indexes.create(gameName: 1)
           collection.indexes.create(user_id: 1)
           collection.indexes.create(timestamp: 1)
+          puts "Added indices to #{gamename}"
         end
     end
 

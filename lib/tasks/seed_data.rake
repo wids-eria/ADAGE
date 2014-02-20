@@ -99,6 +99,5 @@ namespace :seed_data do
         end
         data.save
      end
-
   end
 end
