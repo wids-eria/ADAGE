@@ -95,10 +95,17 @@ class DataController < ApplicationController
           index += 1
         end
 
-
           if drunken_dolphin
-            start_time = Time.at(log["value"]["start"]).to_i
-            end_time = Time.at(log["value"]["end"]).to_i
+            start_time = log["value"]["start"]
+            end_time = log["value"]["end"]
+
+            if start_time.is_a? String
+              start_time = start_time.to_i
+              end_time = end_time.to_i
+            end
+
+            start_time = Time.at(start_time).to_i
+            end_time = Time.at(end_time).to_i
           else
             start_time = DateTime.strptime(log["value"]["start"], "%m/%d/%Y %H:%M:%S").to_time.to_i
             end_time = DateTime.strptime(log["value"]["end"], "%m/%d/%Y %H:%M:%S").to_time.to_i
