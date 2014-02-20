@@ -82,6 +82,7 @@ class ApplicationController < ActionController::Base
   end
 
   
+  
   protected
 
   def oauth_access_token

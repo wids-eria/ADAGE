@@ -44,6 +44,68 @@ class DataController < ApplicationController
 
   end
 
+
+  def field_values
+
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+
+    if client != nil
+      @users = User.where(id: params[:user_ids]).order(:id)
+      @game_version = client.app_token
+      @game_name = client.implementation.game.name
+      since = time_range_to_epoch(params[:time_range])
+      bin = time_range_to_bin(params[:bin])
+      
+
+      map = %Q{
+        function(){
+          var key = {user_id: this.user_id};
+          var data = {field: this[field_name], timestamp: this.timestamp};
+          emit(key,data);
+        }
+      }
+
+      reduce = %Q{
+        function(key,values){
+          var results = {bins: {}};
+          var current_time = new Data()
+          for(var i=0; i < bin_count; i++)
+          {
+            results.bins[current_time.getTime() + i*bin] = 0
+          }
+
+          values.forEach(function(value){
+            
+            var lbin = (int)((value.timestamp - since)/bin)
+            var label = since + (lbin*bin)
+            results.bins[label] = results.bins[label] + value.field      
+            
+
+          });
+
+          return results;
+        }
+      }
+
+      bin_count =  ((Time.now - Time.at(since.to_i))/bin).round
+      scope = {bin: bin, bin_count: bin_count, type: params[:type], since: since}
+      
+      @logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+
+      respond_with @logs
+    
+    
+    end
+
+
+
+  end
+
+
+
   def session_logs
     @game = Game.find(params[:game_id])
     @users = User.where(id: params[:user_ids]).order(:id)
