@@ -95,7 +95,7 @@ class DataController < ApplicationController
           index += 1
         end
 
-        begin
+
           if drunken_dolphin
             start_time = Time.at(log["value"]["start"]).to_i
             end_time = Time.at(log["value"]["end"]).to_i
@@ -108,9 +108,7 @@ class DataController < ApplicationController
 
           total_session_length += minutes
           sessions_played += 1
-        rescue
-           raise "Cannot Graph Data: format does not match drunken_dolphin or bodacious bonobo specifications!"
-        end
+
 
         #add the last user
         @data_group.add_to_group(session_time, @users[index])
