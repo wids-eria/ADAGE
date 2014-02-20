@@ -2,7 +2,6 @@ namespace :mongo do
     desc "Add indexes to each Game collection"
     task :create_indexes  => :environment do
         db = Mongoid::Sessions.default
-       #db.use :ada_development
 
         Game.all.each do |game|
           gamename = game.name.to_s.gsub(' ', '_')
