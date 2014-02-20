@@ -38,6 +38,10 @@ class ApplicationController < ActionController::Base
   def time_range_to_epoch(time_range)
     since = time_range
 
+    if time_range.include?("hour")
+      since = (Time.now - 1.hour).to_i
+    end
+
     if time_range.include?("day")
       since = (Time.now - 1.day).to_i
     end
@@ -74,6 +78,10 @@ class ApplicationController < ActionController::Base
 
     if time_range.include?("hour")
       since = 1.hour
+    end
+    
+    if time_range.include?("all")
+      since = 1.year
     end
 
     return since

@@ -3,13 +3,17 @@ class GraphParams
   include ActiveModel::Conversion
   extend  ActiveModel::Naming
 
-  attr_accessor :key, :value_field, :game_name
+  attr_accessor :key, :value_field, :app_token, :time_range, :bin, :type
 
-   def initialize(attributes = {})
+  def initialize(attributes = {})
     attributes.each do |name, value|
       send("#{name}=", value)
     end
   end
+
+  def time_options
+    ['hour', 'day', 'week', 'month', 'all']
+  end 
 
   def persisted?
     false

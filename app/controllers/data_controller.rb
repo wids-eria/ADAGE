@@ -44,6 +44,39 @@ class DataController < ApplicationController
 
   end
 
+  def data_selection
+
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    @keys = Array.new
+    @fields = Array.new
+    if client != nil
+    
+      if params[:graph_params] != nil
+          @graph_params = GraphParams.new(params[:graph_params])
+        else
+          @graph_params = GraphParams.new
+        end
+      end
+
+
+      game_name = client.implementation.game.name
+      
+      @keys = AdaData.with(game_name).where(game_version: app_token).distinct(:key)
+
+      if @graph_params.key != nil
+        @fields = AdaData.with(game_name).where(game_version: app_token, key: @graph_params.key).first.attributes
+      end
+    
+    end
+
+
+
+
+  end
+
 
   def field_values
 
