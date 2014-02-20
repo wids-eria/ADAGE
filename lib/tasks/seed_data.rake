@@ -99,5 +99,15 @@ namespace :seed_data do
         end
         data.save
      end
+
+    #Add indices to collection
+    db = Mongoid::Sessions.default
+    gamename = 'Fake_Game'.downcase
+    collection = db[gamename]
+    collection.indexes.create(name: 1)
+    collection.indexes.create(gameName: 1)
+    collection.indexes.create(user_id: 1)
+    collection.indexes.create(timestamp: 1)
+
   end
 end
