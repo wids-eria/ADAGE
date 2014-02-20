@@ -19,6 +19,9 @@ namespace :mongo do
         db = Mongoid::Sessions.default
 
         db.collections.each do |coll|
+          from = coll.name.to_s.gsub(' ', '_')
+          to = from.downcase
+
           session = Mongoid.default_session
           database_name = session.options[:database]
           begin
