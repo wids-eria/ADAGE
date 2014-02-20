@@ -22,14 +22,14 @@ class AdaData
   end
 
   def self.with_game(gameName = "ada_data")
-    with(collection: gameName.to_s.gsub(' ', '_'))
+    with(collection: gameName.to_s.gsub(' ', '_').downcase)
   end
 
   def set_collection
     if self.gameName.nil?
       with(collection: "ada_data")
     else
-      with(collection: self.gameName.to_s.gsub(' ', '_'))
+      with(collection: self.gameName.to_s.gsub(' ', '_').downcase)
     end
   end
 end
