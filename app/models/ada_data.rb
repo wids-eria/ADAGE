@@ -29,7 +29,7 @@ class AdaData
     if self.gameName.nil?
       with(collection: "ada_data")
     else
-      with(collection: self.gameName.to_s.gsub(' ', '_'))
+      with(collection: self.gameName.to_s.gsub(' ', '_').downcase)
     end
   end
 end
