@@ -1,17 +1,27 @@
 namespace :seed_data do
+  desc 'Cleans fake data from Fake Game'
+  task :clean => :environment do
+    db = Mongoid::Sessions.default
+    collection = db['Fake_Game']
+    collection.drop
+
+    collection = db['fake_game']
+    collection.drop
+  end
+
   desc 'Creates fake data from a fake game so we can test data tools locally'
   task :create => :environment do
 
     rand = Random.new(Time.now.to_i)
 
     client_token = ''
-    game = Game.where(name: 'Fake Game').first
+    game = Game.where('lower(name) = ?', 'fake game').first
+
     if game != nil
       imp = game.implementations.first
       if imp != nil
         client_token = imp.client.app_token
       end
-    
     end
 
     adage_context = {'name' => 'find_a_candy', 'parent_name' => 'find_a_candy'}
@@ -75,7 +85,7 @@ namespace :seed_data do
      quest_names = ['Find the Thing', 'Resuce the Prince', 'slay the dragon']
      success = [true, false, true, false, true, false]
      (0..100).each do |i|
-        data = AdaData.with_game("Fake_Game").new(types[rand.rand(0...types.count)])
+        data = AdaData.with_game("Fake Game").new(types[rand.rand(0...types.count)])
         data.user_id = rand.rand(1..User.all.count)
         puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
@@ -89,6 +99,5 @@ namespace :seed_data do
         end
         data.save
      end
-
   end
 end

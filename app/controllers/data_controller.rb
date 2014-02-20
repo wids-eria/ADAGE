@@ -95,22 +95,26 @@ class DataController < ApplicationController
           index += 1
         end
 
-        begin
-          if drunken_dolphin
-            start_time = Time.at(log["value"]["start"]).to_i
-            end_time = Time.at(log["value"]["end"]).to_i
-          else
-            start_time = DateTime.strptime(log["value"]["start"], "%m/%d/%Y %H:%M:%S").to_time.to_i
-            end_time = DateTime.strptime(log["value"]["end"], "%m/%d/%Y %H:%M:%S").to_time.to_i
-          end
-          minutes = (end_time - start_time)/1.minute.round
-          session_time[start_time] = minutes
+        if drunken_dolphin
+          start_time = log["value"]["start"]
+          end_time = log["value"]["end"]
 
-          total_session_length += minutes
-          sessions_played += 1
-        rescue
-           raise "Cannot Graph Data: format does not match drunken_dolphin or bodacious bonobo specifications!"
+          if start_time.is_a? String
+            start_time = start_time.to_i
+            end_time = end_time.to_i
+          end
+
+          start_time = Time.at(start_time).to_i
+          end_time = Time.at(end_time).to_i
+        else
+          start_time = DateTime.strptime(log["value"]["start"], "%m/%d/%Y %H:%M:%S").to_time.to_i
+          end_time = DateTime.strptime(log["value"]["end"], "%m/%d/%Y %H:%M:%S").to_time.to_i
         end
+        minutes = (end_time - start_time)/1.minute.round
+        session_time[start_time] = minutes
+
+        total_session_length += minutes
+        sessions_played += 1
 
         #add the last user
         @data_group.add_to_group(session_time, @users[index])
