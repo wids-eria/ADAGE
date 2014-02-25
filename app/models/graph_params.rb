@@ -3,7 +3,7 @@ class GraphParams
   include ActiveModel::Conversion
   extend  ActiveModel::Naming
 
-  attr_accessor :key, :value_field, :app_token, :time_range, :bin, :type
+  attr_accessor :key, :field_name, :app_token, :time_range, :bin, :type 
 
   def initialize(attributes = {})
     attributes.each do |name, value|

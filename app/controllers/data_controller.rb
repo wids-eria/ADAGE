@@ -45,29 +45,36 @@ class DataController < ApplicationController
   end
 
   def data_selection
+    
+    
+    if params[:graph_params] != nil
+      @graph_params = GraphParams.new(params[:graph_params])
+    else
+      @graph_params = GraphParams.new
+    end
 
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
+      @graph_params.app_token = params[:app_token]
+      puts "app token: " + @graph_params.app_token
+    else
+      puts @graph_params.app_token
+      client = Client.where(app_token: @graph_params.app_token).first
     end
 
     @keys = Array.new
     @fields = Array.new
     if client != nil
     
-      if params[:graph_params] != nil
-          @graph_params = GraphParams.new(params[:graph_params])
-        else
-          @graph_params = GraphParams.new
-        end
-      end
 
-
-      game_name = client.implementation.game.name
+      @game = client.implementation.game
       
-      @keys = AdaData.with(game_name).where(game_version: app_token).distinct(:key)
+      puts client.app_token
+      @keys = AdaData.with_game(@game.name).distinct(:key)
+      puts @keys.count
 
       if @graph_params.key != nil
-        @fields = AdaData.with(game_name).where(game_version: app_token, key: @graph_params.key).first.attributes
+        @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
       end
     
     end
@@ -79,6 +86,7 @@ class DataController < ApplicationController
 
 
   def field_values
+    
 
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
@@ -86,7 +94,6 @@ class DataController < ApplicationController
 
 
     if client != nil
-      @users = User.where(id: params[:user_ids]).order(:id)
       @game_version = client.app_token
       @game_name = client.implementation.game.name
       since = time_range_to_epoch(params[:time_range])
@@ -104,15 +111,15 @@ class DataController < ApplicationController
       reduce = %Q{
         function(key,values){
           var results = {bins: {}};
-          var current_time = new Data()
+          var current_time = new Date()
           for(var i=0; i < bin_count; i++)
           {
-            results.bins[current_time.getTime() + i*bin] = 0
+            results.bins[since + i*bin] = 0
           }
 
           values.forEach(function(value){
             
-            var lbin = (int)((value.timestamp - since)/bin)
+            var lbin = Math.floor((value.timestamp - since)/bin)
             var label = since + (lbin*bin)
             results.bins[label] = results.bins[label] + value.field      
             
@@ -124,13 +131,26 @@ class DataController < ApplicationController
       }
 
       bin_count =  ((Time.now - Time.at(since.to_i))/bin).round
-      scope = {bin: bin, bin_count: bin_count, type: params[:type], since: since}
+      scope = {bin: bin, bin_count: bin_count, type: params[:type], since: since, field_name: params[:field_name]}
       
-      @logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+      logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
 
-      respond_with @logs
+      @data_group = DataGroup.new
+      logs.each do |l|
+        @user = User.find(l["_id"]["user_id"].to_i)
+        @data_group.add_to_group(l["value"]["bins"], @user)
+      end 
+      
+      @chart_info = @data_group.to_chart_js
+      respond_to do |format|
+        format.json {render :json => @data_group.to_json}
+        format.html {render}
+        format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
+      end
+
     
-    
+    else
+      puts "CLIENT NOT FOUND!"
     end
 
 

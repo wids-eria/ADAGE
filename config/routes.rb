@@ -48,6 +48,7 @@ Ada::Application.routes.draw do
       get :get_events
       get :field_values
       get :data_selection
+      post :data_selection
     end
   end
 
