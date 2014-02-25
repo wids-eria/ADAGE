@@ -4,7 +4,7 @@ Ada::Application.configure do
   config.cache_classes = true
 
   # Full error reports are disabled and caching is turned on
-  config.consider_all_requests_local       = true
+  config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
   config.action_dispatch.show_exceptions = false
 
@@ -20,7 +20,7 @@ Ada::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
-  config.assets.debug = true
+  config.assets.debug = false
 =begin
   # Settings specified here will take precedence over those in config/application.rb
 
