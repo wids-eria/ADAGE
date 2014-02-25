@@ -6,7 +6,7 @@ Ada::Application.configure do
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = true
-  config.action_dispatch.show_exceptions = false
+  config.action_dispatch.show_exceptions = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
   config.serve_static_assets = true
@@ -20,7 +20,7 @@ Ada::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
-  config.assets.debug = false
+  config.assets.debug = true
 =begin
   # Settings specified here will take precedence over those in config/application.rb
 
