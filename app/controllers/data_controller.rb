@@ -252,7 +252,9 @@ class DataController < ApplicationController
       }
       format.json {
           data = AdaData.with_game(@game.name).in(user_id: @user_ids)
-          render :json => data
+          #render :json => data
+
+          send_data data.to_json, filename: @game.name+'.json'
       }
     end
   end
