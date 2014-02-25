@@ -1,5 +1,6 @@
 Ada::Application.configure do
 
+=begin
   # Code is not reloaded between requests
   config.cache_classes = true
 
@@ -38,8 +39,7 @@ Ada::Application.configure do
     user_name: ENV["GMAIL_USERNAME"],
     password: ENV["GMAIL_PASSWORD"]
   }
-
-=begin
+=end
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on
