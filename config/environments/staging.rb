@@ -1,4 +1,45 @@
 Ada::Application.configure do
+
+  # Code is not reloaded between requests
+  config.cache_classes = true
+
+  # Full error reports are disabled and caching is turned on
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
+  config.action_dispatch.show_exceptions = false
+
+  # Disable Rails's static asset server (Apache or nginx will already do this)
+  config.serve_static_assets = true
+
+  # Compress JavaScripts and CSS
+  config.assets.compress = true
+
+  # Don't fallback to assets pipeline if a precompiled asset is missed
+  config.assets.compile = false
+
+  # Generate digests for assets URLs
+  config.assets.digest = true
+  config.assets.debug = false
+
+  config.i18n.fallbacks = true
+
+  # Send deprecation notices to registered listeners
+  config.active_support.deprecation = :notify
+
+  config.action_mailer.default_url_options = { :host => 'adage.gameslearningsociety.org' }
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",
+    port: 587,
+    domain: ENV["GMAIL_DOMAIN"],
+    authentication: "plain",
+    enable_starttls_auto: true,
+    user_name: ENV["GMAIL_USERNAME"],
+    password: ENV["GMAIL_PASSWORD"]
+  }
+
+=begin
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on
@@ -42,5 +83,5 @@ Ada::Application.configure do
     user_name: ENV["GMAIL_USERNAME"],
     password: ENV["GMAIL_PASSWORD"]
   }
-
+=end
 end
