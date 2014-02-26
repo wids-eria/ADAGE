@@ -33,4 +33,21 @@ namespace :mongo do
           end
         end
     end
+
+    desc "Merges APA:tracts into apa:tracts"
+    task :merge_apa  => :environment do
+        db = Mongoid::Sessions.default
+        db_initial = db["APA:Tracts"]
+        db_final = db["apa:tracts"]
+
+        size = db_initial.find().count() + db_final.find().count()
+
+        db_initial.find().each do |log|
+          db_final.insert(log)
+        end
+
+        if size >=  db_final.find().count()
+          puts "ERROR: Collections did not merge!"
+        end
+    end
 end
