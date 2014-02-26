@@ -29,7 +29,11 @@ This is the base structure that all other ADAGE data types inheret from.
     </tr>
     <tr>
        <td>session_token</td>
-       <td>a string with timestamp of when this player session started</td>
+       <td>A unique string comprised of the Device ID and the start time of the session. This is used for grouping all logs from one instance of play from applicaiton start to application exit.</td>
+    </tr>
+     <tr>
+       <td>game_id</td>
+       <td>A unique string comprised of the the session token plus seconds since start of the application. This game id is used to group logs within a game. If a game allows saving the game id should be stored with the save and restored if that save game is resumed. For multiplayer games all players playing a game together should be reporting the same game_id.</td>
     </tr>
     <tr>
        <td>ada_base_types</td>

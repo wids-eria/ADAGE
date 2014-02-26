@@ -103,7 +103,7 @@ class DataController < ApplicationController
       map = %Q{
         function(){
           var key = {user_id: this.user_id};
-          var data = {field: this[field_name], timestamp: this.timestamp};
+          var data = {field: this[field_name], timestamp: parseInt(this.timestamp)};
           emit(key,data);
         }
       }
@@ -111,16 +111,15 @@ class DataController < ApplicationController
       reduce = %Q{
         function(key,values){
           var results = {bins: {}};
-          var current_time = new Date()
           for(var i=0; i < bin_count; i++)
           {
-            results.bins[since + i*bin] = 0
+            results.bins[parseInt(since) + parseInt(i*bin)] = 0
           }
 
           values.forEach(function(value){
             
-            var lbin = Math.floor((value.timestamp - since)/bin)
-            var label = since + (lbin*bin)
+            var lbin = Math.floor((value.timestamp - parseInt(since))/parseInt(bin))
+            var label = parseInt(since) + parseInt(lbin*bin)
             results.bins[label] = results.bins[label] + value.field      
             
 
