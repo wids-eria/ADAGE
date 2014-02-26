@@ -69,7 +69,8 @@
             %td
               = user.consented
             %td
-              = Time.at(user.instance_variable_get("@last_playtime")).strftime("%m/%d at %I:%M%p")
+              - unless user.instance_variable_get("@last_playtime").nil?
+                = Time.at(user.instance_variable_get("@last_playtime")).strftime("%m/%d at %I:%M%p")
             %td
               -unless user.data(@game.name).empty?
                 = link_to session_logs_user_path(user, gameName: @game.name) do

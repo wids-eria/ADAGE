@@ -23,7 +23,12 @@ class GamesController < ApplicationController
     @users = @game.users
 
     @users.each do |user|
-      user.instance_variable_set("@last_playtime", AdaData.with_game(@game.name).only(:user_id,:timestamp).order_by(:timestamp.asc).where(user_id: user[:id]).last[:timestamp].to_i)
+      lastlog = AdaData.with_game(@game.name).only(:user_id,:timestamp).order_by(:timestamp.asc).where(user_id: user[:id]).last
+      unless lastlog.nil?
+        user.instance_variable_set("@last_playtime", lastlog[:timestamp].to_i)
+      else
+        user.instance_variable_set("@last_playtime", lastlog)
+      end
     end
   end
 
