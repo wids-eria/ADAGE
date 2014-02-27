@@ -26,10 +26,18 @@ class AdaData
   end
 
   def set_collection
+    game_name = 'ada_data'
+
+    #icky code needed for backwards compatibility with GLS applications
     if self.gameName.nil?
-      with(collection: "ada_data")
+      unless self.application_name.nil?
+        game_name = self.application_name
+      end
     else
-      with(collection: self.gameName.to_s.gsub(' ', '_').downcase)
+      game_name = self.gameName
     end
+      
+
+    with(collection: game_name.gsub(' ', '_').downcase)
   end
 end
