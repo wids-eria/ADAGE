@@ -12,16 +12,16 @@ This is the base structure that all other ADAGE data types inheret from.
         <th>description</th>
     </tr>
     <tr>
-       <td>gameName</td>
+       <td>application_name</td>
        <td>a name for your game</td>
     </tr>
 	<tr>
-       <td>gameVersion</td>
+       <td>application_version</td>
        <td>the application token assigned by the ADAGE server for this client</td>
     </tr>
     <tr>
-       <td>ADAVersion</td>
-       <td>drunken_dolphin</td>
+       <td>adage_version</td>
+       <td>electric_eel</td>
     </tr>
     <tr>
        <td>timestamp</td>

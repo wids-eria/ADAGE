@@ -34,7 +34,11 @@ class DataController < ApplicationController
 
       since = time_range_to_epoch(params[:time_range])
 
-      @data = AdaData.with_game(client.implementation.game.name).where(:timestamp.gt => since).in(key: params[:event_name])
+      if params[:game_id] != nil
+        @data = AdaData.with_game(client.implementation.game.name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: params[:event_name])
+      else
+        @data = AdaData.with_game(client.implementation.game.name).where(:timestamp.gt => since).in(key: params[:event_name])
+      end
     end
 
 
