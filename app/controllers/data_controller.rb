@@ -44,6 +44,120 @@ class DataController < ApplicationController
 
   end
 
+  def data_selection
+    
+    
+    if params[:graph_params] != nil
+      @graph_params = GraphParams.new(params[:graph_params])
+    else
+      @graph_params = GraphParams.new
+    end
+
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+      @graph_params.app_token = params[:app_token]
+      puts "app token: " + @graph_params.app_token
+    else
+      puts @graph_params.app_token
+      client = Client.where(app_token: @graph_params.app_token).first
+    end
+
+    @keys = Array.new
+    @fields = Array.new
+    if client != nil
+    
+
+      @game = client.implementation.game
+      
+      puts client.app_token
+      @keys = AdaData.with_game(@game.name).distinct(:key)
+      puts @keys.count
+
+      if @graph_params.key != nil
+        @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
+      end
+    
+    end
+
+
+
+
+  end
+
+
+  def field_values
+    
+
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+
+    if client != nil
+      @game_version = client.app_token
+      @game_name = client.implementation.game.name
+      since = time_range_to_epoch(params[:time_range])
+      bin = time_range_to_bin(params[:bin])
+      
+
+      map = %Q{
+        function(){
+          var key = {user_id: this.user_id};
+          var data = {field: this[field_name], timestamp: parseInt(this.timestamp)};
+          emit(key,data);
+        }
+      }
+
+      reduce = %Q{
+        function(key,values){
+          var results = {bins: {}};
+          for(var i=0; i < bin_count; i++)
+          {
+            results.bins[parseInt(since) + parseInt(i*bin)] = 0
+          }
+
+          values.forEach(function(value){
+            
+            var lbin = Math.floor((value.timestamp - parseInt(since))/parseInt(bin))
+            var label = parseInt(since) + parseInt(lbin*bin)
+            results.bins[label] = results.bins[label] + value.field      
+            
+
+          });
+
+          return results;
+        }
+      }
+
+      bin_count =  ((Time.now - Time.at(since.to_i))/bin).round
+      scope = {bin: bin, bin_count: bin_count, type: params[:type], since: since, field_name: params[:field_name]}
+      
+      logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+
+      @data_group = DataGroup.new
+      logs.each do |l|
+        @user = User.find(l["_id"]["user_id"].to_i)
+        @data_group.add_to_group(l["value"]["bins"], @user)
+      end 
+      
+      @chart_info = @data_group.to_chart_js
+      respond_to do |format|
+        format.json {render :json => @data_group.to_json}
+        format.html {render}
+        format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
+      end
+
+    
+    else
+      puts "CLIENT NOT FOUND!"
+    end
+
+
+
+  end
+
+
+
   def session_logs
     @game = Game.find(params[:game_id])
     @users = User.where(id: params[:user_ids]).order(:id)

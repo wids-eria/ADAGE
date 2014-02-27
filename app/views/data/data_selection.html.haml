@@ -1,0 +1,20 @@
+%h1='Select an event and attribute'
+= simple_form_for @graph_params, :url => data_selection_data_path do |f|
+  = f.hidden_field :app_token, value: @graph_params.app_token
+  %p
+  = f.select :key, @keys
+  %p
+  = f.select :time_range, @graph_params.time_options
+  %p
+  = f.select :bin, @graph_params.time_options
+  %p
+  = f.select :field_name, @fields
+  %p
+  = f.submit 'update'
+
+%br
+%br
+%br
+= link_to field_values_data_path('html', user_ids: @game.user_ids, app_token: @graph_params.app_token, time_range: @graph_params.time_range, bin: @graph_params.bin, key: @graph_params.key, field_name: @graph_params.field_name) do
+  = 'graph'
+

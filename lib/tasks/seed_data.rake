@@ -75,7 +75,8 @@ namespace :seed_data do
                  'user_id' => 1,
                  'name' => 'Quest!',
                  'parent_name' => 'Mission',
-                 'success' => true
+                 'success' => true,
+                 'health' => rand.rand(0..20)
                   }
 
 
