@@ -29,12 +29,12 @@ class AdaData
     game_name = 'ada_data'
 
     #icky code needed for backwards compatibility with GLS applications
-    if self.gameName.nil?
-      unless self.application_name.nil?
-        game_name = self.application_name
-      end
-    else
+    if self.respond_to?('gameName')
       game_name = self.gameName
+    end
+
+    if self.respond_to?('application_name')
+      game_name = self.application_name
     end
       
 
