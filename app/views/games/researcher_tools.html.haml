@@ -29,8 +29,9 @@
             = 'csv'
           = link_to data_by_version_data_path('json', gameName: @game.name, version: version.name, user_ids: @game.user_ids) do
             = 'json'
-          = link_to data_selection_data_path('html', app_token: version.client.app_token) do
-            = 'data selection'
+          - unless version.nil?
+            = link_to data_selection_data_path('html', app_token: version.client.app_token) do
+              = 'data selection'
 
 
   .span4
