@@ -137,7 +137,9 @@ class DataController < ApplicationController
       @data_group = DataGroup.new
       logs.each do |l|
         @user = User.find(l["_id"]["user_id"].to_i)
-        @data_group.add_to_group(l["value"]["bins"], @user)
+        if l["value"]["bins"] != nil
+          @data_group.add_to_group(l["value"]["bins"], @user)
+        end
       end 
       
       @chart_info = @data_group.to_chart_js
