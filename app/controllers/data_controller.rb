@@ -107,7 +107,7 @@ class DataController < ApplicationController
       map = %Q{
         function(){
           var key = {user_id: this.user_id};
-          var data = {field: this[field_name], timestamp: new Date(parseInt(this.timestamp)).getTime()};
+          var data = {field: this[field_name], timestamp: parseInt(this.timestamp)};
           emit(key,data);
         }
       }
@@ -115,16 +115,15 @@ class DataController < ApplicationController
       reduce = %Q{
         function(key,values){
           var results = {bins: {}};
-          var ntime = new Date(parseInt(since)).getTime()
           for(var i=0; i < bin_count; i++)
           {
-            results.bins[ntime + (i*bin)] = 0
+            results.bins[since + (i*bin)] = 0
           }
 
           values.forEach(function(value){
             
-            var lbin = Math.floor((value.timestamp - ntime)/bin)
-            var label = ntime + lbin*bin
+            var lbin = Math.floor((value.timestamp - since)/bin)
+            var label = since + lbin*bin
             results.bins[label] = results.bins[label] + value.field      
             
 
@@ -134,8 +133,10 @@ class DataController < ApplicationController
         }
       }
 
-      bin_count =  ((Time.now - Time.at(since.to_i))/bin).round
-      scope = {bin: bin, bin_count: bin_count, type: params[:type], since: since, field_name: params[:field_name]}
+
+      current_milliseconds = (Time.now.to_f * 1000).to_i
+      bin_count =  ((current_milliseconds - since.to_i)/bin).round
+      scope = {bin: bin, bin_count: bin_count, type: params[:type], since: since.to_i, field_name: params[:field_name]}
       
       logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
 

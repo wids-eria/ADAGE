@@ -39,19 +39,19 @@ class ApplicationController < ActionController::Base
     since = time_range
 
     if time_range.include?("hour")
-      since = (Time.now - 1.hour).to_i
+      since = (Time.now - 1.hour).to_i * 1000
     end
 
     if time_range.include?("day")
-      since = (Time.now - 1.day).to_i
+      since = (Time.now - 1.day).to_i * 1000
     end
 
     if time_range.include?("week")
-      since = (Time.now - 1.week).to_i
+      since = (Time.now - 1.week).to_i * 1000
     end
 
     if time_range.include?("month")
-      since = (Time.now - 1.month).to_i
+      since = (Time.now - 1.month).to_i * 1000
     end
 
     if time_range.include?("all")
@@ -84,7 +84,8 @@ class ApplicationController < ActionController::Base
       since = 1.year
     end
 
-    return since
+    #convert to milliseconds and return
+    return since * 1000
 
   
   end

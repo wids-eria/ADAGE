@@ -25,7 +25,7 @@ This is the base structure that all other ADAGE data types inheret from.
     </tr>
     <tr>
        <td>timestamp</td>
-       <td>Format should be Unix timestamp (Seconds since the epoch)</td>
+       <td>Format should be Unix timestamp (Milliseconds since the epoch)</td>
     </tr>
     <tr>
        <td>session_token</td>

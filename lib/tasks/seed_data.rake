@@ -90,7 +90,7 @@ namespace :seed_data do
         data.user_id = rand.rand(1..User.all.count)
         puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
-        data.timestamp = (start_time + (1.minute * rand.rand(1..50))).to_i.to_s
+        data.timestamp = ((start_time + (1.minute * rand.rand(1..50))).to_i * 1000).to_s
         if data.key.include?('FGQuest')
           data.name = quest_names[rand.rand(0...quest_names.count)]
         end
