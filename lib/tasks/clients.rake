@@ -4,7 +4,8 @@ namespace :clients do
     Implementation.all.each do |version|
       if version.client.nil?
         puts 'creating client credentials for version ' + version.name
-        Client.new(name: version.name, implementation: version)
+        c = Client.new(name: version.name, implementation: version)
+        c.save
       end  
     end 
   end
