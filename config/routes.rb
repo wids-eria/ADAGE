@@ -46,6 +46,7 @@ Ada::Application.routes.draw do
       get :session_logs
       get :context_logs
       get :get_events
+      get :get_events_by_group
       get :field_values
       get :data_selection
       post :data_selection
