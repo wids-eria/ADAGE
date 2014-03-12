@@ -22,6 +22,43 @@ class DataController < ApplicationController
     end
   end
 
+  def get_events_by_group
+    if params[:app_token] != nil
+    client = Client.where(app_token: params[:app_token]).first
+    end
+
+
+    if client != nil
+
+      since = time_range_to_epoch(params[:time_range])
+      game_name = client.implementation.game.name
+
+      keys = params[:events_list]
+      if keys == nil
+        keys = AdaData.with_game(game_name).distinct(:events_list)
+      end
+
+      users = Array.new
+      if params[:group] != nil
+        users = Group.where(id: params[:group]).first.user_ids
+      end
+
+      if params[:game_id] != nil
+        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys).in(user_id: users)
+      else
+        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).in(key: keys).in(user_id: users)
+      end
+    end
+
+
+    @result = Hash.new
+    @result['data'] = @data
+    respond_with @result
+
+
+  
+  end
+
 
   def get_events
 
@@ -35,15 +72,15 @@ class DataController < ApplicationController
       since = time_range_to_epoch(params[:time_range])
       game_name = client.implementation.game.name
 
-      keys = params[:key]
+      keys = params[:events_list]
       if keys == nil
         keys = AdaData.with_game(game_name).distinct(:key)
       end
 
       if params[:game_id] != nil
-        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: params[:event_name])
+        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys)
       else
-        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).in(key: params[:event_name])
+        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).in(key: keys)
       end
     end
 
