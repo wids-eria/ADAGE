@@ -24,7 +24,7 @@ class DataController < ApplicationController
 
   def get_events_by_group
     if params[:app_token] != nil
-    client = Client.where(app_token: params[:app_token]).first
+      client = Client.where(app_token: params[:app_token]).first
     end
 
 
@@ -35,12 +35,15 @@ class DataController < ApplicationController
 
       keys = params[:events_list]
       if keys == nil
-        keys = AdaData.with_game(game_name).distinct(:events_list)
+        keys = AdaData.with_game(game_name).distinct(:key)
       end
 
       users = Array.new
       if params[:group] != nil
-        users = Group.where(code: params[:group]).first.user_ids
+        group = Group.where(code: params[:group]).first
+        if group != nil
+          users = group.user_ids
+        end
       end
 
       if params[:game_id] != nil
