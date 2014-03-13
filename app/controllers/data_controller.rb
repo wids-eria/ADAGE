@@ -46,10 +46,10 @@ class DataController < ApplicationController
         end
       end
 
-      if params[:game_id] != nil or params[:game_id].empty? 
-        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys).in(user_id: users)
-      else
+      if params[:game_id].nil? or params[:game_id].empty? 
         @data = AdaData.with_game(game_name).where(:timestamp.gt => since).in(key: keys).in(user_id: users)
+      else
+        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys).in(user_id: users)
       end
     end
 
@@ -80,10 +80,10 @@ class DataController < ApplicationController
         keys = AdaData.with_game(game_name).distinct(:key)
       end
 
-      if params[:game_id] != nil or params[:game_id].empty? 
-        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys)
-      else
+      if params[:game_id].nil? or params[:game_id].empty? 
         @data = AdaData.with_game(game_name).where(:timestamp.gt => since).in(key: keys)
+      else
+        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys)
       end
     end
 
