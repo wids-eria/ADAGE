@@ -40,7 +40,7 @@ class DataController < ApplicationController
 
       users = Array.new
       if params[:group] != nil
-        users = Group.where(id: params[:group]).first.user_ids
+        users = Group.where(code: params[:group]).first.user_ids
       end
 
       if params[:game_id] != nil
