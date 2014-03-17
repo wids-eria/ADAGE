@@ -1,5 +1,5 @@
 GIT
-  remote: http://github.com/wids-eria/zoo_pass.git
+  remote: git://github.com/wids-eria/zoo_pass.git
   revision: 512530cd1400c7a1b1f4c5bc1b925efca7cd5cde
   branch: abstracting
   specs:
