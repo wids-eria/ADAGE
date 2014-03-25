@@ -23,6 +23,11 @@ class Game < ActiveRecord::Base
    return ids
   end
 
+  def configs
+    ConfigData.where("game_id" => self.id)
+  end
+
+
   protected
 
   def create_researcher_role

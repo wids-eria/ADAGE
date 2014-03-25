@@ -1,3 +1,8 @@
+#A class for storing a save game for a game
+#tied to an implementation and a user
+#user can overwrite the save game but only gets one per
+#implementation of the game
+
 class SaveData
   include Mongoid::Document
   include Mongoid::Timestamps
