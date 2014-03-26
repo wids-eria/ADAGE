@@ -4,11 +4,16 @@ class ConfigController < ApplicationController
   protect_from_forgery :except => :save 
 
 
+  def show
+    @config = ConfigData.find(id: params[:id])
+    respond_with @config
+  end
+
   def load
     client = Client.where(app_token: params[:app_token]).first
     
     if client != nil
-      config_record = client.implementation.game.configs.where(implementation_id: client.implementation.id).first
+      config_record = client.implementation.config
       if config_record != nil
         @config = config_record.config_file
       end
@@ -22,9 +27,8 @@ class ConfigController < ApplicationController
     if params[:config_file] and params[:app_token]
       client = Client.where(app_token: params[:app_token]).first
       if client != nil
-        config = client.implementation.game.configs.find_or_create_by(implementation_id: client.implementation.id)
+        config = ConfigData.find_or_create_by(implementation_id: client.implementation.id)
         config.write_attributes(config_file: params[:config_file])
-        config.game = client.implementation.game
         if !config.save
           error = true
         end

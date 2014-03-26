@@ -6,6 +6,11 @@ class Implementation < ActiveRecord::Base
 
   after_create :create_client_credentials
 
+  def config
+    ConfigData.where("implementation_id" => self.id).first
+  end
+
+
   protected
   
   def create_client_credentials

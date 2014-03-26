@@ -19,6 +19,7 @@ Ada::Application.routes.draw do
 
   match "save_config" => "config#save", :via => :post
   match "load_config" => "config#load", :via => :get
+  match "show_config" => "config#show", :via => :get 
 
 
   match "game_version_data/save" => 'gv#save', :via => :post

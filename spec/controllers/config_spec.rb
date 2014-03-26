@@ -16,7 +16,7 @@ describe ConfigController do
       post :save, 'config_file' => {"somestuff" => [{"one" => 1}, {"two" => 2}]}, 'app_token' => app_token 
       response.status.should be(201)
       game.reload
-      game.configs.count.should == 1
+      game.implementations.first.config.should_not be_nil 
     end
     
     it "updates a config record from incoming json if the record exists" do
@@ -26,8 +26,8 @@ describe ConfigController do
       @request.env['HTTP_AUTHORIZATION'] =  "Bearer " + user.access_tokens.first.consumer_secret
       post :save, 'config_file' => {"somestuff" => [{"foo" => 1}, {"bar" => 2}]}, 'app_token' => app_token 
       response.status.should be(201)
-      game.configs.count.should == 1
-      a_save = game.configs.where(implementation_id: game.implementations.first.id).first
+      game.implementations.first.config.should_not be_nil
+      a_save = game.implementations.first.config
       a_save.config_file['somestuff'][0]['foo'].should == "1"
     end
 
