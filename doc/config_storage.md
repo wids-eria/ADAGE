@@ -2,7 +2,7 @@
 
 ##POST /save_config
 
-Save game information as a json object. Will save one record per player per applications. First call will create the record and subsequent calls will overwrite the saved record.
+Save config file as a json object. Will save one record per application version. First call will create the record and subsequent calls will overwrite the config record.
 
 ###Request
 <table>
@@ -23,7 +23,7 @@ Save game information as a json object. Will save one record per player per appl
 
 ##GET /load_config
 
-Request a previously saved game for a player for this applicaiton.
+Request the config file for this application version
 
 ###Request
 <table>
@@ -38,5 +38,5 @@ Request a previously saved game for a player for this applicaiton.
 </table>
 
 ###Response
-Will return the Json object that was preivously stored for this player from this applicaiton or nothing if there was no peviously saved game
+Will return the Json object that was preivously stored this application version or nothing if there was no peviously saved game
 
