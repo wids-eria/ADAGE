@@ -10,7 +10,14 @@ formative feedback for usability testing and evidence of learning.
 ADAGE is being developed at the [Game + Learning + Society Center](http://www.gameslearningsociety.org) at the University of Wiscsonsin - Madison with
 a partnership with [The Learning Games Network](http://www.learninggamesnetwork.org) and the [Wisconsin Institutes of Discovery](http://wid.wisc.edu)
 
-[More documentation.](https://github.com/wids-eria/ADAGE/tree/master/doc)
+###Documentation
+
+* [Installation Guide](https://github.com/wids-eria/ADAGE/blob/master/doc/install.md)
+* [Data Specification](https://github.com/wids-eria/ADAGE/blob/master/doc/data_spec.md)
+* [Authentication API](https://github.com/wids-eria/ADAGE/blob/master/doc/authentication.md)
+* [Data Logging API](https://github.com/wids-eria/ADAGE/blob/master/doc/data_logging.md)
+* [Save Game API](https://github.com/wids-eria/ADAGE/blob/master/doc/save_games.md)
+* [Configuration File API](https://github.com/wids-eria/ADAGE/blob/master/doc/config_storage.md)
 
 
 ###Acknowledgments 

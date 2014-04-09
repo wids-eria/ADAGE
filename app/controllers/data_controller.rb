@@ -62,6 +62,31 @@ class DataController < ApplicationController
   
   end
 
+  def get_sorted_and_limited_events
+    
+    
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+
+    if client != nil
+
+      since = time_range_to_epoch(params[:time_range])
+      game_name = client.implementation.game.name
+
+
+      @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
+    end
+
+
+    @result = Hash.new
+    @result['data'] = @data
+    respond_with @result
+
+
+  end
+
 
   def get_events
 
