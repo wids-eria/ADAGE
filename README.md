@@ -16,6 +16,7 @@ a partnership with [The Learning Games Network](http://www.learninggamesnetwork.
 * [Data Specification](https://github.com/wids-eria/ADAGE/blob/master/doc/data_spec.md)
 * [Authentication API](https://github.com/wids-eria/ADAGE/blob/master/doc/authentication.md)
 * [Data Logging API](https://github.com/wids-eria/ADAGE/blob/master/doc/data_logging.md)
+* [Data Query API](https://github.com/wids-eria/ADAGE/blob/master/doc/data_query.md)
 * [Save Game API](https://github.com/wids-eria/ADAGE/blob/master/doc/save_games.md)
 * [Configuration File API](https://github.com/wids-eria/ADAGE/blob/master/doc/config_storage.md)
 

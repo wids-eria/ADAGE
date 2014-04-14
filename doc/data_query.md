@@ -1,6 +1,6 @@
 #ADAGE Client Data Queries
 
-These queries have been set up to be useful from a client to retrieve data stored by the game. You will need to be querying from an authenticated client with a valid and authenticated account. 
+These queries have been set up to be useful from a client to retrieve data stored by that game. Requests must come from an authenticated client with a valid and authenticated account. 
 
 ##GET /data/get_events.json
 
