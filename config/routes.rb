@@ -44,7 +44,6 @@ Ada::Application.routes.draw do
   resources :implementations
   resources :data do
     collection do
-      post :tenacity_player_stats
       get :find_tenacity_player
       get :data_by_version
       get :export
