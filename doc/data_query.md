@@ -82,6 +82,11 @@ A query that will allow you to get a list of events sorted by the value of a fie
         <td>integer</td>
         <td>The number of results you want returned.</td>
     </tr>
+     <tr>
+        <td>user_id (optional)</td>
+        <td>integer</td>
+        <td>Limit the query to only the user with this id</td>
+    </tr>
 </table>
 
 ###Response

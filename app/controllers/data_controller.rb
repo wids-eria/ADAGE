@@ -11,17 +11,6 @@ class DataController < ApplicationController
   end
 
 
-  def heatmap
-    if params[:level] != nil
-      @data = AdaData.with_game(params[:gameName]).where(level: params[:level]).where(:created_at.gt => params[:since]).where(key: params[:key]).where(schema: params[:schema])
-    else
-      @data = AdaData.with_game(params[:gameName]).where(:created_at.gt => params[:since]).where(key: params[:key]).where(schema: params[:schema])
-    end
-    respond_to do |format|
-      format.json { render :json => @data }
-    end
-  end
-
   def get_events_by_group
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
@@ -62,6 +51,7 @@ class DataController < ApplicationController
   
   end
 
+
   def get_sorted_and_limited_events
     
     
@@ -75,8 +65,11 @@ class DataController < ApplicationController
       since = time_range_to_epoch(params[:time_range])
       game_name = client.implementation.game.name
 
-
-      @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
+      if params[:user_id].nil? or params[:user_id].empty?
+        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
+      else
+        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).where(user_id: params[:user_id]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
+      end
     end
 
 
@@ -487,7 +480,7 @@ class DataController < ApplicationController
     end
   end
 
-
+#These tenacity specific functions should be removed after we are sure they are no longer in use
   def find_tenacity_player
   end
 
