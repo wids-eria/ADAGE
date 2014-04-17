@@ -1,0 +1,11 @@
+%h3 
+
+=link_to 'Export as CSV', field_values_data_path(params: params, format: 'csv')
+=link_to 'Json', field_values_data_path(params: params, format: 'json')
+
+%script
+  != "playtimes = #{@chart_info.to_json};"
+%script{src: '/assets/ajax_line_chart.js', type: 'text/javascript'}
+%canvas{id: 'playtime_chart', width: 1000, height: 500}
+
+

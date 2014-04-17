@@ -148,8 +148,6 @@ class DataController < ApplicationController
     end
 
 
-
-
   end
 
 
@@ -165,7 +163,6 @@ class DataController < ApplicationController
       @game_version = client.app_token
       @game_name = client.implementation.game.name
       since = time_range_to_epoch(params[:time_range])
-      bin = time_range_to_bin(params[:bin])
       
 
       map = %Q{
@@ -179,16 +176,10 @@ class DataController < ApplicationController
       reduce = %Q{
         function(key,values){
           var results = {bins: {}};
-          for(var i=0; i < bin_count; i++)
-          {
-            results.bins[since + (i*bin)] = 0
-          }
 
           values.forEach(function(value){
             
-            var lbin = Math.floor((value.timestamp - since)/bin)
-            var label = since + lbin*bin
-            results.bins[label] = results.bins[label] + value.field      
+            results.bins[value.timestamp] = value.field;
             
 
           });
@@ -200,9 +191,10 @@ class DataController < ApplicationController
 
       current_milliseconds = (Time.now.to_f * 1000).to_i
       bin_count =  ((current_milliseconds - since.to_i)/bin).round
-      scope = {bin: bin, bin_count: bin_count, type: params[:type], since: since.to_i, field_name: params[:field_name]}
+      scope = {since: since.to_i, field_name: params[:field_name]}
       
       logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+
 
       @data_group = DataGroup.new
       logs.each do |l|
@@ -214,7 +206,7 @@ class DataController < ApplicationController
       
       @chart_info = @data_group.to_chart_js
       respond_to do |format|
-        format.json {render :json => @data_group.to_json}
+        format.json {render :json => @chart_info.to_json}
         format.html {render}
         format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
       end
