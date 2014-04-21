@@ -6,8 +6,6 @@
   %p
   = f.select :time_range, @graph_params.time_options
   %p
-  = f.select :bin, @graph_params.time_options
-  %p
   = f.select :field_name, @fields
   %p
   = f.submit 'update'
@@ -15,6 +13,6 @@
 %br
 %br
 %br
-= link_to field_values_data_path('html', user_ids: @game.user_ids, app_token: @graph_params.app_token, time_range: @graph_params.time_range, bin: @graph_params.bin, key: @graph_params.key, field_name: @graph_params.field_name) do
+= link_to field_values_data_path('html', user_ids: @game.user_ids, app_token: @graph_params.app_token, time_range: @graph_params.time_range, key: @graph_params.key, field_name: @graph_params.field_name) do
   = 'graph'
 

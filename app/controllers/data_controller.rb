@@ -124,7 +124,6 @@ class DataController < ApplicationController
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
       @graph_params.app_token = params[:app_token]
-      puts "app token: " + @graph_params.app_token
     else
       puts @graph_params.app_token
       client = Client.where(app_token: @graph_params.app_token).first
@@ -137,9 +136,7 @@ class DataController < ApplicationController
 
       @game = client.implementation.game
       
-      puts client.app_token
       @keys = AdaData.with_game(@game.name).distinct(:key)
-      puts @keys.count
 
       if @graph_params.key != nil
         @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
@@ -149,6 +146,69 @@ class DataController < ApplicationController
 
 
   end
+
+  def real_time_chart
+    @url = params[:url]
+  end
+
+  def real_time_selection
+    
+    
+    if params[:graph_params] != nil
+      @graph_params = GraphParams.new(params[:graph_params])
+    else
+      @graph_params = GraphParams.new
+    end
+
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+      @graph_params.app_token = params[:app_token]
+    else
+      puts @graph_params.app_token
+      client = Client.where(app_token: @graph_params.app_token).first
+    end
+
+    @keys = Array.new
+    @fields = Array.new
+    @game_ids = Array.new
+    if client != nil
+    
+      
+      @url = '/data/field_values.json?app_token='+@graph_params.app_token
+      
+      if @graph_params.time_range == nil
+        @graph_params.time_range = 'hour'
+      end
+      
+      @url = @url +'&time_range='+ @graph_params.time_range 
+      @game = client.implementation.game
+      @game_ids = AdaData.with_game(@game.name).where(:timestamp.gt => time_range_to_epoch(@graph_params.time_range)).distinct(:game_id)
+      
+
+      if @graph_params.game_id != nil
+        @url = @url + '&game_id=' + @graph_params.game_id
+      end
+      
+      @keys = AdaData.with_game(@game.name).distinct(:key)
+
+      if @graph_params.key != nil
+        
+        @url = @url + '&key=' + @graph_params.key
+
+        @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
+
+        if @graph_params.field_name != nil
+          @url = @url + '&field_name=' + @graph_params.field_name
+        end
+      end
+    
+    
+    end
+
+
+
+  end
+
 
 
   def field_values
@@ -190,10 +250,16 @@ class DataController < ApplicationController
 
 
       current_milliseconds = (Time.now.to_f * 1000).to_i
-      bin_count =  ((current_milliseconds - since.to_i)/bin).round
       scope = {since: since.to_i, field_name: params[:field_name]}
-      
-      logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+     
+      if params[:user_ids] != nil 
+        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+      elsif params[:game_id] != nil
+        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+      else
+        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+      end
+
 
 
       @data_group = DataGroup.new

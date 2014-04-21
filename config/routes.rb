@@ -55,6 +55,8 @@ Ada::Application.routes.draw do
       get :field_values
       get :data_selection
       post :data_selection
+      get :real_time_selection
+      post :real_time_selection
       get :real_time_chart
     end
   end

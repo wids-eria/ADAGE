@@ -18,7 +18,7 @@ $(document).ready(function () {
 
   function fetchData() {
     $.ajax({
-      url: "/data/field_values.json?app_token=alpha_c6aa55221dc7d1e559581ba75babb193&time_range=0&key=FGQuestEnd&bin=all&user_ids=2&field_name=health",
+      url: url,
       type: "GET",
       dataType: "json",
       success: onDataReceived

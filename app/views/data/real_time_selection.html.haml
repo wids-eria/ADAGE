@@ -1,0 +1,20 @@
+%h1='Select an event and attribute'
+= simple_form_for @graph_params, :url => real_time_selection_data_path do |f|
+  = f.hidden_field :app_token, value: @graph_params.app_token
+  %p
+  = f.select :game_id, @game_ids
+  %p
+  = f.select :key, @keys
+  %p
+  = f.select :time_range, @graph_params.time_options
+  %p
+  = f.select :field_name, @fields
+  %p
+  = f.submit 'update'
+
+%br
+%br
+%br
+= link_to real_time_chart_data_path('html', url: @url) do
+  = 'graph'
+
