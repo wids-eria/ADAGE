@@ -189,7 +189,7 @@ class DataController < ApplicationController
         @url = @url + '&game_id=' + @graph_params.game_id
 
         @user_ids = AdaData.with_game(@game.name).where(game_id: @graph_params.game_id).distinct(:user_id)
-        @url = @url + '&user_ids=' + @user_ids
+        @url = @url + '&user_ids=' + @user_ids.to_s
       end
       
       @keys = AdaData.with_game(@game.name).distinct(:key)
