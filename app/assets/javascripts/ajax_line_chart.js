@@ -11,7 +11,7 @@ $(document).ready(function () {
 
     // Load all the data in one pass; if we only got partial
     // data we could merge it with what we already have.
-    myNewChart.Line(series, {animation : false});
+    myNewChart.Line(series, {animation : false, datasetFill : false});
 
   }
 
