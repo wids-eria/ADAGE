@@ -38,8 +38,8 @@ class DataGroup
           data_series[labels.index(key)] = value.to_s.to_i
         end
         datasets << {
-        fillColor: "rgba(" + (rand.rand(0...220)).to_s + ", 220,"  + (rand.rand(0...220)).to_s +  ",0.5)",
-        strokeColor: "rgba(220,220,220,1)",
+        strokeColor: "rgba(" + (rand.rand(0...220)).to_s + ", 220,"  + (rand.rand(0...220)).to_s +  ",1.0)",
+        fillColor: "rgba(0,0,0,.1)",
         data: data_series}
       end
 
