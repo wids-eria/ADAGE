@@ -185,7 +185,7 @@ class DataController < ApplicationController
       @game_ids = AdaData.with_game(@game.name).where(:timestamp.gt => time_range_to_epoch(@graph_params.time_range)).distinct(:game_id)
       
 
-      if @graph_params.game_id != nil
+      unless @graph_params.game_id.nil? or @graph_params.game_id.empty?
         @url = @url + '&game_id=' + @graph_params.game_id
       end
       
