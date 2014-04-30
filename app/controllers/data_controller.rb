@@ -228,7 +228,7 @@ class DataController < ApplicationController
     
       @user_ids = Array.new 
       unless params[:game_id].nil? or params[:game_id].empty? 
-        @user_ids = AdaData.with_game(@game_name).where(game_id: @graph_params.game_id).distinct(:user_id)
+        @user_ids = AdaData.with_game(@game_name).where(game_id: params[:game_id]).distinct(:user_id)
       end
 
       map = %Q{
