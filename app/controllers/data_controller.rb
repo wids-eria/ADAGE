@@ -259,7 +259,7 @@ class DataController < ApplicationController
       scope = {since: since.to_i, field_name: params[:field_name]}
      
       if @user_ids.count > 0
-        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: @user_ids ).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
       elsif params[:game_id] != nil
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
       else
