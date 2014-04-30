@@ -188,8 +188,6 @@ class DataController < ApplicationController
       unless @graph_params.game_id.nil? or @graph_params.game_id.empty?
         @url = @url + '&game_id=' + @graph_params.game_id
 
-        @user_ids = AdaData.with_game(@game.name).where(game_id: @graph_params.game_id).distinct(:user_id)
-        @url = @url + '&user_ids=' + @user_ids.to_json
       end
       
       @keys = AdaData.with_game(@game.name).distinct(:key)
@@ -227,6 +225,11 @@ class DataController < ApplicationController
       @game_name = client.implementation.game.name
       since = time_range_to_epoch(params[:time_range])
       
+    
+      @user_ids = Array.new 
+      unless params[:game_id].nil? or params[:game_id].empty? 
+        @user_ids = AdaData.with_game(@game_name).where(game_id: @graph_params.game_id).distinct(:user_id)
+      end
 
       map = %Q{
         function(){
@@ -255,7 +258,7 @@ class DataController < ApplicationController
       current_milliseconds = (Time.now.to_f * 1000).to_i
       scope = {since: since.to_i, field_name: params[:field_name]}
      
-      if params[:user_ids] != nil 
+      if @user_id.count > 0
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: params[:user_ids]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
       elsif params[:game_id] != nil
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
