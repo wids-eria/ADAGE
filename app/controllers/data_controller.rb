@@ -187,7 +187,6 @@ class DataController < ApplicationController
 
       unless @graph_params.game_id.nil? or @graph_params.game_id.empty?
         @url = @url + '&game_id=' + @graph_params.game_id
-
       end
       
       @keys = AdaData.with_game(@game.name).distinct(:key)

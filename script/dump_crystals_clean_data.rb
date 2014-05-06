@@ -26,7 +26,7 @@ def logs_equal(prev, entry)
 
 end
 
-player_list = CSV.open("csv/tenacity/player_list.csv", 'r')
+player_list = CSV.open("csv/tenacity/crystals_players.csv", 'r')
 players = Array.new
 player_list.each do |player_name|
   player = User.where(player_name: player_name).first
@@ -36,13 +36,13 @@ player_list.each do |player_name|
 end
 
 players.each do |play|
-  data = play.data('Tenacity-Meditation').without([:_id, :created_at, :updated_at]).asc(:timestamp)
+  data = play.data('KrystalsOfKaydor').without([:_id, :created_at, :updated_at]).asc(:timestamp)
   if data.count > 0
-    types = play.data('Tenacity-Meditation').without([:_id, :created_at, :updated_at]).distinct(:key)
+    types = play.data('KrystalsOfKaydor').without([:_id, :created_at, :updated_at]).distinct(:key)
     puts types.inspect
     examples = Array.new
     types.each do |type|
-      ex = play.data('Tenacity-Meditation').without([:_id, :created_at, :updated_at]).where( key: type).first
+      ex = play.data('KrystalsOfKaydor').without([:_id, :created_at, :updated_at]).where( key: type).first
       if ex != nil
         examples << ex
       end
@@ -58,14 +58,15 @@ players.each do |play|
     puts all_attrs.inspect
 
 
-    CSV.open("csv/tenacity/tenacity_"+play.email+"_cleaned.csv", "w") do |csv|
+    CSV.open("csv/tenacity/crystals_"+play.email+"_cleaned.csv", "w") do |csv|
       
       csv << all_attrs.uniq
-      prev = nil
+      prev = Hash.new 
       data.each do |entry|
         
 
-        unless logs_equal(prev, entry)
+        #unless logs_equal(prev[entry.key], entry)
+        if prev[entry.inspect.to_s].nil?
           out = Array.new
           all_attrs.uniq.each do |attr|
             if entry.attributes.keys.include?(attr)
@@ -75,7 +76,7 @@ players.each do |play|
             end
           end
           csv << out
-          prev = entry
+          prev[entry.inspect.to_s] = entry
         end
 
 

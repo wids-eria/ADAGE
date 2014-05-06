@@ -11,10 +11,9 @@ end
 
 
 players.each do |play|
-  data = play.data.where(gameName: 'KrystalsOfKaydor').asc(:timestamp)
+  data = play.data('KrystalsOfKaydor').asc(:timestamp)
   if data.count > 0
     types = data.distinct(:key)
-    types.delete('KoKPlayerMovement') #for now exclude player movement.
     puts types.inspect
     examples = Array.new
     types.each do |type|
@@ -41,17 +40,15 @@ players.each do |play|
       #puts all_attrs.uniq 
       csv << all_attrs.uniq
       data.each do |entry|
-        unless entry.key.include?('KoKPlayerMovement')
-          out = Array.new
-          all_attrs.uniq.each do |attr|
-            if entry.attributes.keys.include?(attr)
-              out << entry.attributes[attr]
-            else
-              out << ""
-            end
+        out = Array.new
+        all_attrs.uniq.each do |attr|
+          if entry.attributes.keys.include?(attr)
+            out << entry.attributes[attr]
+          else
+            out << ""
           end
-          csv << out
         end
+        csv << out
       end
     end
   end

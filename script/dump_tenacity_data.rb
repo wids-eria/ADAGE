@@ -11,7 +11,7 @@ player_list.each do |player_name|
 end
 
 players.each do |play|
-  data = play.data.where(gameName: 'Tenacity-Meditation')
+  data = play.data('Tenacity-Meditation').asc(:timestamp)
   if data.count > 0
     types = data.distinct(:key)
     puts types.inspect
