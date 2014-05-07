@@ -9,7 +9,7 @@ class Tplayer
 
   def run csv
 
-    minds = user.data.where(gameName: 'KrystalsOfKaydor').asc(:timestamp)
+    minds = user.data('KrystalsOfKaydor').asc(:timestamp)
     total_sessions = 0
     total_playtime = 0
     session_times = Hash.new
@@ -28,10 +28,10 @@ class Tplayer
 
 
     if minds.count > 0
-      sessions = minds.distinct(:session_token)
+      sessions = user.data('KrystalsOfKaydor').distinct(:session_token)
       total_sessions = sessions.count
       sessions.each do |token|
-        session_logs = minds.where(session_token: token).asc(:timestamp)
+        session_logs = user.data('KrystalsOfKaydor').where(session_token: token).asc(:timestamp)
         end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
         start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
         session_times[start_time.to_s] = ((end_time - start_time)/1.minute).round 
