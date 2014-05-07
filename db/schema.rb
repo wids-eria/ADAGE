@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131018184315) do
+ActiveRecord::Schema.define(:version => 20140507183222) do
 
   create_table "games", :force => true do |t|
     t.string   "name"
@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.boolean  "control_group"
     t.string   "player_name",                           :default => ""
     t.boolean  "guest",                                 :default => false
+    t.integer  "teacher_status_cd"
     t.index ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true, :order => {"authentication_token" => :asc}
     t.index ["email"], :name => "index_users_on_email", :unique => true, :order => {"email" => :asc}
     t.index ["player_name"], :name => "index_users_on_player_name", :unique => true, :case_sensitive => false, :order => {"player_name" => :asc}
