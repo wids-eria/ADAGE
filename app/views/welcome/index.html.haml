@@ -7,6 +7,8 @@
         = link_to 'Games', games_path
       -if can? :read, Group
         = link_to 'Groups', groups_path
+      -if current_user.admin?
+        = link_to 'Teacher Requests', teacher_requests_users_path
 
     .floatleft{:style => "border-left: 1px dotted #444; padding-left: 10px;"}
       .playername

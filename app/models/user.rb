@@ -13,13 +13,12 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
 
   attr_accessible :id,:email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :guest, :group_ids,:teacher_status
-  as_enum :teacher_status, { pending: 0, accepted: 1, denied: 2 }
+  as_enum :teacher_status, { pending: 1, accepted: 2, denied: 3 }
 
   # for pathfinder, remove when sso is complete
   before_create :update_control_group
   before_save :set_default_role
 
-  before_create :set_default_teacher_status
   before_validation :email_or_player_name, :on => :create
   validates :player_name, presence: true, uniqueness: {case_sensitive: false}
 

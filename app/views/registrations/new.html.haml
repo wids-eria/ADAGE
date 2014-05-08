@@ -1,0 +1,24 @@
+.login_container.floatleft
+  = form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f|
+    = devise_error_messages!
+    .field_container
+      = f.label :player_name, 'Player name', class: 'floatleft'
+      = f.text_field :player_name, class: 'floatright', placeholder: 'Player Name'
+    .field_container
+      = f.label :email, 'Email', class: 'floatleft'
+      = f.text_field :email, class: 'floatright', placeholder: '(OPTIONAL)'
+    .field_container
+      = f.label :password, class: 'floatleft'
+      = f.password_field :password, class: 'floatright', placeholder: 'Password'
+    .field_container
+      = f.label :password_confirmation, 'Confirm', class: 'floatleft'
+      = f.password_field :password_confirmation, class: 'floatright', placeholder: 'Password Confirmation'
+    .field_container
+      = f.label :teacher_status_cd, 'Teacher?', class: 'floatleft'
+      = f.check_box :teacher_status_cd
+    .field_container_remember_me
+      = f.submit "Sign up", class: 'sign_in_button floatright'
+
+.sign_up_container
+  = link_to 'Sign In', new_user_session_url, class: 'floatleft'
+  = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'

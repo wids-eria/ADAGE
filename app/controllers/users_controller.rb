@@ -5,6 +5,19 @@ class UsersController < ApplicationController
   layout 'blank'
   before_filter :authenticate_user!, except: [:authenticate_for_token]
 
+  def teacher_requests
+    @teachers = User.where("teacher_status_cd IS NOT NULL")
+  end
+
+  def update_teacher_request
+    #Update the teacher request for a user
+    @user = User.find(params[:id])
+    @user.teacher_status = params[:status]
+    @user.save
+    flash[:notice] = "#{@user.player_name.capitalize}'s request has been #{params[:status].capitalize}"
+    redirect_to teacher_requests_users_path
+  end
+
   def show
      @user = User.find(params[:id])
   end
@@ -160,7 +173,7 @@ class UsersController < ApplicationController
 
       since = time_range_to_epoch(params[:time_range])
       bin = time_range_to_bin(params[:bin])
-     
+
       values = @user.data_field_values(client.implementation.game.name, params[:key], since, params[:field_name], bin)
       @data_group = DataGroup.new
       @data_group.add_to_group(values, @user)
