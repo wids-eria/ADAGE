@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   validates :email, presence: true, uniqueness: true
 
   has_many :group_ownerships
-  has_many :groups, through: :group_owernships, class_name: "Group"
+  has_many :owned_groups, through: :group_ownerships, source: :group
   has_many :assignments
   has_many :access_tokens
   has_many :social_access_tokens
