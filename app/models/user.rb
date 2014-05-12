@@ -21,7 +21,10 @@ class User < ActiveRecord::Base
 
   before_validation :email_or_player_name, :on => :create
   validates :player_name, presence: true, uniqueness: {case_sensitive: false}
+  validates :email, presence: true, uniqueness: true
 
+  has_many :group_ownerships
+  has_many :groups, through: :group_owernships, class_name: "Group"
   has_many :assignments
   has_many :access_tokens
   has_many :social_access_tokens
@@ -411,16 +414,13 @@ class User < ActiveRecord::Base
     end
   end
 
-  def set_default_teacher_status
-    puts self.to_yaml
-    self.teacher_status = :accepted
-  end
-
   def email_or_player_name
-    if self.email.blank? && self.player_name.present?
-      self.email = self.player_name + "@stu.de.nt"
-    elsif self.player_name.blank? && self.email.present? && self.email.match("@")
-      self.player_name = self.email.split("@").first
+    unless self.teacher_status
+      if self.email.blank? && self.player_name.present?
+        self.email = self.player_name + "@stu.de.nt"
+      elsif self.player_name.blank? && self.email.present? && self.email.match("@")
+        self.player_name = self.email.split("@").first
+      end
     end
   end
 

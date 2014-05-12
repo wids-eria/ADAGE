@@ -6,7 +6,7 @@
       = f.text_field :player_name, class: 'floatright', placeholder: 'Player Name'
     .field_container
       = f.label :email, 'Email', class: 'floatleft'
-      = f.text_field :email, class: 'floatright', placeholder: '(OPTIONAL)'
+      = f.text_field :email, class: 'floatright', placeholder: 'Optional (required for teachers)'
     .field_container
       = f.label :password, class: 'floatleft'
       = f.password_field :password, class: 'floatright', placeholder: 'Password'
@@ -14,8 +14,8 @@
       = f.label :password_confirmation, 'Confirm', class: 'floatleft'
       = f.password_field :password_confirmation, class: 'floatright', placeholder: 'Password Confirmation'
     .field_container
-      = f.label :teacher_status_cd, 'Teacher?', class: 'floatleft'
-      = f.check_box :teacher_status_cd
+      = f.label :teacher_status_cd, 'Are you a teacher?', class: 'floatleft'
+      = f.check_box :teacher_status_cd,class: 'floatright'
     .field_container_remember_me
       = f.submit "Sign up", class: 'sign_in_button floatright'
 
