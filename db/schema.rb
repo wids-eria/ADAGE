@@ -13,30 +13,20 @@
 
 ActiveRecord::Schema.define(:version => 20140509211600) do
 
-  create_table "access_tokens", :force => true do |t|
-    t.string   "consumer_token"
-    t.string   "consumer_secret"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
-    t.integer  "user_id"
-    t.integer  "client_id"
+  create_table "games", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
-  add_index "access_tokens", ["client_id"], :name => "fk__access_tokens_client_id"
-  add_index "access_tokens", ["user_id"], :name => "fk__access_tokens_user_id"
-
-  create_table "assignments", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "role_id"
-    t.datetime "disabled_at"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.integer  "assigner_id"
+  create_table "implementations", :force => true do |t|
+    t.string   "name"
+    t.integer  "game_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.index ["game_id"], :name => "fk__implementations_game_id"
+    t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_implementations_game_id"
   end
-
-  add_index "assignments", ["assigner_id"], :name => "fk__assignments_assigner_id"
-  add_index "assignments", ["role_id"], :name => "fk__assignments_role_id"
-  add_index "assignments", ["user_id"], :name => "fk__assignments_user_id"
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -45,77 +35,9 @@ ActiveRecord::Schema.define(:version => 20140509211600) do
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
     t.integer  "implementation_id"
+    t.index ["implementation_id"], :name => "fk__clients_implementation_id"
+    t.foreign_key ["implementation_id"], "implementations", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_clients_implementation_id"
   end
-
-  add_index "clients", ["implementation_id"], :name => "fk__clients_implementation_id"
-
-  create_table "games", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  create_table "groupownerships", :force => true do |t|
-    t.integer "groupownerships_id"
-    t.integer "user_id"
-    t.integer "group_id"
-  end
-
-  create_table "groups", :force => true do |t|
-    t.string   "code"
-    t.string   "name"
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
-    t.boolean  "playsquad",  :default => true
-  end
-
-  create_table "groups_users", :id => false, :force => true do |t|
-    t.integer "group_id"
-    t.integer "user_id"
-  end
-
-  add_index "groups_users", ["group_id"], :name => "fk__groups_users_group_id"
-  add_index "groups_users", ["user_id"], :name => "fk__groups_users_user_id"
-
-  create_table "implementations", :force => true do |t|
-    t.string   "name"
-    t.integer  "game_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "implementations", ["game_id"], :name => "fk__implementations_game_id"
-
-  create_table "roles", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-    t.string   "type"
-    t.integer  "game_id"
-  end
-
-  add_index "roles", ["game_id"], :name => "fk__roles_game_id"
-
-  create_table "roles_users", :id => false, :force => true do |t|
-    t.integer "role_id"
-    t.integer "user_id"
-  end
-
-  add_index "roles_users", ["role_id"], :name => "fk__roles_users_role_id"
-  add_index "roles_users", ["user_id"], :name => "fk__roles_users_user_id"
-
-  create_table "social_access_tokens", :force => true do |t|
-    t.string   "uid"
-    t.string   "provider"
-    t.string   "access_token"
-    t.datetime "expired_at"
-    t.integer  "user_id"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
-  end
-
-  add_index "social_access_tokens", ["user_id"], :name => "fk__social_access_tokens_user_id"
-  add_index "social_access_tokens", ["user_id"], :name => "index_social_access_tokens_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "",    :null => false
@@ -137,10 +59,96 @@ ActiveRecord::Schema.define(:version => 20140509211600) do
     t.string   "player_name",                           :default => ""
     t.boolean  "guest",                                 :default => false
     t.integer  "teacher_status_cd"
+    t.index ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
+    t.index ["email"], :name => "index_users_on_email", :unique => true
+    t.index ["player_name"], :name => "index_users_on_player_name", :unique => true, :case_sensitive => false
+    t.index ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   end
 
-  add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
-  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
-  add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+  create_table "access_tokens", :force => true do |t|
+    t.string   "consumer_token"
+    t.string   "consumer_secret"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.integer  "user_id"
+    t.integer  "client_id"
+    t.index ["client_id"], :name => "fk__access_tokens_client_id"
+    t.index ["user_id"], :name => "fk__access_tokens_user_id"
+    t.foreign_key ["client_id"], "clients", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_access_tokens_client_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_access_tokens_user_id"
+  end
+
+  create_table "roles", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "type"
+    t.integer  "game_id"
+    t.index ["game_id"], :name => "fk__roles_game_id"
+    t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_roles_game_id"
+  end
+
+  create_table "assignments", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "role_id"
+    t.datetime "disabled_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.integer  "assigner_id"
+    t.index ["assigner_id"], :name => "fk__assignments_assigner_id"
+    t.index ["role_id"], :name => "fk__assignments_role_id"
+    t.index ["user_id"], :name => "fk__assignments_user_id"
+    t.foreign_key ["assigner_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_assigner_id"
+    t.foreign_key ["role_id"], "roles", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_role_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_user_id"
+  end
+
+  create_table "groups", :force => true do |t|
+    t.string   "code"
+    t.string   "name"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+    t.boolean  "playsquad",  :default => true
+  end
+
+  create_table "group_ownerships", :force => true do |t|
+    t.integer "user_id"
+    t.integer "group_id"
+    t.index ["group_id"], :name => "fk__group_ownerships_group_id"
+    t.index ["user_id"], :name => "fk__group_ownerships_user_id"
+    t.foreign_key ["group_id"], "groups", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_group_ownerships_group_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_group_ownerships_user_id"
+  end
+
+  create_table "groups_users", :id => false, :force => true do |t|
+    t.integer "group_id"
+    t.integer "user_id"
+    t.index ["group_id"], :name => "fk__groups_users_group_id"
+    t.index ["user_id"], :name => "fk__groups_users_user_id"
+    t.foreign_key ["group_id"], "groups", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_groups_users_group_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_groups_users_user_id"
+  end
+
+  create_table "roles_users", :id => false, :force => true do |t|
+    t.integer "role_id"
+    t.integer "user_id"
+    t.index ["role_id"], :name => "fk__roles_users_role_id"
+    t.index ["user_id"], :name => "fk__roles_users_user_id"
+    t.foreign_key ["role_id"], "roles", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_roles_users_role_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_roles_users_user_id"
+  end
+
+  create_table "social_access_tokens", :force => true do |t|
+    t.string   "uid"
+    t.string   "provider"
+    t.string   "access_token"
+    t.datetime "expired_at"
+    t.integer  "user_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.index ["user_id"], :name => "fk__social_access_tokens_user_id"
+    t.index ["user_id"], :name => "index_social_access_tokens_on_user_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_social_access_tokens_user_id"
+  end
 
 end
