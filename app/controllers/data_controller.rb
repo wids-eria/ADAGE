@@ -275,7 +275,8 @@ class DataController < ApplicationController
         end
       end 
       
-      @chart_info = @data_group.to_chart_js
+      @chart_info = @data_group.to_rickshaw
+      puts @chart_info.to_json
       respond_to do |format|
         format.json {render :json => @chart_info.to_json}
         format.html {render}

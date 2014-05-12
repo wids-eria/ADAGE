@@ -13,10 +13,11 @@ class DataGroup
     end
   end
 
-  def add_to_group data_hash, user
+  def add_to_group data_hash, user, color="rgba(0,0,0,1)"
     data_series = DataSeries.new
     data_series.player_name = user.player_name
     data_series.user_id = user.id
+    data_series.color = color
     data_series.data = data_hash
     self.series << data_series
   end
@@ -49,6 +50,31 @@ class DataGroup
       return chart_js_blob
 
 
+  end
+
+  def to_rickshaw
+
+    rickshaw_blob = Array.new
+    
+    self.series.each do |data_hash|
+      series_hash = Hash.new
+      data_series = Array.new
+      rand = Random.new(data_hash.user_id)
+      count = 0
+      data_hash.data.keys.sort
+      data_hash.data.each do |key, value|
+        data_series << {x: Time.at(key.to_i).to_i/1000, y: value} 
+        count = count + 1
+      end
+      series_hash[:data] = data_series
+      #series_hash[:color] = data_hash.color
+      series_hash[:color] =  "rgba(" + (rand.rand(0...220)).to_s + ", 220,"  + (rand.rand(0...220)).to_s +  ",1.0)"
+      series_hash[:name] = data_hash.player_name
+      rickshaw_blob << series_hash
+
+    end
+    
+    return rickshaw_blob
   end
 
   def to_csv
