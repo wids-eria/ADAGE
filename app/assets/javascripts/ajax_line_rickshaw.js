@@ -2,7 +2,7 @@
 $(document).ready(function () {
 
   
- /* var graph = new Rickshaw.Graph.Ajax( {
+  var graph = new Rickshaw.Graph.Ajax( {
     element: document.getElementById("chart"),
     width: 1000,
     height: 500,
@@ -26,14 +26,14 @@ $(document).ready(function () {
       yAxis.render();
     }
 
-  } );*/
+  } );
 
   
 
   
 
 
-  fetchData();
+  //fetchData();
 
     
 
@@ -46,7 +46,7 @@ $(document).ready(function () {
       element: document.getElementById("chart"),
       width: 1000,
       height: 500,
-      renderer: 'scatterplot',
+      renderer: 'line',
       series: series 
 
     } );
@@ -65,7 +65,7 @@ $(document).ready(function () {
 
 
    
-    graph.render(); 
+    graph.render();
 
         
 
