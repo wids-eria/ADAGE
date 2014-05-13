@@ -2,7 +2,7 @@
 $(document).ready(function () {
 
   
-  var graph = new Rickshaw.Graph.Ajax( {
+ /* var graph = new Rickshaw.Graph.Ajax( {
     element: document.getElementById("chart"),
     width: 1000,
     height: 500,
@@ -26,14 +26,14 @@ $(document).ready(function () {
       yAxis.render();
     }
 
-  } );
+  } );*/
 
   
 
   
 
 
-  //fetchData();
+  fetchData();
 
     
 
@@ -41,9 +41,30 @@ $(document).ready(function () {
 
     // Load all the data in one pass; if we only got partial
     // data we could merge it with what we already have.
+    
+    var graph = new Rickshaw.Graph( {
+      element: document.getElementById("chart"),
+      width: 1000,
+      height: 500,
+      renderer: 'scatterplot',
+      series: series 
+
+    } );
+    
+    var xAxis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+
+    var yAxis = new Rickshaw.Graph.Axis.Y({
+          graph: graph,
+      });
+
+    xAxis.render();
+
+    yAxis.render();
+
+
+
+
    
-    graph.series = series;
-    console.log(series);
     graph.render(); 
 
         
@@ -59,7 +80,7 @@ $(document).ready(function () {
       success: onDataReceived
     });
 
-    setTimeout(fetchData, 1000);
+    //setTimeout(fetchData, 1000);
   }
 
 });
