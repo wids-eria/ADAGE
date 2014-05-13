@@ -2,6 +2,8 @@
 $(document).ready(function () {
 
   
+  
+  var xAxis, yAxis, legend;
   var graph = new Rickshaw.Graph.Ajax( {
     element: document.getElementById("chart"),
     width: 1000,
@@ -15,72 +17,37 @@ $(document).ready(function () {
   	},
   	onComplete: function(transport) {
   	  var graph = transport.graph;
-  	  var yAxis = new Rickshaw.Graph.Axis.Y({
+      
+      if(!yAxis)
+      {
+        yAxis = new Rickshaw.Graph.Axis.Y({
           graph: graph,
-      });
+        });
+        yAxis.render();
+      }
 
-      var xAxis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+      if(!xAxis)
+      {
+        xAxis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+        xAxis.render();
+      }
 
-      xAxis.render();
 
-      yAxis.render();
+
     }
 
   } );
 
+    
+  refreshGraph();
+
   
-
-  
-
-
-  //fetchData();
-
-    
-
-  function onDataReceived(series) {
-
-    // Load all the data in one pass; if we only got partial
-    // data we could merge it with what we already have.
-    
-    var graph = new Rickshaw.Graph( {
-      element: document.getElementById("chart"),
-      width: 1000,
-      height: 500,
-      renderer: 'line',
-      series: series 
-
-    } );
-    
-    var xAxis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
-
-    var yAxis = new Rickshaw.Graph.Axis.Y({
-          graph: graph,
-      });
-
-    xAxis.render();
-
-    yAxis.render();
-
-
-
-
-   
-    graph.render();
-
-        
+  function refreshGraph() {
+    graph.request();
+    setTimeout(refreshGraph, 1000);
 
   }
+  
 
-
-  function fetchData() {
-    $.ajax({
-      url: url,
-      type: "GET",
-      dataType: "json",
-      success: onDataReceived
-    });
-
-    //setTimeout(fetchData, 1000);
-  }
-
+ 
 });
