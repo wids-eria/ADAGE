@@ -35,8 +35,7 @@ $(document).ready(function () {
         }
         xAxis = new Rickshaw.Graph.Axis.X( { 
           graph: graph,
-          orientation: 'top',
-          tickFormat: format
+          //tickFormat: format
         } );
         xAxis.render();
       }

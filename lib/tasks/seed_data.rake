@@ -203,7 +203,7 @@ namespace :seed_data do
 
         if data.key.include?('FGQuestEnd')
           data.success = success[rand.rand(0...success.count)]
-          data.health = rand.rand(0...20)
+          data.health = rand.rand(4...20)
         end
         data.save
      end
