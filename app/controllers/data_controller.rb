@@ -272,7 +272,6 @@ class DataController < ApplicationController
 
       @data_group = DataGroup.new
       logs.each do |l|
-        puts l.inspect
         @user = User.find(l["_id"].to_i)
         if l["value"] != nil
           @data_group.add_to_group(l["value"], @user)
@@ -280,7 +279,6 @@ class DataController < ApplicationController
       end 
       
       @chart_info = @data_group.to_rickshaw
-      puts @chart_info.to_json
       respond_to do |format|
         format.json {render :json => @chart_info.to_json}
         format.html {render}

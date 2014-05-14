@@ -63,7 +63,7 @@ class DataGroup
       count = 0
       data_hash.data.keys.sort
       data_hash.data.each do |key, value|
-        data_series << {x: key.to_i/1000, y: value} 
+        data_series << {x: key.to_i, y: value} 
         count = count + 1
       end
       series_hash[:data] = data_series

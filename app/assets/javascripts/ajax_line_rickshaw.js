@@ -9,11 +9,9 @@ $(document).ready(function () {
     width: 1000,
     height: 500,
     renderer: 'line',
-    interpolation: 'basis',
     dataURL: url,
 
     onData: function(d) {
-  	  Rickshaw.Series.zeroFill(d);
   	  return d;
   	},
   	onComplete: function(transport) {
@@ -34,9 +32,9 @@ $(document).ready(function () {
           d = new Date(d)
           return d3.time.format("%b %e %I:%M")(d)
         }
-        xAxis = new Rickshaw.Graph.Axis.Time( { 
+        xAxis = new Rickshaw.Graph.Axis.X( { 
           graph: graph,
-          //tickFormat: format
+          tickFormat: format,
         } );
         xAxis.render();
       }
