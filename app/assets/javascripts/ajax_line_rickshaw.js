@@ -9,6 +9,7 @@ $(document).ready(function () {
     width: 1000,
     height: 500,
     renderer: 'line',
+    interpolation: 'basis',
     dataURL: url,
 
     onData: function(d) {
