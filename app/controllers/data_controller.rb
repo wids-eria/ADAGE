@@ -222,30 +222,31 @@ class DataController < ApplicationController
     if client != nil
       @game_version = client.app_token
       @game_name = client.implementation.game.name
-      since = time_range_to_epoch(params[:time_range])
-      
-    
-      @user_ids = Array.new 
-      unless params[:game_id].nil? or params[:game_id].empty? 
-        @user_ids = AdaData.with_game(@game_name).where(game_id: params[:game_id]).distinct(:user_id)
+      unless params[:time_range].nil? or params[:time_range].empty?
+        since = time_range_to_epoch(params[:time_range])
+      else
+        since = time_range_to_epoch('all') 
       end
+    
 
       map = %Q{
         function(){
-          var key = {user_id: this.user_id};
-          var data = {field: this[field_name], timestamp: parseInt(this.timestamp)};
-          emit(key,data);
+          var data = {};
+          data[this.timestamp] = this[field_name];
+          emit(this.user_id,data);
         }
       }
 
       reduce = %Q{
+
         function(key,values){
-          var results = {bins: {}};
+          var results = {};
 
           values.forEach(function(value){
-            
-            results.bins[value.timestamp] = value.field;
-            
+           
+            for(var k in value) { 
+              results[k] =  value[k];
+            }            
 
           });
 
@@ -257,10 +258,11 @@ class DataController < ApplicationController
       current_milliseconds = (Time.now.to_f * 1000).to_i
       scope = {since: since.to_i, field_name: params[:field_name]}
      
-      if @user_ids.count > 0
-        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: @user_ids ).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
-      elsif params[:game_id] != nil
-        first_time = AdaData.where(game_id: game_id).asc(:timestamp).first.timestamp
+      unless params[:game_id].nil? or params[:game_id].empty?
+        first_time = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).first.timestamp
+        puts 'first time: ' + first_time
+        puts params[:game_id]
+        puts AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id], key: params[:key]).where(:timestamp.gt => first_time).distinct(:timestamp).inspect
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => first_time ).map_reduce(map,reduce).out(inline:1).scope(scope)
       else
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
@@ -270,9 +272,10 @@ class DataController < ApplicationController
 
       @data_group = DataGroup.new
       logs.each do |l|
-        @user = User.find(l["_id"]["user_id"].to_i)
-        if l["value"]["bins"] != nil
-          @data_group.add_to_group(l["value"]["bins"], @user)
+        puts l.inspect
+        @user = User.find(l["_id"].to_i)
+        if l["value"] != nil
+          @data_group.add_to_group(l["value"], @user)
         end
       end 
       

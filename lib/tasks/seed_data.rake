@@ -112,6 +112,7 @@ namespace :seed_data do
 
   end
 
+  desc 'Creates fake electric eel data from a fake game so we can test data tools locally'
   task :create_ee => :environment do
 
     rand = Random.new(Time.now.to_i)
@@ -145,7 +146,7 @@ namespace :seed_data do
     adage_base = {'application_name' => 'Fake Game',
                  'application_version' => client_token,
                  'adage_version' => 'electric_eel',
-                 'timestamp' => Time.now.to_i,
+                 'timestamp' => Time.now.to_i.to_s,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEGameEvent', 'ADAGEPlayerEvent'],
                  'key' => 'FGPlayerEvent',
@@ -158,7 +159,7 @@ namespace :seed_data do
     adage_start = {'application_name' => 'Fake Game',
                  'application_version' => client_token,
                  'adage_version' => 'electric_eel',
-                 'timestamp' => Time.now.to_i,
+                 'timestamp' => Time.now.to_i.to_s,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEContext', 'ADAGEContextStart'],
                  'key' => 'FGQuestStart',
@@ -172,7 +173,7 @@ namespace :seed_data do
     adage_end = {'application_name' => 'Fake Game',
                  'application_version' => client_token,
                  'adage_version' => 'electric_eel',
-                 'timestamp' => Time.now.to_i,
+                 'timestamp' => Time.now.to_i.to_s,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEContext', 'ADAGEContextEnd'],
                  'key' => 'FGQuestEnd',
