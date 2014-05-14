@@ -33,7 +33,7 @@ $(document).ready(function () {
           d = new Date(d)
           return d3.time.format("%b %e %I:%M")(d)
         }
-        xAxis = new Rickshaw.Graph.Axis.X( { 
+        xAxis = new Rickshaw.Graph.Axis.Time( { 
           graph: graph,
           //tickFormat: format
         } );
