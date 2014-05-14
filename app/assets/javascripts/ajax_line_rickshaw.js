@@ -28,7 +28,16 @@ $(document).ready(function () {
 
       if(!xAxis)
       {
-        xAxis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+        var local =  new Rickshaw.Fixtures.Time();
+        var format = function(d) {
+          d = new Date(d)
+          return d3.time.format("%b %e %I:%M")(d)
+        }
+        xAxis = new Rickshaw.Graph.Axis.X( { 
+          graph: graph,
+          orientation: 'top',
+          tickFormat: format
+        } );
         xAxis.render();
       }
 
@@ -36,7 +45,7 @@ $(document).ready(function () {
       {
         legend = new Rickshaw.Graph.Legend({
           graph: graph,
-          element: document.getElementById('legend')
+          element: document.getElementById('legend'),
         });
         legend.render();
 
