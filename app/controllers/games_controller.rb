@@ -10,6 +10,8 @@ class GamesController < ApplicationController
 
     @log_count = AdaData.with_game(@game.name).only(:_id).size
     @num_users = AdaData.with_game(@game.name).only(:user_id).distinct(:user_id).size
+
+     session[:graph_params] = nil
   end
 
 
