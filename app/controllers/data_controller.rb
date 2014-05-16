@@ -112,6 +112,28 @@ class DataController < ApplicationController
 
   end
 
+  def get_game_ids
+    
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client != nil
+
+      since = time_range_to_epoc(params[:time_range])
+      game_name = client.implementation.game.name
+
+      @game_ids = AdaData.with_game(game_name).where(:timestamp.gt => since).distinct(:game_id)
+
+    end
+
+    @results = Hash.new
+    @results['data'] = @game_ids
+    respond_with @game_ids
+
+
+  end
+
   def data_selection
     
     

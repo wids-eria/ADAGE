@@ -10,6 +10,8 @@
 
 = link_to 'Game Statistics', statistics_game_path(@game)
 %br
+= link_to 'Graph-a-tron 2000!', select_graph_game_path(@game)
+%br
 
 - if current_user.role?(@game.developer_role) || current_user.admin?
   %h3 Developers
