@@ -342,7 +342,7 @@ class DataController < ApplicationController
 
       start_time = Time.at(start_time).to_i
       end_time = Time.at(end_time).to_i
-      minutes = (end_time - start_time)/1.minute.round
+      minutes = (end_time - start_time)/60000
       session_time[log_user][start_time] = minutes
 
       total_session_length += minutes
