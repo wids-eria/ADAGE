@@ -28,10 +28,17 @@ $(document).ready(function () {
 
       if(!xAxis)
       {
-        var local =  new Rickshaw.Fixtures.Time();
         var format = function(d) {
-          d = new Date(d)
-          return d3.time.format("%b %e %I:%M")(d)
+          if(d > 100000000) 
+          {
+            d = new Date(d);
+            return d3.time.format("%b %e %I:%M")(d);
+          }
+          else
+          {
+            return d;
+          }
+            
         }
         xAxis = new Rickshaw.Graph.Axis.X( { 
           graph: graph,

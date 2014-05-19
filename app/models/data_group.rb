@@ -74,7 +74,12 @@ class DataGroup
               end
             end
 
-          data_series << {x: key.to_i, y: adjusted.to_f} 
+          if data_hash.type.include?('line')
+            data_series << {x: key.to_i, y: adjusted.to_f} 
+          else
+            data_series << {x: count, y: adjusted.to_f} 
+          end
+
           count = count + 1
         end
       end
