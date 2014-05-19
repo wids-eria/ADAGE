@@ -13,11 +13,13 @@ class DataGroup
     end
   end
 
-  def add_to_group data_hash, user, color="rgba(0,0,0,1)"
-    data_series = DataSeries.new
+  def add_to_group data_hash, user, type='line', color=nil
+    data_series = DataSeries.new(user_id: user.id)
     data_series.player_name = user.player_name
-    data_series.user_id = user.id
-    data_series.color = color
+    if color != nil
+      data_series.color = color
+    end
+    data_series.type = type
     data_series.data = data_hash
     self.series << data_series
   end
@@ -33,13 +35,12 @@ class DataGroup
       labels = labels.uniq.sort!
 
       self.series.each do |data_hash|
-        rand = Random.new(data_hash.user_id)
         data_series = Array.new
         data_hash.data.each do |key, value|
           data_series[labels.index(key)] = value.to_s.to_i
         end
         datasets << {
-        strokeColor: "rgba(" + (rand.rand(0...220)).to_s + ", 220,"  + (rand.rand(0...220)).to_s +  ",1.0)",
+        strokeColor: data_hash.color,
         fillColor: "rgba(0,0,0,.1)",
         data: data_series}
       end
@@ -55,20 +56,31 @@ class DataGroup
   def to_rickshaw
 
     rickshaw_blob = Array.new
+
+    puts self.series.inspect
     
     self.series.each do |data_hash|
       series_hash = Hash.new
       data_series = Array.new
-      rand = Random.new(data_hash.user_id)
       count = 0
-      data_hash.data.keys.sort
-      data_hash.data.each do |key, value|
-        data_series << {x: key.to_i, y: value.to_f} 
-        count = count + 1
+      data_hash.data.sort.map do |key, value|
+        unless value.is_a? String
+            adjusted = value
+            if value.is_a? Boolean
+              if value
+                adjusted = 1
+              else
+                adjusted = 0
+              end
+            end
+
+          data_series << {x: key.to_i, y: adjusted.to_f} 
+          count = count + 1
+        end
       end
       series_hash[:data] = data_series
-      #series_hash[:color] = data_hash.color
-      series_hash[:color] =  "rgba(" + (rand.rand(0...220)).to_s + ", 220,"  + (rand.rand(0...220)).to_s +  ",1.0)"
+      series_hash[:color] = data_hash.color
+      series_hash[:renderer] = data_hash.type
       series_hash[:name] = data_hash.player_name
       rickshaw_blob << series_hash
 

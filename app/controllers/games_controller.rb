@@ -62,6 +62,8 @@ class GamesController < ApplicationController
 
     @implementations = @game.implementations
     @ranges = ['hour','day','week','month','all']
+    @graph_types = ['value over time', 'session times']
+    
 
     if session[:graph_params].nil?
       session[:graph_params] = GraphParams.new
@@ -75,6 +77,10 @@ class GamesController < ApplicationController
 
     if params[:app_token] != nil
       @graph_params.app_token = params[:app_token]
+    end
+
+    if params[:graph_type] != nil
+      @graph_params.graph_type = params[:graph_type]
     end
 
     if params[:time_range] != nil
@@ -97,9 +103,9 @@ class GamesController < ApplicationController
     @fields = Array.new
     @game_ids = Array.new
     if @graph_params.app_token != nil 
-    
+
       
-      @url = '/data/field_values.json?app_token='+@graph_params.app_token
+      @url = @graph_params.url_prefix+'app_token='+@graph_params.app_token
       
       if @graph_params.time_range == nil
         @graph_params.time_range = 'hour'

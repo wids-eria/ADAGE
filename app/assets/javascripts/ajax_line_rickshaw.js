@@ -8,7 +8,8 @@ $(document).ready(function () {
     element: document.getElementById("chart"),
     width: 1000,
     height: 500,
-    renderer: 'line',
+    renderer: 'multi',
+    stack: false,
     dataURL: url,
 
     onData: function(d) {
