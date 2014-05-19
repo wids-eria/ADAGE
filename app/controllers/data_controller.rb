@@ -272,10 +272,16 @@ class DataController < ApplicationController
     @game = client.implementation.game
     
     @user_ids = params[:user_ids]
-    if params[:game_id] != nil
+    unless params[:game_id].nil? or params[:game_id].empty?
       @user_ids = AdaData.with_game(@game.name).where(game_id: params[:game_id]).distinct(:user_id).uniq
     end
 
+    if params[:time_range] != nil
+      since = time_range_to_epoch(params[:time_range])
+      if @user_ids.nil?
+        @user_ids = AdaData.with_game(@game.name).where(:timestamp.gt => since).distinct(:user_id).uniq
+      end
+    end
     
     @users = User.where(id: @user_ids).order(:id)
 
