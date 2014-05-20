@@ -122,7 +122,7 @@ class DataController < ApplicationController
 
       since = time_range_to_epoch(params[:time_range])
       game_name = client.implementation.game.name
-
+      
       @game_ids = AdaData.with_game(game_name).where(:timestamp.gt => since).distinct(:game_id)
 
     end
