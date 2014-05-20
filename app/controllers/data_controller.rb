@@ -120,7 +120,7 @@ class DataController < ApplicationController
 
     if client != nil
 
-      since = time_range_to_epoc(params[:time_range])
+      since = time_range_to_epoch(params[:time_range])
       game_name = client.implementation.game.name
 
       @game_ids = AdaData.with_game(game_name).where(:timestamp.gt => since).distinct(:game_id)
@@ -171,6 +171,12 @@ class DataController < ApplicationController
 
   def real_time_chart
     @url = params[:url]
+    @graph_params = session[:graph_params]
+
+    if @graph_params.graph_type.include?('value over time')
+      @title = @graph_params.key + " : " + @graph_params.field_name + " over time" 
+    end
+
   end
 
 
@@ -223,9 +229,6 @@ class DataController < ApplicationController
      
       unless params[:game_id].nil? or params[:game_id].empty?
         first_time = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).first.timestamp
-        puts 'first time: ' + first_time
-        puts params[:game_id]
-        puts AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id], key: params[:key]).where(:timestamp.gt => first_time).distinct(:timestamp).inspect
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => first_time ).map_reduce(map,reduce).out(inline:1).scope(scope)
       else
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
