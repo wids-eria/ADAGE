@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131018184315) do
+ActiveRecord::Schema.define(:version => 20140509211600) do
 
   create_table "games", :force => true do |t|
     t.string   "name"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.integer  "game_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.index ["game_id"], :name => "fk__implementations_game_id", :order => {"game_id" => :asc}
+    t.index ["game_id"], :name => "fk__implementations_game_id"
     t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_implementations_game_id"
   end
 
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
     t.integer  "implementation_id"
-    t.index ["implementation_id"], :name => "fk__clients_implementation_id", :order => {"implementation_id" => :asc}
+    t.index ["implementation_id"], :name => "fk__clients_implementation_id"
     t.foreign_key ["implementation_id"], "implementations", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_clients_implementation_id"
   end
 
@@ -58,10 +58,11 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.boolean  "control_group"
     t.string   "player_name",                           :default => ""
     t.boolean  "guest",                                 :default => false
-    t.index ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true, :order => {"authentication_token" => :asc}
-    t.index ["email"], :name => "index_users_on_email", :unique => true, :order => {"email" => :asc}
-    t.index ["player_name"], :name => "index_users_on_player_name", :unique => true, :case_sensitive => false, :order => {"player_name" => :asc}
-    t.index ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true, :order => {"reset_password_token" => :asc}
+    t.integer  "teacher_status_cd"
+    t.index ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
+    t.index ["email"], :name => "index_users_on_email", :unique => true
+    t.index ["player_name"], :name => "index_users_on_player_name", :unique => true, :case_sensitive => false
+    t.index ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   end
 
   create_table "access_tokens", :force => true do |t|
@@ -71,8 +72,8 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.datetime "updated_at",      :null => false
     t.integer  "user_id"
     t.integer  "client_id"
-    t.index ["client_id"], :name => "fk__access_tokens_client_id", :order => {"client_id" => :asc}
-    t.index ["user_id"], :name => "fk__access_tokens_user_id", :order => {"user_id" => :asc}
+    t.index ["client_id"], :name => "fk__access_tokens_client_id"
+    t.index ["user_id"], :name => "fk__access_tokens_user_id"
     t.foreign_key ["client_id"], "clients", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_access_tokens_client_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_access_tokens_user_id"
   end
@@ -83,7 +84,7 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.datetime "updated_at", :null => false
     t.string   "type"
     t.integer  "game_id"
-    t.index ["game_id"], :name => "fk__roles_game_id", :order => {"game_id" => :asc}
+    t.index ["game_id"], :name => "fk__roles_game_id"
     t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_roles_game_id"
   end
 
@@ -94,9 +95,9 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
     t.integer  "assigner_id"
-    t.index ["assigner_id"], :name => "fk__assignments_assigner_id", :order => {"assigner_id" => :asc}
-    t.index ["role_id"], :name => "fk__assignments_role_id", :order => {"role_id" => :asc}
-    t.index ["user_id"], :name => "fk__assignments_user_id", :order => {"user_id" => :asc}
+    t.index ["assigner_id"], :name => "fk__assignments_assigner_id"
+    t.index ["role_id"], :name => "fk__assignments_role_id"
+    t.index ["user_id"], :name => "fk__assignments_user_id"
     t.foreign_key ["assigner_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_assigner_id"
     t.foreign_key ["role_id"], "roles", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_role_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_user_id"
@@ -110,11 +111,20 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.boolean  "playsquad",  :default => true
   end
 
+  create_table "group_ownerships", :force => true do |t|
+    t.integer "user_id"
+    t.integer "group_id"
+    t.index ["group_id"], :name => "fk__group_ownerships_group_id"
+    t.index ["user_id"], :name => "fk__group_ownerships_user_id"
+    t.foreign_key ["group_id"], "groups", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_group_ownerships_group_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_group_ownerships_user_id"
+  end
+
   create_table "groups_users", :id => false, :force => true do |t|
     t.integer "group_id"
     t.integer "user_id"
-    t.index ["group_id"], :name => "fk__groups_users_group_id", :order => {"group_id" => :asc}
-    t.index ["user_id"], :name => "fk__groups_users_user_id", :order => {"user_id" => :asc}
+    t.index ["group_id"], :name => "fk__groups_users_group_id"
+    t.index ["user_id"], :name => "fk__groups_users_user_id"
     t.foreign_key ["group_id"], "groups", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_groups_users_group_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_groups_users_user_id"
   end
@@ -122,8 +132,8 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
   create_table "roles_users", :id => false, :force => true do |t|
     t.integer "role_id"
     t.integer "user_id"
-    t.index ["role_id"], :name => "fk__roles_users_role_id", :order => {"role_id" => :asc}
-    t.index ["user_id"], :name => "fk__roles_users_user_id", :order => {"user_id" => :asc}
+    t.index ["role_id"], :name => "fk__roles_users_role_id"
+    t.index ["user_id"], :name => "fk__roles_users_user_id"
     t.foreign_key ["role_id"], "roles", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_roles_users_role_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_roles_users_user_id"
   end
@@ -136,8 +146,8 @@ ActiveRecord::Schema.define(:version => 20131018184315) do
     t.integer  "user_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
-    t.index ["user_id"], :name => "fk__social_access_tokens_user_id", :order => {"user_id" => :asc}
-    t.index ["user_id"], :name => "index_social_access_tokens_on_user_id", :order => {"user_id" => :asc}
+    t.index ["user_id"], :name => "fk__social_access_tokens_user_id"
+    t.index ["user_id"], :name => "index_social_access_tokens_on_user_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_social_access_tokens_user_id"
   end
 

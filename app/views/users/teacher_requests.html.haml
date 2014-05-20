@@ -1,0 +1,37 @@
+:javascript
+  $(document).ready(function() {
+    $('#teachers').dynatable({
+      features:{
+        paginate: false,
+        recordCount: false
+      }
+    });
+  });
+
+%h1= 'Teacher Requests'
+
+.row
+  .span12
+    %table.table.table-striped#teachers
+      %thead
+        %tr
+          %th Player name
+          %th Email
+          %th Date Requested
+          %th Status
+      %tbody
+        - @teachers.each do |user|
+          %tr
+            %td
+              = user.player_name
+            %td
+              = user.email
+            %td
+              = Time.at(user.created_at.to_i).strftime("%b %-d")
+            %td
+              = user.teacher_status.capitalize
+
+              - if user.pending?
+                = link_to 'Accept', update_teacher_request_user_path(user, status: "accepted"),method: :put
+                |
+                = link_to 'Deny', update_teacher_request_user_path(user,status: "denied"), method: :put
