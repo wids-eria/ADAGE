@@ -112,6 +112,7 @@ namespace :seed_data do
 
   end
 
+  desc 'Creates fake electric eel data from a fake game so we can test data tools locally'
   task :create_ee => :environment do
 
     rand = Random.new(Time.now.to_i)
@@ -145,34 +146,34 @@ namespace :seed_data do
     adage_base = {'application_name' => 'Fake Game',
                  'application_version' => client_token,
                  'adage_version' => 'electric_eel',
-                 'timestamp' => Time.now.to_i,
+                 'timestamp' => Time.now.to_i.to_s,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEGameEvent', 'ADAGEPlayerEvent'],
                  'key' => 'FGPlayerEvent',
                  'ADAGEVirtualContext' => adage_vc,
                  'ADAGEPositionalContext' => adage_pc,
                  'user_id' => rand.rand(1..User.all.count),
-                 'game_id' => Time.now.to_s
+                 'game_id' => 'fake_game' 
                   }
 
     adage_start = {'application_name' => 'Fake Game',
                  'application_version' => client_token,
                  'adage_version' => 'electric_eel',
-                 'timestamp' => Time.now.to_i,
+                 'timestamp' => Time.now.to_i.to_s,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEContext', 'ADAGEContextStart'],
                  'key' => 'FGQuestStart',
                  'user_id' => 1,
                  'name' => 'Quest!',
                  'parent_name' => 'Mission',
-                 'game_id' => Time.now.to_s
+                 'game_id' => 'fake_game' 
 
                   }
 
     adage_end = {'application_name' => 'Fake Game',
                  'application_version' => client_token,
                  'adage_version' => 'electric_eel',
-                 'timestamp' => Time.now.to_i,
+                 'timestamp' => Time.now.to_i.to_s,
                  'session_token' => Time.now.to_s,
                  'ada_base_types' => ['ADAGEData', 'ADAGEContext', 'ADAGEContextEnd'],
                  'key' => 'FGQuestEnd',
@@ -181,7 +182,7 @@ namespace :seed_data do
                  'parent_name' => 'Mission',
                  'success' => true,
                  'health' => rand.rand(0..20),
-                 'game_id' => Time.now.to_s
+                 'game_id' => 'fake_game' 
                   }
 
 
@@ -195,13 +196,14 @@ namespace :seed_data do
         data.user_id = rand.rand(1..User.all.count)
         puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
-        data.timestamp = ((start_time + (1.minute * rand.rand(1..50))).to_i * 1000).to_s
+        data.timestamp = ((start_time + (1.minute * rand.rand(1..10000))).to_i * 1000).to_s
         if data.key.include?('FGQuest')
           data.name = quest_names[rand.rand(0...quest_names.count)]
         end
 
         if data.key.include?('FGQuestEnd')
           data.success = success[rand.rand(0...success.count)]
+          data.health = rand.rand(4...20)
         end
         data.save
      end

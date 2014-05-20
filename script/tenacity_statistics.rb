@@ -9,7 +9,7 @@ class Tplayer
 
   def run csv
 
-    minds = user.data.where(gameName: 'Tenacity-Meditation').asc(:timestamp)
+    minds = user.data.where(gameName: 'Tenacity-Meditation').without([:_id, :created_at, :updated_at]).asc(:timestamp)
     total_sessions = 0
     total_playtime = 0
     session_times = Hash.new

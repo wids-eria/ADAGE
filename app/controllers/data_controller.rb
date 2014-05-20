@@ -112,6 +112,28 @@ class DataController < ApplicationController
 
   end
 
+  def get_game_ids
+    
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client != nil
+
+      since = time_range_to_epoc(params[:time_range])
+      game_name = client.implementation.game.name
+
+      @game_ids = AdaData.with_game(game_name).where(:timestamp.gt => since).distinct(:game_id)
+
+    end
+
+    @results = Hash.new
+    @results['data'] = @game_ids
+    respond_with @game_ids
+
+
+  end
+
   def data_selection
     
     
@@ -151,65 +173,6 @@ class DataController < ApplicationController
     @url = params[:url]
   end
 
-  def real_time_selection
-    
-    
-    if params[:graph_params] != nil
-      @graph_params = GraphParams.new(params[:graph_params])
-    else
-      @graph_params = GraphParams.new
-    end
-
-    if params[:app_token] != nil
-      client = Client.where(app_token: params[:app_token]).first
-      @graph_params.app_token = params[:app_token]
-    else
-      puts @graph_params.app_token
-      client = Client.where(app_token: @graph_params.app_token).first
-    end
-
-    @keys = Array.new
-    @fields = Array.new
-    @game_ids = Array.new
-    if client != nil
-    
-      
-      @url = '/data/field_values.json?app_token='+@graph_params.app_token
-      
-      if @graph_params.time_range == nil
-        @graph_params.time_range = 'hour'
-      end
-      
-      @url = @url +'&time_range='+ @graph_params.time_range 
-      @game = client.implementation.game
-      @game_ids = AdaData.with_game(@game.name).where(:timestamp.gt => time_range_to_epoch(@graph_params.time_range)).distinct(:game_id)
-      
-
-      unless @graph_params.game_id.nil? or @graph_params.game_id.empty?
-        @url = @url + '&game_id=' + @graph_params.game_id
-      end
-      
-      @keys = AdaData.with_game(@game.name).distinct(:key)
-
-      if @graph_params.key != nil
-        
-        @url = @url + '&key=' + @graph_params.key
-
-        @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
-
-        if @graph_params.field_name != nil
-          @url = @url + '&field_name=' + @graph_params.field_name
-        end
-      end
-    
-    
-    end
-
-
-
-  end
-
-
 
   def field_values
     
@@ -222,30 +185,31 @@ class DataController < ApplicationController
     if client != nil
       @game_version = client.app_token
       @game_name = client.implementation.game.name
-      since = time_range_to_epoch(params[:time_range])
-      
-    
-      @user_ids = Array.new 
-      unless params[:game_id].nil? or params[:game_id].empty? 
-        @user_ids = AdaData.with_game(@game_name).where(game_id: params[:game_id]).distinct(:user_id)
+      unless params[:time_range].nil? or params[:time_range].empty?
+        since = time_range_to_epoch(params[:time_range])
+      else
+        since = time_range_to_epoch('all') 
       end
+    
 
       map = %Q{
         function(){
-          var key = {user_id: this.user_id};
-          var data = {field: this[field_name], timestamp: parseInt(this.timestamp)};
-          emit(key,data);
+          var data = {};
+          data[this.timestamp] = this[field_name];
+          emit(this.user_id,data);
         }
       }
 
       reduce = %Q{
+
         function(key,values){
-          var results = {bins: {}};
+          var results = {};
 
           values.forEach(function(value){
-            
-            results.bins[value.timestamp] = value.field;
-            
+           
+            for(var k in value) { 
+              results[k] =  value[k];
+            }            
 
           });
 
@@ -257,10 +221,12 @@ class DataController < ApplicationController
       current_milliseconds = (Time.now.to_f * 1000).to_i
       scope = {since: since.to_i, field_name: params[:field_name]}
      
-      if @user_ids.count > 0
-        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).in(user_id: @user_ids ).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
-      elsif params[:game_id] != nil
-        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
+      unless params[:game_id].nil? or params[:game_id].empty?
+        first_time = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).first.timestamp
+        puts 'first time: ' + first_time
+        puts params[:game_id]
+        puts AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id], key: params[:key]).where(:timestamp.gt => first_time).distinct(:timestamp).inspect
+        logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => first_time ).map_reduce(map,reduce).out(inline:1).scope(scope)
       else
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
       end
@@ -269,13 +235,13 @@ class DataController < ApplicationController
 
       @data_group = DataGroup.new
       logs.each do |l|
-        @user = User.find(l["_id"]["user_id"].to_i)
-        if l["value"]["bins"] != nil
-          @data_group.add_to_group(l["value"]["bins"], @user)
+        @user = User.find(l["_id"].to_i)
+        if l["value"] != nil
+          @data_group.add_to_group(l["value"], @user)
         end
       end 
       
-      @chart_info = @data_group.to_chart_js
+      @chart_info = @data_group.to_rickshaw
       respond_to do |format|
         format.json {render :json => @chart_info.to_json}
         format.html {render}
@@ -289,6 +255,120 @@ class DataController < ApplicationController
 
 
 
+  end
+
+
+  def session_times
+
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client.nil?
+      return
+    end
+
+
+    @game = client.implementation.game
+    
+    @user_ids = params[:user_ids]
+    unless params[:game_id].nil? or params[:game_id].empty?
+      @user_ids = AdaData.with_game(@game.name).where(game_id: params[:game_id]).distinct(:user_id).uniq
+    end
+
+    if params[:time_range] != nil
+      since = time_range_to_epoch(params[:time_range])
+      if @user_ids.nil?
+        @user_ids = AdaData.with_game(@game.name).where(:timestamp.gt => since).distinct(:user_id).uniq
+      end
+    end
+    
+    @users = User.where(id: @user_ids).order(:id)
+
+
+    map = %Q{
+      function(){
+        var key = {user_id: this.user_id,session: this.session_token};
+        var data = {start:this.timestamp,end:this.timestamp};
+        emit(key,data);
+      }
+    }
+
+    reduce = %Q{
+      function(key,values){
+        var results = {start: null,end:0};
+
+        values.forEach(function(value){
+            if(results.start == null) results.start = value.start;
+            results.end = value.end;
+        });
+
+        return results;
+      }
+    }
+
+    @data_group = DataGroup.new
+    @average_time = 0
+    @session_count = 0
+   
+    #check version and redirect to older api point is this is an older data spec. 
+    log = AdaData.with_game(@game.name).only(:_id,:adage_version).where(:adage_version.exists=>true).first
+
+    if log.nil?
+      redirect_to session_logs_data_path, :params => params, :game_id => @game.id
+      return
+    end
+
+    logs = AdaData.with_game(@game.name).order_by(:timestamp.asc).in(user_id: @user_ids).only(:timestamp,:user_id,:session_token).map_reduce(map,reduce).out(inline:1)
+
+    puts logs.count
+
+    sessions_played = 0
+    total_session_length = 0
+    last_user = -1
+    index = -1
+
+    session_time = Hash.new
+    logs.each do |log|
+      log_user = log["_id"]["user_id"].to_i
+      if(log_user != last_user)
+        #If the log is for a different user add to data_groups and initalize variables for the new user
+        session_time[log_user] = Hash.new
+        last_user = log_user
+        index += 1
+      end
+
+      start_time = log["value"]["start"]
+      end_time = log["value"]["end"]
+
+      if start_time.is_a? String
+        start_time = start_time.to_i
+        end_time = end_time.to_i
+      end
+
+      start_time = Time.at(start_time).to_i
+      end_time = Time.at(end_time).to_i
+      minutes = (end_time - start_time)/60000
+      session_time[log_user][start_time] = minutes
+
+      total_session_length += minutes
+      sessions_played += 1
+
+    end
+
+    @users.each do |u|
+       @data_group.add_to_group(session_time[u.id], u, 'bar')
+    end
+
+    @playtimes = @data_group.to_chart_js
+    @rickshaw = @data_group.to_rickshaw
+    respond_to do |format|
+      format.json {render :json => @rickshaw.to_json}
+      format.html {render}
+      format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
+    end
+
+  
   end
 
 
@@ -374,9 +454,9 @@ class DataController < ApplicationController
       @total_time = total_session_length
     end
     @playtimes = @data_group.to_chart_js
-
+    @rickshaw = @data_group.to_rickshaw
     respond_to do |format|
-      format.json {render :json => @data_group.to_json}
+      format.json {render :json => @rickshaw.to_json}
       format.html {render}
       format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
     end

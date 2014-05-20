@@ -10,6 +10,8 @@ class GamesController < ApplicationController
 
     @log_count = AdaData.with_game(@game.name).only(:_id).size
     @num_users = AdaData.with_game(@game.name).only(:user_id).distinct(:user_id).size
+
+     session[:graph_params] = nil
   end
 
 
@@ -54,21 +56,86 @@ class GamesController < ApplicationController
   end
 
 
-  def select_graph_params
+  def select_graph
+
     @game = Game.find(params[:id])
-    @data = AdaData.with_game(@game.name)
-    @types = @data.distinct(:key)
-    if params[:graph_params] != nil
-      @graph_params = GraphParams.new(params[:graph_params])
-    else
-      @graph_params = GraphParams.new
+
+    @implementations = @game.implementations
+    @ranges = ['hour','day','week','month','all']
+    @graph_types = ['value over time', 'session times']
+    
+
+    if session[:graph_params].nil?
+      session[:graph_params] = GraphParams.new
     end
 
-    @values = Array.new
-    if @graph_params.key != nil
-      @values = @data.where(key: @graph_params.key).last.attributes.keys
+    @graph_params = session[:graph_params]
+
+
+
+    puts @graph_params.app_token
+
+    if params[:app_token] != nil
+      @graph_params.app_token = params[:app_token]
     end
 
+    if params[:graph_type] != nil
+      @graph_params.graph_type = params[:graph_type]
+    end
+
+    if params[:time_range] != nil
+      @graph_params.time_range = params[:time_range]
+    end
+
+    if params[:game_id] != nil
+      @graph_params.game_id = params[:game_id] 
+    end
+
+    if params[:key] != nil
+      @graph_params.key = params[:key] 
+    end
+
+    if params[:field_name] != nil
+      @graph_params.field_name = params[:field_name] 
+    end
+
+    @keys = Array.new
+    @fields = Array.new
+    @game_ids = Array.new
+    if @graph_params.app_token != nil 
+
+      
+      @url = @graph_params.url_prefix+'app_token='+@graph_params.app_token
+      
+      if @graph_params.time_range == nil
+        @graph_params.time_range = 'hour'
+      end
+      
+      @url = @url +'&time_range='+ @graph_params.time_range 
+      @game_ids = AdaData.with_game(@game.name).where(:timestamp.gt => time_range_to_epoch(@graph_params.time_range)).distinct(:game_id)
+      
+
+      unless @graph_params.game_id.nil? or @graph_params.game_id.empty?
+        @url = @url + '&game_id=' + @graph_params.game_id
+      end
+      
+      @keys = AdaData.with_game(@game.name).distinct(:key)
+
+      if @graph_params.key != nil
+        
+        @url = @url + '&key=' + @graph_params.key
+
+        @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
+
+        if @graph_params.field_name != nil
+          @url = @url + '&field_name=' + @graph_params.field_name
+        end
+      end
+    
+    
+    end
+
+    session[:graph_params] = @graph_params
 
   end
 

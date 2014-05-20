@@ -32,7 +32,7 @@ Ada::Application.routes.draw do
   resources :games do
     member do
       post :search_users
-      get :select_graph_params
+      get :select_graph
       post :value_over_time
       get :statistics
       get :sessions
@@ -47,6 +47,7 @@ Ada::Application.routes.draw do
       get :find_tenacity_player
       get :data_by_version
       get :export
+      get :session_times
       get :session_logs
       get :context_logs
       get :get_events

@@ -7,8 +7,9 @@
 
 //= require jquery
 //= require jquery_ujs
-//= require rickshaw_with_d3
 //= require chart
 //= require jquery.dynatable
 //= require bootstrap
 //= require ICanHaz.min
+//= require d3.min
+//= require rickshaw
