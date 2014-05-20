@@ -2,7 +2,7 @@ Ada::Application.routes.draw do
   get "welcome/index"
   get "profile" => 'welcome#profile'
 
-  devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
+  devise_for :users, :controllers => { registrations: "registrations", :omniauth_callbacks => "users/omniauth_callbacks" }
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
   match "data/heatmap" => "data#heatmap"
@@ -19,7 +19,7 @@ Ada::Application.routes.draw do
 
   match "save_config" => "config#save", :via => :post
   match "load_config" => "config#load", :via => :get
-  match "show_config" => "config#show", :via => :get 
+  match "show_config" => "config#show", :via => :get
 
 
   match "game_version_data/save" => 'gv#save', :via => :post
@@ -70,6 +70,7 @@ Ada::Application.routes.draw do
       get :admin
       get :reset_password_form
       put :reset_password
+      get :teacher_requests
     end
     member do
       get :data_by_game
@@ -77,6 +78,7 @@ Ada::Application.routes.draw do
       get :session_logs
       get :context_logs
       get :get_key_values
+      put :update_teacher_request
     end
   end
 

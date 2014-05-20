@@ -96,7 +96,7 @@ class GamesController < ApplicationController
     end
 
     if params[:field_name] != nil
-      @graph_params.field_name = params[:field_name] 
+      @graph_params.field_name= params[:field_name] 
     end
 
     @keys = Array.new

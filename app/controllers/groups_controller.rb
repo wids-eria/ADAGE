@@ -67,4 +67,5 @@ class GroupsController < ApplicationController
       format.json {render json: {message: "Successfully added "+ count.to_s() +" new players.",users: @group.users},status: :ok}
     end
   end
+
 end
