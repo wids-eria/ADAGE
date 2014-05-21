@@ -237,11 +237,14 @@ class DataController < ApplicationController
 
       current_milliseconds = (Time.now.to_f * 1000).to_i
       scope = {since: since.to_i, field_names: JSON.parse(params[:field_names])}
+
+      type_of_graph = 'line'
      
       unless params[:game_id].nil? or params[:game_id].empty?
         first_time = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).first.timestamp
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => first_time ).map_reduce(map,reduce).out(inline:1).scope(scope)
       else
+        type_of_graph = 'bar'
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
       end
 
@@ -252,7 +255,7 @@ class DataController < ApplicationController
       logs.each do |l|
         @user = User.find(l["_id"].to_i)
         if l["value"] != nil
-          @data_group.add_to_group(l["value"], @user)
+          @data_group.add_to_group(l["value"], @user, type_of_graph)
         end
       end 
       
