@@ -54,16 +54,17 @@
       = link_to select_graph_game_path(@game, 'html' , key: key) do
         = key
 
-%br
-.row
-  - @fields.each do |name|
-    - if @graph_params.field_name == name 
-      - div_class = 'btn-success'
-    - else
-      - div_class = 'btn-default'
-    %div{class: 'btn ' + div_class} 
-      = link_to select_graph_game_path(@game, 'html' , field_name: name) do
-        = name
+- @fields.each do |depth, fields|
+  %br
+  .row
+    - fields.each do |name|
+      - if @graph_params.field_names[depth] == name 
+        - div_class = 'btn-success'
+      - else
+        - div_class = 'btn-default'
+      %div{class: 'btn ' + div_class} 
+        = link_to select_graph_game_path(@game, 'html' , field_name: name, field_depth: depth) do
+          = name
 
 
 %br

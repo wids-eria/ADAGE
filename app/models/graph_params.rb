@@ -3,11 +3,12 @@ class GraphParams
   include ActiveModel::Conversion
   extend  ActiveModel::Naming
 
-  attr_accessor :key, :field_name, :app_token, :time_range, :bin, :type, :game_id, :graph_type 
+  attr_accessor :key, :field_names, :app_token, :time_range, :bin, :type, :game_id, :graph_type 
 
   def initialize(attributes = {})
     self.time_range = 'hour'
     self.graph_type = 'value over time'
+    self.field_names = Array.new
     attributes.each do |name, value|
       send("#{name}=", value)
     end

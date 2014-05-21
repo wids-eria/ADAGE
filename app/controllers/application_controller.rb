@@ -38,6 +38,10 @@ class ApplicationController < ActionController::Base
   def time_range_to_epoch(time_range)
     since = time_range
 
+    if since == nil
+      since = 'all'
+    end
+
     if time_range.include?("hour")
       since = (Time.now - 1.hour).to_i * 1000
     end
@@ -88,6 +92,32 @@ class ApplicationController < ActionController::Base
     return since * 1000
 
   
+  end
+
+  #called recursively to collect all the graphable numeric field names
+  def add_field_names depth, attributes, field_hash, filter_hash
+   
+    if field_hash[depth] == nil
+      field_hash[depth] = Array.new
+    end
+
+    attributes.each do |key, value|
+    
+      if value.is_a? Hash
+        if filter_hash[depth] != nil and filter_hash[depth].include?(key)
+          field_hash = add_field_names(depth+1, value, field_hash, filter_hash)
+        end
+      end
+
+      unless value.is_a? String
+        field_hash[depth] << key
+      end
+
+    end
+    
+    return field_hash
+
+
   end
 
   

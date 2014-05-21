@@ -96,11 +96,13 @@ class GamesController < ApplicationController
     end
 
     if params[:field_name] != nil
-      @graph_params.field_name= params[:field_name] 
+      index = params[:field_depth].to_i
+      @graph_params.field_names[index] = params[:field_name] 
+      @graph_params.field_names = @graph_params.field_names.drop(@graph_params.field_names.count - (index+1))
     end
 
     @keys = Array.new
-    @fields = Array.new
+    @fields = Hash.new
     @game_ids = Array.new
     if @graph_params.app_token != nil 
 
@@ -125,10 +127,10 @@ class GamesController < ApplicationController
         
         @url = @url + '&key=' + @graph_params.key
 
-        @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
+        @fields = add_field_names(0, AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes, @fields, @graph_params.field_names)
 
-        if @graph_params.field_name != nil
-          @url = @url + '&field_name=' + @graph_params.field_name
+        if @graph_params.field_names != nil
+          @url = @url + '&field_names=' + @graph_params.field_names.to_json
         end
       end
     

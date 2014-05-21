@@ -174,7 +174,11 @@ class DataController < ApplicationController
     @graph_params = session[:graph_params]
 
     if @graph_params.graph_type.include?('value over time')
-      @title = @graph_params.key + " : " + @graph_params.field_name + " over time" 
+      @title = @graph_params.key
+      @graph_params.field_names.each do |name| 
+          @title = @title + " : " + name
+      end
+      @title = @title  + " over time" 
     end
 
   end
@@ -196,12 +200,19 @@ class DataController < ApplicationController
       else
         since = time_range_to_epoch('all') 
       end
-    
+
 
       map = %Q{
         function(){
           var data = {};
-          data[this.timestamp] = this[field_name];
+
+          var num = this;
+
+          field_names.forEach(function(value){
+              num = num[value];
+          });
+
+          data[this.timestamp] = num;
           emit(this.user_id,data);
         }
       }
@@ -225,7 +236,7 @@ class DataController < ApplicationController
 
 
       current_milliseconds = (Time.now.to_f * 1000).to_i
-      scope = {since: since.to_i, field_name: params[:field_name]}
+      scope = {since: since.to_i, field_names: JSON.parse(params[:field_names])}
      
       unless params[:game_id].nil? or params[:game_id].empty?
         first_time = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).first.timestamp
@@ -235,6 +246,7 @@ class DataController < ApplicationController
       end
 
 
+      puts 'count ' + logs.count.to_s
 
       @data_group = DataGroup.new
       logs.each do |l|
