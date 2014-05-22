@@ -273,8 +273,8 @@ class DataController < ApplicationController
           name = nil
           player_info = player_info_map[@user.id] 
           if player_info != nil
-            color = player_info.color
-            name = player_info.name
+            color = player_info['color']
+            name = player_info['name']
           end
           @data_group.add_to_group(l["value"], @user, type_of_graph, color, name)
         end
