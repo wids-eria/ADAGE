@@ -249,7 +249,10 @@ class DataController < ApplicationController
         game_info = AdaData.with_game(@game_name).where(game_id: params[:game_id], key: 'EconautsGameInformation').first
         if game_info != nil
           game_info.networkedPlayers.each do |key, value|
+            puts key
+            puts value.inspect
             user_id = game_info.adageIDs[key]
+            puts user_id
             color = value.playerColor
             player_info_map[user_id] = { name: value.name, color: "rgba("+color.r.to_s+","+color.g.to_s+","+color.b.to_s+","+color.a.to_s+")"}  
           end
