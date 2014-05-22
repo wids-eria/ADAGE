@@ -253,7 +253,7 @@ class DataController < ApplicationController
             color = value['PlayerInfo']['playerColor']
             player_info_map[user_id] = Hash.new
             player_info_map[user_id]['name'] = value['PlayerInfo']['name']
-            player_info_map[user_id]['color'] = "rgba("+color['r'].to_s+","+color['g'].to_s+","+color['b'].to_s+","+color['a'].to_s+")"
+            player_info_map[user_id]['color'] = "rgba("+color['r'].to_s+","+color['g'].to_s+","+color['b'].to_s+",1.0)"
           end
           
         end
@@ -278,7 +278,7 @@ class DataController < ApplicationController
             color = player_info['color']
             name = player_info['name']
           end
-          @data_group.add_to_group(l["value"], @user, type_of_graph, color, name)
+          @data_group.add_to_group(l["value"], @user, type_of_graph, nil , name)
         end
       end 
       
