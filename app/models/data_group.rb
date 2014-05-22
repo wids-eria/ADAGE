@@ -13,9 +13,12 @@ class DataGroup
     end
   end
 
-  def add_to_group data_hash, user, type='line', color=nil
+  def add_to_group data_hash, user, type='line', color=nil, name=nil
     data_series = DataSeries.new(user_id: user.id)
-    data_series.player_name = user.player_name
+    if name == nil
+      name = user.player_name
+    end
+    data_series.player_name = name 
     if color != nil
       data_series.color = color
     end
