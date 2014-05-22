@@ -250,7 +250,8 @@ class DataController < ApplicationController
         if game_info != nil
           game_info.networkedPlayers.each do |key, value|
             user_id = game_info.adageIDs[key]
-            player_info_map[user_id] = { name: value.name, color: "rgba("+value.color.r.to_s+","+value.color.g.to_s+","+value.color.b.to_s+","+value.color.a.to_s+")"}  
+            color = value.PlayerInfo.playerColor
+            player_info_map[user_id] = { name: value.PlayerInfo.name, color: "rgba("+color.r.to_s+","+color.g.to_s+","+color.b.to_s+","+color.a.to_s+")"}  
           end
           
         end
