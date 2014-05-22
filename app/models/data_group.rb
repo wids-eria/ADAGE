@@ -15,10 +15,11 @@ class DataGroup
 
   def add_to_group data_hash, user, type='line', color=nil, name=nil
     data_series = DataSeries.new(user_id: user.id)
+    in_game = name
     if name == nil
-      name = user.player_name
+      in_game = user.player_name
     end
-    data_series.player_name = name 
+    data_series.player_name = in_game
     if color != nil
       data_series.color = color
     end
