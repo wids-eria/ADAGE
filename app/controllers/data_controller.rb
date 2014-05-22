@@ -251,6 +251,7 @@ class DataController < ApplicationController
           game_info.networkedPlayers.each do |key, value|
             user_id = game_info.adageIDs[key]
             color = value['PlayerInfo']['playerColor']
+            player_info_map[user_id] = Hash.new
             player_info_map[user_id]['name'] = value['PlayerInfo']['name']
             player_info_map[user_id]['color'] = "rgba("+color['r'].to_s+","+color['g'].to_s+","+color['b'].to_s+","+color['a'].to_s+")"
           end
