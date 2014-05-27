@@ -249,7 +249,7 @@ class DataController < ApplicationController
         if game_info != nil
           game_info.players.each do |key, value|
             user_id = key
-            color = value['playerColor']
+            color = value['color']
             player_info_map[user_id] = Hash.new
             player_info_map[user_id]['name'] = value['name']
             player_info_map[user_id]['color'] = "rgba("+(color['r']*255).to_s+","+(color['g']*255).to_s+","+(color['b']*255).to_s+",1.0)"
