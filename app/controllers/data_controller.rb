@@ -245,15 +245,14 @@ class DataController < ApplicationController
       unless params[:game_id].nil? or params[:game_id].empty?
         first_time = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).first.timestamp
 
-        #special case right now as a proof of concept eventually key should be change to search for generic Adage base type Game Information
-        game_info = AdaData.with_game(@game_name).where(game_id: params[:game_id], key: 'EconautsGameInformation').first
+        game_info = AdaData.with_game(@game_name).where(game_id: params[:game_id]).any_of(:ada_base_type.in => ['ADAGEGameInformation']).first
         if game_info != nil
-          game_info.networkedPlayers.each do |key, value|
-            user_id = game_info.adageIDs[key]
-            color = value['PlayerInfo']['playerColor']
+          game_info.players.each do |key, value|
+            user_id = key
+            color = value['playerColor']
             player_info_map[user_id] = Hash.new
-            player_info_map[user_id]['name'] = value['PlayerInfo']['name']
-            player_info_map[user_id]['color'] = "rgba("+color['r'].to_s+","+color['g'].to_s+","+color['b'].to_s+",1.0)"
+            player_info_map[user_id]['name'] = value['name']
+            player_info_map[user_id]['color'] = "rgba("+(color['r']*255).to_s+","+(color['g']*255).to_s+","+(color['b']*255).to_s+",1.0)"
           end
           
         end
