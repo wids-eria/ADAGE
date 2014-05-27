@@ -245,7 +245,7 @@ class DataController < ApplicationController
       unless params[:game_id].nil? or params[:game_id].empty?
         first_time = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).first.timestamp
 
-        game_info = AdaData.with_game(@game_name).where(game_id: params[:game_id]).any_of(:ada_base_type.in => ['ADAGEGameInformation']).first
+        game_info = AdaData.with_game(@game_name).where(game_id: params[:game_id]).any_of(:ada_base_types.in => ['ADAGEGameInformation']).first
         if game_info != nil
           game_info.players.each do |key, value|
             user_id = key
