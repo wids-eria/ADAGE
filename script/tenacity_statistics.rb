@@ -41,17 +41,18 @@ class Tplayer
     
 
 
-    sessions =  AdaData.with_game('Tenacity-Meditation').asc(:timestamp).distinct(:session_token)
+    sessions =  user.data('Tenacity-Meditation').asc(:timestamp).distinct(:session_token)
     total_sessions = sessions.count
+    puts user.player_name + ' sessions: ' + sessions.count.to_s
     sessions.each do |token|
-      session_logs = AdaData.with_game('Tenacity-Meditation').where(session_token: token).asc(:timestamp)
-      end_time =  DateTime.strptime(session_logs.last.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
-      start_time = DateTime.strptime(session_logs.first.timestamp, "%m/%d/%Y %H:%M:%S").to_time 
+      session_logs = user.data('Tenacity-Meditation').where(session_token: token).asc(:timestamp)
+      end_time =  DateTime.strptime(session_logs.last.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time 
+      start_time = DateTime.strptime(session_logs.first.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time 
       session_times[start_time.to_s] = (end_time - start_time) 
       total_playtime = total_playtime + session_times[start_time.to_s]
     end
 
-    logs = AdaData.with_game('Tenacity-Meditation').where(:key.in => ['TenStageStart', 'TenStageComplete', 'TenBreathCycleEnd', 'TenSelfAssessment'])
+    logs = user.data('Tenacity-Meditation').where(:key.in => ['TenStageStart', 'TenStageComplete', 'TenBreathCycleEnd', 'TenSelfAssessment']).asc(:timestamp)
     last_name = ''
     last_time = 0
     started = false
@@ -61,7 +62,7 @@ class Tplayer
         level_start_list[log.name] = level_start_list[log.name] + 1
         length_start_list[log.sessionTime] = length_start_list[log.sessionTime] + 1
         last_name = log.name
-        last_time = log.sessionTime.to_i * 60 
+        last_time = log.sessionTime 
         started = true
       end
 
@@ -69,7 +70,7 @@ class Tplayer
         level_completes = level_completes + 1
         level_complete_list[log.name] = level_complete_list[log.name] + 1
         length_complete_list[last_time] = length_complete_list[last_time] + 1
-        total_time_in_level = total_time_in_level + last_time
+        total_time_in_level = total_time_in_level + last_time.to_i
 
 
         started = false
@@ -80,7 +81,7 @@ class Tplayer
         post = log.selfAssessmentValue
 
         if pre != 0  
-          csv_levels << [user.player_name, log.timestamp, log.session_token, log.name, last_time.to_s, total_time_in_level.to_s, pre.to_s, post.to_s, level_success.to_s, level_fail.to_s]
+          csv_levels << [user.player_name, log.timestamp, log.session_token, last_name, last_time.to_s, total_time_in_level.to_s, pre.to_s, post.to_s, level_success.to_s, level_fail.to_s]
         end
         
         pre = log.selfAssessmentValue
@@ -90,7 +91,7 @@ class Tplayer
       end
 
       if log.key.include?('TenBreathCycleEnd')
-        csv_breath_cycles << log.attributes.values
+        csv_breath_cycles << [user.player_name] + log.attributes.values
         total_cycles = total_cycles + 1
         if log.success == true
           total_success = total_success + 1
@@ -107,7 +108,7 @@ class Tplayer
     
 
     
-    csv_totals << [user.player_name, total_sessions.to_s, total_playtime.to_s, total_playetime/total_sessions, total_time_in_level.to_s, level_starts.to_s, level_completes.to_s, total_cycles.to_s, total_success.to_s, total_success/total_cycles, total_fail.to_s] + level_start_list.values + level_complete_list.values + length_start_list.values + length_complete_list.values
+    csv_totals << [user.player_name, total_sessions.to_s, total_playtime.to_s, total_playtime.to_f/total_sessions.to_f, total_time_in_level.to_s, level_starts.to_s, level_completes.to_s, total_cycles.to_s, total_success.to_s, total_success.to_f/total_cycles.to_f, total_fail.to_s] + level_start_list.values + level_complete_list.values + length_start_list.values + length_complete_list.values
 
       
 
@@ -132,11 +133,14 @@ class TenacityPlayerStats
     level_keys = AdaData.with_game('Tenacity-Meditation').where(key: 'TenStageStart').distinct(:name)
     length_keys = AdaData.with_game('Tenacity-Meditation').where(key: 'TenStageStart').distinct(:sessionTime)
 
+    puts level_keys
+    puts length_keys
+
     breath_cycle_col = AdaData.with_game('Tenacity-Meditation').where(key: 'TenBreathCycleEnd').last
 
-    csv_breath_cycles << breath_cycle_col.attributes.keys
+    csv_breath_cycles << ['player'] + breath_cycle_col.attributes.keys
 
-    csv_level << ['player', 'timestamp', 'session token', 'level name', 'selected session time', 'time in level', 'pre', 'post', 'success count', 'failure count']
+    csv_levels << ['player', 'timestamp', 'session token', 'level name', 'selected session time', 'time in level', 'pre', 'post', 'success count', 'failure count']
     
     level_s = level_keys.map{ |k| k + ' starts'}
     level_c = level_keys.map{ |k| k + ' completes'}
@@ -153,7 +157,6 @@ class TenacityPlayerStats
         puts player_name.to_s + " NOT FOUND"
       end
     end
-    csv.close
   end
 
 end
