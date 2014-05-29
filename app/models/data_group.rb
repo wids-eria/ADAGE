@@ -89,7 +89,7 @@ class DataGroup
       end
       series_hash[:data] = data_series
       series_hash[:color] = data_hash.color
-      series_hash[:renderer] = data_hash.type
+      series_hash[:renderer] = 'line' #data_hash.type
       series_hash[:name] = data_hash.player_name
       rickshaw_blob << series_hash
 
