@@ -253,6 +253,7 @@ class DataController < ApplicationController
             player_info_map[user_id] = Hash.new
             player_info_map[user_id]['identifier'] = value['identifier']
             player_info_map[user_id]['color'] = "rgba("+(color['r'].to_f*255.0).to_s+","+(color['g'].to_f*255.0).to_s+","+(color['b'].to_f*255.0).to_s+",1.0)"
+            Rails.logger.debug player_info_map[user_id]['color']
           end
           
         end
