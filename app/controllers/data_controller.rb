@@ -252,7 +252,7 @@ class DataController < ApplicationController
             color = value['color']
             player_info_map[user_id] = Hash.new
             player_info_map[user_id]['name'] = value['name']
-            player_info_map[user_id]['color'] = "rgba("+(color['r']*255).to_s+","+(color['g']*255).to_s+","+(color['b']*255).to_s+",1.0)"
+            player_info_map[user_id]['color'] = "rgba("+(color['r'].to_i*255).to_s+","+(color['g'].to_i*255).to_s+","+(color['b'].to_i*255).to_s+",1.0)"
           end
           
         end

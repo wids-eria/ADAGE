@@ -8,7 +8,7 @@ class DataSeries
   def initialize(attributes = {})
     rand = Random.new(attributes[:user_id])
     self.data = Array.new
-    #self.color = "rgba(" + (rand.rand(0...220)).to_s + ", 220, "  + (rand.rand(0...220)).to_s +  ",1.0)"
+    self.color = "rgba(" + (rand.rand(0...220)).to_s + ", 220, "  + (rand.rand(0...220)).to_s +  ",1.0)"
     self.type = 'line'
     attributes.each do |name, value|
       send("#{name}=", value)
