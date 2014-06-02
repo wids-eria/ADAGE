@@ -251,7 +251,7 @@ class DataController < ApplicationController
             user_id = key
             color = value['color']
             player_info_map[user_id] = Hash.new
-            player_info_map[user_id]['name'] = value['name']
+            player_info_map[user_id]['identifier'] = value['identifier']
             player_info_map[user_id]['color'] = "rgba("+(color['r'].to_i*255).to_s+","+(color['g'].to_i*255).to_s+","+(color['b'].to_i*255).to_s+",1.0)"
           end
           
@@ -275,7 +275,7 @@ class DataController < ApplicationController
           player_info = player_info_map[@user.id] 
           if player_info != nil
             color = player_info['color']
-            name = player_info['name']
+            name = player_info['identifier']
           end
           @data_group.add_to_group(l["value"], @user, type_of_graph, color , name)
         end
