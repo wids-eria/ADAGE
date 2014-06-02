@@ -276,10 +276,10 @@ class DataController < ApplicationController
         if l["value"] != nil
           color = nil
           name = nil
+          Rails.logger.debug @user.id.to_s 
           player_info = player_info_map[@user.id] 
           if player_info != nil
             Rails.logger.debug player_info['identifier']
-            Rails.logger.debug @user.player_name 
             Rails.logger.debug player_info['color']
 
             color = player_info['color']
