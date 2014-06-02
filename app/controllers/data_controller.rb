@@ -248,10 +248,6 @@ class DataController < ApplicationController
         game_info = AdaData.with_game(@game_name).where(game_id: params[:game_id]).any_of(:ada_base_types.in => ['ADAGEGameInformation']).last
         if game_info != nil
           game_info.players.each do |key, value|
-            Rails.logger.debug value['identifier']
-            Rails.logger.debug key.to_s 
-            Rails.logger.debug value['color']
-
             user_id = key
             color = value['color']
             player_info_map[user_id] = Hash.new
@@ -276,12 +272,8 @@ class DataController < ApplicationController
         if l["value"] != nil
           color = nil
           name = nil
-          Rails.logger.debug @user.id.to_s 
-          player_info = player_info_map[@user.id] 
+          player_info = player_info_map[@user.id.to_s] 
           if player_info != nil
-            Rails.logger.debug player_info['identifier']
-            Rails.logger.debug player_info['color']
-
             color = player_info['color']
             name = player_info['identifier']
           end
