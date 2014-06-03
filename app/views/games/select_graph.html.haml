@@ -1,4 +1,4 @@
-%h1='Graph-a-tron 2000!'
+%h1='Query Builder'
 
 .row
   - @implementations.each do |imp|
@@ -6,8 +6,8 @@
       - div_class = 'btn-success'
     - else
       - div_class = 'btn-default'
-    %div{class: 'btn ' + div_class} 
-      = link_to select_graph_game_path(@game, 'html' , app_token: imp.client.app_token) do
+    = link_to select_graph_game_path(@game, 'html' , app_token: imp.client.app_token) do
+      %div{class: 'btn ' + div_class} 
         = imp.name
 
 %br
@@ -17,8 +17,8 @@
       - div_class = 'btn-success'
     - else
       - div_class = 'btn-default'
-    %div{class: 'btn ' + div_class} 
-      = link_to select_graph_game_path(@game, 'html' , graph_type: t) do
+    = link_to select_graph_game_path(@game, 'html' , graph_type: t) do
+      %div{class: 'btn ' + div_class} 
         = t
 
 %br
@@ -28,8 +28,8 @@
       - div_class = 'btn-success'
     - else
       - div_class = 'btn-default'
-    %div{class: 'btn ' + div_class} 
-      = link_to select_graph_game_path(@game, 'html' , time_range: t) do
+    = link_to select_graph_game_path(@game, 'html' , time_range: t) do
+      %div{class: 'btn ' + div_class} 
         = t
 
 %br
@@ -39,8 +39,8 @@
       - div_class = 'btn-success'
     - else
       - div_class = 'btn-default'
-    %div{class: 'btn ' + div_class} 
-      = link_to select_graph_game_path(@game, 'html' , game_id: id) do
+    = link_to select_graph_game_path(@game, 'html' , game_id: id) do
+      %div{class: 'btn ' + div_class} 
         = id
 
 %br
@@ -50,8 +50,8 @@
       - div_class = 'btn-success'
     - else
       - div_class = 'btn-default'
-    %div{class: 'btn ' + div_class} 
-      = link_to select_graph_game_path(@game, 'html' , key: key) do
+    = link_to select_graph_game_path(@game, 'html' , key: key) do
+      %div{class: 'btn ' + div_class} 
         = key
 
 - @fields.each do |depth, fields|
@@ -62,14 +62,24 @@
         - div_class = 'btn-success'
       - else
         - div_class = 'btn-default'
-      %div{class: 'btn ' + div_class} 
-        = link_to select_graph_game_path(@game, 'html' , field_name: name, field_depth: depth) do
+      = link_to select_graph_game_path(@game, 'html' , field_name: name, field_depth: depth) do
+        %div{class: 'btn ' + div_class} 
           = name
 
 
 %br
 %br
 %br
-= link_to real_time_chart_data_path('html', url: @url) do
-  = 'graph'
+
+= link_to real_time_chart_data_path('html', url: @rickshaw_url) do
+  %div{class: 'btn btn-primary'} 
+    = 'graph'
+
+= link_to @json_url do
+  %div{class: 'btn btn-primary'} 
+    = 'view as json'
+
+= link_to @csv_url do
+  %div{class: 'btn btn-primary'} 
+    = 'export as csv'
 

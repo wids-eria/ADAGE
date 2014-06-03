@@ -284,7 +284,15 @@ class DataController < ApplicationController
       
       @chart_info = @data_group.to_rickshaw
       respond_to do |format|
-        format.json {render :json => @chart_info.to_json}
+        format.json {
+        
+          if params[:rickshaw] != nil 
+            render :json => @chart_info.to_json
+          else
+            render :json => @data_group.to_json
+          end
+        
+        }
         format.html {render}
         format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
       end
