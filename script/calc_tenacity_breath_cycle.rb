@@ -14,7 +14,8 @@ end
 #ids = AdaData.with_game('Tenacity-Meditation').only(:user_id).distinct(:user_id)
 #players = User.where(id: ids)
 
-player_list = CSV.open("csv/tenacity/player_list.csv", 'r')
+player_list = CSV.open("csv/tenacity/mindfulness_players.csv", 'r')
+
 players = Array.new
 player_list.each do |player_name|
   player = User.where(player_name: player_name).first
@@ -23,24 +24,23 @@ player_list.each do |player_name|
   end
 end
 
+tccsv = CSV.open("csv/tenacity/average_breath_from_cleaned_touch.csv", "w")
+tcsv = CSV.open("csv/tenacity/average_breath_from_touch_.csv", "w")
+dccsv = CSV.open("csv/tenacity/average_breath_from_touch_difference_cleaned_.csv", "w")
+dcsv = CSV.open("csv/tenacity/average_breath_from_touch_difference_.csv", "w")
+ccsv = CSV.open("csv/tenacity/average_breath_from_end_cycle_.csv", "w")
+
+tccsv << ['name', 'session', 'average breath for levels played'] 
+tcsv << ['name', 'session', 'average breath for levels played'] 
+dccsv << ['name', 'session', 'average breath for levels played'] 
+dcsv << ['name', 'session', 'average breath for levels played'] 
+ccsv << ['name', 'session', 'average breath for levels played'] 
 
 
 players.each do |play|
   data = play.data('Tenacity-Meditation').in(key: ['TenTouchEvent', 'TenStageStart', 'TenBreathCycleEnd'] ).without([:_id, :created_at, :updated_at]).asc(:timestamp)
   if data.count > 0
     
-    tccsv = CSV.open("csv/tenacity/average_breath_from_cleaned_touch_"+play.email+".csv", "w")
-    tcsv = CSV.open("csv/tenacity/average_breath_from_touch_"+play.email+".csv", "w")
-    dccsv = CSV.open("csv/tenacity/average_breath_from_touch_difference_cleaned_"+play.email+".csv", "w")
-    dcsv = CSV.open("csv/tenacity/average_breath_from_touch_difference_"+play.email+".csv", "w")
-    ccsv = CSV.open("csv/tenacity/average_breath_from_end_cycle_"+play.email+".csv", "w")
-
-    tccsv << ['name', 'session', 'scores'] 
-    tcsv << ['name', 'session', 'scores'] 
-    dccsv << ['name', 'session', 'scores'] 
-    dcsv << ['name', 'session', 'scores'] 
-    ccsv << ['name', 'session', 'scores'] 
-
     puts play.player_name + " has " + data.count.to_s
     
     tcscores = Hash.new()

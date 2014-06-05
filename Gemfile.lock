@@ -213,12 +213,9 @@ GEM
       rake
     rdoc (3.12.2)
       json (~> 1.4)
-<<<<<<< HEAD
-=======
     ref (1.0.5)
     rickshaw_rails (1.2.0)
       railties (>= 3.1.0)
->>>>>>> Games-Portal
     rqrcode (0.4.2)
     rqrcode_png (0.1.2)
       chunky_png

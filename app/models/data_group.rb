@@ -13,9 +13,13 @@ class DataGroup
     end
   end
 
-  def add_to_group data_hash, user, type='line', color=nil
+  def add_to_group data_hash, user, type='line', color=nil, name=nil
     data_series = DataSeries.new(user_id: user.id)
-    data_series.player_name = user.player_name
+    in_game = name
+    if name == nil
+      in_game = user.player_name
+    end
+    data_series.player_name = in_game
     if color != nil
       data_series.color = color
     end
@@ -85,7 +89,7 @@ class DataGroup
       end
       series_hash[:data] = data_series
       series_hash[:color] = data_hash.color
-      series_hash[:renderer] = data_hash.type
+      series_hash[:renderer] = 'line' #data_hash.type
       series_hash[:name] = data_hash.player_name
       rickshaw_blob << series_hash
 

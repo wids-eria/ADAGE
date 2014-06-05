@@ -120,9 +120,9 @@ class DataController < ApplicationController
 
     if client != nil
 
-      since = time_range_to_epoc(params[:time_range])
+      since = time_range_to_epoch(params[:time_range])
       game_name = client.implementation.game.name
-
+      
       @game_ids = AdaData.with_game(game_name).where(:timestamp.gt => since).distinct(:game_id)
 
     end
@@ -171,6 +171,16 @@ class DataController < ApplicationController
 
   def real_time_chart
     @url = params[:url]
+    @graph_params = session[:graph_params]
+
+    if @graph_params.graph_type.include?('value over time')
+      @title = @graph_params.key
+      @graph_params.field_names.each do |name| 
+          @title = @title + " : " + name
+      end
+      @title = @title  + " over time" 
+    end
+
   end
 
 
@@ -190,12 +200,19 @@ class DataController < ApplicationController
       else
         since = time_range_to_epoch('all') 
       end
-    
+
 
       map = %Q{
         function(){
           var data = {};
-          data[this.timestamp] = this[field_name];
+
+          var num = this;
+
+          field_names.forEach(function(value){
+              num = num[value];
+          });
+
+          data[this.timestamp] = num;
           emit(this.user_id,data);
         }
       }
@@ -219,31 +236,63 @@ class DataController < ApplicationController
 
 
       current_milliseconds = (Time.now.to_f * 1000).to_i
-      scope = {since: since.to_i, field_name: params[:field_name]}
+      scope = {since: since.to_i, field_names: JSON.parse(params[:field_names])}
+
+      type_of_graph = 'line'
+
+      player_info_map = Hash.new
      
       unless params[:game_id].nil? or params[:game_id].empty?
         first_time = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).first.timestamp
-        puts 'first time: ' + first_time
-        puts params[:game_id]
-        puts AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id], key: params[:key]).where(:timestamp.gt => first_time).distinct(:timestamp).inspect
+
+        game_info = AdaData.with_game(@game_name).where(game_id: params[:game_id]).any_of(:ada_base_types.in => ['ADAGEGameInformation']).last
+        if game_info != nil
+          game_info.players.each do |key, value|
+            user_id = key
+            color = value['color']
+            player_info_map[user_id] = Hash.new
+            player_info_map[user_id]['identifier'] = value['identifier']
+            player_info_map[user_id]['color'] = "rgba("+(color['r'].to_f*255).to_i.to_s+","+(color['g'].to_f*255).to_i.to_s+","+(color['b'].to_f*255).to_i.to_s+",1.0)"
+            Rails.logger.debug player_info_map[user_id]['color']
+          end
+          
+        end
+
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(game_id: params[:game_id]).where(key: params[:key]).where(:timestamp.gt => first_time ).map_reduce(map,reduce).out(inline:1).scope(scope)
       else
+        type_of_graph = 'bar'
         logs = AdaData.with_game(@game_name).order_by(:timestamp.asc).where(key: params[:key]).where(:timestamp.gt => since.to_s).map_reduce(map,reduce).out(inline:1).scope(scope)
       end
 
 
+      puts 'count ' + logs.count.to_s
 
       @data_group = DataGroup.new
       logs.each do |l|
         @user = User.find(l["_id"].to_i)
         if l["value"] != nil
-          @data_group.add_to_group(l["value"], @user)
+          color = nil
+          name = nil
+          player_info = player_info_map[@user.id.to_s] 
+          if player_info != nil
+            color = player_info['color']
+            name = player_info['identifier']
+          end
+          @data_group.add_to_group(l["value"], @user, type_of_graph, color , name)
         end
       end 
       
       @chart_info = @data_group.to_rickshaw
       respond_to do |format|
-        format.json {render :json => @chart_info.to_json}
+        format.json {
+        
+          if params[:rickshaw] != nil 
+            render :json => @chart_info.to_json
+          else
+            render :json => @data_group.to_json
+          end
+        
+        }
         format.html {render}
         format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
       end
@@ -363,7 +412,16 @@ class DataController < ApplicationController
     @playtimes = @data_group.to_chart_js
     @rickshaw = @data_group.to_rickshaw
     respond_to do |format|
-      format.json {render :json => @rickshaw.to_json}
+      format.json {
+        
+          if params[:rickshaw] != nil 
+            render :json => @data_group.to_rickshaw.to_json
+          else
+            render :json => @data_group.to_json
+          end
+        
+        }
+
       format.html {render}
       format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
     end
@@ -456,7 +514,15 @@ class DataController < ApplicationController
     @playtimes = @data_group.to_chart_js
     @rickshaw = @data_group.to_rickshaw
     respond_to do |format|
-      format.json {render :json => @rickshaw.to_json}
+      format.json {
+        
+          if params[:rickshaw] != nil 
+            render :json => @data_group.to_rickshaw.to_json
+          else
+            render :json => @data_group.to_json
+          end
+        
+        }
       format.html {render}
       format.csv { send_data @data_group.to_csv, filename: @game.name+"_participant_sessions.csv" }
     end

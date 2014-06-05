@@ -96,44 +96,40 @@ class GamesController < ApplicationController
     end
 
     if params[:field_name] != nil
-      @graph_params.field_name = params[:field_name] 
+      index = params[:field_depth].to_i
+      @graph_params.field_names[index] = params[:field_name] 
+      @graph_params.field_names = @graph_params.field_names.drop(@graph_params.field_names.count - (index+1))
     end
 
     @keys = Array.new
-    @fields = Array.new
+    @fields = Hash.new
     @game_ids = Array.new
     if @graph_params.app_token != nil 
 
       
-      @url = @graph_params.url_prefix+'app_token='+@graph_params.app_token
       
       if @graph_params.time_range == nil
         @graph_params.time_range = 'hour'
       end
       
-      @url = @url +'&time_range='+ @graph_params.time_range 
       @game_ids = AdaData.with_game(@game.name).where(:timestamp.gt => time_range_to_epoch(@graph_params.time_range)).distinct(:game_id)
       
 
-      unless @graph_params.game_id.nil? or @graph_params.game_id.empty?
-        @url = @url + '&game_id=' + @graph_params.game_id
-      end
-      
       @keys = AdaData.with_game(@game.name).distinct(:key)
 
       if @graph_params.key != nil
         
-        @url = @url + '&key=' + @graph_params.key
 
-        @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
+        @fields = add_field_names(0, AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes, @fields, @graph_params.field_names)
 
-        if @graph_params.field_name != nil
-          @url = @url + '&field_name=' + @graph_params.field_name
-        end
       end
     
     
     end
+
+    @rickshaw_url = @graph_params.to_rickshaw_url
+    @json_url = @graph_params.to_json_url
+    @csv_url = @graph_params.to_csv_url
 
     session[:graph_params] = @graph_params
 
