@@ -105,7 +105,7 @@ class DataGroup
     labels = labels.uniq.sort!
 
     out = CSV.generate do |csv|
-      csv << ['player_name', 'player_id'] + labels
+      csv << ['player_name'] + labels
       series.each do |s|
         data_series = Array.new
         s.data.each do |key,value|
