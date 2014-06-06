@@ -34,14 +34,18 @@
 
 %br
 .row
-  - @game_ids.each do |id|
-    - if @graph_params.game_id == id 
-      - div_class = 'btn-success'
-    - else
-      - div_class = 'btn-default'
-    = link_to select_graph_game_path(@game, 'html' , game_id: id) do
-      %div{class: 'btn ' + div_class} 
-        = id
+  .btn-group
+    %button.btn.btn-success.dropdown-toggle{"data-toggle" => "dropdown", type: "button"}
+      -if @graph_params.game_id.nil?
+        = 'All Games'
+      -else
+        = @graph_params.game_id 
+      %span.caret
+    %ul.dropdown-menu{role: "menu"}
+      - @game_ids.each do |id|
+        %li
+          = link_to select_graph_game_path(@game, 'html' , game_id: id) do
+            = id
 
 %br
 .row

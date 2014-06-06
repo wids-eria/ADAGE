@@ -90,7 +90,11 @@ class GamesController < ApplicationController
     end
 
     if params[:game_id] != nil
-      @graph_params.game_id = params[:game_id] 
+      if params[:game_id].include?('All Games')
+        @graph_params.game_id = nil
+      else
+        @graph_params.game_id = params[:game_id] 
+      end
     end
 
     if params[:key] != nil
@@ -115,6 +119,7 @@ class GamesController < ApplicationController
       end
       
       @game_ids = AdaData.with_game(@game.name).where(:timestamp.gt => time_range_to_epoch(@graph_params.time_range)).distinct(:game_id)
+      @game_ids << 'All Games'
       
 
       @keys = AdaData.with_game(@game.name).distinct(:key)
