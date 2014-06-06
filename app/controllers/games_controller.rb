@@ -62,7 +62,7 @@ class GamesController < ApplicationController
 
     @implementations = @game.implementations
     @ranges = ['hour','day','week','month','all']
-    @graph_types = ['value over time', 'session times']
+    @graph_types = ['value over time', 'session times', 'key count']
     
 
     if session[:graph_params].nil?
@@ -80,6 +80,8 @@ class GamesController < ApplicationController
     end
 
     if params[:graph_type] != nil
+      #When changing the graph type we reset all the graph params
+      @graph_params = GraphParams.new
       @graph_params.graph_type = params[:graph_type]
     end
 

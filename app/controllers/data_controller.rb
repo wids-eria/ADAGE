@@ -99,9 +99,9 @@ class DataController < ApplicationController
       end
 
       if params[:game_id].nil? or params[:game_id].empty? 
-        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).in(key: keys)
+        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).in(key: keys).asc(:timestamp)
       else
-        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys)
+        @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys).asc(:timestamp)
       end
     end
 
@@ -111,6 +111,49 @@ class DataController < ApplicationController
     respond_with @result
 
   end
+
+  def key_counts
+
+    client = get_client_by_token(params[:app_token])
+
+    if client != nil
+      
+      since = time_range_to_epoch(params[:time_range])
+      game_name = client.implementation.game.name
+
+      keys = AdaData.with_game(game_name).where(:timestamp.gt => since).distinct(:key)
+
+
+      @data_group = DataGroup.new
+      keys.each_with_index do |k, index|
+
+        count = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: k).count
+        hash = Hash.new
+        hash[k] = count
+        @data_group.add_to_group(hash, nil, index, 'bar', k)
+      end
+
+      @chart_info = @data_group.to_rickshaw 
+      respond_to do |format|
+          format.json {
+          
+            if params[:rickshaw] != nil 
+              render :json => @chart_info.to_json
+            else
+              render :json => @data_group.to_json
+            end
+          
+          }
+          format.html {render}
+          format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
+      end
+
+    end
+  
+  
+  end
+
+
 
   def get_game_ids
     
@@ -278,7 +321,7 @@ class DataController < ApplicationController
             color = player_info['color']
             name = player_info['identifier']
           end
-          @data_group.add_to_group(l["value"], @user, type_of_graph, color , name)
+          @data_group.add_to_group(l["value"], @user, @user.id, type_of_graph, name, color)
         end
       end 
       
@@ -406,7 +449,7 @@ class DataController < ApplicationController
     end
 
     @users.each do |u|
-       @data_group.add_to_group(session_time[u.id], u, 'bar')
+       @data_group.add_to_group(session_time[u.id], u, u.id, 'bar')
     end
 
     @playtimes = @data_group.to_chart_js
@@ -476,7 +519,7 @@ class DataController < ApplicationController
         log_user = log["_id"]["user_id"].to_i
         if(log_user != last_user)
           #If the log is for a different user add to data_groups and initalize variables for the new user
-          @data_group.add_to_group(session_time, @users[index])
+          @data_group.add_to_group(session_time,  @users[index], @users[index].id)
           session_time = Hash.new
           last_user = log_user
           index += 1
@@ -504,7 +547,7 @@ class DataController < ApplicationController
         sessions_played += 1
 
         #add the last user
-        @data_group.add_to_group(session_time, @users[index])
+        @data_group.add_to_group(session_time,  @users[index], @users[index].id)
       end
 
       @average_time = total_session_length/sessions_played
@@ -591,7 +634,7 @@ class DataController < ApplicationController
 
       index = 0
       logs.each do |log|
-        @data_group.add_to_group(log["value"], @users[index])
+        @data_group.add_to_group(log["value"],  @users[index], @users[index].id)
         index += 1
       end
     end

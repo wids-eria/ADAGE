@@ -13,11 +13,13 @@ class DataGroup
     end
   end
 
-  def add_to_group data_hash, user, type='line', color=nil, name=nil
-    data_series = DataSeries.new(user_id: user.id)
+  def add_to_group data_hash, user, id, type='line', name=nil, color=nil
+    data_series = DataSeries.new(id: id)
     in_game = name
     if name == nil
-      in_game = user.player_name
+      unless user.nil?
+        in_game = user.player_name
+      end
     end
     data_series.player_name = in_game
     if color != nil
@@ -66,7 +68,7 @@ class DataGroup
     self.series.each do |data_hash|
       series_hash = Hash.new
       data_series = Array.new
-      count = 0
+      count = 1 
       data_hash.data.sort.map do |key, value|
         unless value.is_a? String
             adjusted = value
@@ -89,7 +91,7 @@ class DataGroup
       end
       series_hash[:data] = data_series
       series_hash[:color] = data_hash.color
-      series_hash[:renderer] = 'line' #data_hash.type
+      series_hash[:renderer] = data_hash.type
       series_hash[:name] = data_hash.player_name
       rickshaw_blob << series_hash
 
@@ -109,7 +111,7 @@ class DataGroup
         s.data.each do |key,value|
           data_series[labels.index(key)] = value
         end
-        csv << [s.player_name, s.user_id.to_s] + data_series
+        csv << [s.player_name] + data_series
       end
     end
 

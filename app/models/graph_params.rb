@@ -49,6 +49,10 @@ class GraphParams
     if self.graph_type.include?('session times')
       return '/data/session_times'
     end
+
+    if self.graph_type.include?('key count')
+      return '/data/key_counts'
+    end
     
   end
 
