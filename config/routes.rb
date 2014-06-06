@@ -2,7 +2,7 @@ Ada::Application.routes.draw do
   get "welcome/index"
   get "profile" => 'welcome#profile'
 
-  devise_for :users, :controllers => { registrations: "registrations", :omniauth_callbacks => "users/omniauth_callbacks" }
+  devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions",:omniauth_callbacks => "users/omniauth_callbacks" }
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
   match "data/heatmap" => "data#heatmap"
