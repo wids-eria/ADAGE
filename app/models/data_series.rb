@@ -3,10 +3,10 @@ class DataSeries
   include ActiveModel::Conversion
   extend  ActiveModel::Naming
 
-  attr_accessor :data, :player_name, :user_id, :color, :type
+  attr_accessor :data, :player_name, :id, :color, :type
 
   def initialize(attributes = {})
-    rand = Random.new(attributes[:user_id])
+    rand = Random.new(attributes[:id])
     self.data = Array.new
     self.color = "rgba(" + (rand.rand(0...220)).to_s + ", 220, "  + (rand.rand(0...220)).to_s +  ",1.0)"
     self.type = 'line'

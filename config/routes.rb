@@ -51,6 +51,7 @@ Ada::Application.routes.draw do
       get :session_logs
       get :context_logs
       get :get_events
+      get :key_counts
       get :get_events_by_group
       get :get_game_ids
       get :get_sorted_and_limited_events

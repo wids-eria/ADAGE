@@ -176,7 +176,7 @@ class UsersController < ApplicationController
 
       values = @user.data_field_values(client.implementation.game.name, params[:key], since, params[:field_name], bin)
       @data_group = DataGroup.new
-      @data_group.add_to_group(values, @user)
+      @data_group.add_to_group(values, @user, @user.id)
 
       @chart_info = @data_group.to_chart_js
       respond_to do |format|

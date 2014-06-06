@@ -94,6 +94,21 @@ class ApplicationController < ActionController::Base
   
   end
 
+  def get_client_by_token token
+    
+    if token != nil
+      client = Client.where(app_token: token).first
+    end
+
+    if client.nil?
+      render :json => {:errors => ["Could not find application."] }, :status => 401
+    end
+
+    return client
+
+  end
+
+
   #called recursively to collect all the graphable numeric field names
   def add_field_names depth, attributes, field_hash, filter_hash
    
