@@ -6,6 +6,10 @@
     .field_container
       = f.label :password, class: 'floatleft'
       = f.password_field :password, class: 'floatright', placeholder: 'Password'
+    - if @code
+      .field_container
+        = f.label :code, class: 'floatleft'
+        = f.text_field :group, class: 'floatright', placeholder: 'Play Code (optional)'
     .field_container_remember_me
       = f.submit "Sign in", class: 'sign_in_button floatright'
       - if devise_mapping.rememberable?

@@ -1,9 +1,14 @@
 class OauthController < ApplicationController
-  before_filter :authenticate_user!, except: [:client_side_create_user, :access_token, :user, :authorize_unity, :authorize_unity_fb, :guest, :authorize_brainpop]
+  before_filter :authenticate_user!, except: [:authorize,:client_side_create_user, :access_token, :user, :authorize_unity, :authorize_unity_fb, :guest, :authorize_brainpop]
   skip_before_filter :verify_authenticity_token, :only => [:access_token, :user]
   respond_to :html, :json
 
   def authorize
+    if params[:scope] == "portal"
+      session[:portal] = true
+    end
+
+    authenticate_user!
     application = Client.where(app_token: params[:client_id]).first
     access_token = current_user.access_tokens.create({client: application})
     redirect_to access_token.redirect_uri_for(params[:redirect_uri]+"?&state=#{params[:state]}")
