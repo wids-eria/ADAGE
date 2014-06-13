@@ -60,7 +60,7 @@ This assumes you have git installed already.
 	
 	```cp config/nouns.txt.template config/nouns.txt```
 	
-	```cp config/initializers/secret_token.rb.template```
+	```cp config/initializers/secret_token.rb.template config/initializers/secret_token.rb```
 	
 2. Create a secret token 
 
@@ -76,9 +76,13 @@ This assumes you have git installed already.
 	```rake abilities:create```
 	
 
-5. You should be done! Try running the server with rails s and see if it works. You may want to create an account and then use the rails console to locate your account and give it the admin ability.
+5. You should be done! Try running the server with ```rails server``` and see if it works. You may want to create an account and then use the ```rails console``` to locate your account and give it the admin ability.
 
-
+	```me = User.where(player_name: "Insert the name you registered as here").first```
+	
+	```admin_role = Role.where(name: "admin").first```
+	
+	```me.roles << admin_role```
 
 
 
