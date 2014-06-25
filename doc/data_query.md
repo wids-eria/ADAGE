@@ -92,3 +92,80 @@ A query that will allow you to get a list of events sorted by the value of a fie
 ###Response
 
 A list of the requested events as json. Will be empty if no events were returned in the query and will return standard error structure if the application is not found or the player can not be authenticated.
+
+##GET /data/get_game_ids
+
+Query for all the game ids from the specificed time application and time range.
+
+
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>type</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>app_token</td>
+        <td>string</td>
+        <td>Token that identifies the client application</td>
+    </tr>
+     <tr>
+        <td>time_range</td>
+        <td>string</td>
+        <td>How far back in time to query. Can contain a timestamp or the following keywords "hour", "day", "week", "month". For all events pass 0</td>
+    </tr>
+</table>
+
+###Response
+
+A list of all the game ids created for the application in the time given time range.
+
+##GET /data/field_values
+
+Get the values of a field from a key over a given time range time. Responds to the formats json or csv. Using the optional rickshaw=true param with the json format it will respond with json formated for a rickshaw graph.
+
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>type</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>app_token</td>
+        <td>string</td>
+        <td>Token that identifies the client application</td>
+    </tr>
+     <tr>
+        <td>time_range</td>
+        <td>string</td>
+        <td>How far back in time to query. Can contain a timestamp or the following keywords "hour", "day", "week", "month". For all events pass 0</td>
+    </tr>
+     <tr>
+        <td>key</td>
+        <td>string</td>
+        <td>The key of the event that has the field.</td>
+    </tr>
+    <tr>
+        <td>field_names</td>
+        <td>List of Strings</td>
+        <td>This is a list of field names, this allows the option to dig down to a nested field using the names of all the fields along the way to the final desired field</td>
+    </tr>
+    <tr>
+        <td>game_id</td>
+        <td>string (optional)</td>
+        <td>Restricts the query to just the game specified. Will also adjust the time range to be from the start of the game and will trigger a query for the ADAGEGameInformation. Rickshaw json will use the information about player color and player name form the ADAGEGameInformation if found.</td>
+    </tr>
+    <tr>
+        <td>rickshaw (optional)</td>
+        <td>bool</td>
+        <td>If used in combo with a request for json it will return json formated for use with a rickshaw graph</td>
+    </tr>
+    
+</table>
+
+
+###Response
+
+json or csv containing the values of the field over time. 
