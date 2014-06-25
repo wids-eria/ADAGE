@@ -61,6 +61,11 @@ class Tplayer
 
     puts user.player_name
 
+    foo = user.data('KrystalsOfKaydor').count
+    if foo == 0
+      return
+    end
+
 
     logs = user.data('KrystalsOfKaydor').without([:_id, :created_at, :updated_at]).asc(:timestamp)
 
@@ -223,5 +228,8 @@ class TenacityPlayerStats
 
 end
 
-players = CSV.open("csv/tenacity/crystals_players.csv", 'r')
+#players = CSV.open("csv/tenacity/crystals_players.csv", 'r')
+players = User.player_name_matches('5-0-')
+players = players.map{ |u| u.player_name}
+puts players.inspect
 TenacityPlayerStats.new.run players

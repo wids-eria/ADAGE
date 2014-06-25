@@ -39,6 +39,11 @@ class Tplayer
     pre = 0
     post = 0
     
+    foo = user.data('Tenacity-Meditation').count
+    if foo == 0
+      return
+    end
+
 
 
     sessions =  user.data('Tenacity-Meditation').asc(:timestamp).distinct(:session_token)
@@ -161,5 +166,7 @@ class TenacityPlayerStats
 
 end
 
-players = CSV.open("csv/tenacity/mindfulness_players.csv", 'r')
+#players = CSV.open("csv/tenacity/mindfulness_players.csv", 'r')
+players = User.player_name_matches('5-0-')
+players = players.map{ |u| u.player_name}
 TenacityPlayerStats.new.run players

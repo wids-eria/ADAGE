@@ -1,14 +1,15 @@
 require 'csv'
 
 
-player_list = CSV.open("csv/tenacity/crystals_players.csv", 'r')
-players = Array.new
-player_list.each do |player_name|
-  player = User.where(player_name: player_name).first
-  if player != nil
-    players << player
-  end
-end
+#player_list = CSV.open("csv/tenacity/crystals_players.csv", 'r')
+#players = Array.new
+#player_list.each do |player_name|
+#  player = User.where(player_name: player_name).first
+#  if player != nil
+#    players << player
+#  end
+#end
+players = User.player_name_matches('5-0-')
 
 types = AdaData.with_game('KrystalsOfKaydor').where(schema: 'PRODUCTION-05-29-2013').without([:_id, :created_at, :updated_at]).distinct(:key)
 puts types.inspect

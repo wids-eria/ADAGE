@@ -1,14 +1,15 @@
 require 'csv'
 
 
-player_list = CSV.open("csv/tenacity/player_list.csv", 'r')
-players = Array.new
-player_list.each do |player_name|
-  player = User.where(player_name: player_name).first
-  if player != nil
-    players << player
-  end
-end
+#player_list = CSV.open("csv/tenacity/player_list.csv", 'r')
+#players = Array.new
+#player_list.each do |player_name|
+#  player = User.where(player_name: player_name).first
+#  if player != nil
+#    players << player
+#  end
+#end
+players = User.player_name_matches('5-0-')
 
 
 types = AdaData.with_game('Tenacity-Meditation').where(schema: 'PRODUCTION-05-17-2013').without([:_id, :created_at, :updated_at]).distinct(:key)
