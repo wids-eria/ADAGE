@@ -160,6 +160,29 @@ class UsersController < ApplicationController
     end
   end
 
+  def get_accessible_games
+    @user = User.find(params[:id])
+    @games = Array.new
+    Game.all.each do |game|
+      if can? :read, game
+        data = {game: game.name}
+        versions = Array.new
+        game.implementations.each do |imp|
+          temp = imp.as_json(only: [:name,:client])
+          temp[:token] = imp.client.app_token
+          versions << temp
+        end
+        data[:versions] = versions
+        @games << data
+
+      end
+    end
+
+    respond_to do |format|
+      format.json { render :json => @games }
+    end
+  end
+
 
   def get_key_values
 
