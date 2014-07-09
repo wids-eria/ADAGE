@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140509211600) do
+ActiveRecord::Schema.define(:version => 20140709183815) do
 
   create_table "games", :force => true do |t|
     t.string   "name"
@@ -19,14 +19,8 @@ ActiveRecord::Schema.define(:version => 20140509211600) do
     t.datetime "updated_at", :null => false
   end
 
-  create_table "implementations", :force => true do |t|
-    t.string   "name"
-    t.integer  "game_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-    t.index ["game_id"], :name => "fk__implementations_game_id"
-    t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_implementations_game_id"
-  end
+# Could not dump table "implementations" because of following StandardError
+#   Unknown type 'json' for column 'schema'
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -102,6 +96,14 @@ ActiveRecord::Schema.define(:version => 20140509211600) do
     t.foreign_key ["role_id"], "roles", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_role_id"
     t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_assignments_user_id"
   end
+
+  create_table "dashboards", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+# Could not dump table "graphs" because of following StandardError
+#   Unknown type 'json' for column 'settings'
 
   create_table "groups", :force => true do |t|
     t.string   "code"
