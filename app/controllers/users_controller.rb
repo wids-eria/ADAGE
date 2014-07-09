@@ -160,6 +160,40 @@ class UsersController < ApplicationController
     end
   end
 
+  def get_accessible_games
+    if params[:app_token] != nil
+      client = Client.find_by_app_token(params[:app_token])
+    end
+
+    if client != nil
+      @user = User.find(params[:id])
+      @games = Array.new
+      Game.all.each do |game|
+        if can? :read, game
+          data = {game: game.name}
+          versions = Array.new
+          game.implementations.each do |imp|
+            temp = imp.as_json(only: [:name,:client])
+            temp[:token] = imp.client.app_token
+            versions << temp
+          end
+          data[:versions] = versions
+          @games << data
+
+        end
+      end
+
+      respond_to do |format|
+        format.json { render :json => @games }
+      end
+    else
+      respond_to do |format|
+        format.json { render :json => [], :status => :unauthorized}
+      end
+    end
+
+  end
+
 
   def get_key_values
 
@@ -184,7 +218,10 @@ class UsersController < ApplicationController
         format.html {render}
         format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
       end
-
+    else
+      respond_to do |format|
+        format.json { render :json => [], :status => :unauthorized}
+      end
     end
 
   end

@@ -123,6 +123,10 @@ GEM
       railties (~> 3.0)
       thor (~> 0.14)
     json (1.8.0)
+    json-schema-generator (0.0.9)
+      jsonpath
+    jsonpath (0.5.6)
+      multi_json
     jwt (0.1.6)
       multi_json (>= 1.0)
     kaminari (0.13.0)
@@ -214,8 +218,6 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.5)
-    rickshaw_rails (1.2.0)
-      railties (>= 3.1.0)
     rqrcode (0.4.2)
     rqrcode_png (0.1.2)
       chunky_png
@@ -308,6 +310,7 @@ DEPENDENCIES
   haml
   httparty
   jquery-rails
+  json-schema-generator
   kaminari
   launchy
   mongoid

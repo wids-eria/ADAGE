@@ -80,6 +80,7 @@ Ada::Application.routes.draw do
       get :session_logs
       get :context_logs
       get :get_key_values
+      get :get_accessible_games
       put :update_teacher_request
     end
   end
