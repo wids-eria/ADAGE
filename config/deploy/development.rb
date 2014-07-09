@@ -1,5 +1,5 @@
 set :rails_env, :development
-set :branch, "master"
+set :branch, fetch(:branch, "master")
 
 role :web, "gls-devel-1.discovery.wisc.edu"
 role :app, "gls-devel-1.discovery.wisc.edu"
