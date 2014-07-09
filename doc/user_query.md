@@ -2,7 +2,7 @@
 
 These queries have been set up to be useful from a client to retrieve relevant user data. Requests must come from an authenticated client with a valid and authenticated account. 
 
-##GET /users/{user_id}/get_accessible_games.json
+##GET /users/:user_id/get_accessible_games.json
 
 Query to get the Games a User has permissions to log to.
 
