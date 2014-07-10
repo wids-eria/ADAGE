@@ -1,6 +1,6 @@
 class Game < ActiveRecord::Base
 
-  attr_accessible :name, :implementations
+  attr_accessible :name, :implementations, :dashboards
   validates :name, uniqueness: { case_sensitive: false }
   has_many :implementations
 

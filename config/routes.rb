@@ -38,6 +38,7 @@ Ada::Application.routes.draw do
       get :sessions
       get :contexts
       get :developer_tools
+      get :dashboard
       get :researcher_tools
     end
   end
