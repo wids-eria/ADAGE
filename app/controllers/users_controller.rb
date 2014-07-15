@@ -223,7 +223,7 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render :json => [], :status => :unauthorized}
+        #format.json { render :json => [], :status => :unauthorized}
       end
     end
 
