@@ -163,9 +163,12 @@ class UsersController < ApplicationController
   def get_accessible_games
     if params[:app_token] != nil
       client = Client.find_by_app_token(params[:app_token])
+
+      Rails.logger.debug("App token" + params[:app_token])
     end
 
-    if client != nil
+    if client
+      Rails.logger.debug("Found Client")
       @user = User.find(params[:id])
       @games = Array.new
       Game.all.each do |game|
