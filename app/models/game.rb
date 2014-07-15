@@ -5,6 +5,7 @@ class Game < ActiveRecord::Base
   has_many :implementations
 
   has_many :roles
+  has_many :dashboards
   has_one :participant_role
   has_one :researcher_role
   has_one :developer_role

@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
   has_many :assignments
   has_many :access_tokens
   has_many :social_access_tokens
+  has_many :dashboards
   has_and_belongs_to_many :roles
   has_and_belongs_to_many :groups
 
