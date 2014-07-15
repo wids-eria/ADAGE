@@ -1,5 +1,16 @@
+.graph-container{
+  padding: 20px;
+
+  width: auto;
+  border: 1px dashed black;
+}
+
 .graph{
-  border: 1px solid black;
-  width: 400px;
-  height: 250px;
+  margin: 10px;
+}
+
+#legend{
+  width: 100px;
+  min-height: 20px;
+  margin: 10px;
 }
