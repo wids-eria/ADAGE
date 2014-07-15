@@ -167,6 +167,10 @@ class UsersController < ApplicationController
 
     if client
       @user = User.find(params[:id])
+
+
+      Rails.logger.debug("User " + params[:id])
+
       @games = Array.new
       Game.all.each do |game|
         if can? :read, game
