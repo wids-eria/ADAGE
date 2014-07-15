@@ -7,6 +7,21 @@
 
 .graph{
   margin: 10px;
+
+
+  .x_tick{
+    .title{
+      bottom: -20px !important;
+      color: black !important;
+      font-size: 1.2em !important;
+    }
+  }
+
+  .tick{
+    left: -20px !important;
+    color: black !important;
+    font-size: 1.2em !important;
+  }
 }
 
 #legend{
