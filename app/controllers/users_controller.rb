@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   respond_to :html, :json
 
   layout 'blank'
-  before_filter :authenticate_user!, except: [:authenticate_for_token,:get_accessible_games]
+  before_filter :authenticate_user!, except: [:authenticate_for_token]
 
   def teacher_requests
     @teachers = User.where("teacher_status_cd IS NOT NULL")
