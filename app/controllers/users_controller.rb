@@ -167,10 +167,6 @@ class UsersController < ApplicationController
 
     if client
       @user = User.find(params[:id])
-
-
-      Rails.logger.debug("User " + params[:id])
-
       @games = Array.new
       Game.all.each do |game|
         if can? :read, game
@@ -187,7 +183,6 @@ class UsersController < ApplicationController
         end
       end
 
-      Rails.logger.debug("Response " + @games.to_json)
       respond_to do |format|
         format.json { render :json => @games }
       end
