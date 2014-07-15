@@ -163,12 +163,9 @@ class UsersController < ApplicationController
   def get_accessible_games
     if params[:app_token] != nil
       client = Client.find_by_app_token(params[:app_token])
-
-      Rails.logger.debug("App token" + params[:app_token])
     end
 
     if client
-      Rails.logger.debug("Found Client")
       @user = User.find(params[:id])
       @games = Array.new
       Game.all.each do |game|
@@ -186,6 +183,7 @@ class UsersController < ApplicationController
         end
       end
 
+      Rails.logger.debug("Response " + @games.to_json)
       respond_to do |format|
         format.json { render :json => @games }
       end
