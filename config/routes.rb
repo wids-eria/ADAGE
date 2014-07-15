@@ -40,6 +40,7 @@ Ada::Application.routes.draw do
       get :developer_tools
       get :dashboard
       get :researcher_tools
+      get :remote_graph
     end
   end
   resources :implementations

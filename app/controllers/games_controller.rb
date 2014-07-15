@@ -200,4 +200,17 @@ class GamesController < ApplicationController
   def edit
     @game = Game.find(params[:id])
   end
+
+  def remote_graph
+    @game = Game.find(params[:id])
+    @data = AdaData.with_game(@game.name).only(:timestamp,:health,:user_id).asc(:timestamp)
+
+    results = {data:[]}
+    @data.each do |r|
+      results[:data].push({x: r[:timestamp].to_i, y: r[:health].to_i })
+    end
+
+    respond_with results
+  end
+
 end
