@@ -1,31 +1,54 @@
 .graph-container{
   padding: 20px;
-
-  width: auto;
-  border: 1px dashed black;
-}
-
-.graph{
-  margin: 10px;
+  width: 450px;
+  background-color: rgb(184, 184, 184);
 
 
-  .x_tick{
-    .title{
-      bottom: -20px !important;
-      color: black !important;
-      font-size: 1.2em !important;
+  #yaxis{
+    border-radius:5px;
+    padding:5px;
+    background-color: white;
+    float:left;
+    width: 30px;
+    height: 280px;
+    margin-top: 10px;
+  }
+
+  .graph{
+  border-radius:5px;
+    padding:10px;
+    background-color: white;
+    margin: 10px;
+    margin-left: 30px;
+    padding-bottom:30px;
+
+    .x_tick{
+      .title{
+        bottom: 5px !important;
+        color: black !important;
+        font-size: 0.8em !important;
+        /*
+          transform:rotate(-35deg);
+          -ms-transform:rotate(-35deg);
+          -webkit-transform:rotate(-35deg);
+        */
+      }
+    }
+
+    .y_grid,.y_ticks{
+        left: -20px !important;
+      .tick{
+        left: -20px !important;
+        color: black !important;
+        font-size: 1.2em !important;
+      }
     }
   }
 
-  .tick{
-    left: -20px !important;
-    color: black !important;
-    font-size: 1.2em !important;
+  #legend{
+    width: 100px;
+    min-height: 20px;
+    margin-top: 30px;
+    margin-left: 10px;
   }
-}
-
-#legend{
-  width: 100px;
-  min-height: 20px;
-  margin: 10px;
 }
