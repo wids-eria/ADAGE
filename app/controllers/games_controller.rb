@@ -203,7 +203,8 @@ class GamesController < ApplicationController
 
   def remote_graph
     @game = Game.find(params[:id])
-    @data = AdaData.with_game(@game.name).only(:timestamp,:health,:user_id).asc(:timestamp)
+
+    @data = AdaData.with_game(@game.name).only(params[:metrics][:x],params[:metrics][:y],:user_id).asc(:timestamp)
 
     results = {data:[],name:@data[0][:user_id]}
     @data.each do |r|

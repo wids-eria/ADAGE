@@ -13,7 +13,10 @@ $(document).ready(function () {
       padding: { top: 0.08, right: 0, bottom: 0.06, left: 0 },
     });
 
-    var jqxhr = $.get( "remote_graph.json", function(response) {
+    var params = {};
+    params = jQuery.parseJSON(self.dataset.options);
+
+    var jqxhr = $.get( "remote_graph.json",params, function(response) {
       data[0].name = response['name'];
       data[0].data = response['data'];
       data[0].color = 'steelblue';
