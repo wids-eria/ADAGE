@@ -2,4 +2,4 @@
 
 %h2= @game.name + " DashBoard"
 - @dashboard.graphs.each do |graph|
-  = render partial: 'graph'
+  = render partial: 'graph', locals: {graph: graph}

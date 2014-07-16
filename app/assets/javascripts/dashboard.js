@@ -15,6 +15,7 @@ $(document).ready(function () {
 
     var params = {};
     params = jQuery.parseJSON(self.dataset.options);
+    //params =self.dataset.options;
 
     var jqxhr = $.get( "remote_graph.json",params, function(response) {
       data[0].name = response['name'];

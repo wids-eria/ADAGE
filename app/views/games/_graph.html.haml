@@ -1,4 +1,5 @@
 .graph-container
   #yaxis
-  .graph.line{ data: {options: {metrics: {x: 'timestamp',y: 'health'}}.to_json}}
+  - output = JSON.parse graph.metrics
+  .graph.line{ data: {options: {metrics: output}.to_json}}
   #legend
