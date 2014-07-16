@@ -211,7 +211,13 @@ class GamesController < ApplicationController
       metrics << params[:metrics][key]
     end
 
-    @data = AdaData.with_game(@game.name).only(metrics).asc(:timestamp)
+    params[:metrics].each do |key,val|
+      metrics << params[:metrics][key]
+    end
+
+
+
+    @data = AdaData.with_game(@game.name).only(metrics).where()asc(:timestamp)
 
     results = {data:[],name:@data[0][:user_id]}
     @data.each do |r|
