@@ -56,6 +56,10 @@ $(document).ready(function () {
   });
 
   $(".refresh").click(function(g){
+    //this should be redone at some point to refresh the already existing graph
+    $(this).parent().find("#legend").html("");
+    $(this).parent().find("#yaxis").html("");
+    $(this).parent().find(".graph").html("");
     requestGraph($(this).parent().find(".graph")[0]);
   });
 });

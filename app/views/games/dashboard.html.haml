@@ -1,5 +1,21 @@
 = javascript_include_tag :dashboard
 
 %h2= @game.name + " DashBoard"
+
+#toolbar
+  %button#add-graph.button{data: {toggle: "modal" ,target: "#graph-modal"}} Add Graph
+
 - @dashboard.graphs.each do |graph|
   = render partial: 'graph', locals: {graph: graph}
+
+.modal.fade#graph-modal
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h4 Create Graph
+
+      .modal-body
+        asdasd
+      .modal-footer
+        %button#submit-graph.button Create
+        %button#close-graph.button{data: {dismiss: "modal"}} Close
