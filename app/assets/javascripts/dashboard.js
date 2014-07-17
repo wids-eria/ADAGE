@@ -62,4 +62,9 @@ $(document).ready(function () {
     $(this).parent().find(".graph").html("");
     requestGraph($(this).parent().find(".graph")[0]);
   });
+
+  ich.addTemplate("user", "<ul>{{test}} asdasd</ul>");
+  var user = ich.user({test:"ASDASD"});
+  $("ul#metrics").html(user);
+
 });

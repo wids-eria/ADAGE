@@ -1,5 +1,4 @@
 = javascript_include_tag :dashboard
-
 %h2= @game.name + " DashBoard"
 
 #toolbar
@@ -15,7 +14,16 @@
         %h4 Create Graph
 
       .modal-body
-        asdasd
+        %ol.breadcrumb
+          %li
+            %a{href: "#"} Home /
+          %li
+            %a{href: "#"} Other /
+          %li
+            %a{href: "#"} asd
+
+        %ul#metrics One
+
       .modal-footer
         %button#submit-graph.button Create
         %button#close-graph.button{data: {dismiss: "modal"}} Close
