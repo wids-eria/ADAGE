@@ -18,33 +18,34 @@ $(document).ready(function () {
     params = jQuery.parseJSON(self.dataset.options);
 
     var jqxhr = $.get( "remote_graph.json",params, function(response) {
-      data[0].name = response['name'];
-      data[0].data = response['data'];
-      data[0].color = 'steelblue';
-      graph.update();
+      if(response){
+        data[0].name = response['name'];
+        data[0].data = response['data'];
+        data[0].color = 'steelblue';
+        graph.update();
 
-      var hoverDetail = new Rickshaw.Graph.HoverDetail( {
-        graph: graph,
-        orientation: 'left',
-      });
+        var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+          graph: graph,
+          orientation: 'left',
+        });
 
-      var legend = new Rickshaw.Graph.Legend( {
-        graph: graph,
-        element: $(self).parent().find("#legend")[0]
-      });
+        var legend = new Rickshaw.Graph.Legend( {
+          graph: graph,
+          element: $(self).parent().find("#legend")[0]
+        });
 
-      var xAxis = new Rickshaw.Graph.Axis.Time({
-        graph: graph,
-        orientation: 'bottom',
-      });
+        var xAxis = new Rickshaw.Graph.Axis.Time({
+          graph: graph,
+          orientation: 'bottom',
+        });
 
-      var yAxis = new Rickshaw.Graph.Axis.Y({
-        graph: graph,
-        element: $(self).parent().find("#yaxis")[0]
-      });
-      yAxis.render();
-      xAxis.render();
-
+        var yAxis = new Rickshaw.Graph.Axis.Y({
+          graph: graph,
+          element: $(self).parent().find("#yaxis")[0]
+        });
+        yAxis.render();
+        xAxis.render();
+      }
     })
     .fail(function() {})
     .always(function() {});

@@ -213,20 +213,28 @@ class GamesController < ApplicationController
 
     @data = AdaData.with_game(@game.name).only(metrics).asc(:timestamp)
 
+    # FLatten filter params and handle date case
     filter_params = params[:filters]
 
     if filter_params[:date]
-      start_time = filter_params[:date][:start]
-      end_time = filter_params[:date][:end]
+      filters = {}
 
-      filters = {:timestamp.gte => start_time.to_s,:timestamp.gte => start_time.to_s}
+      if filter_params[:date][:start]
+        start_time = filter_params[:date][:start]
+        filters[:timestamp.gte] = start_time.to_s
+      end
+
+      if filter_params[:date][:end]
+        end_time = filter_params[:date][:end]
+        filters[:timestamp.lte] = end_time.to_s
+      end
+
       filter_params.delete(:date)
-
       filter_params.each do |key,val|
         filters[key] = val.to_i
       end
 
-      @data.where(filters)
+      @data = @data.where(filters)
     end
 
     if @data.count > 0
