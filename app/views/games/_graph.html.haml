@@ -1,7 +1,8 @@
-- output = JSON.parse graph.metrics
+- metrics = JSON.parse graph.metrics
+- filters = JSON.parse graph.filters
 .graph-container
   #yaxis
-  .graph.line{ data: {options: {metrics: output,filters: {date: {start: "1401008100",end: "1484898100"},user_id: "51"}}.to_json}}
+  .graph.line{ data: {options: {metrics: metrics,filters: filters}.to_json}}
   #legend
-  = output["y"] +" over " +output["x"]
+  = metrics["y"] +" over " +metrics["x"]
   .refresh Refresh
