@@ -1,9 +1,10 @@
 $(document).ready(function () {
-  $(".graph").each(function(g){
-    var self = this;
+
+  function requestGraph(g){
+    var self = g;
     var data = [{data:[]}];
     var graph = new Rickshaw.Graph( {
-      element: this,
+      element: g,
       width: 380,
       height: 250,
       series: data,
@@ -15,7 +16,6 @@ $(document).ready(function () {
 
     var params = {};
     params = jQuery.parseJSON(self.dataset.options);
-    //params =self.dataset.options;
 
     var jqxhr = $.get( "remote_graph.json",params, function(response) {
       data[0].name = response['name'];
@@ -48,6 +48,13 @@ $(document).ready(function () {
     })
     .fail(function() {})
     .always(function() {});
+  }
 
+  $(".graph").each(function(g){
+    requestGraph(this);
+  });
+
+  $(".refresh").click(function(g){
+    requestGraph($(this).parent().find(".graph")[0]);
   });
 });

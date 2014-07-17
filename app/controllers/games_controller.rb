@@ -211,26 +211,38 @@ class GamesController < ApplicationController
       metrics << params[:metrics][key]
     end
 
-    params[:metrics].each do |key,val|
-      metrics << params[:metrics][key]
+    filters = params[:filters]
+
+
+    #@data = AdaData.with_game(@game.name).asc(:timestamp).where(:timestamp.gte => start_time.to_s).all
+    @data = AdaData.with_game(@game.name).only(metrics).asc(:timestamp)
+
+    if filters[:date]
+      start_time = filters[:date][:start]
+      end_time = filters[:date][:end]
+
+      @data.where(:timestamp.gte => start_time.to_s,:timestamp.gte => start_time.to_s)
     end
 
 
 
-    @data = AdaData.with_game(@game.name).only(metrics).where()asc(:timestamp)
+   # @data = AdaData.with_game(@game.name).where(:health.gt => 0).only(metrics).asc(:timestamp)
 
-    results = {data:[],name:@data[0][:user_id]}
-    @data.each do |r|
+    if @data.count > 0
+      results = {data:[],name:@data[0][:user_id]}
+      @data.each do |r|
 
-      temp = {}
-      params[:metrics].each do |key,val|
-        temp[key] = r[val].to_i
+        temp = {}
+        params[:metrics].each do |key,val|
+          temp[key] = r[val].to_i
+        end
+
+        results[:data].push(temp)
       end
-
-      results[:data].push(temp)
+      respond_with results
+    else
+      respond_with {}
     end
-
-    respond_with results
   end
 
 end
