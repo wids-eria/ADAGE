@@ -18,6 +18,7 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
     @dashboard = @game.dashboards.where(user_id: nil).first|| Dashboard.create(game_id: @game)
 
+    @keys = AdaData.with_game("live_game").get_keys
   end
 
 
@@ -199,6 +200,10 @@ class GamesController < ApplicationController
 
   def edit
     @game = Game.find(params[:id])
+  end
+
+  def keys
+    respond_with AdaData.with_game(Game.find(params[:id]).name).get_keys.to_json
   end
 
   def remote_graph

@@ -63,8 +63,80 @@ $(document).ready(function () {
     requestGraph($(this).parent().find(".graph")[0]);
   });
 
-  ich.addTemplate("user", "<ul>{{test}} asdasd</ul>");
-  var user = ich.user({test:"ASDASD"});
-  $("ul#metrics").html(user);
+  var temp = "{{#metrics}}<ul>{{.}}</ul>{{>address}}{{/metrics}}";
+  var partial = "<ul>{{address}}</ul>";
+  var data = {metrics:[{address:"ASDASD"},{address:"Asss"}]};
+
+
+  data = {
+    first: {
+      other: null
+    },
+    second: {
+      other: null
+    },
+
+    //Recursively traverse Json and build an nested UL
+    maketree: function(self){
+      if(self == undefined) self=this;
+      var output = "";
+      for(var key in self){
+        if(typeof self[key] != 'function'){
+          if(self[key] != null){
+            output +=  "<ul>" + key + this.maketree(self[key]) + "</ul>";
+          }else{
+           return "<ul>" + key  + "</ul>";
+          }
+        }
+      }
+      return output;
+    }
+  };
+
+
+  ich.addTemplate("address",partial);
+
+  var temp = "<ul>{{maketree}}</ul>";
+  ich.addTemplate("keys", temp);
+  var html = ich.keys(data);
+  $("body").html(html);
+
+  //$("ul#metrics").html(html);
+
+  function FormatKeys(keys){
+    //Recursive Magic
+    function NestKeys(obj,items){
+      var item = items[0];
+      if(items.length ==1){
+        if(obj[item] == undefined) obj[item] = null;
+        return true;
+      }else{
+        if(obj[item] == undefined) obj[item] = {};
+        items.shift();
+        NestKeys(obj[item],items);
+      }
+    }
+
+    //Split each key on . to expand the key into nested keys
+    var result = {};
+    for(var key in keys){
+      if(keys[key] != null){
+        var nested = keys[key].split('.');
+        NestKeys(result,nested);
+      }
+    }
+
+    return result;
+  }
+
+  $.get( "keys.json", function(response) {
+    var keys = FormatKeys(response);
+    console.log(keys);
+
+
+
+
+
+  });
 
 });
