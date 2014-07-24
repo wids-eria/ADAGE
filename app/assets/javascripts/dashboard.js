@@ -63,45 +63,8 @@ $(document).ready(function () {
     requestGraph($(this).parent().find(".graph")[0]);
   });
 
-  var temp = "{{#metrics}}<ul>{{.}}</ul>{{>address}}{{/metrics}}";
-  var partial = "<ul>{{address}}</ul>";
-  var data = {metrics:[{address:"ASDASD"},{address:"Asss"}]};
-
-
-  data = {
-    first: {
-      other: null
-    },
-    second: {
-      other: null
-    },
-
-    //Recursively traverse Json and build an nested UL
-    maketree: function(self){
-      if(self == undefined) self=this;
-      var output = "";
-      for(var key in self){
-        if(typeof self[key] != 'function'){
-          if(self[key] != null){
-            output +=  "<ul>" + key + this.maketree(self[key]) + "</ul>";
-          }else{
-           return "<ul>" + key  + "</ul>";
-          }
-        }
-      }
-      return output;
-    }
-  };
-
-
-  ich.addTemplate("address",partial);
-
   var temp = "<ul>{{maketree}}</ul>";
   ich.addTemplate("keys", temp);
-  var html = ich.keys(data);
-  $("body").html(html);
-
-  //$("ul#metrics").html(html);
 
   function FormatKeys(keys){
     //Recursive Magic
@@ -131,12 +94,30 @@ $(document).ready(function () {
 
   $.get( "keys.json", function(response) {
     var keys = FormatKeys(response);
-    console.log(keys);
 
+    keys.maketree = function(self){
+      if(self == undefined) self=this;
+      var output = "";
+      for(var key in self){
+        if(typeof self[key] != 'function' && key != "_id" && key !="tojson"){
+          if(self[key] != null){
+            output +=  "<ul><label>" + key +"</label>" + this.maketree(self[key]) + "</ul>";
+          }else{
+            output += "<ul><label>" + key +"</label>" + "</ul>";
+          }
+        }
+      }
+      return output;
+    };
 
+    var html = ich.keys(keys);
+    $("#metrics").html(html.text());
 
-
-
+   // $("#metrics ul").hide();
+    $("#metrics>ul:not(ul ul)").show();
+    $("#metrics label").click(function(){
+      $(this).parent().children("ul").toggle();
+    });
   });
 
 });
