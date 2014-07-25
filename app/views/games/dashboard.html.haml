@@ -12,8 +12,32 @@
     .modal-content
       .modal-header
         %h4 Create Graph
+        #variables
+          %label.axis
+            X-axis
+            %input#x-axis
+          %label.axis
+            Y-axis
+            %input#y-axis
+
+
+          .btn-group{data: {toggle: "buttons"}}
+            %label.btn.btn-primary
+              %input{type: "radio",name: "options",id:"line"}
+                Line
+            %label.btn.btn-primary
+              %input{type: "radio",name: "options",id:"bar"}
+                Bar
+          %label.date To
+          %label.date From
 
       .modal-body
+        .dropdown.open
+          %a{href: "#",data: {toggle: "dropdown"}}
+            DOEOIAWND
+            %ul.dropdown-menu{role:"menu"}
+              %label ASDASD
+
         %ol.breadcrumb
           %li
             %a{href: "#"} Home /

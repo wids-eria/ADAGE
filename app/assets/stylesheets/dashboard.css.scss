@@ -67,6 +67,7 @@
 
 #metrics{
   ul{
+    width: 300px;
     label{
       border-radius: 5px;
       background-color: #f5f5f5;
@@ -77,7 +78,70 @@
       &:hover{
         background-color: rgb(204, 200, 200);
       }
+
+      &.selected{
+        background-color: orange;
+        -webkit-transition: background-color 0.2s;
+        transition: background-color 0.2s;
+      }
     }
+
     clear:both;
   }
+}
+
+#graph-modal{
+  width: 900px;
+  margin-left: -450px;
+
+  h4{
+    text-align: center;
+    padding-bottom:5px;
+    border-bottom: 1px solid gray;
+  }
+
+  .modal-header{
+    #variables{
+      .axis{
+        padding:5px;
+        margin-right:10px;
+        display: inline-block;
+        border: 1px solid black;
+
+        input{
+          padding:5px;
+          &:checked{
+            visibility: hidden;
+          }
+        }
+      }
+
+      .date{
+        float:right;
+        padding:5px;
+        margin-right:10px;
+        display: inline-block;
+        border: 1px solid black;
+
+      }
+
+      input[type="radio"]{
+        text-align: center;
+        visibility: hidden!important;
+        &:checked{
+          visibility: hidden;
+        }
+      }
+    }
+
+  }
+}
+
+
+.modal{
+  display: none;
+}
+
+.modal-backdrop.fade.in {
+  opacity: 0.3 !important;
 }

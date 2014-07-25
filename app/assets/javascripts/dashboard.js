@@ -65,7 +65,6 @@ $(document).ready(function () {
 
   var temp = "<ul>{{maketree}}</ul>";
   ich.addTemplate("keys", temp);
-
   function FormatKeys(keys){
     //Recursive Magic
     function NestKeys(obj,items){
@@ -113,10 +112,17 @@ $(document).ready(function () {
     var html = ich.keys(keys);
     $("#metrics").html(html.text());
 
-   // $("#metrics ul").hide();
+    $("#metrics ul").hide();
     $("#metrics>ul:not(ul ul)").show();
     $("#metrics label").click(function(){
-      $(this).parent().children("ul").toggle();
+      $(this).parent().children("ul").toggle("fast");
+      if($(this).parent().children("ul").size() ==0){
+        $("#metrics .selected").removeClass("selected");
+        $(this).toggleClass("selected");
+        $(".modal #x-axis").val($(this).html());
+      }else{
+
+      }
     });
   });
 
