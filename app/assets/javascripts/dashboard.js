@@ -94,6 +94,7 @@ $(document).ready(function () {
   $.get( "keys.json", function(response) {
     var keys = FormatKeys(response);
 
+    //Reformat Json tree into nested ul
     keys.maketree = function(self){
       if(self == undefined) self=this;
       var output = "";
@@ -109,21 +110,51 @@ $(document).ready(function () {
       return output;
     };
 
+    //Load finished html into metric selection modal
     var html = ich.keys(keys);
-    $("#metrics").html(html.text());
+    $("#metric-select-modal #metric-selection").html(html.text());
 
-    $("#metrics ul").hide();
-    $("#metrics>ul:not(ul ul)").show();
-    $("#metrics label").click(function(){
-      $(this).parent().children("ul").toggle("fast");
-      if($(this).parent().children("ul").size() ==0){
-        $("#metrics .selected").removeClass("selected");
-        $(this).toggleClass("selected");
-        $(".modal #x-axis").val($(this).html());
-      }else{
-
-      }
-    });
+    $("#metric-selection ul").hide();
+    $("#metric-selection>ul:not(ul ul)").show();
   });
 
+  $("label.axis").click(function(){
+    ToggleMetricPicker($(this).find("input"));
+  });
+
+
+  function InitializeMetrics(target){
+    $("#metric-selection label").unbind("click");
+    $("#metric-selection label").click(function(){
+      if($(this).parent().children("ul").size() ==0){
+        $("#metric-selection .selected").removeClass("selected");
+        $(this).toggleClass("selected");
+        $(target).val($(this).html());
+      }else{
+        ToggleMetricPicker(target,this);
+      }
+    });
+  }
+
+  function ToggleMetricPicker(target,key){
+    $('#metric-select-modal').modal('show');
+    $("#metric-selection ul").hide();
+
+    if(key == undefined){
+      $("#metric-selection>ul:not(ul ul)").show();
+      $('.breadcrumb').html("");
+    }else{
+      $('.breadcrumb').append("<li><a>"+$(key).html()+"</a></li> /");
+      $("#metric-selection").html($(key).parent().find("ul").clone());
+
+      $("#metric-selection>ul:not(ul ul)").show();
+    }
+
+    InitializeMetrics(target);
+  }
 });
+
+
+
+
+

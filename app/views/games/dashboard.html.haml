@@ -19,8 +19,6 @@
           %label.axis
             Y-axis
             %input#y-axis
-
-
           .btn-group{data: {toggle: "buttons"}}
             %label.btn.btn-primary
               %input{type: "radio",name: "options",id:"line"}
@@ -32,22 +30,22 @@
           %label.date From
 
       .modal-body
-        .dropdown.open
-          %a{href: "#",data: {toggle: "dropdown"}}
-            DOEOIAWND
-            %ul.dropdown-menu{role:"menu"}
-              %label ASDASD
-
-        %ol.breadcrumb
-          %li
-            %a{href: "#"} Home /
-          %li
-            %a{href: "#"} Other /
-          %li
-            %a{href: "#"} asd
-
         #metrics One
 
       .modal-footer
         %button#submit-graph.button Create
         %button#close-graph.button{data: {dismiss: "modal"}} Close
+
+
+.modal.fade#metric-select-modal
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h4 Select a Metric
+      .modal-body
+        %ol.breadcrumb
+        #metric-selection
+      .modal-footer
+        %button#close-graph.button{data: {dismiss: "modal"}} Close
+        %button#submit-graph.button Apply
+
