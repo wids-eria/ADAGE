@@ -675,9 +675,11 @@ class DataController < ApplicationController
     @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     @user_ids = params[:user_ids]
-    puts @user_ids
+
     respond_to do |format|
       format.csv {
+        @user_ids = AdaData.with_game(@game.name).distinct(:user_id)
+
         out = CSV.generate do |csv|
           @user_ids.each do |id|
             user = User.find(id)

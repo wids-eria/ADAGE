@@ -20,7 +20,7 @@
       = 'json'
     <br/>
     All player data:
-    = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
+    = link_to export_data_path('csv', gameName: @game.name) do
       = 'csv'
     = link_to export_data_path('json', gameName: @game.name) do
       = 'json'
