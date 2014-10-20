@@ -12,12 +12,18 @@
   });
 .row
   .span4
-    Export all player data:
+    %h4='Data Export'
+    All participant data:
     = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
       = 'csv'
     = link_to export_data_path('json', gameName: @game.name, user_ids: @game.user_ids) do
       = 'json'
-
+    <br/>
+    All player data:
+    = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
+      = 'csv'
+    = link_to export_data_path('json', gameName: @game.name) do
+      = 'json'
 
   .span4
     %h2='Game Versions'
@@ -39,7 +45,7 @@
 
 .row
   .span12
-    %h2='Players'
+    %h2='Participants'
 .row
   .span6
     %h3='Total number of players: ' + @users.count.to_s
