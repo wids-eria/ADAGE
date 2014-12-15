@@ -11,6 +11,7 @@ class Ability
 
     if user.role? Role.find_by_name('admin')
       can :manage, :all
+      Rack::MiniProfiler.authorize_request
     elsif user.role? Role.find_by_name('player')
       can :create, AdaData
       can :read, AdaData do |data|

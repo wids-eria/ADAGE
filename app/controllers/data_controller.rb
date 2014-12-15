@@ -685,6 +685,7 @@ class DataController < ApplicationController
         end
 
         if params[:end]
+          params[:end] += 86400*1000
           @user_ids = @user_ids.where(:timestamp.lte=> params[:end])
         end
 
@@ -713,6 +714,7 @@ class DataController < ApplicationController
         end
 
         if params[:end]
+          params[:end] += 86400*1000
           data = data.where(:timestamp.lte=> params[:end])
         end
 
