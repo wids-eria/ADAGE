@@ -1,7 +1,9 @@
 %h2= @game.name
 %br
-
 :javascript
+  function DatetoUnix(data){
+    return Math.round(new Date(data).getTime());
+  }
   $(document).ready(function() {
     $('#data').dynatable({
       features:{
@@ -9,10 +11,51 @@
         recordCount: false
       }
     });
+
+    $('.daterange input').datepicker({
+      autoclose: true,
+      todayHighlight: true
+    });
+
+    $('.csv-export').click(function(){
+      var start = DatetoUnix($('.start').val());
+      var end = DatetoUnix($('.end').val());
+      var params = "";
+
+      if(start){params+="&start="+start;};
+      if(end){params+="&end="+end;};
+
+      var url = "#{export_data_path('csv', gameName: @game.name)}"+params;
+      window.location.href = url;
+    });
+
+    $('.json-export').click(function(){
+      var start = DatetoUnix($('.start').val());
+      var end = DatetoUnix($('.end').val());
+      var params = "";
+
+      if(start){params+="&start="+start;};
+      if(end){params+="&end="+end;};
+
+      var url = "#{export_data_path('json', gameName: @game.name)}"+params;
+      window.location.href = url;
+    });
   });
+
+
 .row
   .span4
-    %h4='Data Export'
+    %h2='Export'
+    #datepicker
+    .daterange
+      %span.add-on From
+      %input{type: :text,class: "input-small start",name: :start}
+      %span.add-on To
+      %input{type: :text,class: "input-small end",name: :end}
+      %a.csv-export csv
+      %a.json-export json
+
+    <hr/>
     All participant data:
     = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
       = 'csv'
@@ -24,7 +67,6 @@
       = 'csv'
     = link_to export_data_path('json', gameName: @game.name) do
       = 'json'
-
   .span4
     %h2='Game Versions'
     %ul

@@ -1,0 +1,29 @@
+$(document).ready(function() {
+  $('#data').dynatable({
+    features:{
+      paginate: false,
+      recordCount: false
+    }
+  });
+
+  $('.daterange input').datepicker({
+    autoclose: true,
+    todayHighlight: true
+  });
+
+  $('.csv-export').click(function(){
+    var start = $('.start').val();
+    var end = $('.end').val();
+    console.log(start,end);
+    var url = "";
+    $.get( url, function( data ) {
+
+
+
+    });
+
+  });
+  console.log("T#{}");
+
+});
+

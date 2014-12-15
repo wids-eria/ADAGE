@@ -1,5 +1,5 @@
 set :rails_env, :production
-set :branch, fetch(:branch, "loopy_lurman")
+set :branch, fetch(:branch, "master")
 
 role :web, "eria-1.morgridge.net"
 role :app, "eria-1.morgridge.net"

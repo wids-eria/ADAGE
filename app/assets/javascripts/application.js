@@ -7,7 +7,8 @@
 
 //= require jquery
 //= require jquery_ujs
-//= require chart
+//= require bootstrap-datepicker
+//= require Chart
 //= require jquery.dynatable
 //= require bootstrap
 //= require ICanHaz.min

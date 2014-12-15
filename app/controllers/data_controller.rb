@@ -678,7 +678,17 @@ class DataController < ApplicationController
 
     respond_to do |format|
       format.csv {
-        @user_ids = AdaData.with_game(@game.name).distinct(:user_id)
+        @user_ids = AdaData.with_game(@game.name)
+
+        if params[:start]
+          @user_ids = @user_ids.where(:timestamp.gte=> params[:start])
+        end
+
+        if params[:end]
+          @user_ids = @user_ids.where(:timestamp.lte=> params[:end])
+        end
+
+        @user_ids = @user_ids.distinct(:user_id)
 
         out = CSV.generate do |csv|
           @user_ids.each do |id|
@@ -695,7 +705,15 @@ class DataController < ApplicationController
         unless  @user_ids.nil?
           data = AdaData.with_game(@game.name).in(user_id: @user_ids)
         else
-          data = AdaData.with_game(@game.name).all
+          data = AdaData.with_game(@game.name)
+        end
+
+        if params[:start]
+          data = data.where(:timestamp.gte=> params[:start])
+        end
+
+        if params[:end]
+          data = data.where(:timestamp.lte=> params[:end])
         end
 
         send_data data.to_json, filename: @game.name+'.json'
