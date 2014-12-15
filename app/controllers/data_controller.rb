@@ -676,6 +676,12 @@ class DataController < ApplicationController
     authorize! :read, @game
     @user_ids = params[:user_ids]
 
+
+    if params[:end]
+      params[:end] = params[:end].to_i
+      params[:end] += 86400*1000
+    end
+
     respond_to do |format|
       format.csv {
         @user_ids = AdaData.with_game(@game.name)
@@ -685,7 +691,6 @@ class DataController < ApplicationController
         end
 
         if params[:end]
-          params[:end] += 86400*1000
           @user_ids = @user_ids.where(:timestamp.lte=> params[:end])
         end
 
@@ -714,7 +719,6 @@ class DataController < ApplicationController
         end
 
         if params[:end]
-          params[:end] += 86400*1000
           data = data.where(:timestamp.lte=> params[:end])
         end
 
