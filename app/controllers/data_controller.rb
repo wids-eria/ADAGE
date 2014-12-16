@@ -671,6 +671,19 @@ class DataController < ApplicationController
     end
   end
 
+  def set_file_headers(filename,type)
+    headers["Content-Type"] = type
+    headers["Content-disposition"] = "attachment; filename='#{filename}'"
+  end
+
+  def set_streaming_headers
+    headers['X-Accel-Buffering'] = 'no'
+    headers["Cache-Control"] ||= "no-cache"
+    headers.delete("Content-Length")
+    headers['Last-Modified'] = Time.now.ctime.to_s
+  end
+
+
   def export
     @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
@@ -720,7 +733,24 @@ class DataController < ApplicationController
           data = data.where(:timestamp.lte=>params[:end])
         end
 
-        send_data data.to_json, filename: @game.name+'.json'
+        filename = @game.name+'.json'
+        type = "text/json"
+
+        set_file_headers(filename,type)
+        set_streaming_headers
+
+        response.status = 200
+
+        self.response_body = Enumerator.new do |y|
+          i=0
+
+          data.all.each do |log|
+            y << log.to_json
+            i+=1
+          end
+        end
+
+        #send_data data.all.to_json, filename: filename
       }
     end
   end
