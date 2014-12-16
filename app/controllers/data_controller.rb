@@ -678,8 +678,7 @@ class DataController < ApplicationController
 
 
     if params[:end]
-      params[:end] = params[:end].to_i
-      params[:end] += 86400*1000
+      params[:end] = (Time.at((params[:end].to_i)/1000).to_time.to_i*1000).to_s
     end
 
     respond_to do |format|
@@ -719,7 +718,7 @@ class DataController < ApplicationController
         end
 
         if params[:end]
-          data = data.where(:timestamp.lte=> params[:end])
+          data = data.where(:timestamp.lte=>params[:end])
         end
 
         send_data data.to_json, filename: @game.name+'.json'
