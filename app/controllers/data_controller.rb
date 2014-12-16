@@ -738,19 +738,16 @@ class DataController < ApplicationController
 
         set_file_headers(filename,type)
         set_streaming_headers
-
         response.status = 200
 
         self.response_body = Enumerator.new do |y|
           i=0
-
           data.all.each do |log|
             y << log.to_json
             i+=1
+            GC.start if i%500==0
           end
         end
-
-        #send_data data.all.to_json, filename: filename
       }
     end
   end
