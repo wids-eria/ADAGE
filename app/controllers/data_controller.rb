@@ -676,9 +676,8 @@ class DataController < ApplicationController
     authorize! :read, @game
     @user_ids = params[:user_ids]
 
-
     if params[:end]
-      params[:end] = (Time.at((params[:end].to_i)/1000).to_time.to_i*1000).to_s
+      params[:end] = (Time.at((params[:end].to_i)/1000+86400).to_time.to_i*1000).to_s
     end
 
     respond_to do |format|
@@ -698,7 +697,7 @@ class DataController < ApplicationController
         out = CSV.generate do |csv|
           @user_ids.each do |id|
             user = User.find(id)
-            if user.present?
+            unless user.nil?
               user.data_to_csv(csv, @game.name)
             end
           end

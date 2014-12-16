@@ -46,18 +46,18 @@
 .row
   .span4
     %h2='Export'
-    -#
-    -##datepicker
-    -#.daterange
-    -#  %span.add-on From
-    -#  %input{type: :text,class: "input-small start",name: :start}
-    -#  %span.add-on To
-    -#  %input{type: :text,class: "input-small end",name: :end}
-    -#  %a.csv-export csv
-    -#  %a.json-export json
-    -#
 
-    -#<hr/>
+    #datepicker
+      .daterange
+        %span.add-on From
+        %input{type: :text,class: "input-small start",name: :start}
+        %span.add-on To
+        %input{type: :text,class: "input-small end",name: :end}
+        %a.csv-export csv
+        %a.json-export json
+
+
+    <hr/>
     All participant data:
     = link_to export_data_path('csv', gameName: @game.name, user_ids: @game.user_ids) do
       = 'csv'
