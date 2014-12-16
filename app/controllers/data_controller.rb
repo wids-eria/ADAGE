@@ -716,7 +716,14 @@ class DataController < ApplicationController
           end
         end
 
-        send_data out, filename: @game.name+'.csv'
+        filename = @game.name+'.csv'
+
+        if params[:end] and params[:start]
+          start_date =  Time.at(params[:start].to_i/1000).to_time.strftime("%-m_%-d_%Y")
+          end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
+          filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
+        end
+        send_data out, filename: filename
       }
       format.json {
         unless  @user_ids.nil?
@@ -734,6 +741,13 @@ class DataController < ApplicationController
         end
 
         filename = @game.name+'.json'
+
+        if params[:end] and params[:start]
+          start_date =  Time.at(params[:start].to_i/1000).to_time.strftime("%-m_%-d_%Y")
+          end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
+          filename = @game.name+"_"+start_date+"-"+end_date+'.json'
+        end
+
         type = "text/json"
 
         set_file_headers(filename,type)
