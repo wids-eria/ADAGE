@@ -743,7 +743,7 @@ class DataController < ApplicationController
         self.response_body = Enumerator.new do |y|
           i=0
           data.all.each do |log|
-            y << log.to_json
+            y << log.to_json + "\n"
             i+=1
             GC.start if i%500==0
           end
