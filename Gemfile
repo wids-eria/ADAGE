@@ -47,7 +47,7 @@ group :test, :development do
   gem 'colored'
 
   gem 'cucumber-rails'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '2.7.0'
   gem 'fabrication'
   gem 'pry'
   gem 'pry-rails'

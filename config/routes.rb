@@ -21,7 +21,6 @@ Ada::Application.routes.draw do
   match "load_config" => "config#load", :via => :get
   match "show_config" => "config#show", :via => :get
 
-
   match "game_version_data/save" => 'gv#save', :via => :post
   match "game_version_data/delete" => 'gv#delete', :via => :post
   match "game_version_data" => 'gv#show', :via => :get
@@ -41,7 +40,9 @@ Ada::Application.routes.draw do
       get :researcher_tools
     end
   end
+
   resources :implementations
+
   resources :data do
     collection do
       get :find_tenacity_player

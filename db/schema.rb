@@ -98,8 +98,14 @@ ActiveRecord::Schema.define(:version => 20140709183815) do
   end
 
   create_table "dashboards", :force => true do |t|
+    t.integer  "game_id"
+    t.integer  "user_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.index ["game_id"], :name => "fk__dashboards_game_id"
+    t.index ["user_id"], :name => "fk__dashboards_user_id"
+    t.foreign_key ["game_id"], "games", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_dashboards_game_id"
+    t.foreign_key ["user_id"], "users", ["id"], :on_update => :no_action, :on_delete => :no_action, :name => "fk_dashboards_user_id"
   end
 
 # Could not dump table "graphs" because of following StandardError
