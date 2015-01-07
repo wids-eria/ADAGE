@@ -75,16 +75,14 @@ class GroupsController < ApplicationController
     params[:player_group][:user_ids].each do |user_id|
       if not user_id.blank?
         user = User.find(user_id)
-        if user && user.add_to_group(@group.code)
+        if user && user.remove_from_group(@group.code)
           count += 1
         end
       end
     end
 
     respond_to do |format|
-      format.json {render json: {message: "Successfully added "+ count.to_s() +" new players.",users: @group.users},status: :ok}
+      format.json {render json: {message: "Successfully removed "+ count.to_s() +" new players.",users: @group.users},status: :ok}
     end
-
   end
-
 end

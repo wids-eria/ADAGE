@@ -190,7 +190,7 @@ class User < ActiveRecord::Base
 
   def remove_from_group(code)
     @group = Group.find_by_code(code)
-    unless @group.nil? || self.groups.include?(@group)
+    unless @group.nil?
       self.groups.delete(@group)
       return true
     end

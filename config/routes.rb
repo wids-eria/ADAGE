@@ -11,6 +11,7 @@ Ada::Application.routes.draw do
   resources :groups do
     member do
       put :add_user
+      delete :remove_user
     end
   end
 
