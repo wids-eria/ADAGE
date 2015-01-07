@@ -23,6 +23,20 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- Name: hstore; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS hstore WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION hstore; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs';
+
+
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
@@ -421,6 +435,40 @@ ALTER SEQUENCE social_access_tokens_id_seq OWNED BY social_access_tokens.id;
 
 
 --
+-- Name: stats; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE stats (
+    id integer NOT NULL,
+    key character varying(255),
+    value hstore,
+    game_id integer,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: stats_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE stats_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stats_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE stats_id_seq OWNED BY stats.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -548,6 +596,13 @@ ALTER TABLE ONLY social_access_tokens ALTER COLUMN id SET DEFAULT nextval('socia
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY stats ALTER COLUMN id SET DEFAULT nextval('stats_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
@@ -637,6 +692,14 @@ ALTER TABLE ONLY roles
 
 ALTER TABLE ONLY social_access_tokens
     ADD CONSTRAINT social_access_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stats_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY stats
+    ADD CONSTRAINT stats_pkey PRIMARY KEY (id);
 
 
 --
@@ -774,10 +837,31 @@ CREATE INDEX fk__social_access_tokens_user_id ON social_access_tokens USING btre
 
 
 --
+-- Name: fk__stats_game_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__stats_game_id ON stats USING btree (game_id);
+
+
+--
+-- Name: fk__stats_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__stats_user_id ON stats USING btree (user_id);
+
+
+--
 -- Name: index_social_access_tokens_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_social_access_tokens_on_user_id ON social_access_tokens USING btree (user_id);
+
+
+--
+-- Name: index_stats_on_value; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_stats_on_value ON stats USING gist (value);
 
 
 --
@@ -960,6 +1044,22 @@ ALTER TABLE ONLY social_access_tokens
 
 
 --
+-- Name: fk_stats_game_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stats
+    ADD CONSTRAINT fk_stats_game_id FOREIGN KEY (game_id) REFERENCES games(id);
+
+
+--
+-- Name: fk_stats_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stats
+    ADD CONSTRAINT fk_stats_user_id FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -1020,3 +1120,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140509211600');
 INSERT INTO schema_migrations (version) VALUES ('20140708210113');
 
 INSERT INTO schema_migrations (version) VALUES ('20140709183815');
+
+INSERT INTO schema_migrations (version) VALUES ('20150107220957');
