@@ -15,6 +15,7 @@ Ada::Application.routes.draw do
     end
   end
 
+
   match "save_game" => "save#save", :via => :post
   match "load_game" => "save#load", :via => :get
 
@@ -64,6 +65,10 @@ Ada::Application.routes.draw do
       post :real_time_selection
       get :real_time_chart
     end
+  end
+  namespace :stats do
+    post :save_stat
+    get :get_stat
   end
 
   resources :users do

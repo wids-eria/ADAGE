@@ -151,8 +151,6 @@ ALTER SEQUENCE clients_id_seq OWNED BY clients.id;
 
 CREATE TABLE dashboards (
     id integer NOT NULL,
-    game_id integer,
-    user_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -214,7 +212,6 @@ ALTER SEQUENCE games_id_seq OWNED BY games.id;
 
 CREATE TABLE graphs (
     id integer NOT NULL,
-    dashboard_id integer,
     settings json,
     metrics json,
     created_at timestamp without time zone NOT NULL,
@@ -440,8 +437,7 @@ ALTER SEQUENCE social_access_tokens_id_seq OWNED BY social_access_tokens.id;
 
 CREATE TABLE stats (
     id integer NOT NULL,
-    key character varying(255),
-    value hstore,
+    data hstore,
     game_id integer,
     user_id integer,
     created_at timestamp without time zone NOT NULL,
@@ -753,27 +749,6 @@ CREATE INDEX fk__clients_implementation_id ON clients USING btree (implementatio
 
 
 --
--- Name: fk__dashboards_game_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX fk__dashboards_game_id ON dashboards USING btree (game_id);
-
-
---
--- Name: fk__dashboards_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX fk__dashboards_user_id ON dashboards USING btree (user_id);
-
-
---
--- Name: fk__graphs_dashboard_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX fk__graphs_dashboard_id ON graphs USING btree (dashboard_id);
-
-
---
 -- Name: fk__group_ownerships_group_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -858,10 +833,10 @@ CREATE INDEX index_social_access_tokens_on_user_id ON social_access_tokens USING
 
 
 --
--- Name: index_stats_on_value; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_stats_on_data; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_stats_on_value ON stats USING gist (value);
+CREATE INDEX index_stats_on_data ON stats USING gist (data);
 
 
 --
@@ -945,30 +920,6 @@ ALTER TABLE ONLY assignments
 
 ALTER TABLE ONLY clients
     ADD CONSTRAINT fk_clients_implementation_id FOREIGN KEY (implementation_id) REFERENCES implementations(id);
-
-
---
--- Name: fk_dashboards_game_id; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY dashboards
-    ADD CONSTRAINT fk_dashboards_game_id FOREIGN KEY (game_id) REFERENCES games(id);
-
-
---
--- Name: fk_dashboards_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY dashboards
-    ADD CONSTRAINT fk_dashboards_user_id FOREIGN KEY (user_id) REFERENCES users(id);
-
-
---
--- Name: fk_graphs_dashboard_id; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY graphs
-    ADD CONSTRAINT fk_graphs_dashboard_id FOREIGN KEY (dashboard_id) REFERENCES dashboards(id);
 
 
 --

@@ -3,14 +3,13 @@ class AddStats < ActiveRecord::Migration
     execute 'CREATE EXTENSION hstore';
 
     create_table(:stats) do |t|
-      t.column :key, :string
-      t.column :value, :hstore
+      t.column :data, :hstore
       t.references :game
       t.references :user
       t.timestamps
     end
 
-    add_hstore_index :stats, :value
+    add_hstore_index :stats, :data
   end
 
   def down

@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.13'
 gem 'pg'
 gem 'devise', '1.5.4'
-#gem 'mongoid'
+gem 'mongoid'
 gem 'simple_enum'
 
 gem 'bson_ext'
