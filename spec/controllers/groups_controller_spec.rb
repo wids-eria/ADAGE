@@ -35,7 +35,6 @@ describe GroupsController do
     end
   end
 
-
   describe "#remove_user_from_group" do
     it "returns an error if user can't be removed from a group" do
       put :add_user, format: :json, id: group.id, player_group: {

@@ -1,5 +1,5 @@
 class StatsController < ApplicationController
-  #before_filter :authenticate_user!
+  before_filter :authenticate_user!
   wrap_parameters format: [:json, :xml]
   respond_to :json
   protect_from_forgery except: [:save_stat,:get_stat]
