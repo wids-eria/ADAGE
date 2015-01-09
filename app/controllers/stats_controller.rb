@@ -13,12 +13,12 @@ class StatsController < ApplicationController
       @game = client.implementation.game
     end
 
-    @user = User.where(id:params[:user_id]).first
+    @user = User.where(id: params[:user_id]).first
 
     errors = []
     unless @user.nil? or @game.nil?
-      stat = Stat.first_or_create(user_id: @user,game_id: @game)
-
+      stat = Stat.where(user_id: @user,game_id: @game).first_or_create
+      puts stat.to_yaml
       #Set hstore key=>value
       stat.data[params[:key]] = params[:value]
 
@@ -57,22 +57,30 @@ class StatsController < ApplicationController
       @game = client.implementation.game
     end
 
-    @user = User.where(id:params[:user_id]).first
+    errors = []
+    data = nil
+    unless @game.nil?
+      stat = Stat.where(user_id: params[:user_id],game_id: @game).first
 
-    unless @user.nil? or @game.nil?
-      stat = Stat.where(user_id: @user,game_id: @game).first
-
-      if stat.data[params[:key]]
+      unless stat.nil? or stat.data[params[:key]].nil?
         data = stat.data[params[:key]]
+        status = :ok
+      else
+        errors = ["Stat Does Not Exist For #{params[:key]}"]
+        status = 400
       end
+    else
+      errors = ["Game Not found for app token"]
+      status = 400
     end
 
     respond_to do |format|
       format.json {
         render json: {
           data: data,
+          errors: errors
         },
-        status: :ok
+        status: status
       }
     end
   end
