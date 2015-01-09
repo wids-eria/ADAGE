@@ -1,10 +1,10 @@
-class StatsController < ApplicationController
+class AchievementsController < ApplicationController
   before_filter :authenticate_user!
   wrap_parameters format: [:json, :xml]
   respond_to :json
   protect_from_forgery except: [:save_stat,:get_stat]
 
-  def save_stat
+  def save_achievement
     #Find Game through app token
     client = Client.where(app_token: params[:app_token]).first
     @game = nil
@@ -16,7 +16,7 @@ class StatsController < ApplicationController
 
     errors = []
     unless @user.nil? or @game.nil?
-      stat = Stat.where(user_id: @user,game_id: @game).first_or_create
+      stat = Achievement.where(user_id: @user,game_id: @game).first_or_create
       #Set hstore key=>value
       stat.data[params[:key]] = params[:value]
 
@@ -47,7 +47,7 @@ class StatsController < ApplicationController
     end
   end
 
-  def get_stat
+  def get_achievement
     #Find Game through app token
     client = Client.where(app_token: params[:app_token]).first
     @game = nil
@@ -58,13 +58,13 @@ class StatsController < ApplicationController
     errors = []
     data = nil
     unless @game.nil?
-      stat = Stat.where(user_id: params[:user_id],game_id: @game).first
+      stat = Achievement.where(user_id: params[:user_id],game_id: @game).first
 
       unless stat.nil? or stat.data[params[:key]].nil?
         data = stat.data[params[:key]]
         status = :ok
       else
-        errors << ["Stat Does Not Exist For #{params[:key]}"]
+        errors << ["Achievement Does Not Exist For #{params[:key]}"]
         status = 400
       end
     else

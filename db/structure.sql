@@ -78,6 +78,39 @@ ALTER SEQUENCE access_tokens_id_seq OWNED BY access_tokens.id;
 
 
 --
+-- Name: achievements; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE achievements (
+    id integer NOT NULL,
+    data hstore,
+    game_id integer,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: achievements_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE achievements_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: achievements_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE achievements_id_seq OWNED BY achievements.id;
+
+
+--
 -- Name: assignments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -522,6 +555,13 @@ ALTER TABLE ONLY access_tokens ALTER COLUMN id SET DEFAULT nextval('access_token
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY achievements ALTER COLUMN id SET DEFAULT nextval('achievements_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY assignments ALTER COLUMN id SET DEFAULT nextval('assignments_id_seq'::regclass);
 
 
@@ -608,6 +648,14 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 ALTER TABLE ONLY access_tokens
     ADD CONSTRAINT access_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: achievements_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY achievements
+    ADD CONSTRAINT achievements_pkey PRIMARY KEY (id);
 
 
 --
@@ -721,6 +769,20 @@ CREATE INDEX fk__access_tokens_user_id ON access_tokens USING btree (user_id);
 
 
 --
+-- Name: fk__achievements_game_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__achievements_game_id ON achievements USING btree (game_id);
+
+
+--
+-- Name: fk__achievements_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__achievements_user_id ON achievements USING btree (user_id);
+
+
+--
 -- Name: fk__assignments_assigner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -826,6 +888,13 @@ CREATE INDEX fk__stats_user_id ON stats USING btree (user_id);
 
 
 --
+-- Name: index_achievements_on_data; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_achievements_on_data ON achievements USING gist (data);
+
+
+--
 -- Name: index_social_access_tokens_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -888,6 +957,22 @@ ALTER TABLE ONLY access_tokens
 
 ALTER TABLE ONLY access_tokens
     ADD CONSTRAINT fk_access_tokens_user_id FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_achievements_game_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY achievements
+    ADD CONSTRAINT fk_achievements_game_id FOREIGN KEY (game_id) REFERENCES games(id);
+
+
+--
+-- Name: fk_achievements_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY achievements
+    ADD CONSTRAINT fk_achievements_user_id FOREIGN KEY (user_id) REFERENCES users(id);
 
 
 --
@@ -1073,3 +1158,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140708210113');
 INSERT INTO schema_migrations (version) VALUES ('20140709183815');
 
 INSERT INTO schema_migrations (version) VALUES ('20150107220957');
+
+INSERT INTO schema_migrations (version) VALUES ('20150109222014');

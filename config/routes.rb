@@ -66,9 +66,15 @@ Ada::Application.routes.draw do
       get :real_time_chart
     end
   end
+
   namespace :stats do
     post :save_stat
     get :get_stat
+  end
+
+  namespace :achievements do
+    post :save_achievement
+    get :get_achievement
   end
 
   resources :users do
