@@ -48,7 +48,7 @@ This assumes you have git installed already.
 
 ###Install complete so take a break then come back for server setup!
 
-1. Copy and update config templates
+1. Copy and update the contents of the following config templates
 
 	```cp config/application.yml.template config/application.yml```
 	
