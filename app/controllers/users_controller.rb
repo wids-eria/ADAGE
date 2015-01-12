@@ -196,7 +196,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
 
     respond_to do |format|
-      format.json { render json: @user.groups }
+      format.json { render json: @user.groups .map { |group| group.as_json(only: [:name,:code]) } }
     end
   end
 
