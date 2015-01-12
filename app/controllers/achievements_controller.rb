@@ -5,17 +5,20 @@ class AchievementsController < ApplicationController
   protect_from_forgery except: [:save_stat,:get_stat]
 
   def save_achievement
-    #Find Game through app token
-    client = Client.where(app_token: params[:app_token]).first
-    @game = nil
-    unless client.nil?
-      @game = client.implementation.game
-    end
-
-    @user = User.where(id: params[:user_id]).first
+    #Find Game and user through access token
+    access_token = AccessToken.where(consumer_secret: params[:access_token]).first
 
     errors = []
-    unless @user.nil? or @game.nil?
+    @game = nil
+    unless access_token.nil?
+      @game = access_token.client.implementation.game
+      @user = access_token.user
+    else
+      errors << "Invalid Access Token"
+      status = 400
+    end
+
+    unless access_token.nil? or @game.nil?
       stat = Achievement.where(user_id: @user,game_id: @game).first_or_create
       #Set hstore key=>value
       stat.data[params[:key]] = params[:value]
@@ -25,16 +28,6 @@ class AchievementsController < ApplicationController
       else
         status = 400
       end
-    else
-      if @user.nil?
-        errors << "Invalid User"
-      end
-
-      if @game.nil?
-        errors << "No Game found for App Token"
-      end
-
-      status = 400
     end
 
     respond_to do |format|
@@ -48,28 +41,30 @@ class AchievementsController < ApplicationController
   end
 
   def get_achievement
-    #Find Game through app token
-    client = Client.where(app_token: params[:app_token]).first
-    @game = nil
-    unless client.nil?
-      @game = client.implementation.game
-    end
+    #Find Game and user through access token
+    access_token = AccessToken.where(consumer_secret: params[:access_token]).first
 
     errors = []
-    data = nil
-    unless @game.nil?
-      stat = Achievement.where(user_id: params[:user_id],game_id: @game).first
+    @game = nil
+    unless access_token.nil?
+      @game = access_token.client.implementation.game
+      @user = access_token.user
+    else
+      errors << "Invalid Access Token"
+      status = 400
+    end
 
-      unless stat.nil? or stat.data[params[:key]].nil?
-        data = stat.data[params[:key]]
+    data = nil
+    unless access_token.nil? or @game.nil?
+      achievement = Achievement.where(user_id: @user,game_id: @game).first
+
+      unless achievement.nil? or achievement.data[params[:key]].nil?
+        data = achievement.data[params[:key]]
         status = :ok
       else
-        errors << ["Achievement Does Not Exist For #{params[:key]}"]
+        errors << "Achievement Does Not Exist For #{params[:key]}"
         status = 400
       end
-    else
-      errors << ["Game Not found for app token"]
-      status = 400
     end
 
     respond_to do |format|

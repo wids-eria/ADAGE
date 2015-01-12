@@ -11,12 +11,8 @@ Save Stat as a key/value for a particular user and application.
         <th>description</th>
     </tr>
     <tr>
-        <td>user_id</td>
-        <td>User ID</td>
-    </tr>
-    <tr>
-        <td>app_token</td>
-        <td>Token that identifies the client application</td>
+        <td>access_token</td>
+        <td>The secret access token for that specific user and application</td>
     </tr>
     <tr>
         <td>key</td>
@@ -40,12 +36,8 @@ Request the value for a previously saved stat for a player for this application.
         <th>description</th>
     </tr>
     <tr>
-        <td>user_id</td>
-        <td>User ID</td>
-    </tr>
-    <tr>
-        <td>app_token</td>
-        <td>Token that identifies the client application</td>
+        <td>access_token</td>
+        <td>The secret access token for that specific user and application</td>
     </tr>
     <tr>
         <td>key</td>

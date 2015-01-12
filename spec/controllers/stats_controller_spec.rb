@@ -7,6 +7,7 @@ describe StatsController do
   let!(:user) { Fabricate :user, password: 'pass1234', roles: [Role.where(name: 'admin').first, Role.where(name: 'teacher').first] }
   let!(:game) { Fabricate :game}
   let!(:app_token) {game.implementations.first.client.app_token}
+  let!(:access_token) {Fabricate :access_token, user: user, client: game.implementations.first.client}
 
   before do
     @request.env["devise.mapping"] = Devise.mappings[:user]
@@ -15,49 +16,42 @@ describe StatsController do
 
   describe "#save_stat" do
     it "stat can be saved" do
-      post :save_stat, format: :json, user_id: user.id, app_token: app_token, key: "test_key",value:"3142567382127"
+      post :save_stat, format: :json, access_token: access_token.consumer_secret, key: "test_key",value:"3142567382127"
       response.should be_success
     end
 
-    it "returns an error for incorrect app token" do
-      post :save_stat, format: :json, user_id: user.id, app_token: "asjdasodasd", key: "test_key",value:"3142567382127"
+    it "returns an error for invalid access_token" do
+      post :save_stat, format: :json, access_token: "ASDASDASDASDASD", key: "test_key",value:"3142567382127"
 
       data = JSON.parse(response.body)
-      data["errors"].should be_any{ |m| m =~ /No Game found/}
-    end
-
-    it "returns an error for incorrect user" do
-      post :save_stat, format: :json, user_id: 1232232, app_token: app_token, key: "test_key",value:"3142567382127"
-
-      data = JSON.parse(response.body)
-      data["errors"].should be_any{ |m| m =~ /Invalid User/}
+      data["errors"].should be_any{ |m| m.to_s =~ /Invalid Access/}
     end
   end
 
   describe "#get_stat" do
     before(:each) do
-      post :save_stat, format: :json, user_id: user.id, app_token: app_token, key: "test_key",value:"3142567382127"
+      post :save_stat, format: :json, access_token: access_token.consumer_secret, key: "test_key", value:"3142567382127"
     end
 
-    it "stat can be saved" do
-      get :get_stat, format: :json, user_id: user.id, app_token: app_token, key: "test_key"
+    it "stat can be retrieved" do
+      get :get_stat, format: :json, access_token: access_token.consumer_secret,  key: "test_key"
 
       data = JSON.parse(response.body)
       data["data"].should =~ /3142567382127/
     end
 
     it "error returned for invalid key" do
-      get :get_stat, format: :json, user_id: user.id, app_token: app_token, key: "tesasdasdast_key"
+      get :get_stat, format: :json, access_token: access_token.consumer_secret, key: "tesasdasdast_key"
 
       data = JSON.parse(response.body)
       data["errors"].should be_any{ |m| m.to_s =~ /Stat Does Not Exist/}
     end
 
-    it "error returned for app token" do
-      get :get_stat, format: :json, user_id: user.id, app_token: "ASDASDAS", key: "test_key"
+    it "error returned for invalid access token" do
+      get :get_stat, format: :json, access_token: "ASDASDASD",  key: "test_key"
 
       data = JSON.parse(response.body)
-      data["errors"].should be_any{ |m| m.to_s =~ /Game Not found for app token/}
+      data["errors"].should be_any{ |m| m.to_s =~ /Invalid Access/}
     end
   end
 end

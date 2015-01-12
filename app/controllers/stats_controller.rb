@@ -5,17 +5,20 @@ class StatsController < ApplicationController
   protect_from_forgery except: [:save_stat,:get_stat]
 
   def save_stat
-    #Find Game through app token
-    client = Client.where(app_token: params[:app_token]).first
-    @game = nil
-    unless client.nil?
-      @game = client.implementation.game
-    end
-
-    @user = User.where(id: params[:user_id]).first
+    #Find Game and user through access token
+    access_token = AccessToken.where(consumer_secret: params[:access_token]).first
 
     errors = []
-    unless @user.nil? or @game.nil?
+    @game = nil
+    unless access_token.nil?
+      @game = access_token.client.implementation.game
+      @user = access_token.user
+    else
+      errors << "Invalid Access Token"
+      status = 400
+    end
+
+    unless access_token.nil? or @game.nil?
       stat = Stat.where(user_id: @user,game_id: @game).first_or_create
       #Set hstore key=>value
       stat.data[params[:key]] = params[:value]
@@ -25,16 +28,6 @@ class StatsController < ApplicationController
       else
         status = 400
       end
-    else
-      if @user.nil?
-        errors << "Invalid User"
-      end
-
-      if @game.nil?
-        errors << "No Game found for App Token"
-      end
-
-      status = 400
     end
 
     respond_to do |format|
@@ -48,17 +41,22 @@ class StatsController < ApplicationController
   end
 
   def get_stat
-    #Find Game through app token
-    client = Client.where(app_token: params[:app_token]).first
-    @game = nil
-    unless client.nil?
-      @game = client.implementation.game
-    end
+    #Find Game and user through access token
+    access_token = AccessToken.where(consumer_secret: params[:access_token]).first
 
     errors = []
+    @game = nil
+    unless access_token.nil?
+      @game = access_token.client.implementation.game
+      @user = access_token.user
+    else
+      errors << "Invalid Access Token"
+      status = 400
+    end
+
     data = nil
-    unless @game.nil?
-      stat = Stat.where(user_id: params[:user_id],game_id: @game).first
+    unless access_token.nil? or @game.nil?
+      stat = Stat.where(user_id: @user,game_id: @game).first
 
       unless stat.nil? or stat.data[params[:key]].nil?
         data = stat.data[params[:key]]
@@ -67,9 +65,6 @@ class StatsController < ApplicationController
         errors << ["Stat Does Not Exist For #{params[:key]}"]
         status = 400
       end
-    else
-      errors << ["Game Not found for app token"]
-      status = 400
     end
 
     respond_to do |format|
