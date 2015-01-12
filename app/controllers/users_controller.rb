@@ -4,6 +4,7 @@ class UsersController < ApplicationController
 
   layout 'blank'
   before_filter :authenticate_user!, except: [:authenticate_for_token]
+  before_filter :authenticate_app_token, only: [:groups]
 
   def teacher_requests
     @teachers = User.where("teacher_status_cd IS NOT NULL")

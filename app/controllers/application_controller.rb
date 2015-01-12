@@ -135,7 +135,16 @@ class ApplicationController < ActionController::Base
 
   end
 
-
+  def authenticate_app_token
+    if params[:app_token]
+      client = Client.where(app_token: params[:app_token]).first
+      if client.nil?
+        render :json => {:errors => ["Invalid Application Token"] }, status: :unauthorized
+      end
+    else
+      render :json => {:errors => ["Invalid Application Token"] }, status: :unauthorized
+    end
+  end
 
   protected
 
@@ -154,12 +163,8 @@ class ApplicationController < ActionController::Base
       end
     end
 
-
     if access_token != nil
       sign_in access_token.user
     end
-
   end
-
-
 end
