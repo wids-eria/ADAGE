@@ -87,9 +87,11 @@ Ada::Application.routes.draw do
       put :reset_password
       get :teacher_requests
     end
+
     member do
       get :data_by_game
       get :stats
+      get :groups
       get :session_logs
       get :context_logs
       get :get_key_values

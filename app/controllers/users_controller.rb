@@ -66,8 +66,6 @@ class UsersController < ApplicationController
     end
   end
 
-
-
   def stats
     @user = User.find(params[:id])
     @games = @user.data.distinct(:gameName)
@@ -194,6 +192,13 @@ class UsersController < ApplicationController
 
   end
 
+  def  groups
+    @user = User.find(params[:id])
+
+    respond_to do |format|
+      format.json { render json: @user.groups }
+    end
+  end
 
   def get_key_values
 
