@@ -773,7 +773,6 @@ class DataController < ApplicationController
   end
 
   def create
-
     @data = []
     error = false
     if params[:data]
@@ -800,6 +799,8 @@ class DataController < ApplicationController
       format.all { redirect_to :root, :status => status}
     end
   end
+
+
 
 
 end

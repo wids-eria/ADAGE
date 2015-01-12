@@ -68,4 +68,21 @@ class GroupsController < ApplicationController
     end
   end
 
+  def remove_user
+    @group = Group.find(params[:id])
+
+    count = 0
+    params[:player_group][:user_ids].each do |user_id|
+      if not user_id.blank?
+        user = User.find(user_id)
+        if user && user.remove_from_group(@group.code)
+          count += 1
+        end
+      end
+    end
+
+    respond_to do |format|
+      format.json {render json: {message: "Successfully removed "+ count.to_s() +" new players.",users: @group.users},status: :ok}
+    end
+  end
 end

@@ -1,12 +1,12 @@
 class SaveController < ApplicationController
   before_filter :authenticate_user!
   respond_to :html, :json, :csv
-  protect_from_forgery :except => :save 
+  protect_from_forgery :except => :save
 
 
   def load
     client = Client.where(app_token: params[:app_token]).first
-    
+
     if client != nil
       save_record = current_user.saves.where(implementation_id: client.implementation.id).first
       if save_record != nil
@@ -17,7 +17,7 @@ class SaveController < ApplicationController
     respond_with @save
   end
 
-  def save 
+  def save
     error = false
     if params[:save_game] and params[:app_token]
       client = Client.where(app_token: params[:app_token]).first
@@ -36,14 +36,12 @@ class SaveController < ApplicationController
 
     return_value = {}
     if error
-      status = 400 
+      status = 400
     else
-      status = 201 
+      status = 201
     end
     respond_to do |format|
-      format.all { redirect_to :root, :status => status} 
+      format.all { redirect_to :root, :status => status}
     end
   end
-
-  
 end

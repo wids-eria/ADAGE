@@ -186,7 +186,15 @@ class User < ActiveRecord::Base
       return true
     end
     return false
+  end
 
+  def remove_from_group(code)
+    @group = Group.find_by_code(code)
+    unless @group.nil?
+      self.groups.delete(@group)
+      return true
+    end
+    return false
   end
 
   def data_field_values(game_name, key, since, field, bin_time_range=1.hour)
