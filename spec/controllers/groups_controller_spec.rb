@@ -11,7 +11,6 @@ describe GroupsController do
     sign_in :user, user
   end
 
-
   describe "#index" do
     it "returns a list of groups" do
       get :index
