@@ -4,6 +4,7 @@ class UsersController < ApplicationController
 
   layout 'blank'
   before_filter :authenticate_user!, except: [:authenticate_for_token]
+  #before_filter :authenticate_app_token, only: [:groups]
 
   def teacher_requests
     @teachers = User.where("teacher_status_cd IS NOT NULL")
@@ -65,8 +66,6 @@ class UsersController < ApplicationController
       format.js  { render json: [users: @users,page: params[:page],pagination: pagination] }
     end
   end
-
-
 
   def stats
     @user = User.find(params[:id])
@@ -194,6 +193,14 @@ class UsersController < ApplicationController
 
   end
 
+  def  groups
+    @user = User.find(params[:id])
+
+    respond_to do |format|
+      #format.json { render json: { groups: @user.groups .map { |group| group.as_json(only: [:name,:code])} } , status: :ok}
+      format.json { render json: [] , status: :ok}
+    end
+  end
 
   def get_key_values
 

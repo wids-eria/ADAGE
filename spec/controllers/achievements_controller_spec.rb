@@ -37,7 +37,6 @@ describe AchievementsController do
       get :get_achievement, format: :json, access_token: access_token.consumer_secret,  key: "test_key"
 
       data = JSON.parse(response.body)
-      puts data
       data["data"].should =~ /true/
     end
 
