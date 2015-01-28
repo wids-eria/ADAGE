@@ -78,4 +78,38 @@ class AchievementsController < ApplicationController
     end
   end
 
+  def get_achievements
+    #Find Game and user through access token
+    access_token = AccessToken.where(consumer_secret: params[:access_token]).first
+
+    errors = []
+    @game = nil
+    unless access_token.nil?
+      @game = access_token.client.implementation.game
+      @user = access_token.user
+    else
+      errors << "Invalid Access Token"
+      status = 400
+    end
+
+    data = nil
+    unless access_token.nil? or @game.nil?
+      achievement = Achievement.where(user_id: @user,game_id: @game).first
+
+      unless achievement.nil?
+        data = achievement.data
+        status = :ok
+      end
+    end
+
+    respond_to do |format|
+      format.json {
+        render json: {
+          data: data,
+          errors: errors
+        },
+        status: status
+      }
+    end
+  end
 end

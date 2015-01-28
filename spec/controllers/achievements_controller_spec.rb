@@ -54,4 +54,29 @@ describe AchievementsController do
       data["errors"].should be_any{ |m| m.to_s =~ /Invalid Access/}
     end
   end
+
+
+  describe "#get_achievements" do
+    before(:each) do
+      post :save_achievement, format: :json, access_token: access_token.consumer_secret, key: "first_key",value:true
+      post :save_achievement, format: :json, access_token: access_token.consumer_secret, key: "second_key",value:false
+    end
+
+    it "achievement can be retrieved" do
+      get :get_achievements, format: :json, access_token: access_token.consumer_secret,  key: "test_key"
+
+      data = JSON.parse(response.body)
+      puts data
+
+      response.should be_success
+    end
+
+
+    it "error returned for invalid access token" do
+      get :get_achievements, format: :json, access_token: "ASDASDASD"
+
+      data = JSON.parse(response.body)
+      data["errors"].should be_any{ |m| m.to_s =~ /Invalid Access/}
+    end
+  end
 end
