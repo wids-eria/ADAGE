@@ -70,11 +70,13 @@ Ada::Application.routes.draw do
   namespace :stats do
     post :save_stat
     get :get_stat
+    get :get_stats
   end
 
   namespace :achievements do
     post :save_achievement
     get :get_achievement
+    get :get_achievements
   end
 
   resources :users do

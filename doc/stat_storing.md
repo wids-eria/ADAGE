@@ -48,3 +48,22 @@ Request the value for a previously saved stat for a player for this application.
 ###Response
 Will return the Json object with the value for the given Stat key
 
+##GET /get_stats
+
+Request all of the stats for a player for this application.
+
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>access_token</td>
+        <td>The secret access token for the specific user and application</td>
+    </tr>
+</table>
+
+###Response
+Will return the Json object with all of the stats key/values
+

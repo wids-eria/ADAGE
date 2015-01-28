@@ -179,7 +179,6 @@ class DataController < ApplicationController
 
   def data_selection
 
-
     if params[:graph_params] != nil
       @graph_params = GraphParams.new(params[:graph_params])
     else
@@ -190,7 +189,6 @@ class DataController < ApplicationController
       client = Client.where(app_token: params[:app_token]).first
       @graph_params.app_token = params[:app_token]
     else
-      puts @graph_params.app_token
       client = Client.where(app_token: @graph_params.app_token).first
     end
 
@@ -198,17 +196,13 @@ class DataController < ApplicationController
     @fields = Array.new
     if client != nil
 
-
       @game = client.implementation.game
-
       @keys = AdaData.with_game(@game.name).distinct(:key)
 
       if @graph_params.key != nil
         @fields = AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes.keys
       end
-
     end
-
 
   end
 

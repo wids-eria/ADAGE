@@ -54,4 +54,28 @@ describe StatsController do
       data["errors"].should be_any{ |m| m.to_s =~ /Invalid Access/}
     end
   end
+
+
+  describe "#get_stats" do
+    before(:each) do
+      post :save_stat, format: :json, access_token: access_token.consumer_secret, key: "first_key", value:"1"
+      post :save_stat, format: :json, access_token: access_token.consumer_secret, key: "second_key", value:"2"
+    end
+
+    it "stat can be retrieved" do
+      get :get_stats, format: :json, access_token: access_token.consumer_secret
+
+      data = JSON.parse(response.body)
+
+      puts data
+      response.should be_success
+    end
+
+    it "error returned for invalid access token" do
+      get :get_stats, format: :json, access_token: "ASDASDASD"
+
+      data = JSON.parse(response.body)
+      data["errors"].should be_any{ |m| m.to_s =~ /Invalid Access/}
+    end
+  end
 end
