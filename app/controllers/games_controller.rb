@@ -20,6 +20,19 @@ class GamesController < ApplicationController
     @users = @game.users
   end
 
+  def logger
+    @game = Game.find(params[:id])
+    starttime = params[:start]
+    starttime = Time.at(starttime.to_i/1000)
+    logs = AdaData.with_game(@game.name).where(:timestamp.gte => starttime.to_s).all
+    respond_to do |format|
+      format.json {
+        render json: logs.to_json
+      }
+    end
+  end
+
+
   def researcher_tools
     @game = Game.find(params[:id])
     @users = @game.users
@@ -63,7 +76,7 @@ class GamesController < ApplicationController
     @implementations = @game.implementations
     @ranges = ['hour','day','week','month','all']
     @graph_types = ['value over time', 'session times', 'key count']
-    
+
 
     if session[:graph_params].nil?
       session[:graph_params] = GraphParams.new
@@ -93,45 +106,45 @@ class GamesController < ApplicationController
       if params[:game_id].include?('All Games')
         @graph_params.game_id = nil
       else
-        @graph_params.game_id = params[:game_id] 
+        @graph_params.game_id = params[:game_id]
       end
     end
 
     if params[:key] != nil
-      @graph_params.key = params[:key] 
+      @graph_params.key = params[:key]
     end
 
     if params[:field_name] != nil
       index = params[:field_depth].to_i
-      @graph_params.field_names[index] = params[:field_name] 
+      @graph_params.field_names[index] = params[:field_name]
       @graph_params.field_names = @graph_params.field_names.drop(@graph_params.field_names.count - (index+1))
     end
 
     @keys = Array.new
     @fields = Hash.new
     @game_ids = Array.new
-    if @graph_params.app_token != nil 
+    if @graph_params.app_token != nil
 
-      
-      
+
+
       if @graph_params.time_range == nil
         @graph_params.time_range = 'hour'
       end
-      
+
       @game_ids = AdaData.with_game(@game.name).where(:timestamp.gt => time_range_to_epoch(@graph_params.time_range)).distinct(:game_id)
       @game_ids << 'All Games'
-      
+
 
       @keys = AdaData.with_game(@game.name).distinct(:key)
 
       if @graph_params.key != nil
-        
+
 
         @fields = add_field_names(0, AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes, @fields, @graph_params.field_names)
 
       end
-    
-    
+
+
     end
 
     @rickshaw_url = @graph_params.to_rickshaw_url

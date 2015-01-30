@@ -153,7 +153,7 @@ namespace :seed_data do
                  'ADAGEVirtualContext' => adage_vc,
                  'ADAGEPositionalContext' => adage_pc,
                  'user_id' => rand.rand(1..User.all.count),
-                 'game_id' => 'fake_game' 
+                 'game_id' => 'fake_game'
                   }
 
     adage_start = {'application_name' => 'Fake Game',
@@ -166,7 +166,7 @@ namespace :seed_data do
                  'user_id' => 1,
                  'name' => 'Quest!',
                  'parent_name' => 'Mission',
-                 'game_id' => 'fake_game' 
+                 'game_id' => 'fake_game'
 
                   }
 
@@ -182,21 +182,20 @@ namespace :seed_data do
                  'parent_name' => 'Mission',
                  'success' => true,
                  'health' => rand.rand(0..20),
-                 'game_id' => 'fake_game' 
+                 'game_id' => 'fake_game'
                   }
 
 
-
-     start_time = Time.now - rand.rand(0..5) * 1.days
+     start_time = Time.now
      types = [adage_base, adage_start, adage_end]
      quest_names = ['Find the Thing', 'Resuce the Prince', 'slay the dragon']
      success = [true, false, true, false, true, false]
-     (0..100).each do |i|
+     (0..2).each do |i|
         data = AdaData.with_game("Fake Game").new(types[rand.rand(0...types.count)])
         data.user_id = rand.rand(1..User.all.count)
         puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
-        data.timestamp = ((start_time + (1.minute * rand.rand(1..10000))).to_i * 1000).to_s
+        data.timestamp = ((start_time )).to_s
         if data.key.include?('FGQuest')
           data.name = quest_names[rand.rand(0...quest_names.count)]
         end

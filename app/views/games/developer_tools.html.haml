@@ -16,4 +16,7 @@
 
 
 
-    = render partial: 'implementations/add', locals: {game: @game} 
+    = render partial: 'implementations/add', locals: {game: @game}
+.row
+  .span12
+    = render partial: 'games/log_debugger', locals: {game: @game}

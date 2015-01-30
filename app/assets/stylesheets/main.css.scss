@@ -9,6 +9,23 @@
 
 }
 
+#logger{
+    .rows{
+      .init{
+        background-color: rgba(253, 224, 106, 0.41);
+        -webkit-transition: all 0.2s ease;
+        -moz-transition: all 0.2s ease;
+        -o-transition: all 0.2s ease;
+        transition: all 0.2s ease;
+      }
+      tr{
+        -webkit-transition: all 0.2s ease;
+        -moz-transition: all 0.2s ease;
+        -o-transition: all 0.2s ease;
+        transition: all 0.2s ease;
+      }
+    }
+}
 body{
   width: 100%;
   margin: 0;

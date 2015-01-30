@@ -1,0 +1,109 @@
+:javascript
+  $.fn.addTempClass = function(tempClass, duration){
+      if( !tempClass )
+          return this;
+
+      return this.each(function(){
+          var $elm = $(this);
+
+          $elm.addClass(tempClass);
+          setTimeout(function(){
+              $elm.removeClass(tempClass);
+          }, duration || 100);
+      });
+  }
+
+  $( document ).ready(function() {
+    var Logger = function(options){
+      var self = this;
+      self.active = false;
+      self.tick = 2000;
+      self.max_rows = 10;
+      self.update =  function(){
+        if(self.active){
+          var date = new Date().getTime();
+          date = new Date(date - self.tick);
+          $.get( "logger",{start: date.getTime()}, function( data ){
+            self.displaylog(data);
+          });
+        }
+        setTimeout(function(){self.update()}, self.tick);
+      };
+
+      self.displaylog = function(logs){
+        if(logs.length > 0){
+          for(var i in logs){
+            var log = ich.log(logs[i]);
+            self.appendLog(log);
+          }
+        }else{
+          var log = ich.log({
+            key: "No Logs",
+            name: "---",
+            user_id: "-",
+            timestamp: "---",
+          });
+          self.appendLog(log);
+        }
+      };
+
+      self.appendLog = function(log){
+        var t = $('tbody').append(log);
+        $(".rows > tr:last").addTempClass("init",1000);
+        var size = $(".rows > tr").length;
+
+        if(size>self.max_rows){
+          var diff = size - self.max_rows -1;
+          $('tbody > tr').not(':gt(' + diff + ')').fadeOut(400);
+        }
+      }
+
+      self.enabled = function(){
+        self.active = true;
+      };
+      self.disabled = function(){
+        self.active = false;
+      };
+
+      function Logger(){
+        self.update();
+      };
+
+      return Logger();
+    }
+
+    var log = new Logger();
+    $("#start").click(function(){
+      log.enabled();
+    });
+    $("#stop").click(function(){
+      log.disabled();
+    });
+    $("#clear").click(function(){
+      $('tbody').text("");
+    });
+  });
+:plain
+  <script id="log" type="text/html">
+    <tr>
+      <td>{{ key }}</td>
+      <td>{{ name }}</td>
+      <td>{{ user_id }}</td>
+      <td>{{ timestamp }}</td>
+    </tr>
+  </script>
+
+%h3 Log Debugger
+%div.container.col-md-2
+  %button.btn.btn-info#clear Clear
+  %button.btn.btn-succes#start Start
+  %button.btn.btn-danger#stop Stop
+
+%table.table.table-responsive#logger
+  %thead
+    %tr
+      %th timestamp
+      %th key
+      %th name
+      %th user_id
+  %tbody.rows
