@@ -41,6 +41,7 @@ Ada::Application.routes.draw do
       get :developer_tools
       get :logger
       get :researcher_tools
+      get :sync_time
     end
   end
 

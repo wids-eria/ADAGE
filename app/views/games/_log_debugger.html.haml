@@ -17,13 +17,30 @@
     var Logger = function(options){
       var self = this;
       self.active = false;
-      self.tick = 2000;
+      self.tick = 3000;
+      self.last_tick;
       self.max_rows = 10;
+
+      self.sync = function(){
+        $.get( "sync_time.json",function( data,status,xhr ){
+          self.synced_time = new Date(data).getTime();
+          self.last_tick = self.synced_time;
+        });
+      };
+
       self.update =  function(){
         if(self.active){
           var date = new Date().getTime();
-          date = new Date(date - self.tick);
-          $.get( "logger",{start: date.getTime()}, function( data ){
+          date = new Date(date - self.tick).getTime();
+          if(typeof self.synced_time != "undefined"){
+            var diff = new Date().getTime() - self.last_tick;
+            self.last_tick = new Date().getTime();
+
+            date = self.synced_time;
+            self.synced_time += diff;
+          }
+
+          $.get( "logger",{start: date}, function( data,status,xhr ){
             self.displaylog(data);
           });
         }
@@ -66,6 +83,7 @@
       };
 
       function Logger(){
+        self.sync();
         self.update();
       };
 

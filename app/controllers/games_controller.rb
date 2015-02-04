@@ -34,6 +34,9 @@ class GamesController < ApplicationController
     end
   end
 
+  def sync_time
+    respond_with Time.now
+  end
 
   def researcher_tools
     @game = Game.find(params[:id])
