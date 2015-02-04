@@ -23,7 +23,7 @@ class GamesController < ApplicationController
   def logger
     @game = Game.find(params[:id])
 
-    params[:start] = params[:start].to_i/1000
+    params[:start] = params[:start].to_i
     start_time = DateTime.strptime(params[:start].to_s, "%s").to_time
 
     logs = AdaData.with_game(@game.name).where(:created_at.gte => start_time).all
