@@ -77,7 +77,14 @@ class DataController < ApplicationController
 
     @result = Hash.new
     @result['data'] = @data
-    respond_with @result
+
+    respond_to do |format|
+      if params[:callback]
+        format.json { render json: @result.to_json, callback: params[:callback] }
+      else
+        format.json { render  json: @result.to_json}
+      end
+    end
   end
 
 
