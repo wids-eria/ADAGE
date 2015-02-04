@@ -23,10 +23,10 @@ class GamesController < ApplicationController
   def logger
     @game = Game.find(params[:id])
 
-    params[:start] = params[:start].to_i
+    params[:start] = params[:start].to_i/1000
     start_time = DateTime.strptime(params[:start].to_s, "%s").to_time
-
-    logs = AdaData.with_game(@game.name).where(:created_at.gte => start_time).all
+    puts start_time
+    logs = AdaData.with_game(@game.name).where(:created_at.gt => start_time).all
     respond_to do |format|
       format.json {
         render json: logs.to_json
