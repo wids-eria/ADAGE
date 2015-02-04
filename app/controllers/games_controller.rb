@@ -22,9 +22,36 @@ class GamesController < ApplicationController
 
   def logger
     @game = Game.find(params[:id])
-    starttime = params[:start]
-    starttime = Time.at(starttime.to_i/1000)
-    logs = AdaData.with_game(@game.name).where(:timestamp.gte => starttime.to_s).all
+
+    #Check for the ADAVersion for compatability before all the processing
+    log = AdaData.with_game(@game.name).only(:_id,:adage_version).where(:adage_version.exists=>true).first
+
+    unless log.nil?
+      electric_eel = log.adage_version.include?('electric_eel')
+      if electric_eel
+        start_time = DateTime.strptime(params[:start], "%s").to_time.to_i
+      end
+    end
+
+    log = AdaData.with_game(@game.name).only(:_id,:ADAVersion).where(:ADAVersion.exists=>true).first
+
+    unless log.nil?
+      drunken_dolphin = log.ADAVersion.include?('drunken_dolphin')
+      if drunken_dolphin
+        start_time = params[:start]
+
+        if start_time.is_a? String
+          start_time = start_time.to_i
+        end
+
+        start_time = Time.at(start_time).to_i
+        puts log.to_json
+      end
+    end
+
+    #"2015-02-04 15:34:45 -0600"
+    #puts start_time.to_s
+    logs = AdaData.with_game(@game.name).where(:timestamp.gte => start_time).all
     respond_to do |format|
       format.json {
         render json: logs.to_json

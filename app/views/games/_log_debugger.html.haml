@@ -8,7 +8,7 @@
 
           $elm.addClass(tempClass);
           setTimeout(function(){
-              $elm.removeClass(tempClass);
+            $elm.removeClass(tempClass);
           }, duration || 100);
       });
   }
@@ -99,11 +99,12 @@
   %button.btn.btn-succes#start Start
   %button.btn.btn-danger#stop Stop
 
-%table.table.table-responsive#logger
-  %thead
-    %tr
-      %th timestamp
-      %th key
-      %th name
-      %th user_id
-  %tbody.rows
+%div#logger
+  %table.table.table-responsive
+    %thead
+      %tr
+        %th key
+        %th name
+        %th user_id
+        %th timestamp
+    %tbody.rows

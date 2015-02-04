@@ -1,22 +1,23 @@
-%h2= @game.name
-%br
-.row
-  .span12
-    %h2='Game Versions'
-    %ul
-      - @game.implementations.each do |version|
-        %li
-          = version.name
-          %br
-          -if version.client != nil
-            = 'App Token ' + version.client.app_token
+%div#dev-tools
+  %h2= @game.name
+  %br
+  .row
+    .span12
+      %h2='Game Versions'
+      %ul
+        - @game.implementations.each do |version|
+          %li
+            = version.name
             %br
-            = 'App Secret ' + version.client.app_secret
-            %br
+            -if version.client != nil
+              = 'App Token ' + version.client.app_token
+              %br
+              = 'App Secret ' + version.client.app_secret
+              %br
 
 
 
-    = render partial: 'implementations/add', locals: {game: @game}
-.row
-  .span12
-    = render partial: 'games/log_debugger', locals: {game: @game}
+      = render partial: 'implementations/add', locals: {game: @game}
+  .row
+    .span12
+      = render partial: 'games/log_debugger', locals: {game: @game}
