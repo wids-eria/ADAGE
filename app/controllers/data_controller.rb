@@ -54,21 +54,23 @@ class DataController < ApplicationController
 
   def get_sorted_and_limited_events
 
-
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
     end
 
-
     if client != nil
-
-      since = time_range_to_epoch(params[:time_range])
       game_name = client.implementation.game.name
 
-      if params[:user_id].nil? or params[:user_id].empty?
-        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
+      unless params[:time_range].nil?
+        since = time_range_to_epoch(params[:time_range])
+
+        if params[:user_id].nil? or params[:user_id].empty?
+          @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
+        else
+          @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).where(user_id: params[:user_id]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
+        end
       else
-        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).where(user_id: params[:user_id]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
+        @data = AdaData.with_game(game_name).desc(params[:field_name]).limit(params[:limit])
       end
     end
 
@@ -76,8 +78,6 @@ class DataController < ApplicationController
     @result = Hash.new
     @result['data'] = @data
     respond_with @result
-
-
   end
 
 
@@ -302,8 +302,6 @@ class DataController < ApplicationController
       end
 
 
-      puts 'count ' + logs.count.to_s
-
       @data_group = DataGroup.new
       logs.each do |l|
         @user = User.find(l["_id"].to_i)
@@ -333,13 +331,9 @@ class DataController < ApplicationController
         format.html {render}
         format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
       end
-
-
     else
       puts "CLIENT NOT FOUND!"
     end
-
-
 
   end
 
