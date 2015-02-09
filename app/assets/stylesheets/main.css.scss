@@ -33,13 +33,15 @@
           display: none;
           margin-left: 20px;
           position: absolute;
+          top: 40%;
           width: 500px;
           border: 1px solid #ddd;
           background-color: #FBFBFD;
           @include rounded(4px);
 
           pre{
-            font-size:0.7em;
+            font-size:0.8em;
+            line-height: 1.4em;
           }
         }
 
