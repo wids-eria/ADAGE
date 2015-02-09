@@ -1,3 +1,4 @@
+%script{src: '../../assets/tether.min.js', type: 'text/javascript'}
 :javascript
   $.fn.addTempClass = function(tempClass, duration){
       if( !tempClass )
@@ -52,17 +53,21 @@
       self.displaylog = function(logs){
         if(logs.length > 0){
           for(var i in logs){
-            var log = ich.log(logs[i]);
-            self.appendLog(log);
+            logs[i].log = JSON.stringify(logs[i], null, ' ');
+            var temp = ich.log(logs[i]);
+            self.appendLog(temp);
           }
         }else{
-          var log = ich.log({
+          var data = {
             key: "No Logs",
             name: "---",
             user_id: "-",
             timestamp: "---",
-          });
-          self.appendLog(log);
+          };
+
+          data.log= JSON.stringify(data, null, ' ');
+          var temp = ich.log(data);
+          self.appendLog(temp);
         }
       };
 
@@ -75,6 +80,13 @@
           var diff = size - self.max_rows -1;
           $('tbody > tr').not(':gt(' + diff + ')').fadeOut(400);
         }
+
+        $(".rows > tr:last").mouseover(function(){
+          $(this).find(".log").show();
+        })
+        .mouseout(function(){
+          $(this).find(".log").hide();
+        });
       }
 
       self.enabled = function(){
@@ -104,6 +116,8 @@
       $('tbody').text("");
     });
   });
+
+
 :plain
   <script id="log" type="text/html">
     <tr>
@@ -111,6 +125,7 @@
       <td>{{ name }}</td>
       <td>{{ user_id }}</td>
       <td>{{ timestamp }}</td>
+      <td class="log"><pre>{{ log }}</pre></td>
     </tr>
   </script>
 
@@ -129,3 +144,4 @@
         %th user_id
         %th timestamp
     %tbody.rows
+
