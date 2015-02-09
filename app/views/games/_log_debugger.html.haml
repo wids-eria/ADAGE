@@ -1,4 +1,3 @@
-%script{src: '../../assets/tether.min.js', type: 'text/javascript'}
 :javascript
   $.fn.addTempClass = function(tempClass, duration){
       if( !tempClass )
@@ -109,7 +108,7 @@
     $("#start").click(function(){
       log.enabled();
     });
-    $("#stop").click(function(){
+    $("#stop-button").click(function(){
       log.disabled();
     });
     $("#clear").click(function(){
@@ -133,7 +132,7 @@
 %div.container.col-md-2
   %button.btn.btn-info#clear Clear
   %button.btn.btn-succes#start Start
-  %button.btn.btn-danger#stop Stop
+  %button.btn.btn-danger#stop-button Stop
 
 %div#logger
   %table.table.table-responsive
