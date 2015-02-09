@@ -212,4 +212,14 @@ class GamesController < ApplicationController
   def edit
     @game = Game.find(params[:id])
   end
+
+  def clear_data
+    if !Rails.env.production?
+      @game = Game.find(params[:id])
+      if current_user.admin?
+         AdaData.with_game(@game.name).delete_all
+      end
+      redirect_to developer_tools_game_path(@game)
+    end
+  end
 end

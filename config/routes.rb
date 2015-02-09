@@ -42,6 +42,7 @@ Ada::Application.routes.draw do
       get :logger
       get :researcher_tools
       get :sync_time
+      delete :clear_data
     end
   end
 

@@ -1,6 +1,10 @@
 %div#dev-tools
-  %h2= @game.name
+  %h2= @game.name.capitalize
   %br
+  - if current_user.admin? and !Rails.env.production?
+    %button.btn.btn-danger#stop
+      = link_to "Clear data", clear_data_game_path(@game), method: :delete, data: { confirm: "Are you sure?" }
+
   .row
     .span12
       %h2='Game Versions'
@@ -14,8 +18,6 @@
               %br
               = 'App Secret ' + version.client.app_secret
               %br
-
-
 
       = render partial: 'implementations/add', locals: {game: @game}
   .row
