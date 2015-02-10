@@ -92,3 +92,23 @@ Request all of the stats for a player for this application.
 ###Response
 Will return the Json object with all of the stats key/values
 
+
+##DELETE /clear_stats
+
+Clear all of the stats for a user
+
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>access_token</td>
+        <td>The secret access token for the specific user and application</td>
+    </tr>
+</table>
+
+###Response
+Will return the status of the request
+

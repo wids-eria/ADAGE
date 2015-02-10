@@ -54,13 +54,13 @@ class StatsController < ApplicationController
     end
 
     unless access_token.nil? or @game.nil?
-
       stats = params[:stats]
-      stats.each do |stat_data|
+      stats.keys.each do |key|
+
         stat = Stat.where(user_id: @user,game_id: @game).first_or_create
 
         #Set hstore key=>value
-        stat.data[stat_data[:key]] = stat_data[:value]
+        stat.data[key] = stats[key]
 
         if stat.save
           status = 201
@@ -80,6 +80,35 @@ class StatsController < ApplicationController
     end
   end
 
+  def clear_stats
+    #Find Game and user through access token
+    access_token = AccessToken.where(consumer_secret: params[:access_token]).first
+    errors = []
+    @game = nil
+    unless access_token.nil?
+      @game = access_token.client.implementation.game
+      @user = access_token.user
+    else
+      errors << "Invalid Access Token"
+      status = 400
+    end
+
+    unless access_token.nil? or @game.nil?
+      stat = Stat.where(user_id: @user,game_id: @game).first
+
+      stat.data = {}
+      stat.save
+    end
+
+    respond_to do |format|
+      format.json {
+        render json: {
+          errors: errors
+        },
+        status: status;
+      }
+    end
+  end
 
 
   def get_stat
