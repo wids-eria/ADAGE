@@ -72,6 +72,7 @@ Ada::Application.routes.draw do
 
   namespace :stats do
     post :save_stat
+    post :save_stats
     get :get_stat
     get :get_stats
   end

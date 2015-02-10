@@ -27,6 +27,24 @@ describe StatsController do
       data["errors"].should be_any{ |m| m.to_s =~ /Invalid Access/}
     end
   end
+  describe "#save_stats" do
+    it "stats array can be saved" do
+      post :save_stats, format: :json, access_token: access_token.consumer_secret, stats: [{"test_key"=>"111"}.as_json,{"another_key" => "123"}].as_json
+
+      get :get_stats, format: :json, access_token: access_token.consumer_secret
+      data = JSON.parse(response.body)
+
+      response.should be_success
+    end
+
+    it "returns an error for invalid access_token" do
+      post :save_stats, format: :json, access_token: "ASDASDASDASDASD", stats: [{"test_key"=>"111"}.as_json,{"another_key" => "123"}].as_json
+
+      data = JSON.parse(response.body)
+      data["errors"].should be_any{ |m| m.to_s =~ /Invalid Access/}
+    end
+  end
+
 
   describe "#get_stat" do
     before(:each) do
@@ -66,8 +84,6 @@ describe StatsController do
       get :get_stats, format: :json, access_token: access_token.consumer_secret
 
       data = JSON.parse(response.body)
-
-      puts data
       response.should be_success
     end
 

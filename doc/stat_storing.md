@@ -24,6 +24,31 @@ Save Stat as a key/value for a particular user and application.
     </tr>
 </table>
 
+##POST /save_stats
+
+Save an array of Stats as a key/value for a particular user and application.
+
+###Request
+<table>
+    <tr> 
+        <th>params</th>
+        <th>description</th>
+    </tr>
+    <tr>
+        <td>access_token</td>
+        <td>The secret access token for the specific user and application</td>
+    </tr>
+    <tr>
+        <td>stats</td>
+        <td>and array of json key vaue pairs of each stat. I.e. stats: [{"key"=>"value"},{"another_key" => "value"}]</td>
+    </tr>
+    <tr>
+        <td>value</td>
+        <td>The Stat value to be stored, can be any data type</td>
+    </tr>
+</table>
+
+
 
 ##GET /get_stat
 

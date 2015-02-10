@@ -2,7 +2,7 @@ class StatsController < ApplicationController
   before_filter :authenticate_user!
   wrap_parameters format: [:json, :xml]
   respond_to :json
-  protect_from_forgery except: [:save_stat,:get_stat]
+  protect_from_forgery except: [:save_stat,:save_stats,:get_stat]
 
   def save_stat
     #Find Game and user through access token
@@ -39,6 +39,48 @@ class StatsController < ApplicationController
       }
     end
   end
+
+  def save_stats
+    #Find Game and user through access token
+    access_token = AccessToken.where(consumer_secret: params[:access_token]).first
+    errors = []
+    @game = nil
+    unless access_token.nil?
+      @game = access_token.client.implementation.game
+      @user = access_token.user
+    else
+      errors << "Invalid Access Token"
+      status = 400
+    end
+
+    unless access_token.nil? or @game.nil?
+
+      stats = params[:stats]
+      stats.each do |stat_data|
+        stat = Stat.where(user_id: @user,game_id: @game).first_or_create
+
+        #Set hstore key=>value
+        stat.data[stat_data[:key]] = stat_data[:value]
+
+        if stat.save
+          status = 201
+        else
+          status = 400
+        end
+      end
+    end
+
+    respond_to do |format|
+      format.json {
+        render json: {
+          errors: errors
+        },
+        status: status;
+      }
+    end
+  end
+
+
 
   def get_stat
     #Find Game and user through access token
@@ -98,6 +140,7 @@ class StatsController < ApplicationController
 
       unless stat.nil?
         data = stat.data
+        puts data
         status = :ok
       end
     end
