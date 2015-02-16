@@ -41,6 +41,8 @@ class StatsController < ApplicationController
   end
 
   def save_stats
+    params[:stats] = ActiveSupport::JSON.decode(params[:stats])
+
     #Find Game and user through access token
     access_token = AccessToken.where(consumer_secret: params[:access_token]).first
     errors = []
