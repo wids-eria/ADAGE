@@ -122,9 +122,13 @@ class User < ActiveRecord::Base
       player_name: name,
       email: name+'@guest.com',
       guest: true,
+      password: Digest::SHA1.hexdigest(Time.now.to_s)
     )
     return guest
   end
+
+
+
 
   def self.find_for_brainpop_auth(player_id, signed_in_resource=nil)
 
@@ -386,6 +390,13 @@ class User < ActiveRecord::Base
       end
     end
     return contexts
+  end
+
+  def to_raw_qr
+    if self.guest
+      text = ActiveSupport::JSON.encode({username: self.player_name,password: self.password,timestamp: Time.now})
+      return text
+    end
   end
 
   protected

@@ -5,3 +5,10 @@
   = label_tag 'Player name'
   = text_field_tag :player_name 
   = submit_tag 'search'
+
+
+%h2= 'Generate Guests'
+= form_tag generate_guest_users_path do
+  = label_tag 'Amount'
+  = number_field_tag :amount, nil, in: 1...50
+  = submit_tag 'Generate'

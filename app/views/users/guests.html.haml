@@ -1,0 +1,7 @@
+%h2 Generated Guests
+- @guests.each do |guest|
+	%span
+		%h4 
+			= guest.player_name
+		= image_tag qrcode(guest.to_raw_qr)
+		= link_to "Download", qrcode(guest.to_raw_qr), target: "_blank", download: guest.player_name+"-login-"+DateTime.now().strftime("%F")+".png"

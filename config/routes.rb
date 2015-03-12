@@ -89,7 +89,9 @@ Ada::Application.routes.draw do
       get :new_sequence
       post :create_sequence
       post :find
+      post :generate_guest
       get :admin
+      get :guests
       get :reset_password_form
       put :reset_password
       get :teacher_requests

@@ -280,7 +280,21 @@ class UsersController < ApplicationController
     end
   end
 
+  def generate_guest
+    @amount = params[:amount].to_i
+
+    if @amount >= 0 
+      @guests = []
+      
+      for i in 1..@amount
+        @guests << User.create_guest()
+      end
+      render "guests"
+    end
+  end
+
   protected
+
 
   def application
     @application ||= Client.where(app_token: params[:client_id]).first
