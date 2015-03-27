@@ -1,8 +1,8 @@
 module ApplicationHelper
 
-	def qrcode(text="",width=128,height=128)
+	def qrcode(text="",width=200,height=200)
 		#helper to generate a qr code with adaptive resizing to compensate for data size
-		size = 2
+		size = 1
 		qr = nil
 		while qr.nil?
 			begin
