@@ -14,5 +14,3 @@
 //= require ICanHaz.min
 //= require d3.min
 //= require rickshaw
-//= require html5-qrcode.min
-//= require jsqrcode-combined.min
