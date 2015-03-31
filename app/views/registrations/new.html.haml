@@ -1,7 +1,7 @@
 .login_container.floatleft
   = form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f|
     = devise_error_messages!
-    .field_container
+    .field_containers
       = f.label :player_name, 'Player name', class: 'floatleft'
       = f.text_field :player_name, class: 'floatright', placeholder: 'Player Name'
     .field_container

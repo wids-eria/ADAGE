@@ -15,7 +15,7 @@
       - if devise_mapping.rememberable?
         = f.check_box :remember_me, class: 'floatright remember_me_checkbox'
         = f.label :remember_me, class: 'floatright'
-
+  %input(type="file" accept="image/*" capture="camera")
 //.sign_up_container
 //  .field_container
 //    = link_to 'Connect with Facebook', user_omniauth_authorize_path(:facebook), class: 'floatleft'
