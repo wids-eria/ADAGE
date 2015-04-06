@@ -727,10 +727,10 @@ class DataController < ApplicationController
           @user_ids.each do |id|
             user = User.where(id: id).first
             unless user.nil?
-              y << user.data_to_csv(@game.name)
+              user.data_to_csv(y,@game.name)
             end
             i+=1
-            GC.start if i%500==0
+            GC.start if i%5==0
           end
         end
       }

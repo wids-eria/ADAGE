@@ -234,7 +234,7 @@ class User < ActiveRecord::Base
 
   end
 
-  def data_to_csv(gameName, schema='')
+  def data_to_csv(output,gameName, schema='')
     #csv = ""
     keys = Hash.new
     data = nil
@@ -257,7 +257,9 @@ class User < ActiveRecord::Base
         all_attrs << k
       end
     end
-    csv = CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
+    output << CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
+
+    i=0
     data.each do |entry|
       out = Array.new
       out << self.player_name
@@ -277,9 +279,10 @@ class User < ActiveRecord::Base
           out << ""
         end
       end
-      csv << CSV.generate_line(out)
+      output << CSV.generate_line(out)
+      i+=1
+      GC.start if i%500==0
     end
-    return csv
   end
 
 
