@@ -190,9 +190,11 @@ namespace :seed_data do
      types = [adage_base, adage_start, adage_end]
      quest_names = ['Find the Thing', 'Resuce the Prince', 'slay the dragon']
      success = [true, false, true, false, true, false]
-     (0..2).each do |i|
+
+
+     (0..2000).each do |i|
         data = AdaData.with_game("Fake Game").new(types[rand.rand(0...types.count)])
-        data.user_id = rand.rand(1..User.all.count)
+        data.user_id = User.all.sample.id
         puts 'creating data for ' + data.user_id.to_s
         data.session_token = start_time.to_s
         data.timestamp = ((start_time ))

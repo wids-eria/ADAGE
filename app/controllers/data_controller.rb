@@ -408,8 +408,6 @@ class DataController < ApplicationController
 
     logs = AdaData.with_game(@game.name).order_by(:timestamp.asc).in(user_id: @user_ids).only(:timestamp,:user_id,:session_token).map_reduce(map,reduce).out(inline:1)
 
-    puts logs.count
-
     sessions_played = 0
     total_session_length = 0
     last_user = -1
@@ -648,16 +646,25 @@ class DataController < ApplicationController
     @user_ids = params[:user_ids]
     respond_to do |format|
       format.csv {
-        out = CSV.generate do |csv|
+        type = "text/csv"
+
+        filename = @game.name+'_'+ params[:version]+'.csv'
+        set_file_headers(filename,type)
+        set_streaming_headers
+        response.status = 200
+
+        @user_ids = @user_ids.distinct(:user_id)
+        self.response_body = Enumerator.new do |y|
+          i=0
           @user_ids.each do |id|
-            user = User.find(id)
-            if user.present?
-              user.data_to_csv(csv, @game.name, params[:version])
+            user = User.where(id: id).first
+            unless user.nil?
+              y << user.data_to_csv(@game.name, params[:version])
             end
+            i+=1
+            GC.start if i%500==0
           end
         end
-
-        send_data out, filename: @game.name+'_'+ params[:version]+'.csv'
       }
       format.json {
         data = AdaData.with_game(params[:gameName]).where(schema: params[:version]).in(user_id: params[:user_ids] )
@@ -700,17 +707,6 @@ class DataController < ApplicationController
           @user_ids = @user_ids.where(:timestamp.lte=> params[:end])
         end
 
-        @user_ids = @user_ids.distinct(:user_id)
-
-        out = CSV.generate do |csv|
-          @user_ids.each do |id|
-            user = User.find(id)
-            unless user.nil?
-              user.data_to_csv(csv, @game.name)
-            end
-          end
-        end
-
         filename = @game.name+'.csv'
 
         if params[:end] and params[:start]
@@ -718,7 +714,25 @@ class DataController < ApplicationController
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
         end
-        send_data out, filename: filename
+
+        type = "text/csv"
+
+        set_file_headers(filename,type)
+        set_streaming_headers
+        response.status = 200
+
+        @user_ids = @user_ids.distinct(:user_id)
+        self.response_body = Enumerator.new do |y|
+          i=0
+          @user_ids.each do |id|
+            user = User.where(id: id).first
+            unless user.nil?
+              y << user.data_to_csv(@game.name)
+            end
+            i+=1
+            GC.start if i%500==0
+          end
+        end
       }
       format.json {
         unless  @user_ids.nil?

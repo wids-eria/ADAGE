@@ -234,7 +234,8 @@ class User < ActiveRecord::Base
 
   end
 
-  def data_to_csv(csv, gameName, schema='')
+  def data_to_csv(gameName, schema='')
+    #csv = ""
     keys = Hash.new
     data = nil
     if schema.present?
@@ -256,7 +257,7 @@ class User < ActiveRecord::Base
         all_attrs << k
       end
     end
-    csv << ["player", "epoch time"] + all_attrs.uniq
+    csv = CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
     data.each do |entry|
       out = Array.new
       out << self.player_name
@@ -264,7 +265,7 @@ class User < ActiveRecord::Base
         if entry.timestamp.to_s.include?(':')
           out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
         else
-          out << 'does not compute'
+          out << entry.timestamp
         end
       else
         out << 'no timestamp'
@@ -276,7 +277,7 @@ class User < ActiveRecord::Base
           out << ""
         end
       end
-      csv << out
+      csv << CSV.generate_line(out)
     end
     return csv
   end
