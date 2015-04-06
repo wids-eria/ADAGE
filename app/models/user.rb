@@ -258,7 +258,7 @@ class User < ActiveRecord::Base
       end
     end
     output << CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
-    
+
     i=0
     data.each do |entry|
       out = Array.new
@@ -281,7 +281,7 @@ class User < ActiveRecord::Base
       end
       output << CSV.generate_line(out)
       i+=1
-      GC.start if i%5==0
+      GC.start if i%5000==0
     end
   end
 
