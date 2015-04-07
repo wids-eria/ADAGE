@@ -289,6 +289,7 @@ class User < ActiveRecord::Base
       Rails.logger.error "[ - ] #{id}" if i%1000 == 0
       #GC.start if i%5000==0
     end
+    out << ""
   end
 
 
