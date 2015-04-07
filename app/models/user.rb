@@ -239,11 +239,12 @@ class User < ActiveRecord::Base
     keys = Hash.new
     data = nil
     if schema.present?
-      data = self.data(gameName).where(schema: schema).asc(:timestamp).entries
+      #data = self.data(gameName).where(schema: schema).asc(:timestamp).all
+      data = AdaData.with_game(gameName).where(user_id: self.id).asc(:timestamp).all
     else
-      data = self.data(gameName).asc(:timestamp).entries
+      data = AdaData.with_game(gameName).where(user_id: self.id).asc(:timestamp).all
     end
-    types = self.data(gameName).distinct(:key)
+    types = AdaData.with_game(gameName).where(user_id: self.id).distinct(:key)
     examples = Array.new
     types.each do |type|
       ex = data.select{ |d| d.key.include?(type)}.last
@@ -257,10 +258,12 @@ class User < ActiveRecord::Base
         all_attrs << k
       end
     end
-    output << CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
 
     i=0
     data.each do |entry|
+      if i==0
+        output << CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
+      end
       out = Array.new
       out << self.player_name
       if entry.respond_to?('timestamp')
