@@ -281,6 +281,9 @@ class User < ActiveRecord::Base
       end
       output << CSV.generate_line(out)
       i+=1
+
+
+      Rails.logger.error "[ - ] #{id}" if i%1000 == 0
       #GC.start if i%5000==0
     end
   end
