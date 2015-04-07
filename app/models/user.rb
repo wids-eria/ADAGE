@@ -244,7 +244,7 @@ class User < ActiveRecord::Base
     else
       data = AdaData.with_game(gameName).where(user_id: self.id).asc(:timestamp).all
     end
-    types = AdaData.with_game(gameName).where(user_id: self.id).distinct(:key)
+    types = AdaData.with_game(gameName).where(user_id: self.id).all.distinct(:key)
     examples = Array.new
     types.each do |type|
       ex = data.select{ |d| d.key.include?(type)}.last
@@ -289,7 +289,7 @@ class User < ActiveRecord::Base
       Rails.logger.error "[ - ] #{id}" if i%1000 == 0
       #GC.start if i%5000==0
     end
-    out << ""
+    output << ""
   end
 
 
