@@ -770,7 +770,7 @@ class DataController < ApplicationController
           data.all.each do |log|
             y << log.to_json + "\n"
             i+=1
-            GC.start if i%500==0
+            GC.start if i%5000==0
           end
         end
       }
