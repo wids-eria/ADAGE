@@ -730,6 +730,8 @@ class DataController < ApplicationController
 
             user = User.where(id: id).first
             unless user.nil?
+              count = user.data(@game.name).asc(:timestamp).entries.count
+              Rails.logger.error "[ - ] Data count: #{count}"
               user.data_to_csv(y,@game.name)
             else 
               y << ""
