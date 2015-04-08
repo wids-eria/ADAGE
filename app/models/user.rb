@@ -263,7 +263,7 @@ class User < ActiveRecord::Base
     data.each do |entry|
       out = Array.new
       if i==0
-        csv <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
+        output <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
       end
       out << self.player_name
       if entry.respond_to?('timestamp')
@@ -283,8 +283,7 @@ class User < ActiveRecord::Base
         end
       end
       i+=1
-      csv << CSV.generate_line(out)
-      output << csv
+      output << CSV.generate_line(out)
       GC.start if i%5000==0
     end
   end
