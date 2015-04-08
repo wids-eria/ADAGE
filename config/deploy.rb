@@ -14,6 +14,7 @@ set :default_stage, "development"
 set :application, "ada"
 set :repository,  "git@github.com:wids-eria/ADAGE.git"
 set :scm, :git
+set :branch, tag if exists?(:tag)
 
 set :user, :deploy
 ssh_options[:forward_agent] = true
