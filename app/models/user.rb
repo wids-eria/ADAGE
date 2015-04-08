@@ -286,7 +286,7 @@ class User < ActiveRecord::Base
       csv << CSV.generate_line(out)
       GC.start if i%5000==0
     end
-    output << csv
+    output << csv unless csv == ""
   end
 
 
