@@ -728,6 +728,8 @@ class DataController < ApplicationController
             user = User.where(id: id).first
             unless user.nil?
               user.data_to_csv(y,@game.name)
+            else 
+              y << ""
             end
             i+=1
           #  GC.start if i%5==0
