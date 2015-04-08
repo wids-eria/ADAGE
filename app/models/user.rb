@@ -239,9 +239,9 @@ class User < ActiveRecord::Base
     keys = Hash.new
     data = nil
     if schema.present?
-      data = self.data(gameName).where(schema: schema).asc(:timestamp).all
+      data = self.data(gameName).where(schema: schema).asc(:timestamp).entries
     else
-      data = self.data(gameName).asc(:timestamp).all
+      data = self.data(gameName).asc(:timestamp).entries
     end
     types = self.data(gameName).distinct(:key)
     examples = Array.new
@@ -284,7 +284,7 @@ class User < ActiveRecord::Base
       end
       i+=1
       csv << CSV.generate_line(out)
-      #GC.start if i%5000==0
+      GC.start if i%5000==0
     end
     output << csv
   end
