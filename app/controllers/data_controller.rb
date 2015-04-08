@@ -659,9 +659,7 @@ class DataController < ApplicationController
           @user_ids.each do |id|
             user = User.where(id: id).first
             unless user.nil?
-              y << user.data_to_csv(@game.name, params[:version])
-            else
-              y << ""
+              user.data_to_csv(@game.name, params[:version])
             end
             i+=1
             GC.start if i%500==0
