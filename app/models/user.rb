@@ -239,12 +239,11 @@ class User < ActiveRecord::Base
     keys = Hash.new
     data = nil
     if schema.present?
-      #data = self.data(gameName).where(schema: schema).asc(:timestamp).all
-      data = AdaData.with_game(gameName).where(user_id: self.id).asc(:timestamp).all
+      data = self.data(gameName).where(schema: schema).asc(:timestamp).entries
     else
-      data = AdaData.with_game(gameName).where(user_id: self.id).asc(:timestamp).all
+      data = self.data(gameName).asc(:timestamp).entries
     end
-    types = AdaData.with_game(gameName).where(user_id: self.id).all.distinct(:key)
+    types = self.data(gameName).distinct(:key)
     examples = Array.new
     types.each do |type|
       ex = data.select{ |d| d.key.include?(type)}.last
@@ -259,12 +258,13 @@ class User < ActiveRecord::Base
       end
     end
 
+    csv = ""
     i=0
     data.each do |entry|
-      if i==0
-        output << CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
-      end
       out = Array.new
+      if i==0
+        csv <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
+      end
       out << self.player_name
       if entry.respond_to?('timestamp')
         if entry.timestamp.to_s.include?(':')
@@ -282,14 +282,11 @@ class User < ActiveRecord::Base
           out << ""
         end
       end
-      output << CSV.generate_line(out)
       i+=1
-
-
-      Rails.logger.error "[ - ] #{id}" if i%1000 == 0
-      #GC.start if i%5000==0
+      csv << CSV.generate_line(out)
+      GC.start if i%5000==0
     end
-    output << ""
+    output << csv
   end
 
 

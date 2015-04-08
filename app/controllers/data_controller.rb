@@ -722,18 +722,13 @@ class DataController < ApplicationController
         response.status = 200
 
         @user_ids = @user_ids.distinct(:user_id)
-
-        Rails.logger.error "[ - ] User count: #{@user_ids.length}"
         self.response_body = Enumerator.new do |y|
           i=0
           @user_ids.each do |id|
-
             user = User.where(id: id).first
             unless user.nil?
-              Rails.logger.error "[ - ] #{id}"
               user.data_to_csv(y,@game.name)
             else
-              Rails.logger.error "[ - ] #{id} nil"
               y << ""
             end
             i+=1
