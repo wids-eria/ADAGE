@@ -725,7 +725,7 @@ class DataController < ApplicationController
         self.response_body = Enumerator.new do |y|
           i=0
 
-          100_000.times do |d|
+          200000.times do |d|
             @user_ids.each do |id|
               user = User.where(id: id).first
               unless user.nil?
