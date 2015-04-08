@@ -260,6 +260,7 @@ class User < ActiveRecord::Base
 
     csv = ""
     i=0
+    Rails.logger.error "[ - ] Data count: #{data.all.count}"
     data.each do |entry|
       out = Array.new
       if i==0
