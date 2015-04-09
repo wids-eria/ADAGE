@@ -261,7 +261,7 @@ class User < ActiveRecord::Base
     csv = ""
     i=0
     data.each do |entry|
-      ouput << "test: "+i.to_s
+      ouput << "test: "
       out = Array.new
       if i==0
       #  output <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
