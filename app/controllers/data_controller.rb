@@ -721,7 +721,7 @@ class DataController < ApplicationController
         set_streaming_headers
         response.status = 200
 
-        @user_ids = @user_ids.distinct(:user_id)
+        @user_ids = @user_ids.all.distinct(:user_id)
         self.response_body = Enumerator.new do |y|
           i=0
 
