@@ -256,12 +256,11 @@ class User < ActiveRecord::Base
       e.attributes.keys.each do |k|
         all_attrs << k
       end
-    end
+    end      
 
     csv = ""
     i=0
     data.each do |entry|
-      ouput << "test: "
       out = Array.new
       if i==0
         csv <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
@@ -287,7 +286,6 @@ class User < ActiveRecord::Base
       csv << CSV.generate_line(out)
       GC.start if i%5000==0
     end
-
     return csv
   end
 
