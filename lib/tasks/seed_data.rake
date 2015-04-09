@@ -192,7 +192,7 @@ namespace :seed_data do
      success = [true, false, true, false, true, false]
 
 
-     (0..2000).each do |i|
+     (0..10000).each do |i|
         data = AdaData.with_game("Fake Game").new(types[rand.rand(0...types.count)])
         data.user_id = User.all.sample.id
         puts 'creating data for ' + data.user_id.to_s
