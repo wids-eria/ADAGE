@@ -722,10 +722,8 @@ class DataController < ApplicationController
         response.status = 200
 
         @user_ids = @user_ids.all.distinct(:user_id)
-        self.response_body = Enumerator.new do |y|
+        self.response_body = Enumerator.new(@user_ids) do |y|
           i=0
-
-          y << "#{@user_ids.length}\n"
           @user_ids.each do |id|
 
             y << "#{id}\n"
