@@ -730,7 +730,7 @@ class DataController < ApplicationController
             user = User.where(id: id).first
             unless user.nil?
               #count = user.data(@game.name).asc(:timestamp).entries.count
-              yield user.data_to_csv(y,@game.name)
+              y << user.data_to_csv(y,@game.name)
               #y << "#{id}\n"
             end
           #  i+=1
