@@ -244,6 +244,12 @@ class User < ActiveRecord::Base
       data = self.data(gameName).asc(:timestamp).entries
     end
     types = self.data(gameName).distinct(:key)
+
+
+    return "#{gameName}\n" 
+
+
+    
     examples = Array.new
     types.each do |type|
       ex = data.select{ |d| d.key.include?(type)}.last
@@ -258,9 +264,7 @@ class User < ActiveRecord::Base
       end
     end      
 
-    
 
-    return "#{gameName}\n" 
 
     csv = ""
     i=0
