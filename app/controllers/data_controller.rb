@@ -732,6 +732,8 @@ class DataController < ApplicationController
               #count = user.data(@game.name).asc(:timestamp).entries.count
               y << user.data_to_csv(y,@game.name)
               #y << "#{id}\n"
+            else
+              y << ""
             end
           #  i+=1
             #GC.start if i%5==0
