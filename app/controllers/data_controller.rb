@@ -722,7 +722,6 @@ class DataController < ApplicationController
         response.status = 200
 
         @user_ids = @user_ids.distinct(:user_id)
-        Rails.logger.error "[ - ] User count: #{@user_ids.length}"
         self.response_body = Enumerator.new do |y|
           i=0
 
@@ -731,8 +730,7 @@ class DataController < ApplicationController
             user = User.where(id: id).first
             unless user.nil?
               count = user.data(@game.name).asc(:timestamp).entries.count
-              y << count
-              Rails.logger.error "[ - ] Data count: #{count}"
+              y << count.to_s
               #user.data_to_csv(y,@game.name)
             end
             i+=1
