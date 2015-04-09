@@ -726,13 +726,13 @@ class DataController < ApplicationController
          # i=0
           @user_ids.each do |id|
 
-            y << "#{id}\n"
-            #user = User.where(id: id).first
-            #unless user.nil?
+            #y << "#{id}\n"
+            user = User.where(id: id).first
+            unless user.nil?
               #count = user.data(@game.name).asc(:timestamp).entries.count
-              #user.data_to_csv(y,@game.name)
+              yield user.data_to_csv(y,@game.name)
               #y << "#{id}\n"
-          #  end
+            end
           #  i+=1
             #GC.start if i%5==0
           end
