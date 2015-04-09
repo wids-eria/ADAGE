@@ -235,7 +235,6 @@ class User < ActiveRecord::Base
   end
 
   def data_to_csv(output,gameName, schema='')
-    return "#{gameName}\n" 
     #csv = ""
     keys = Hash.new
     data = nil
@@ -259,8 +258,17 @@ class User < ActiveRecord::Base
       end
     end      
 
+    
+
+    return "#{gameName}\n" 
+
     csv = ""
     i=0
+
+
+
+
+
     data.each do |entry|
       out = Array.new
       if i==0
