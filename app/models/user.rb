@@ -260,11 +260,10 @@ class User < ActiveRecord::Base
 
     csv = ""
     i=0
-    Rails.logger.error "[ - ] Data count: #{data.all.count}"
     data.each do |entry|
       out = Array.new
       if i==0
-        output <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
+      #  output <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
       end
       out << self.player_name
       if entry.respond_to?('timestamp')
