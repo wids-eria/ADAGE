@@ -723,17 +723,17 @@ class DataController < ApplicationController
 
         @user_ids = @user_ids.all.distinct(:user_id)
         self.response_body = Enumerator.new do |y|
-          i=0
+         # i=0
           @user_ids.each do |id|
 
             y << "#{id}\n"
             #user = User.where(id: id).first
-            unless user.nil?
+            #unless user.nil?
               #count = user.data(@game.name).asc(:timestamp).entries.count
               #user.data_to_csv(y,@game.name)
               #y << "#{id}\n"
-            end
-            i+=1
+          #  end
+          #  i+=1
             #GC.start if i%5==0
           end
         end
