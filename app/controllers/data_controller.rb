@@ -733,7 +733,7 @@ class DataController < ApplicationController
               #user.data_to_csv(y,@game.name)
               yield user
             else
-              y << "nil\n"
+              y << "nil"
             end
             i+=1
             #GC.start if i%5==0
