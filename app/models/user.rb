@@ -234,8 +234,7 @@ class User < ActiveRecord::Base
 
   end
 
-  def data_to_csv(output,gameName, schema='')
-    #csv = ""
+  def data_to_csv(output,gameName, schema='',all_attrs)
     keys = Hash.new
     data = nil
     if schema.present?
@@ -243,40 +242,13 @@ class User < ActiveRecord::Base
     else
       data = self.data(gameName).asc(:timestamp).entries
     end
-    types = self.data(gameName).distinct(:key)
-
-
-    return "#{gameName}\n" 
-
-
-    
-    examples = Array.new
-    types.each do |type|
-      ex = data.select{ |d| d.key.include?(type)}.last
-      if ex != nil
-        examples << ex
-      end
-    end
-    all_attrs = Array.new
-    examples.each do |e|
-      e.attributes.keys.each do |k|
-        all_attrs << k
-      end
-    end      
-
-
 
     csv = ""
     i=0
-
-
-
-
-
     data.each do |entry|
       out = Array.new
       if i==0
-        csv <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
+        csv <<  CSV.generate_line(["player", "epoch time"] + all_attrs)
       end
       out << self.player_name
       if entry.respond_to?('timestamp')
@@ -288,7 +260,7 @@ class User < ActiveRecord::Base
       else
         out << 'no timestamp'
       end
-      all_attrs.uniq.each do |attr|
+      all_attrs.each do |attr|
         if entry.attributes.keys.include?(attr)
           out << entry.attributes[attr]
         else

@@ -685,58 +685,84 @@ class DataController < ApplicationController
     headers['Last-Modified'] = Time.now.ctime.to_s
   end
 
+  def attributes(gameName,schema="")
+    keys = Hash.new
+    data = nil
+    if schema.present?
+      data =  AdaData.with_game(@game.name).where(schema: schema).asc(:user_id,:timestamp)
+    else
+      data = AdaData.with_game(@game.name).asc(:user_id,:timestamp)
+    end
+
+    types = AdaData.with_game(@game.name).limit(20000).distinct(:key)
+    examples = Array.new
+    types.each do |type|
+      ex = data.select{ |d| d.key.include?(type)}.last
+      if ex != nil
+        examples << ex
+      end
+    end
+    all_attrs = Array.new
+    examples.each do |e|
+      e.attributes.keys.each do |k|
+        unless all_attrs.include? k
+          all_attrs << k
+        end
+      end
+    end  
+
+    return all_attrs
+  end
 
   def export
     @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     @user_ids = params[:user_ids]
 
+    if params[:start]
+      params[:start] = (Time.at((params[:start].to_i)/1000+86400).to_time.to_i*1000).to_i
+    end
     if params[:end]
-      params[:end] = (Time.at((params[:end].to_i)/1000+86400).to_time.to_i*1000).to_s
+      params[:end] = (Time.at((params[:end].to_i)/1000+86400).to_time.to_i*1000).to_i
     end
 
     respond_to do |format|
       format.csv {
-        @user_ids = AdaData.with_game(@game.name)
-
-        if params[:start]
-          @user_ids = @user_ids.where(:timestamp.gte=> params[:start])
-        end
-
-        if params[:end]
-          @user_ids = @user_ids.where(:timestamp.lte=> params[:end])
-        end
 
         filename = @game.name+'.csv'
-
         if params[:end] and params[:start]
           start_date =  Time.at(params[:start].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
+
+          @user_ids = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end]).all.distinct(:user_id)
+        elsif params[:start]
+          @user_ids = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).all.distinct(:user_id)
+        elsif params[:end]
+          @user_ids = AdaData.with_game(@game.name).where(:timestamp.lte=> params[:end]).distinct(:user_id)
+        else
+          @user_ids = AdaData.with_game(@game.name).limit(20000).distinct(:user_id)
         end
 
-        type = "text/csv"
+        all_attr = attributes(@game.name)
 
+        type = "text/csv"
         set_file_headers(filename,type)
         set_streaming_headers
         response.status = 200
 
-        @user_ids = @user_ids.all.distinct(:user_id)
+        @user_ids = @user_ids.uniq
         self.response_body = Enumerator.new do |y|
-         # i=0
+          i=0
           @user_ids.each do |id|
-
-            #y << "#{id}\n"
             user = User.where(id: id).first
             unless user.nil?
-              #count = user.data(@game.name).asc(:timestamp).entries.count
-              y << user.data_to_csv(y,@game.name)
-              #y << "#{id}\n"
+              y << user.data_to_csv(y,@game.name,"",all_attr)
             else
               y << ""
             end
-          #  i+=1
-            #GC.start if i%5==0
+            i+=1
+            GC.start if i%5==0
           end
         end
       }
