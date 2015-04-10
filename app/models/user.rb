@@ -234,13 +234,13 @@ class User < ActiveRecord::Base
 
   end
 
-  def data_to_csv(output,gameName, schema='',all_attrs)
+  def data_to_csv(output,gameName, schema='',all_attrs) 
     keys = Hash.new
     data = nil
     if schema.present?
-      data = self.data(gameName).where(schema: schema).asc(:timestamp).entries
+      data = self.data(gameName).where(schema: schema).asc(:timestamp)
     else
-      data = self.data(gameName).asc(:timestamp).entries
+      data = self.data(gameName).asc(:timestamp)
     end
 
     csv = ""
