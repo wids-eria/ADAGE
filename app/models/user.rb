@@ -234,47 +234,6 @@ class User < ActiveRecord::Base
 
   end
 
-  def data_to_csv(output,gameName, schema='',all_attrs) 
-    keys = Hash.new
-    data = nil
-    if schema.present?
-      data = self.data(gameName).where(schema: schema).asc(:timestamp)
-    else
-      data = self.data(gameName).asc(:timestamp)
-    end
-
-    csv = ""
-    i=0
-    data.each do |entry|
-      out = Array.new
-      if i==0
-        csv <<  CSV.generate_line(["player", "epoch time"] + all_attrs)
-      end
-      out << self.player_name
-      if entry.respond_to?('timestamp')
-        if entry.timestamp.to_s.include?(':')
-          out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
-        else
-          out << entry.timestamp
-        end
-      else
-        out << 'no timestamp'
-      end
-      all_attrs.each do |attr|
-        if entry.attributes.keys.include?(attr)
-          out << entry.attributes[attr]
-        else
-          out << ""
-        end
-      end
-      i+=1
-      csv << CSV.generate_line(out)
-      GC.start if i%5000==0
-    end
-    return csv
-  end
-
-
   #returns session for this player
   def session_information(gameName= nil, gameVersion= nil)
     data = self.data(gameName).asc(:timestamp)

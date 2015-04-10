@@ -735,34 +735,52 @@ class DataController < ApplicationController
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
 
-          @user_ids = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end]).all.distinct(:user_id)
+          data = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end]).asc(:user_id).entries
         elsif params[:start]
-          @user_ids = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).all.distinct(:user_id)
+          data = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).asc(:user_id).entries
         elsif params[:end]
-          @user_ids = AdaData.with_game(@game.name).where(:timestamp.lte=> params[:end]).distinct(:user_id)
+          data = AdaData.with_game(@game.name).where(:timestamp.lte=> params[:end]).asc(:user_id).entries
         else
-          @user_ids = AdaData.with_game(@game.name).limit(20000).distinct(:user_id)
+          data = AdaData.with_game(@game.name).asc(:user_id).entries
         end
 
-        all_attr = attributes(@game.name)
+        all_attrs = attributes(@game.name)
 
         type = "text/csv"
         set_file_headers(filename,type)
         set_streaming_headers
         response.status = 200
 
-        @user_ids = @user_ids.uniq
         self.response_body = Enumerator.new do |y|
-          i=0
-          @user_ids.each do |id|
-            user = User.where(id: id).first
-            unless user.nil?
-              y << user.data_to_csv(y,@game.name,"",all_attr)
-            else
-              y << ""
+          y << CSV.generate_line(["player", "epoch time"] + all_attrs)
+          user_id = -1
+          player_name = ""
+          data.each do |entry|
+            if user_id != entry.user_id
+              user_id = entry.user_id
+              user = User.find(user_id)
+              player_name = user.player_name
             end
-            i+=1
-            GC.start if i%5==0
+
+            out = Array.new
+            out << player_name
+            if entry.respond_to?('timestamp')
+              if entry.timestamp.to_s.include?(':')
+                out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
+              else
+                out << entry.timestamp
+              end
+            else
+              out << 'no timestamp'
+            end
+            all_attrs.each do |attr|
+              if entry.attributes.keys.include?(attr)
+                out << entry.attributes[attr]
+              else
+                out << ""
+              end
+            end
+            y << CSV.generate_line(out)
           end
         end
       }
