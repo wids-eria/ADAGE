@@ -735,13 +735,13 @@ class DataController < ApplicationController
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
 
-          data = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end]).asc(:user_id).entries
+          data = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end]).asc(:user_id)
         elsif params[:start]
-          data = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).asc(:user_id).entries
+          data = AdaData.with_game(@game.name).where(:timestamp.gte=> params[:start]).asc(:user_id)
         elsif params[:end]
-          data = AdaData.with_game(@game.name).where(:timestamp.lte=> params[:end]).asc(:user_id).entries
+          data = AdaData.with_game(@game.name).where(:timestamp.lte=> params[:end]).asc(:user_id)
         else
-          data = AdaData.with_game(@game.name).asc(:user_id).entries
+          data = AdaData.with_game(@game.name).asc(:user_id)
         end
 
         all_attrs = attributes(@game.name)
@@ -755,7 +755,7 @@ class DataController < ApplicationController
           y << CSV.generate_line(["player", "epoch time"] + all_attrs)
           user_id = -1
           player_name = ""
-          data.each do |entry|
+          data.entries.each do |entry|
             if user_id != entry.user_id
               user_id = entry.user_id
               user = User.find(user_id)
