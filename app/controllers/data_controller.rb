@@ -727,7 +727,7 @@ class DataController < ApplicationController
     end
 
     #Pre Query all the data attributes
-    all_attrs = attributes(@game.name)
+    all_attrs = attributes(@game.name).limit(10000)
 
     respond_to do |format|
       format.csv {
