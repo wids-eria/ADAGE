@@ -694,7 +694,7 @@ class DataController < ApplicationController
       data = AdaData.with_game(@game.name).asc(:user_id,:timestamp)
     end
 
-    types = AdaData.with_game(@game.name).limit(20000).distinct(:key)
+    types = data.limit(2000).distinct(:key)
     examples = Array.new
     types.each do |type|
       ex = data.select{ |d| d.key.include?(type)}.last
