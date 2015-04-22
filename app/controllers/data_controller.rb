@@ -765,7 +765,7 @@ class DataController < ApplicationController
           user_id = -1
           player_name = ""
 
-          data.entries.each do |entry|
+          data.each do |entry|
             if user_id != entry.user_id
               user_id = entry.user_id
               user = User.find(user_id)
