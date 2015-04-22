@@ -726,11 +726,11 @@ class DataController < ApplicationController
       params[:end] = (Time.at((params[:end].to_i)/1000+86400).to_time.to_i*1000).to_i
     end
 
-    #Pre Query all the data attributes
-    all_attrs = attributes(@game.name)
-
     respond_to do |format|
       format.csv {
+
+        #Pre Query all the data attributes
+        all_attrs = attributes(@game.name)
 
         filename = @game.name+'.csv'
 
@@ -745,27 +745,26 @@ class DataController < ApplicationController
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
 
-          data = data.where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end]).asc(:user_id)
+          data = data.where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end])
         elsif params[:start]
-          data = data.where(:timestamp.gte=> params[:start]).asc(:user_id)
+          data = data.where(:timestamp.gte=> params[:start])
         elsif params[:end]
-          data = data.where(:timestamp.lte=> params[:end]).asc(:user_id)
-        else
-          data = data.asc(:user_id)
+          data = data.where(:timestamp.lte=> params[:end])
         end
 
         type = "text/csv"
+
         set_file_headers(filename,type)
         set_streaming_headers
         response.status = 200
 
-        offset = 0
         self.response_body = Enumerator.new do |y|
           y << CSV.generate_line(["player", "epoch time"] + all_attrs)
           user_id = -1
           player_name = ""
-
-          data.each do |entry|
+        
+          i=0
+          data.asc(:user_id).all.each do |entry|
             if user_id != entry.user_id
               user_id = entry.user_id
               user = User.find(user_id)
@@ -792,7 +791,9 @@ class DataController < ApplicationController
               end
             end
             y << CSV.generate_line(out)
-          end
+            i+=1
+            GC.start if i%5000==0
+          end 
         end
       }
       format.json {
@@ -869,9 +870,4 @@ class DataController < ApplicationController
       format.all { redirect_to :root, :status => status}
     end
   end
-
-
-
-
-
 end

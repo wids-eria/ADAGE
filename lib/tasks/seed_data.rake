@@ -195,18 +195,23 @@ namespace :seed_data do
      (0..10000).each do |i|
         data = AdaData.with_game("Fake Game").new(types[rand.rand(0...types.count)])
         data.user_id = User.all.sample.id
-        puts 'creating data for ' + data.user_id.to_s
-        data.session_token = start_time.to_s
-        data.timestamp = ((start_time ))
-        if data.key.include?('FGQuest')
-          data.name = quest_names[rand.rand(0...quest_names.count)]
-        end
+        unless User.where(id: data.user_id).first.nil?
+            if data.user_id == 4
+                puts "ASDASDASDASNOIDASDOIADSNI"
+            end
+            puts 'creating data for ' + data.user_id.to_s
+            data.session_token = start_time.to_s
+            data.timestamp = ((start_time ))
+            if data.key.include?('FGQuest')
+              data.name = quest_names[rand.rand(0...quest_names.count)]
+            end
 
-        if data.key.include?('FGQuestEnd')
-          data.success = success[rand.rand(0...success.count)]
-          data.health = rand.rand(4...20)
+            if data.key.include?('FGQuestEnd')
+              data.success = success[rand.rand(0...success.count)]
+              data.health = rand.rand(4...20)
+            end
+            data.save
         end
-        data.save
      end
 
     #Add indices to collection
