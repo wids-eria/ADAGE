@@ -765,39 +765,34 @@ class DataController < ApplicationController
           user_id = -1
           player_name = ""
 
-          lim = 10000
-          total = data.count
-          while offset < total
-            data.limit(lim).skip(offset).entries.each do |entry|
-              if user_id != entry.user_id
-                user_id = entry.user_id
-                user = User.find(user_id)
-                player_name = user.player_name
-              end
-
-              out = Array.new
-              out << player_name
-              if entry.respond_to?('timestamp')
-                if entry.timestamp.to_s.include?(':')
-                  out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
-                else
-                  out << entry.timestamp
-                end
-              else
-                out << 'no timestamp'
-              end
-
-              all_attrs.each do |attr|
-                if entry.attributes.keys.include?(attr)
-                  out << entry.attributes[attr]
-                else
-                  out << ""
-                end
-              end
-              y << CSV.generate_line(out)
+          data.entries.each do |entry|
+            if user_id != entry.user_id
+              user_id = entry.user_id
+              user = User.find(user_id)
+              player_name = user.player_name
             end
+
+            out = Array.new
+            out << player_name
+            if entry.respond_to?('timestamp')
+              if entry.timestamp.to_s.include?(':')
+                out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
+              else
+                out << entry.timestamp
+              end
+            else
+              out << 'no timestamp'
+            end
+
+            all_attrs.each do |attr|
+              if entry.attributes.keys.include?(attr)
+                out << entry.attributes[attr]
+              else
+                out << ""
+              end
+            end
+            y << CSV.generate_line(out)
           end
-          offset += lim
         end
       }
       format.json {
