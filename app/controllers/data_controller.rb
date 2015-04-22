@@ -689,12 +689,12 @@ class DataController < ApplicationController
     keys = Hash.new
     data = nil
     if schema.present?
-      data =  AdaData.with_game(@game.name).where(schema: schema).asc(:user_id,:timestamp)
+      data =  AdaData.with_game(@game.name).where(schema: schema).asc(:user_id,:timestamp).limit(200)
     else
-      data = AdaData.with_game(@game.name).asc(:user_id,:timestamp)
+      data = AdaData.with_game(@game.name).asc(:user_id,:timestamp).limit(200)
     end
 
-    types = data.limit(2000).distinct(:key)
+    types = data.distinct(:key)
     examples = Array.new
     types.each do |type|
       ex = data.select{ |d| d.key.include?(type)}.last
@@ -727,7 +727,7 @@ class DataController < ApplicationController
     end
 
     #Pre Query all the data attributes
-    all_attrs = attributes(@game.name).limit(10000)
+    all_attrs = attributes(@game.name)
 
     respond_to do |format|
       format.csv {
