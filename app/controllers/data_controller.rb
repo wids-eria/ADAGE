@@ -726,6 +726,9 @@ class DataController < ApplicationController
       params[:end] = (Time.at((params[:end].to_i)/1000+86400).to_time.to_i*1000).to_i
     end
 
+    #Pre Query all the data attributes
+    all_attrs = attributes(@game.name)
+
     respond_to do |format|
       format.csv {
 
@@ -743,8 +746,6 @@ class DataController < ApplicationController
         else
           data = AdaData.with_game(@game.name).asc(:user_id)
         end
-
-        all_attrs = attributes(@game.name)
 
         type = "text/csv"
         set_file_headers(filename,type)
@@ -773,6 +774,7 @@ class DataController < ApplicationController
             else
               out << 'no timestamp'
             end
+            
             all_attrs.each do |attr|
               if entry.attributes.keys.include?(attr)
                 out << entry.attributes[attr]
