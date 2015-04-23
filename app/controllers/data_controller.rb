@@ -764,7 +764,7 @@ class DataController < ApplicationController
           player_name = ""
         
           i=0
-          data.asc(:user_id).each do |entry|
+          data.asc(:user_id).all.each do |entry|
             if user_id != entry.user_id
               user_id = entry.user_id
               user = User.find(user_id)
