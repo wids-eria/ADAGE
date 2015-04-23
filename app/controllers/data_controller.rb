@@ -694,7 +694,7 @@ class DataController < ApplicationController
       data = AdaData.with_game(@game.name).limit(10000)
     end
 
-    types = data.distinct(:key)
+    types = data.only(:key).distinct(:key)
     examples = Array.new
     types.each do |type|
       ex = data.select{ |d| d.key.include?(type)}.last
