@@ -659,7 +659,7 @@ class DataController < ApplicationController
           @user_ids.each do |id|
             user = User.where(id: id).first
             unless user.nil?
-              y << user.data_to_csv(@game.name, params[:version])
+              user.data_to_csv(@game.name, params[:version])
             end
             i+=1
             GC.start if i%500==0
@@ -685,34 +685,71 @@ class DataController < ApplicationController
     headers['Last-Modified'] = Time.now.ctime.to_s
   end
 
+  def attributes(gameName,schema="")
+    keys = Hash.new
+    data = nil
+    if schema.present?
+      data =  AdaData.with_game(@game.name).where(schema: schema).limit(3000)
+    else
+      data = AdaData.with_game(@game.name).limit(3000)
+    end
+
+    types = data.distinct(:key)
+    examples = Array.new
+    types.each do |type|
+      ex = data.select{ |d| d.key.include?(type)}.last
+      if ex != nil
+        examples << ex
+      end
+    end
+    all_attrs = Array.new
+    examples.each do |e|
+      e.attributes.keys.each do |k|
+        unless all_attrs.include? k
+          all_attrs << k
+        end
+      end
+    end  
+
+    return all_attrs
+  end
 
   def export
     @game = Game.where('lower(name) = ?', params[:gameName].downcase).first
     authorize! :read, @game
     @user_ids = params[:user_ids]
 
+    if params[:start]
+      params[:start] = (Time.at((params[:start].to_i)/1000+86400).to_time.to_i*1000).to_i
+    end
     if params[:end]
-      params[:end] = (Time.at((params[:end].to_i)/1000+86400).to_time.to_i*1000).to_s
+      params[:end] = (Time.at((params[:end].to_i)/1000+86400).to_time.to_i*1000).to_i
     end
 
     respond_to do |format|
       format.csv {
-        @user_ids = AdaData.with_game(@game.name)
 
-        if params[:start]
-          @user_ids = @user_ids.where(:timestamp.gte=> params[:start])
-        end
-
-        if params[:end]
-          @user_ids = @user_ids.where(:timestamp.lte=> params[:end])
-        end
+        #Pre Query all the data attributes
+        all_attrs = attributes(@game.name)
 
         filename = @game.name+'.csv'
+
+        unless  @user_ids.nil?
+          data = AdaData.with_game(@game.name).in(user_id: @user_ids)
+        else
+          data = AdaData.with_game(@game.name)
+        end
 
         if params[:end] and params[:start]
           start_date =  Time.at(params[:start].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
+
+          data = data.where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end])
+        elsif params[:start]
+          data = data.where(:timestamp.gte=> params[:start])
+        elsif params[:end]
+          data = data.where(:timestamp.lte=> params[:end])
         end
 
         type = "text/csv"
@@ -721,19 +758,42 @@ class DataController < ApplicationController
         set_streaming_headers
         response.status = 200
 
-        @user_ids = @user_ids.distinct(:user_id)
         self.response_body = Enumerator.new do |y|
+          y << CSV.generate_line(["player", "epoch time"] + all_attrs)
+          user_id = -1
+          player_name = ""
+        
           i=0
-          @user_ids.each do |id|
-            user = User.where(id: id).first
-            unless user.nil?
-              user.data_to_csv(y,@game.name)
-            else 
-              y << ""
+          data.each do |entry|
+            if user_id != entry.user_id
+              user_id = entry.user_id
+              user = User.find(user_id)
+              player_name = user.player_name
             end
+
+            out = Array.new
+            out << player_name
+            if entry.respond_to?('timestamp')
+              if entry.timestamp.to_s.include?(':')
+                out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
+              else
+                out << entry.timestamp
+              end
+            else
+              out << 'no timestamp'
+            end
+
+            all_attrs.each do |attr|
+              if entry.attributes.keys.include?(attr)
+                out << entry.attributes[attr]
+              else
+                out << ""
+              end
+            end
+            y << CSV.generate_line(out)
             i+=1
-          #  GC.start if i%5==0
-          end
+            GC.start if i%5000==0
+          end 
         end
       }
       format.json {
@@ -810,9 +870,4 @@ class DataController < ApplicationController
       format.all { redirect_to :root, :status => status}
     end
   end
-
-
-
-
-
 end

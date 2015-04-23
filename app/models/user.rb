@@ -234,62 +234,6 @@ class User < ActiveRecord::Base
 
   end
 
-  def data_to_csv(output,gameName, schema='')
-    #csv = ""
-    keys = Hash.new
-    data = nil
-    if schema.present?
-      data = self.data(gameName).where(schema: schema).asc(:timestamp).entries
-    else
-      data = self.data(gameName).asc(:timestamp).entries
-    end
-    types = self.data(gameName).distinct(:key)
-    examples = Array.new
-    types.each do |type|
-      ex = data.select{ |d| d.key.include?(type)}.last
-      if ex != nil
-        examples << ex
-      end
-    end
-    all_attrs = Array.new
-    examples.each do |e|
-      e.attributes.keys.each do |k|
-        all_attrs << k
-      end
-    end
-
-    csv = ""
-    i=0
-    data.each do |entry|
-      out = Array.new
-      if i==0
-        csv <<  CSV.generate_line(["player", "epoch time"] + all_attrs.uniq)
-      end
-      out << self.player_name
-      if entry.respond_to?('timestamp')
-        if entry.timestamp.to_s.include?(':')
-          out << DateTime.strptime(entry.timestamp.to_s, "%m/%d/%Y %H:%M:%S").to_time.to_i
-        else
-          out << entry.timestamp
-        end
-      else
-        out << 'no timestamp'
-      end
-      all_attrs.uniq.each do |attr|
-        if entry.attributes.keys.include?(attr)
-          out << entry.attributes[attr]
-        else
-          out << ""
-        end
-      end
-      i+=1
-      csv << CSV.generate_line(out)
-      GC.start if i%5000==0
-    end
-    output << csv
-  end
-
-
   #returns session for this player
   def session_information(gameName= nil, gameVersion= nil)
     data = self.data(gameName).asc(:timestamp)
