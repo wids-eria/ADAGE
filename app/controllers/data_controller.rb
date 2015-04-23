@@ -689,9 +689,9 @@ class DataController < ApplicationController
     keys = Hash.new
     data = nil
     if schema.present?
-      data =  AdaData.with_game(@game.name).where(schema: schema).asc(:user_id,:timestamp).limit(200)
+      data =  AdaData.with_game(@game.name).where(schema: schema).limit(200)
     else
-      data = AdaData.with_game(@game.name).asc(:user_id,:timestamp).limit(200)
+      data = AdaData.with_game(@game.name).limit(200)
     end
 
     types = data.distinct(:key)
