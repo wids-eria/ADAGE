@@ -689,12 +689,12 @@ class DataController < ApplicationController
     keys = Hash.new
     data = nil
     if schema.present?
-      data =  AdaData.with_game(@game.name).where(schema: schema).limit(10000)
+      data =  AdaData.with_game(@game.name).where(schema: schema).limit(3000)
     else
-      data = AdaData.with_game(@game.name).limit(10000)
+      data = AdaData.with_game(@game.name).limit(3000)
     end
 
-    types = data.only(:key).distinct(:key)
+    types = data.distinct(:key)
     examples = Array.new
     types.each do |type|
       ex = data.select{ |d| d.key.include?(type)}.last
