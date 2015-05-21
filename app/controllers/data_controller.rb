@@ -70,7 +70,16 @@ class DataController < ApplicationController
           @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).where(user_id: params[:user_id]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
         end
       else
-        @data = AdaData.with_game(game_name).all.desc('_id').limit(params[:limit])
+        @data  = AdaData.with_game(game_name).all.desc('_id')
+        unless params[:key].nil?
+          @data = @data.where(key: params[:key])
+        end
+
+        unless params[:user_id].nil?
+          @data = @data.where(user_id: params[:user_id])
+        end
+        
+        @data.limit(params[:limit])
       end
     end
 
