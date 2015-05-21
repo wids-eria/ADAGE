@@ -103,7 +103,7 @@ class UsersController < ApplicationController
         format.html { redirect_to user_path(@user) }
       else
         flash[:error] = 'Player name not found'
-        format.json { render json: {error:"Player name not found"}, status: :ok }
+        format.json { render json: {error:"Player name not found"}, status: :no_content }
         format.html { redirect_to :back }
       end
     end
