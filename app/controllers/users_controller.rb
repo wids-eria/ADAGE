@@ -99,10 +99,12 @@ class UsersController < ApplicationController
     @user = User.where(player_name: params[:player_name]).first
     respond_to do |format|
       if @user.present?
-        format.any { redirect_to user_path(@user) }
+        format.json { render :json =>{player_name: params[:player_name],user_id: @user.id}, :status => :ok }
+        format.html { redirect_to user_path(@user) }
       else
         flash[:error] = 'Player name not found'
-        format.any { redirect_to :back }
+        format.json { render json: {error:"Player name not found"}, status: :ok }
+        format.html { redirect_to :back }
       end
     end
   end
