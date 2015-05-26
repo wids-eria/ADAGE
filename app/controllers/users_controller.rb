@@ -77,7 +77,6 @@ class UsersController < ApplicationController
       @names << game
       @counts << {x: i, y: game_data.distinct(:session_token).count}
     end
-    puts @counts.inspect
   end
 
   def session_logs
