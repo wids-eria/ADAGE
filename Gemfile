@@ -39,7 +39,7 @@ end
 gem 'jquery-rails'
 gem 'capistrano'
 gem 'capistrano-ext'
-gem 'rvm-capistrano'
+gem 'rvm-capistrano',  require: false
 gem 'haml'
 gem 'd3-rails'
 

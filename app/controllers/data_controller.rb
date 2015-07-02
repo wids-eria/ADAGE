@@ -115,17 +115,25 @@ class DataController < ApplicationController
       end
 
       if params[:game_id].nil? or params[:game_id].empty?
-        @data = AdaData.with_game(game_name).where(:timestamp.gt => since).in(key: keys).asc(:timestamp)
+        since = since.to_i
+        puts since
+        @data = AdaData.with_game(game_name).where(:timestamp.gt => since.to_i).in(key: keys).asc(:timestamp)
       else
         @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys).asc(:timestamp)
       end
     end
 
-
+    puts @data.count
     @result = Hash.new
     @result['data'] = @data
-    respond_with @result
-
+    
+    respond_to do |format|
+      if params[:callback]
+        format.json { render json: @result.to_json, callback: params[:callback] }
+      else
+        format.json { render  json: @result.to_json}
+      end
+    end
   end
 
   def key_counts

@@ -224,4 +224,74 @@ namespace :seed_data do
     collection.indexes.create(timestamp: 1)
 
   end
+
+
+  desc 'Creates Oztoc data in realtime for tablet testing'
+  task :create_oztoc => :environment do
+
+    rand = Random.new(Time.now.to_i)
+
+    client_token = ''
+    game = Game.where('lower(name) = ?', 'oztoctablet').first
+
+    if game != nil
+      imp = game.implementations.first
+      if imp != nil
+        client_token = imp.client.app_token
+      end
+    end
+
+    circuit_template = {
+        'application_name' => 'OztocTablet',
+        "key"=>"MakeCircuitCreated",
+        "num_batteries"=>1,
+        "num_leds"=>2,
+        "playspace_ids"=>[4],
+        "timestamp" => Time.now.to_i,
+        'session_token' => 'oztoctablet',
+        'game_id' => 'oztoctablet'
+    }
+
+    fish_template = {
+        'application_name' => 'OztocTablet',
+        "key"=>"MakeSpawnFish",
+        "fish"=>{"name"=>"large red fish"},
+        "playspace_ids"=>[1],
+        "timestamp" => Time.now.to_i,
+        'session_token' => 'oztoctablet',
+        'game_id' => 'oztoctablet'
+    }
+
+    types = [circuit_template, fish_template]
+    fish = ["fish","squid"]
+    size = ["small","medium","large"]
+    color = ["red","blue","green"]
+
+    #Add indices to collection
+    db = Mongoid::Sessions.default
+    gamename = 'oztoctablet'.downcase
+    collection = db[gamename]
+    collection.indexes.create(name: 1)
+    collection.indexes.create(gameName: 1)
+    collection.indexes.create(user_id: 1)
+    collection.indexes.create(timestamp: 1)
+
+    (0..1000).each do |i|
+        sleep 3
+        data = AdaData.with_game("oztoctablet").new(types.sample)
+        data.user_id = rand.rand(0...4)
+        data.playspace_ids = [rand.rand(1...5)]
+        data.timestamp = (Time.now.to_f*1000).to_i
+
+        data.session_token = data.timestamp.to_s
+        if data.key == "MakeSpawnFish"
+            data.fish["name"] = size.sample + " " + color.sample + " "+fish.sample
+        end
+        puts 'creating data for playspace ' + data.playspace_ids.to_s
+        data.save
+        puts AdaData.with_game("oztoctablet").all.count
+    end
+
+
+  end
 end
