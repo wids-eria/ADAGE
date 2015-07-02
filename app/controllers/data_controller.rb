@@ -762,7 +762,7 @@ class DataController < ApplicationController
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
 
-          data = data.where(:timestamp.gte=> params[:start].to_i).where(:timestamp.lte=> params[:end].to_i)
+          data = data.where(:timestamp.gte=> params[:start].to_i/1000).where(:timestamp.lte=> params[:end].to_i/1000)
         elsif params[:start]
           data = data.where(:timestamp.gte=> params[:start])
         elsif params[:end]
