@@ -187,14 +187,15 @@ class DataController < ApplicationController
 
       map = %Q{
         function() {
-          emit(this.key, { key: this.key ,text: this.uiText});
+          emit(this.key, { key: this.key ,uiText: this.uiText});
         }
       }
 
       reduce = %Q{
         function(key, values) {
-          var result = { count: 0 ,uiText: values.uiText};
+          var result = { count: 0 ,uiText: null};
           values.forEach(function(value) {
+            if(result.uiText == null) result.uiText = value.uiText;
             result.count += 1;
           });
           return result;
