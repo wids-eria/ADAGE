@@ -193,7 +193,7 @@ class DataController < ApplicationController
 
       reduce = %Q{
         function(key, values) {
-          var result = { count: 0 ,text: values.uiText};
+          var result = { count: 0 ,uiText: values.uiText};
           values.forEach(function(value) {
             result.count += 1;
           });
