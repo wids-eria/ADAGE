@@ -178,12 +178,6 @@ class DataController < ApplicationController
   end
 
   def context_frequency
-    #{data: [{"Econauts Open":{
-    #   count: 2,
-    #   uiText: "SD"
-    # }}
-    #
-
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
     end
@@ -206,7 +200,7 @@ class DataController < ApplicationController
           return result;
         }
       }
-      @data  = AdaData.with_game(game_name).in(ada_base_types: ["ADAGEContext"]).desc('_id').map_reduce(map,reduce).out(inline:1)
+      @data  = AdaData.with_game(game_name).in(ada_base_types: ["ADAGEContext"]).desc('_id').only(:key,:uiText).map_reduce(map,reduce).out(inline:1)
     end
 
     @result = Hash.new
