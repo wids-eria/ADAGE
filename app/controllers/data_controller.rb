@@ -193,13 +193,13 @@ class DataController < ApplicationController
 
       map = %Q{
         function() {
-          emit(this.key, { key: this.key });
+          emit(this.key, { key: this.key ,text: this.uiText});
         }
       }
 
       reduce = %Q{
         function(key, values) {
-          var result = { count: 0 };
+          var result = { count: 0 ,text: values.uiText};
           values.forEach(function(value) {
             result.count += 1;
           });
@@ -207,8 +207,6 @@ class DataController < ApplicationController
         }
       }
       @data  = AdaData.with_game(game_name).in(ada_base_types: ["ADAGEContext"]).desc('_id').map_reduce(map,reduce).out(inline:1)
-   
-      puts @data.to_json
     end
 
     @result = Hash.new
@@ -217,7 +215,7 @@ class DataController < ApplicationController
     @data.each do |item|
       @temp[item['_id']] = {
         count: item['value']['count'],
-        uiText: item.to_json
+        uiText: item['value']['uiText']
       }
     end
 
