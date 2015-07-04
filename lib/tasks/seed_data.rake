@@ -62,6 +62,7 @@ namespace :seed_data do
                  'user_id' => 1,
                  'name' => 'Quest!',
                  'parent_name' => 'Mission',
+                 "uiText" => "ASDASD"
 
                   }
 
@@ -76,7 +77,9 @@ namespace :seed_data do
                  'name' => 'Quest!',
                  'parent_name' => 'Mission',
                  'success' => true,
-                 'health' => rand.rand(0..20)
+                 'health' => rand.rand(0..20),
+                 "uiText" => "ASDASD"
+
                   }
 
 
@@ -294,4 +297,7 @@ namespace :seed_data do
 
 
   end
+
+
+
 end

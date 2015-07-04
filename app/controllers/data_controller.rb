@@ -177,7 +177,60 @@ class DataController < ApplicationController
 
   end
 
+  def context_frequency
+    #{data: [{"Econauts Open":{
+    #   count: 2,
+    #   uiText: "SD"
+    # }}
+    #
 
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client != nil
+      game_name = client.implementation.game.name
+
+      map = %Q{
+        function() {
+          emit(this.key, { key: this.key });
+        }
+      }
+
+      reduce = %Q{
+        function(key, values) {
+          var result = { count: 0 };
+          values.forEach(function(value) {
+            result.count += 1;
+          });
+          return result;
+        }
+      }
+      @data  = AdaData.with_game(game_name).in(ada_base_types: ["ADAGEContext"]).desc('_id').map_reduce(map,reduce).out(inline:1)
+   
+      puts @data.to_json
+    end
+
+    @result = Hash.new
+
+    @temp = Hash.new
+    @data.each do |item|
+      @temp[item['_id']] = {
+        count: item['value']['count'],
+        uiText: item.to_json
+      }
+    end
+
+    @result['data'] = @temp
+    
+    respond_to do |format|
+      if params[:callback]
+        format.json { render json: @result.to_json, callback: params[:callback] }
+      else
+        format.json { render  json: @result.to_json}
+      end
+    end
+  end
 
   def get_game_ids
 
@@ -737,7 +790,7 @@ class DataController < ApplicationController
     @user_ids = params[:user_ids]
 
     if params[:start]
-      params[:start] = (Time.at((params[:start].to_i)/1000+86400).to_time.to_i*1000).to_i
+      params[:start] = (Time.at((params[:start].to_i)/1000).to_time.to_i*1000).to_i
     end
     if params[:end]
       params[:end] = (Time.at((params[:end].to_i)/1000+86400).to_time.to_i*1000).to_i
@@ -762,9 +815,9 @@ class DataController < ApplicationController
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
 
-          data = data.where(:timestamp.gte=> params[:start].to_i/1000).where(:timestamp.lte=> params[:end].to_i/1000)
+          data = data.where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end].to_i/1000)
         elsif params[:start]
-          data = data.where(:timestamp.gte=> params[:start])
+          data = data.where(:timestamp.gte=> params[:start].to_i)
         elsif params[:end]
           data = data.where(:timestamp.lte=> params[:end])
         end
