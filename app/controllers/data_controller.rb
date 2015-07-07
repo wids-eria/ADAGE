@@ -202,9 +202,6 @@ class DataController < ApplicationController
         }
       }
       @data  = AdaData.with_game(game_name).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextType: true).desc('_id').only(:key,:uiText,:startContextType).map_reduce(map,reduce).out(inline:1)
-    
-      puts AdaData.with_game(game_name).where(key: "EconautsDialogClose").in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextType: true).desc('_id').only(:key,:uiText,:startContextType).count
-  
     end
 
     @result = Hash.new
@@ -288,9 +285,9 @@ class DataController < ApplicationController
 
         temp = Hash.new
         temp[item] = Hash.new
-        temp[item]['min_duration'] = min
-        temp[item]['max_duration'] = max
-        temp[item]['avg_duration'] = total/count
+        temp[item]['min_duration'] = min/1000
+        temp[item]['max_duration'] = max/1000
+        temp[item]['avg_duration'] = total/count/1000
         temp[item]['count'] = count
         @contexts << temp
       end
