@@ -254,7 +254,7 @@ class DataController < ApplicationController
     if client != nil
       game_name = client.implementation.game.name
       @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key]).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id')
-      @contexts = Array.new
+      @contexts = Hash.new
       @data.distinct(:name).each do |item|
         count = 0
         min = nil
@@ -262,7 +262,7 @@ class DataController < ApplicationController
         total = 0
 
         #For each end context calc 
-        AdaData.with_game(game_name).where(key: params[:key],name: item).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id').each do |log|
+        AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: item).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id').each do |log|
           end_log = log
 
           start_log = AdaData.with_game(game_name).where(client_id: end_log.startContextID).first
@@ -287,13 +287,11 @@ class DataController < ApplicationController
           count +=1
         end
 
-        temp = Hash.new
-        temp[item] = Hash.new
-        temp[item]['min_dur'] = min/1000
-        temp[item]['max_dur'] = max/1000
-        temp[item]['avg_dur'] = total/count/1000
-        temp[item]['count'] = count
-        @contexts << temp
+        @contexts[item] = Hash.new
+        @contexts[item]['min_dur'] = min/1000.0
+        @contexts[item]['max_dur'] = max/1000.0
+        @contexts[item]['avg_dur'] = total/count/1000.0
+        @contexts[item]['count'] = count
       end
     end
 
@@ -318,7 +316,7 @@ class DataController < ApplicationController
       game_name = client.implementation.game.name
 
       @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: params[:name]).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id')
-      @contexts = Array.new
+      @contexts = Hash.new
       @data.each do |log|
         end_log = log
         start_log = AdaData.with_game(game_name).where(client_id: end_log.startContextID).first
@@ -326,14 +324,13 @@ class DataController < ApplicationController
         event_count = AdaData.with_game(game_name).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).count
 
         duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
+        duration/=1000.0
 
-        temp = Hash.new 
         item = log.client_id
-        temp[item] = Hash.new 
-        temp[item]["timestamp"] =end_log.timestamp
-        temp[item]["duration"] = duration
-        temp[item]["event_count"] = event_count
-        @contexts << temp
+        @contexts [item] = Hash.new 
+        @contexts [item]["timestamp"] =end_log.timestamp
+        @contexts [item]["duration"] = duration
+        @contexts [item]["event_count"] = event_count
       end
     end
 
@@ -381,20 +378,18 @@ class DataController < ApplicationController
 
     end
     
-    @contexts = Array.new
-    temp = Hash.new
+    @contexts = Hash.new
     @data.each do |item|
       key = item['_id']
-      temp[key] = Hash.new
-      temp[key]['count']= item['value']['count']
-      temp[key]['uiText']= item['value']['uiText']
+      @contexts[key] = Hash.new
+      @contexts[key]['count']= item['value']['count']
+      @contexts[key]['uiText']= item['value']['uiText']
 
-      temp[key]['isContext']= false
-      if(item['value'].has_key?('name'))
-        temp[key]['name']= item['value']['name']
-        temp[key]['isContext']= true
+      @contexts[key]['isContext']= false
+      if(@contexts['value'].has_key?('name'))
+        @contexts[key]['name']= item['value']['name']
+        @contexts[key]['isContext']= true
       end
-      @contexts<<temp
     end
 
 
