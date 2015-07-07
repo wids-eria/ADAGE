@@ -398,8 +398,9 @@ class DataController < ApplicationController
       @contexts[key]['count']= item['value']['count']
       @contexts[key]['uiText']= item['value']['uiText']
 
+      
       @contexts[key]['isContext']= false
-      if @contexts[key].has_key?('name')
+      if item['value'].has_key?('name')
         @contexts[key]['name']= item['value']['name']
         @contexts[key]['isContext']= true
       end
@@ -416,8 +417,60 @@ class DataController < ApplicationController
         format.json { render  json: @result.to_json}
       end
     end
-
   end
+
+  def context_event_count
+    parse_filters(params[:filters])
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client != nil
+      game_name = client.implementation.game.name
+
+      end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
+      start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
+
+      map = %Q{
+        function() {
+          emit(this.key, { count: 1 ,uiText: this.uiText, name: this.name});
+        }
+      }
+
+      reduce = %Q{
+        function(key, values) {
+          var result = { count: 0 ,uiText: null};
+          values.forEach(function(value) {
+            if(result.uiText == null) result.uiText = value.uiText;
+            result.count += 1;
+          });
+          return result;
+        }
+      }
+
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or(name: params[:event_key]).or(uiText: params[:event_key]).and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).map_reduce(map,reduce).out(inline:1)
+    end
+    
+    @contexts = Hash.new
+    @data.each do |item|
+      key = item['_id']
+      @contexts[key] = Hash.new
+      @contexts[key]['count']= item['value']['count']
+      @contexts[key]['uiText']= item['value']['uiText']
+    end
+
+    @result= Hash.new
+    @result['data'] = @contexts
+    
+    respond_to do |format|
+      if params[:callback]
+        format.json { render json: @result.to_json, callback: params[:callback] }
+      else
+        format.json { render  json: @result.to_json}
+      end
+    end
+  end
+
 
 
   def data_selection

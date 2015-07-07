@@ -60,6 +60,7 @@ Ada::Application.routes.draw do
       get :context_list
       get :context_list_keyed
       get :context_event_type_list
+      get :context_event_count
       get :get_events
       get :key_counts
       get :get_events_by_group
