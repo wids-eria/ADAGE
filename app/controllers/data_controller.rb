@@ -207,36 +207,47 @@ class DataController < ApplicationController
     if client != nil
       game_name = client.implementation.game.name
 
-      map = %Q{
-        function() {
-          emit(this.startContextType, { count: 1 ,uiText: this.uiText});
-        }
-      }
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('key').only(:key,:uiText,:client_id)
 
-      reduce = %Q{
-        function(key, values) {
-          var result = { count: 0 ,uiText: null};
-          values.forEach(function(value) {
-            if(result.uiText == null) result.uiText = value.uiText;
-            result.count += 1;
-          });
-          return result;
-        }
-      }
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").in(ada_base_types: ["ADAGEContextEnd"]).and(@filters).exists(startContextType: true).desc('_id').only(:key,:uiText,:startContextType).map_reduce(map,reduce).out(inline:1)
+      @contexts = Hash.new
+      @data.distinct(:key).each do |item|
+        count = 0
+        min = nil
+        max = -1
+        total = 0
+
+        #For each end context calc 
+        AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: item).in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('_id').each do |log|
+          start_log = log
+
+          end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
+          duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
+
+          if min == nil
+
+            min = duration
+          elsif duration <  min
+            min = duration
+          end
+
+          if duration >  max
+            max = duration
+          end
+
+          total += duration 
+          count +=1
+        end
+
+        @contexts[item] = Hash.new
+        @contexts[item]['min_dur'] = min/1000.0
+        @contexts[item]['max_dur'] = max/1000.0
+        @contexts[item]['avg_dur'] = total/count/1000.0
+        @contexts[item]['count'] = count
+      end
     end
 
     @result = Hash.new
-
-    @temp = Hash.new
-    @data.each do |item|
-      @temp[item['_id']] = {
-        count: item['value']['count'],
-        uiText: item['value']['uiText']
-      }
-    end
-
-    @result['data'] = @temp
+    @result['data'] = @contexts
     
     respond_to do |format|
       if params[:callback]
@@ -255,7 +266,7 @@ class DataController < ApplicationController
 
     if client != nil
       game_name = client.implementation.game.name
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key]).in(ada_base_types: ["ADAGEContextEnd"]).and(@filters).exists(startContextID: true).desc('_id')
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key]).in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('_id')
       @contexts = Hash.new
       @data.distinct(:name).each do |item|
         count = 0
@@ -264,10 +275,10 @@ class DataController < ApplicationController
         total = 0
 
         #For each end context calc 
-        AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: item).in(ada_base_types: ["ADAGEContextEnd"]).and(@filters).exists(startContextID: true).desc('_id').each do |log|
-          end_log = log
+        AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: item).in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('_id').each do |log|
+          start_log = log
 
-          start_log = AdaData.with_game(game_name).where(client_id: end_log.startContextID).first
+          end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
           duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
 
           if min == nil
@@ -314,18 +325,20 @@ class DataController < ApplicationController
     if client != nil
       game_name = client.implementation.game.name
 
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: params[:name]).and(@filters).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id')
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: params[:name]).and(@filters).in(ada_base_types: ["ADAGEContextStart"]).desc('_id')
       @contexts = Hash.new
       @data.each do |log|
-        end_log = log
-        start_log = AdaData.with_game(game_name).where(client_id: end_log.startContextID).first
+        start_log = log
+
+        end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
+        duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
 
         event_count = AdaData.with_game(game_name).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).count
 
         duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
         duration/=1000.0
 
-        item = log.client_id
+        item = end_log.client_id
         @contexts [item] = Hash.new 
         @contexts [item]["timestamp"] =end_log.timestamp
         @contexts [item]["duration"] = duration
