@@ -289,9 +289,9 @@ class DataController < ApplicationController
 
         temp = Hash.new
         temp[item] = Hash.new
-        temp[item]['min_duration'] = min/1000
-        temp[item]['max_duration'] = max/1000
-        temp[item]['avg_duration'] = total/count/1000
+        temp[item]['min_dur'] = min/1000
+        temp[item]['max_dur'] = max/1000
+        temp[item]['avg_dur'] = total/count/1000
         temp[item]['count'] = count
         @contexts << temp
       end
