@@ -53,6 +53,7 @@ Ada::Application.routes.draw do
       get :find_tenacity_player
       get :data_by_version
       get :export
+      get :visualizer_export
       get :session_times
       get :session_logs
       get :context_logs

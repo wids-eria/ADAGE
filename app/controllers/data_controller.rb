@@ -398,7 +398,7 @@ class DataController < ApplicationController
       @contexts[key]['count']= item['value']['count']
       @contexts[key]['uiText']= item['value']['uiText']
 
-      
+
       @contexts[key]['isContext']= false
       if item['value'].has_key?('name')
         @contexts[key]['name']= item['value']['name']
@@ -471,7 +471,125 @@ class DataController < ApplicationController
     end
   end
 
+  def visualizer_export
+    parse_filters(params[:filters])
+    authorize! :read, @game
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
 
+    game_name = ""
+    if client != nil
+      game_name = client.implementation.game.name
+
+      #Set file streaming data
+      filename = game_name+'.json'
+      type = "text/json"
+
+      set_file_headers(filename,type)
+      set_streaming_headers
+      response.status = 200
+
+      if params[:key].empty?
+        #open query
+        @data = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters)
+        respond_with  do |format|
+          format.json{
+            self.response_body = Enumerator.new do |y|
+              i=0
+              @data.each do |log|
+                y << log.to_json + "\n"
+                i+=1
+                GC.start if i%5000==0
+              end
+            end
+          } 
+        end
+      elsif params[:name].empty?
+        #key query
+        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key]).in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('_id')
+
+        respond_with  do |format|
+          format.json{
+            self.response_body = Enumerator.new do |y|
+              i=0
+              @data.each do |item|
+                start_log = item
+                end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
+
+                @results = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").between(_id: start_log._id..end_log._id).and(@filters).desc('_id')
+              
+                @results.all.each do |log|
+                  y << log.to_json + "\n"
+                  i+=1
+                  GC.start if i%5000==0
+                end
+              end
+            end
+          } 
+        end
+      elsif params[:client_id].empty?
+        #name query
+        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: params[:name]).and(@filters).in(ada_base_types: ["ADAGEContextStart"]).desc('_id')
+
+        respond_with  do |format|
+          format.json{
+            self.response_body = Enumerator.new do |y|
+              i=0                    
+              @data.each do |item|
+                start_log = item
+                end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
+
+                @results = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").between(_id: start_log._id..end_log._id).and(@filters).desc('_id')
+              
+                @results.all.each do |log|
+                  y << log.to_json + "\n"
+                  i+=1
+                  GC.start if i%5000==0
+                end
+              end
+            end
+          } 
+        end
+      elsif params[:event_key].empty?
+        #client_id query
+        end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
+        start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
+
+        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id])
+        respond_with  do |format|
+          format.json{
+            self.response_body = Enumerator.new do |y|
+              i=0                    
+              @data.all.each do |log|
+                y << log.to_json + "\n"
+                i+=1
+                GC.start if i%5000==0
+              end
+            end
+          } 
+        end
+      else
+        #full query
+        end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
+        start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
+
+        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or(name: params[:event_key]).or(uiText: params[:event_key]).and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id])
+        respond_with  do |format|
+          format.json{
+            self.response_body = Enumerator.new do |y|
+              i=0                    
+              @data.all.each do |log|
+                y << log.to_json + "\n"
+                i+=1
+                GC.start if i%5000==0
+              end
+            end
+          } 
+        end
+      end
+    end
+  end
 
   def data_selection
 
