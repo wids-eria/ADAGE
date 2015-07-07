@@ -187,7 +187,7 @@ class DataController < ApplicationController
 
       map = %Q{
         function() {
-          emit(this.key, { key: this.key ,uiText: this.uiText});
+          emit(this.startContextType, { count: 1 ,uiText: this.uiText});
         }
       }
 
@@ -201,7 +201,10 @@ class DataController < ApplicationController
           return result;
         }
       }
-      @data  = AdaData.with_game(game_name).in(ada_base_types: ["ADAGEContext"]).desc('_id').only(:key,:uiText).map_reduce(map,reduce).out(inline:1)
+      @data  = AdaData.with_game(game_name).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextType: true).desc('_id').only(:key,:uiText,:startContextType).map_reduce(map,reduce).out(inline:1)
+    
+      puts AdaData.with_game(game_name).where(key: "EconautsDialogClose").in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextType: true).desc('_id').only(:key,:uiText,:startContextType).count
+  
     end
 
     @result = Hash.new
@@ -243,9 +246,170 @@ class DataController < ApplicationController
     @results = Hash.new
     @results['data'] = @game_ids
     respond_with @game_ids
+  end
 
+  def context_list
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client != nil
+      game_name = client.implementation.game.name
+
+      @data  = AdaData.with_game(game_name).where(key: params[:key]).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id')
+      @contexts = Array.new
+      @data.distinct(:name).each do |item|
+        count = 0
+        min = nil
+        max = -1
+        total = 0
+
+        #For each end context calc 
+        AdaData.with_game(game_name).where(key: params[:key],name: item).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id').each do |log|
+          end_log = log
+          start_log = AdaData.with_game(game_name).where(client_id: end_log.startContextID).first.timestamp
+
+          duration =  end_log.timestamp.to_i - start_log.to_i
+
+          if min == nil
+
+            min = duration
+          elsif duration <  min
+            min = duration
+          end
+
+          if duration >  max
+            max = duration
+          end
+
+          total += duration 
+          count +=1
+        end
+
+        temp = Hash.new
+        temp[item] = Hash.new
+        temp[item]['min_duration'] = min
+        temp[item]['max_duration'] = max
+        temp[item]['avg_duration'] = total/count
+        temp[item]['count'] = count
+        @contexts << temp
+      end
+    end
+
+    @result= Hash.new
+    @result['data'] = @contexts
+    
+    respond_to do |format|
+      if params[:callback]
+        format.json { render json: @result.to_json, callback: params[:callback] }
+      else
+        format.json { render  json: @result.to_json}
+      end
+    end
+  end
+
+  def context_list_keyed
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client != nil
+      game_name = client.implementation.game.name
+
+      @data  = AdaData.with_game(game_name).where(key: params[:key],name: params[:name]).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id')
+      @contexts = Array.new
+      @data.each do |log|
+        end_log = log
+        start_log = AdaData.with_game(game_name).where(client_id: end_log.startContextID).first
+
+        event_count = AdaData.with_game(game_name).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).count
+
+        duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
+
+        temp = Hash.new 
+        item = log.client_id
+        temp[item] = Hash.new 
+        temp[item]["timestamp"] =end_log.timestamp
+        temp[item]["duration"] = duration
+        temp[item]["event_count"] = event_count
+        @contexts << temp
+      end
+    end
+
+    @result= Hash.new
+    @result['data'] = @contexts
+    
+    respond_to do |format|
+      if params[:callback]
+        format.json { render json: @result.to_json, callback: params[:callback] }
+      else
+        format.json { render  json: @result.to_json}
+      end
+    end
+  end
+
+  def context_event_type_list
+    if params[:app_token] != nil
+      client = Client.where(app_token: params[:app_token]).first
+    end
+
+    if client != nil
+      game_name = client.implementation.game.name
+
+      end_log = AdaData.with_game(game_name).where(client_id: params[:client_id]).first
+      start_log = AdaData.with_game(game_name).where(client_id: end_log.startContextID).first
+
+      map = %Q{
+        function() {
+          emit(this.key, { count: 1 ,uiText: this.uiText, name: this.name});
+        }
+      }
+
+      reduce = %Q{
+        function(key, values) {
+          var result = { count: 0 ,uiText: null};
+          values.forEach(function(value) {
+            if(result.uiText == null) result.uiText = value.uiText;
+            result.count += 1;
+          });
+          return result;
+        }
+      }
+
+      @data  = AdaData.with_game(game_name).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).map_reduce(map,reduce).out(inline:1)
+
+    end
+    
+    @contexts = Array.new
+    temp = Hash.new
+    @data.each do |item|
+      key = item['_id']
+      temp[key] = Hash.new
+      temp[key]['count']= item['value']['count']
+      temp[key]['uiText']= item['value']['uiText']
+
+      temp[key]['isContext']= false
+      if(item['value'].has_key?('name'))
+        temp[key]['name']= item['value']['name']
+        temp[key]['isContext']= true
+      end
+      @contexts<<temp
+    end
+
+
+    @result= Hash.new
+    @result['data'] = @contexts
+    
+    respond_to do |format|
+      if params[:callback]
+        format.json { render json: @result.to_json, callback: params[:callback] }
+      else
+        format.json { render  json: @result.to_json}
+      end
+    end
 
   end
+
 
   def data_selection
 

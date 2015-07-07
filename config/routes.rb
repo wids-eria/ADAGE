@@ -57,6 +57,9 @@ Ada::Application.routes.draw do
       get :session_logs
       get :context_logs
       get :context_frequency
+      get :context_list
+      get :context_list_keyed
+      get :context_event_type_list
       get :get_events
       get :key_counts
       get :get_events_by_group
