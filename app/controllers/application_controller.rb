@@ -12,6 +12,28 @@ class ApplicationController < ActionController::Base
     new_user_session_path
   end
 
+
+  def parse_filters(filters)
+    @filters = Array.new
+
+    unless filters.nil?
+      filters.keys.each do |key|
+        type =  filters[key]['type']
+        if type == "range"
+          from =  filters[key]['values'][0].to_i
+          to =  filters[key]['values'][0]
+          temp = Hash.new
+          temp["timestamp"] = {
+            "$gte"=> "0",
+          }
+         # @filters << temp
+        elsif type == "equals"
+
+        end
+      end
+    end
+  end
+
   def qrcode(text="",width=200,height=200)
     #helper to generate a qr code with adaptive resizing to compensate for data size
     size = 1

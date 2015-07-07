@@ -199,6 +199,7 @@ class DataController < ApplicationController
   end
 
   def context_frequency
+    parse_filters(params[:filters])
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
     end
@@ -222,7 +223,7 @@ class DataController < ApplicationController
           return result;
         }
       }
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextType: true).desc('_id').only(:key,:uiText,:startContextType).map_reduce(map,reduce).out(inline:1)
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").in(ada_base_types: ["ADAGEContextEnd"]).and(@filters).exists(startContextType: true).desc('_id').only(:key,:uiText,:startContextType).map_reduce(map,reduce).out(inline:1)
     end
 
     @result = Hash.new
@@ -247,13 +248,14 @@ class DataController < ApplicationController
   end
 
   def context_list
+    parse_filters(params[:filters])
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
     end
 
     if client != nil
       game_name = client.implementation.game.name
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key]).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id')
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key]).in(ada_base_types: ["ADAGEContextEnd"]).and(@filters).exists(startContextID: true).desc('_id')
       @contexts = Hash.new
       @data.distinct(:name).each do |item|
         count = 0
@@ -262,14 +264,10 @@ class DataController < ApplicationController
         total = 0
 
         #For each end context calc 
-        AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: item).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id').each do |log|
+        AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: item).in(ada_base_types: ["ADAGEContextEnd"]).and(@filters).exists(startContextID: true).desc('_id').each do |log|
           end_log = log
 
           start_log = AdaData.with_game(game_name).where(client_id: end_log.startContextID).first
-
-          puts start_log.to_json
-
-
           duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
 
           if min == nil
@@ -308,6 +306,7 @@ class DataController < ApplicationController
   end
 
   def context_list_keyed
+    parse_filters(params[:filters])
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
     end
@@ -315,7 +314,7 @@ class DataController < ApplicationController
     if client != nil
       game_name = client.implementation.game.name
 
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: params[:name]).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id')
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: params[:name]).and(@filters).in(ada_base_types: ["ADAGEContextEnd"]).exists(startContextID: true).desc('_id')
       @contexts = Hash.new
       @data.each do |log|
         end_log = log
@@ -347,6 +346,7 @@ class DataController < ApplicationController
   end
 
   def context_event_type_list
+    parse_filters(params[:filters])
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
     end
@@ -354,8 +354,8 @@ class DataController < ApplicationController
     if client != nil
       game_name = client.implementation.game.name
 
-      end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).first
-      start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).first
+      end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
+      start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
 
       map = %Q{
         function() {
@@ -374,7 +374,7 @@ class DataController < ApplicationController
         }
       }
 
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).map_reduce(map,reduce).out(inline:1)
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).map_reduce(map,reduce).out(inline:1)
 
     end
     
@@ -386,7 +386,7 @@ class DataController < ApplicationController
       @contexts[key]['uiText']= item['value']['uiText']
 
       @contexts[key]['isContext']= false
-      if(@contexts['value'].has_key?('name'))
+      if @contexts[key].has_key?('name')
         @contexts[key]['name']= item['value']['name']
         @contexts[key]['isContext']= true
       end
