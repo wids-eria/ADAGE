@@ -364,48 +364,30 @@ class DataController < ApplicationController
       client = Client.where(app_token: params[:app_token]).first
     end
 
+    @contexts = Hash.new
     if client != nil
       game_name = client.implementation.game.name
 
       end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
       start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
 
-      map = %Q{
-        function() {
-          emit(this.key, { count: 1 ,uiText: this.uiText, name: this.name});
-        }
-      }
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token)
+      
+      @data.each do |log|
+        key = log.key
+        if !@contexts.has_key?(key) 
+          @contexts[key] = Hash.new
+          @contexts[key]['count']= 0
+          @contexts[key]['uiText']= log.uiText
 
-      reduce = %Q{
-        function(key, values) {
-          var result = { count: 0 ,uiText: null, name: this.name};
-          values.forEach(function(value) {
-            if(result.uiText == null) result.uiText = value.uiText;
-            if(result.name == null) result.name = value.name;
-            result.count += 1;
-          });
-          return result;
-        }
-      }
-
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token).map_reduce(map,reduce).out(inline:1)
-
-    end
-    
-    @contexts = Hash.new
-    @data.each do |item|
-      key = item['_id']
-      @contexts[key] = Hash.new
-      @contexts[key]['count']= item['value']['count']
-      @contexts[key]['uiText']= item['value']['uiText']
-
-      @contexts[key]['isContext']= false
-      if item['value'].has_key?('name') and !item['value']['name'].nil?
-        @contexts[key]['name']= item['value']['name']
-        @contexts[key]['isContext']= true
+          if log.has_attribute?('name')
+            @contexts[key]['name']= log.name
+            @contexts[key]['isContext']= true
+          end
+        end
+        @contexts[key]['count'] += 1
       end
     end
-
 
     @result= Hash.new
     @result['data'] = @contexts
@@ -425,40 +407,24 @@ class DataController < ApplicationController
       client = Client.where(app_token: params[:app_token]).first
     end
 
+    @contexts = Hash.new
     if client != nil
       game_name = client.implementation.game.name
 
       end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
-
-      puts end_log.to_json
       start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
 
-      map = %Q{
-        function() {
-          emit(this.key, { count: 1 ,uiText: this.uiText, name: this.name});
-        }
-      }
-
-      reduce = %Q{
-        function(key, values) {
-          var result = { count: 0 ,uiText: null};
-          values.forEach(function(value) {
-            if(result.uiText == null) result.uiText = value.uiText;
-            result.count += 1;
-          });
-          return result;
-        }
-      }
-
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or({key: params[:event_key]},{name: params[:event_key]},{uiText: params[:event_key]}).and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token).map_reduce(map,reduce).out(inline:1)
-    end
-    
-    @contexts = Hash.new
-    @data.each do |item|
-      key = item['_id']
-      @contexts[key] = Hash.new
-      @contexts[key]['count']= item['value']['count']
-      @contexts[key]['uiText']= item['value']['uiText']
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or({key: params[:event_key]},{name: params[:event_key]},{uiText: params[:event_key]}).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token)
+      @data.each do |log|
+        key = log.uiText
+        if !@contexts.has_key?(key) 
+          @contexts[key] = Hash.new
+          @contexts[key]['count']= 0
+          @contexts[key]['uiText']= log.uiText
+        end
+        @contexts[key]['count'] += 1
+      end
+  
     end
 
     @result= Hash.new
