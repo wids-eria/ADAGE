@@ -378,9 +378,10 @@ class DataController < ApplicationController
 
       reduce = %Q{
         function(key, values) {
-          var result = { count: 0 ,uiText: null};
+          var result = { count: 0 ,uiText: null, name: this.name};
           values.forEach(function(value) {
             if(result.uiText == null) result.uiText = value.uiText;
+            if(result.name == null) result.name = value.name;
             result.count += 1;
           });
           return result;
@@ -398,9 +399,8 @@ class DataController < ApplicationController
       @contexts[key]['count']= item['value']['count']
       @contexts[key]['uiText']= item['value']['uiText']
 
-
       @contexts[key]['isContext']= false
-      if item['value'].has_key?('name')
+      if item['value'].has_key?('name') and !item['value']['name'].nil?
         @contexts[key]['name']= item['value']['name']
         @contexts[key]['isContext']= true
       end
