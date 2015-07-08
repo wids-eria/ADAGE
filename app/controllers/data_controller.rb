@@ -459,11 +459,10 @@ class DataController < ApplicationController
 
       parse_filters(params[:filters])
 
-      puts @filters
-
       if params[:key].empty?
         #open query
         @data = AdaData.with_game(game_name).and(@filters).where(adage_version: "fiery_falcon")
+
         respond_with  do |format|
           format.json{
             self.response_body = Enumerator.new do |y|
@@ -489,12 +488,15 @@ class DataController < ApplicationController
                 end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
 
                 @results = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").between(_id: start_log._id..end_log._id).and(@filters).desc('_id')
-              
+                
+
+                y << start_log.to_json + "\n"  
                 @results.all.each do |log|
                   y << log.to_json + "\n"
                   i+=1
                   GC.start if i%5000==0
                 end
+                y << end_log.to_json     
               end
             end
           } 
@@ -512,12 +514,14 @@ class DataController < ApplicationController
                 end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
 
                 @results = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").between(_id: start_log._id..end_log._id).and(@filters).desc('_id')
-              
+                
+                y << start_log.to_json + "\n"   
                 @results.all.each do |log|
                   y << log.to_json + "\n"
                   i+=1
                   GC.start if i%5000==0
                 end
+                y << end_log.to_json     
               end
             end
           } 
@@ -528,15 +532,18 @@ class DataController < ApplicationController
         start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
 
         @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token)
+
         respond_with  do |format|
           format.json{
             self.response_body = Enumerator.new do |y|
               i=0                    
-              @data.all.each do |log|
+              y << start_log.to_json + "\n"  
+              @data.each do |log|
                 y << log.to_json + "\n"
                 i+=1
                 GC.start if i%5000==0
               end
+              y << end_log.to_json     
             end
           } 
         end
@@ -545,16 +552,18 @@ class DataController < ApplicationController
         end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
         start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
 
-        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or(name: params[:event_key]).or(uiText: params[:event_key]).and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token)
+        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or({key: params[:event_key]},{name: params[:event_key]},{uiText: params[:event_key]}).and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token)
         respond_with  do |format|
           format.json{
             self.response_body = Enumerator.new do |y|
-              i=0                    
+              i=0         
+              y << start_log.to_json + "\n"         
               @data.all.each do |log|
                 y << log.to_json + "\n"
                 i+=1
                 GC.start if i%5000==0
               end
+              y << end_log.to_json          
             end
           } 
         end
