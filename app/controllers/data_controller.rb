@@ -383,6 +383,12 @@ class DataController < ApplicationController
           if log.has_attribute?('name')
             @contexts[key]['name']= log.name
             @contexts[key]['isContext']= true
+
+            if log.has_attribute?('startContextType')
+              @contexts[key]['startContextType']= log.startContextType
+            end
+          else
+            @contexts[key]['isContext']= false
           end
         end
         @contexts[key]['count'] += 1
