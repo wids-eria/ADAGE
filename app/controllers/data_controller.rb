@@ -388,7 +388,7 @@ class DataController < ApplicationController
         }
       }
 
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).map_reduce(map,reduce).out(inline:1)
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token).map_reduce(map,reduce).out(inline:1)
 
     end
     
@@ -429,6 +429,8 @@ class DataController < ApplicationController
       game_name = client.implementation.game.name
 
       end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
+
+      puts end_log.to_json
       start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
 
       map = %Q{
@@ -448,7 +450,7 @@ class DataController < ApplicationController
         }
       }
 
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or({key: params[:event_key]},{name: params[:event_key]},{uiText: params[:event_key]}).and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).map_reduce(map,reduce).out(inline:1)
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or({key: params[:event_key]},{name: params[:event_key]},{uiText: params[:event_key]}).and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token).map_reduce(map,reduce).out(inline:1)
     end
     
     @contexts = Hash.new
@@ -559,7 +561,7 @@ class DataController < ApplicationController
         end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
         start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
 
-        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id])
+        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token)
         respond_with  do |format|
           format.json{
             self.response_body = Enumerator.new do |y|
@@ -577,7 +579,7 @@ class DataController < ApplicationController
         end_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: params[:client_id]).and(@filters).first
         start_log = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(client_id: end_log.startContextID).and(@filters).first
 
-        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or(name: params[:event_key]).or(uiText: params[:event_key]).and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id])
+        @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or(name: params[:event_key]).or(uiText: params[:event_key]).and(@filters).between(_id: start_log._id..end_log._id).in(session_token: start_log.session_token)
         respond_with  do |format|
           format.json{
             self.response_body = Enumerator.new do |y|
