@@ -448,7 +448,7 @@ class DataController < ApplicationController
         }
       }
 
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or(name: params[:event_key]).or(uiText: params[:event_key]).and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).map_reduce(map,reduce).out(inline:1)
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").or({key: params[:event_key]},{name: params[:event_key]},{uiText: params[:event_key]}).and(@filters).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).map_reduce(map,reduce).out(inline:1)
     end
     
     @contexts = Hash.new
@@ -472,7 +472,6 @@ class DataController < ApplicationController
   end
 
   def visualizer_export
-    parse_filters(params[:filters])
     authorize! :read, @game
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
@@ -490,9 +489,13 @@ class DataController < ApplicationController
       set_streaming_headers
       response.status = 200
 
+      parse_filters(params[:filters])
+
+      puts @filters
+
       if params[:key].empty?
         #open query
-        @data = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").and(@filters)
+        @data = AdaData.with_game(game_name).and(@filters).where(adage_version: "fiery_falcon")
         respond_with  do |format|
           format.json{
             self.response_body = Enumerator.new do |y|

@@ -20,13 +20,14 @@ class ApplicationController < ActionController::Base
       filters.keys.each do |key|
         type =  filters[key]['type']
         if type == "range"
-          from =  filters[key]['values'][0].to_i
-          to =  filters[key]['values'][0]
+          from = filters[key]['values'][0]
+          to =  filters[key]['values'][1]
           temp = Hash.new
-          temp["timestamp"] = {
-            "$gte"=> "0",
+          temp['created_at'] = {
+            "$gte"=> from.to_i,
+            "$gte"=> to.to_i,
           }
-         # @filters << temp
+          #@filters << temp
         elsif type == "equals"
 
         end
