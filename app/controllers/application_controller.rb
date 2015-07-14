@@ -25,9 +25,11 @@ class ApplicationController < ActionController::Base
           temp = Hash.new
           temp['created_at'] = {
             "$gte"=> from.to_i,
-            "$gte"=> to.to_i,
+            "$lte"=> to.to_i,
           }
-          #@filters << temp
+          @filters << temp
+
+          puts filters.to_json
         elsif type == "equals"
 
         end
