@@ -15,6 +15,7 @@ set :application, "ada"
 set :repository,  "git@github.com:wids-eria/ADAGE.git"
 set :scm, :git
 set :branch, tag if exists?(:tag)
+set :keep_releases, 3
 
 set :user, :deploy
 ssh_options[:forward_agent] = true
@@ -34,6 +35,7 @@ after 'deploy:finalize_update', 'deploy:symlink_external_site_config'
 after 'deploy:finalize_update', 'deploy:symlink_secret_token'
 after 'deploy:finalize_update', 'deploy:symlink_application_yml'
 after 'deploy:finalize_update', 'deploy:symlink_word_lists'
+after "deploy:restart", "deploy:cleanup"
 
 namespace :deploy do
   desc "Symlinks the database.yml"

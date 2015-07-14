@@ -41,6 +41,7 @@ class ConfigController < ApplicationController
       end
     else
       if params[:app_token].nil?
+        error = true
         errors << "Missing App Token"
       end
     end
