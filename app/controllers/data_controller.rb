@@ -220,22 +220,24 @@ class DataController < ApplicationController
         AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: item).in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('_id').each do |log|
           start_log = log
 
-          end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
-          duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
+          if start_log.client_id != ".0"
+            end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
+            duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
 
-          if min == nil
+            if min == nil
 
-            min = duration
-          elsif duration <  min
-            min = duration
+              min = duration
+            elsif duration <  min
+              min = duration
+            end
+
+            if duration >  max
+              max = duration
+            end
+
+            total += duration 
+            count +=1
           end
-
-          if duration >  max
-            max = duration
-          end
-
-          total += duration 
-          count +=1
         end
 
         @contexts[item] = Hash.new
@@ -278,22 +280,24 @@ class DataController < ApplicationController
         AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: params[:key],name: item).in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('_id').each do |log|
           start_log = log
 
-          end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
-          duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
+          if start_log.client_id != ".0"
+            end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
+            duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
 
-          if min == nil
+            if min == nil
 
-            min = duration
-          elsif duration <  min
-            min = duration
+              min = duration
+            elsif duration <  min
+              min = duration
+            end
+
+            if duration >  max
+              max = duration
+            end
+
+            total += duration 
+            count +=1
           end
-
-          if duration >  max
-            max = duration
-          end
-
-          total += duration 
-          count +=1
         end
 
         @contexts[item] = Hash.new
@@ -330,19 +334,21 @@ class DataController < ApplicationController
       @data.each do |log|
         start_log = log
 
-        end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
-        duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
+        if start_log.client_id != ".0"
+          end_log = AdaData.with_game(game_name).where(startContextID: start_log.client_id).first
+          duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
 
-        event_count = AdaData.with_game(game_name).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).count
+          event_count = AdaData.with_game(game_name).between(_id: start_log._id..end_log._id).in(context: [start_log.client_id]).count
 
-        duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
-        duration/=1000.0
+          duration =  end_log.timestamp.to_i - start_log.timestamp.to_i
+          duration/=1000.0
 
-        item = end_log.client_id
-        @contexts [item] = Hash.new 
-        @contexts [item]["timestamp"] =end_log.timestamp
-        @contexts [item]["duration"] = duration
-        @contexts [item]["event_count"] = event_count
+          item = end_log.client_id
+          @contexts [item] = Hash.new 
+          @contexts [item]["timestamp"] =end_log.timestamp
+          @contexts [item]["duration"] = duration
+          @contexts [item]["event_count"] = event_count
+        end
       end
     end
 
