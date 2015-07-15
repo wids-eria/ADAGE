@@ -1138,11 +1138,11 @@ class DataController < ApplicationController
           end_date=  Time.at(params[:end].to_i/1000).to_time.strftime("%-m_%-d_%Y")
           filename = @game.name+"_"+start_date+"-"+end_date+'.csv'
 
-          data = data.where(:timestamp.gte=> params[:start]).where(:timestamp.lte=> params[:end].to_i/1000)
+          data = data.where(:created_at.gte=> params[:start].to_i/1000).where(:created_at.lte=> params[:end].to_i/1000)
         elsif params[:start]
-          data = data.where(:timestamp.gte=> params[:start].to_i)
+          data = data.where(:created_at.gte=> params[:start].to_i/1000)
         elsif params[:end]
-          data = data.where(:timestamp.lte=> params[:end])
+          data = data.where(:created_at.lte=> params[:end].to_i/1000)
         end
 
         type = "text/csv"
@@ -1197,11 +1197,11 @@ class DataController < ApplicationController
         end
 
         if params[:start]
-          data = data.where(:timestamp.gte=> params[:start])
+          data = data.where(:created_at.gte=> params[:start].to_i/1000).asc(:_id)
         end
 
         if params[:end]
-          data = data.where(:timestamp.lte=>params[:end])
+          data = data.where(:created_at.lte=>params[:end].to_i/1000).asc(:_id)
         end
 
         filename = @game.name+'.json'
