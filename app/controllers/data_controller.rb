@@ -207,7 +207,7 @@ class DataController < ApplicationController
     if client != nil
       game_name = client.implementation.game.name
 
-      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('key').only(:key,:uiText,:client_id)
+      @data  = AdaData.with_game(game_name).where(adage_version: "fiery_falcon").in(ada_base_types: ["ADAGEContextStart"]).and(@filters).only(:key,:uiText,:client_id)
 
       @contexts = Hash.new
       @data.distinct(:key).each do |item|
@@ -217,7 +217,7 @@ class DataController < ApplicationController
         total = 0
 
         #For each end context calc 
-        AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: item).in(ada_base_types: ["ADAGEContextStart"]).and(@filters).desc('_id').each do |log|
+        AdaData.with_game(game_name).where(adage_version: "fiery_falcon").where(key: item).and(@filters).each do |log|
           start_log = log
 
           if start_log.client_id != ".0"
