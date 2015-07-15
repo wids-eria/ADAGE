@@ -10,7 +10,7 @@ namespace :mongo do
           collection.indexes.create(gameName: 1)
           collection.indexes.create(user_id: 1)
           collection.indexes.create(timestamp: 1)
-          collection.indexes.create(startContextID: 1)
+          collection.indexes.create({ adage_version: 1, startContextID: 1,key: 1, created_at: 1 })
           puts "Added indices to #{gamename}"
         end
     end
