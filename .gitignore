@@ -32,3 +32,5 @@ config/nouns.txt
 scripts/csv
 *.csv
 scripts/csv/kodu
+
+config/environments/development.rb

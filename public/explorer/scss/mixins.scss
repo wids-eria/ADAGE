@@ -1,0 +1,55 @@
+/*------------------------------------------------------------------
+    Mixins
+-------------------------------------------------------------------*/
+@mixin css3-prefix($property, $value) {
+  -webkit-#{$property}: #{$value};
+   -khtml-#{$property}: #{$value};
+     -moz-#{$property}: #{$value};
+      -ms-#{$property}: #{$value};
+       -o-#{$property}: #{$value};
+          #{$property}: #{$value};
+}
+
+
+@mixin center{ margin:0 auto; }
+
+@mixin full { width:100%; float:left; }
+
+@mixin transition{
+  -webkit-transition: all 0.2s ease;
+     -moz-transition: all 0.2s ease;
+      -ms-transition: all 0.2s ease;
+       -o-transition: all 0.2s ease;
+}
+
+@mixin rounded_corners{
+  -webkit-border-radius: 3px;
+     -moz-border-radius: 3px;
+          border-radius: 3px;
+}
+
+@mixin border-rounded($tl,$tr,$br,$bl) {
+  -webkit-border-radius: $tl $tr $br $bl;
+     -moz-border-radius: $tl $tr $br $bl;
+      -ms-border-radius: $tl $tr $br $bl;
+          border-radius: $tl $tr $br $bl;
+}
+
+@mixin border-color($tl,$tr,$br,$bl,$color) {
+  border-width: $tl $tr $br $bl;
+  border-style: solid;
+  border-color: $color;
+}
+
+@mixin box-shadow($x: 2px, $y: 2px, $blur: 5px, $color: rgba(0,0,0,.4), $inset: "") {
+  @if ($inset != "") {
+    @include css3-prefix('box-shadow', $inset $x $y $blur $color);
+  } @else {
+    @include css3-prefix('box-shadow', $x $y $blur $color);
+  }
+}
+
+
+
+
+/* End Mixins */

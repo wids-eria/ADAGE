@@ -16,6 +16,8 @@ Ada::Application.routes.draw do
   end
 
 
+  match "explorer" => "data#explorer", :via => :get
+
   match "save_game" => "save#save", :via => :post
   match "load_game" => "save#load", :via => :get
 

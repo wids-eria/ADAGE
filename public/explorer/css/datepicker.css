@@ -1,0 +1,51 @@
+/*------------------------------------------------------------------
+    Mixins
+-------------------------------------------------------------------*/
+/* End Mixins */
+.ui-datepicker {
+  -webkit-border-radius: 2px 2px 2px 2px;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -ms-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
+  border-width: 1px 1px 1px 1px;
+  border-style: solid;
+  border-color: #34495E;
+  background-color: #34495E;
+  color: white;
+  width: 250px;
+  display: none;
+}
+.ui-datepicker .ui-datepicker-header {
+  padding: 10px;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-next {
+  float: right;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
+  float: left;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-title {
+  width: 75px;
+  margin: 0 auto;
+}
+.ui-datepicker table th {
+  color: #34495E;
+}
+.ui-datepicker table td {
+  -webkit-border-radius: 18px 18px 18px 18px;
+  -moz-border-radius: 18px 18px 18px 18px;
+  -ms-border-radius: 18px 18px 18px 18px;
+  border-radius: 18px 18px 18px 18px;
+  height: 30px;
+  width: 25px;
+  background-color: rgba(199, 199, 199, 0.59);
+  text-align: center;
+}
+.ui-datepicker table td a {
+  color: #34495E;
+  text-decoration: none;
+}
+.ui-datepicker .ui-datepicker-calendar {
+  width: 100%;
+  background-color: white;
+}

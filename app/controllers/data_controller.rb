@@ -1269,4 +1269,8 @@ class DataController < ApplicationController
       format.all { redirect_to :root, :status => status}
     end
   end
+
+  def explorer
+    render file: "#{Rails.root}/public/explorer/html/index.html", layout: false
+  end
 end

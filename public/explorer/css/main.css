@@ -1,0 +1,375 @@
+/*------------------------------------------------------------------
+    Mixins
+-------------------------------------------------------------------*/
+/* End Mixins */
+/*------------------------------------------------------------------
+    Mixins
+-------------------------------------------------------------------*/
+/* End Mixins */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,600,700,800);
+.ui-datepicker {
+  -webkit-border-radius: 2px 2px 2px 2px;
+  -moz-border-radius: 2px 2px 2px 2px;
+  -ms-border-radius: 2px 2px 2px 2px;
+  border-radius: 2px 2px 2px 2px;
+  border-width: 1px 1px 1px 1px;
+  border-style: solid;
+  border-color: #34495E;
+  background-color: #34495E;
+  color: white;
+  width: 250px;
+  display: none;
+}
+.ui-datepicker .ui-datepicker-header {
+  padding: 10px;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-next {
+  float: right;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
+  float: left;
+}
+.ui-datepicker .ui-datepicker-header .ui-datepicker-title {
+  width: 75px;
+  margin: 0 auto;
+}
+.ui-datepicker table th {
+  color: #34495E;
+}
+.ui-datepicker table td {
+  -webkit-border-radius: 18px 18px 18px 18px;
+  -moz-border-radius: 18px 18px 18px 18px;
+  -ms-border-radius: 18px 18px 18px 18px;
+  border-radius: 18px 18px 18px 18px;
+  height: 30px;
+  width: 25px;
+  background-color: rgba(199, 199, 199, 0.59);
+  text-align: center;
+}
+.ui-datepicker table td a {
+  color: #34495E;
+  text-decoration: none;
+}
+.ui-datepicker .ui-datepicker-calendar {
+  width: 100%;
+  background-color: white;
+}
+
+/***
+
+Variables
+
+***/
+/***
+
+General HTML
+
+***/
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+  font-size: 3.3em;
+  margin-top: 0px;
+  margin-bottom: 5px;
+  color: #34495E;
+  text-align: center;
+}
+
+html {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#c1c1c1+7,7b9199+100&amp;0.65+29,0.37+43,0.33+53,0+100 */
+  background: -moz-radial-gradient(center, ellipse cover, rgba(193, 193, 193, 0.65) 7%, rgba(176, 182, 184, 0.65) 29%, rgba(166, 175, 178, 0.37) 43%, rgba(158, 170, 174, 0.33) 53%, rgba(123, 145, 153, 0) 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(7%, rgba(193, 193, 193, 0.65)), color-stop(29%, rgba(176, 182, 184, 0.65)), color-stop(43%, rgba(166, 175, 178, 0.37)), color-stop(53%, rgba(158, 170, 174, 0.33)), color-stop(100%, rgba(123, 145, 153, 0)));
+  /* Chrome,Safari4+ */
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(193, 193, 193, 0.65) 7%, rgba(176, 182, 184, 0.65) 29%, rgba(166, 175, 178, 0.37) 43%, rgba(158, 170, 174, 0.33) 53%, rgba(123, 145, 153, 0) 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-radial-gradient(center, ellipse cover, rgba(193, 193, 193, 0.65) 7%, rgba(176, 182, 184, 0.65) 29%, rgba(166, 175, 178, 0.37) 43%, rgba(158, 170, 174, 0.33) 53%, rgba(123, 145, 153, 0) 100%);
+  /* Opera 12+ */
+  background: -ms-radial-gradient(center, ellipse cover, rgba(193, 193, 193, 0.65) 7%, rgba(176, 182, 184, 0.65) 29%, rgba(166, 175, 178, 0.37) 43%, rgba(158, 170, 174, 0.33) 53%, rgba(123, 145, 153, 0) 100%);
+  /* IE10+ */
+  background: radial-gradient(ellipse at center, rgba(193, 193, 193, 0.65) 7%, rgba(176, 182, 184, 0.65) 29%, rgba(166, 175, 178, 0.37) 43%, rgba(158, 170, 174, 0.33) 53%, rgba(123, 145, 153, 0) 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6c1c1c1', endColorstr='#007b9199',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */
+  height: 100%;
+}
+
+body {
+  padding: 10px;
+  padding-bottom: 100px;
+}
+
+/***
+
+General Classes	
+
+***/
+.green {
+  color: green;
+}
+
+.fr {
+  float: right;
+}
+
+.fl {
+  float: left;
+}
+
+input {
+  -webkit-border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+  outline: none;
+  border: none;
+  width: 100px;
+  font-size: 0.8em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #34495E;
+  padding: 3px;
+  text-align: center;
+}
+
+button {
+  -webkit-border-radius: 4px 4px 5px 5px;
+  -moz-border-radius: 4px 4px 5px 5px;
+  -ms-border-radius: 4px 4px 5px 5px;
+  border-radius: 4px 4px 5px 5px;
+  background-color: #34495E;
+  padding: 8px;
+  font-size: 1.2em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-align: center;
+  min-width: 80px;
+  outline: none;
+  border: none;
+}
+button:hover {
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  background-color: #70859a;
+  cursor: pointer;
+}
+
+.apply {
+  color: white;
+  -webkit-border-radius: 14px 14px 14px 14px;
+  -moz-border-radius: 14px 14px 14px 14px;
+  -ms-border-radius: 14px 14px 14px 14px;
+  border-radius: 14px 14px 14px 14px;
+  padding: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 0.9em;
+  letter-spacing: 0.05em;
+  line-height: 1.4em;
+  background-color: #F47D7D;
+}
+.apply:hover {
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  background-color: #ffb9b9;
+  cursor: pointer;
+}
+
+#content {
+  margin: 0  auto;
+  width: 70%;
+  max-width: 1000px;
+}
+#content #applyfilters {
+  -webkit-border-radius: 4px 4px 0px 0px;
+  -moz-border-radius: 4px 4px 0px 0px;
+  -ms-border-radius: 4px 4px 0px 0px;
+  border-radius: 4px 4px 0px 0px;
+  font-size: 1.2em;
+  letter-spacing: 0.04em;
+  padding: 13px;
+  color: white;
+  background-color: #34495E;
+}
+#content #applyfilters .date {
+  font-size: 0.9em;
+  margin-left: 25px;
+}
+#content #applyfilters .date input {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+#content #applyfilters .date i {
+  font-size: 1.2em;
+  margin-left: 2px;
+  color: white;
+}
+#content #filters {
+  border-width: 2px 0px 0px 0px;
+  border-style: solid;
+  border-color: white;
+  font-size: 1.2em;
+  letter-spacing: 0.04em;
+  padding: 5px 0px 2px 8px;
+  color: white;
+  background-color: white;
+}
+#content #filters .filter {
+  -webkit-border-radius: 14px 14px 14px 14px;
+  -moz-border-radius: 14px 14px 14px 14px;
+  -ms-border-radius: 14px 14px 14px 14px;
+  border-radius: 14px 14px 14px 14px;
+  background-color: #F47D7D;
+  color: white;
+  padding: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-right: 8px;
+  margin-bottom: 2px;
+  font-size: 0.7em;
+  display: inline-block;
+}
+#content #filters .filter .fa {
+  padding-left: 2px;
+  padding-right: 4px;
+}
+#content #filters .filter .fa-remove {
+  font-size: 1.7em;
+}
+#content #filters .filter:hover {
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  background-color: #ffb9b9;
+  cursor: pointer;
+}
+#content #options {
+  width: 100%;
+  background-color: white;
+  height: 45px;
+  color: #34495E;
+  font-size: 1.0em;
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+#content #options #back {
+  margin-left: 10px;
+  margin-right: 10px;
+  float: left;
+  line-height: 0.7em;
+  clear: none;
+}
+#content #options #back:hover {
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  color: #70859a;
+  cursor: pointer;
+}
+#content #options #breadcrumb {
+  width: 100%;
+  margin: 0  auto;
+}
+#content #options #breadcrumb .crumb {
+  position: relative;
+  height: 26px;
+  min-width: 50px;
+  padding: 4px 10px 4px 10px;
+  background-color: #34495E;
+  color: white;
+  line-height: 1.6em;
+  text-align: center;
+  display: inline-block;
+}
+#content #options #breadcrumb .crumb:first-child {
+  padding-left: 10px;
+  -webkit-border-radius: 4px 0px 0px 4px;
+  -moz-border-radius: 4px 0px 0px 4px;
+  -ms-border-radius: 4px 0px 0px 4px;
+  border-radius: 4px 0px 0px 4px;
+}
+#content #options #breadcrumb .crumb:first-child:last-child {
+  -webkit-border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+}
+#content #options #breadcrumb .crumb:last-child {
+  -webkit-border-radius: 0px 4px 4px 0px;
+  -moz-border-radius: 0px 4px 4px 0px;
+  -ms-border-radius: 0px 4px 4px 0px;
+  border-radius: 0px 4px 4px 0px;
+}
+#content #options #breadcrumb .crumb.selected {
+  background-color: #F47D7D;
+}
+#content #options #breadcrumb .crumb.selected:hover {
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  background-color: #ffb9b9;
+  cursor: pointer;
+}
+#content #options #breadcrumb .crumb:not(:first-child) {
+  margin-left: 3px;
+}
+#content #options #breadcrumb .crumb:hover {
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  background-color: #70859a;
+  cursor: pointer;
+}
+#content #title {
+  position: absolute;
+  margin: 0 auto;
+  min-width: 800px;
+  display: block;
+  z-index: 1;
+  font-size: 1.25em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #34495E;
+  margin-top: -5px;
+  left: 25%;
+  text-align: center;
+}
+#content #chart {
+  -webkit-border-radius: 0px 0px 4px 4px;
+  -moz-border-radius: 0px 0px 4px 4px;
+  -ms-border-radius: 0px 0px 4px 4px;
+  border-radius: 0px 0px 4px 4px;
+  height: 500px;
+  background-color: white;
+}
+#content #bottom #export {
+  color: white;
+  margin-top: 10px;
+  float: right;
+  display: block;
+}
+#content #bottom #desc {
+  -webkit-border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -ms-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+  background-color: white;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 1.07em;
+  letter-spacing: 0.02em;
+  color: #34495E;
+  width: 80%;
+  float: left;
+}

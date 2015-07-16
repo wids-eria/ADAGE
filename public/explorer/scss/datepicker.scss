@@ -1,0 +1,63 @@
+@import 'mixins';
+$bg: #34495E;
+
+
+
+.ui-datepicker{
+	@include border-rounded(2px,2px,2px,2px);
+	@include border-color(1px,1px,1px,1px,$bg);
+	background-color: $bg;
+	color:white;
+	width: 250px;
+	display: none;
+	.ui-datepicker-header{
+
+		padding: 10px;
+
+		.ui-datepicker-title{
+
+		}
+
+		.ui-datepicker-next{
+			float: right;
+		}		
+
+		.ui-datepicker-prev{
+			float: left;
+		}
+	
+		.ui-datepicker-title{
+  			width: 75px;
+	 		margin: 0 auto;
+		}
+	}
+
+	table{
+		//border-collapse: collapse;
+
+
+		th{
+			color: $bg;
+		}
+
+		td{
+			@include border-rounded(18px,18px,18px,18px);
+			height: 30px;
+			width: 25px;
+			background-color: rgba(199, 199, 199, 0.59);
+			text-align: center;
+
+			a{
+				color: $bg;
+				text-decoration: none;
+			}
+		}
+
+	}
+
+	.ui-datepicker-calendar{
+		width:100%;
+		background-color: white;
+
+	}
+}

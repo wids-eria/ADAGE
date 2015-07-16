@@ -1,0 +1,601 @@
+extends ./main_layout.jade
+
+block scripts
+block content
+	script.
+		$(document).ready(function(){
+			currentLevel = 0;
+			cachedData = {};
+			cachedChartData = {};
+		
+			currentParams = [];
+		
+			onClearLevels = function()
+			{
+				currentParams = [];
+				$('div#breadcrumb').empty();
+				currentLevel = 0;
+				execQuery(null, currentLevel);
+			}
+			
+			onFilterClick = function(index)
+			{
+				currentParams.length = index;
+				$('div#breadcrumb').children().slice(index).detach();
+				if(index > 0)
+					$('div#breadcrumb').append("<span class='crumb selected' onclick='onClearLevels()'>Clear</span>");
+				
+				currentLevel = index;
+				execQuery(null, index);
+			}
+			
+			addParamButton = function(name, visible)
+			{
+				var target = $('div#breadcrumb').find("span:nth-last-child(2)");
+				switch(currentLevel)
+				{
+					case 1: 
+						$('div#breadcrumb').append("<span class='crumb' onclick='onFilterClick(" + currentParams.length + ")'>" + name + "</span>");
+						$('div#breadcrumb').append("<span class='crumb selected' onclick='onClearLevels()'>Clear</span>");
+						currentParams.push(name);
+					break;
+					case 2:
+						target.after("<span class='crumb' onclick='onFilterClick(" + currentParams.length + ")'>" + name + "</span>");
+						target = $('div#breadcrumb').find("span:nth-last-child(2)");
+						target.toggle(visible);
+						currentParams.push(name);
+					break;
+					case 3: //special here because we don't want to display the id, we want the timestamp
+						target.after("<span class='crumb' onclick='onFilterClick(" + currentParams.length + ")'>" + moment.unix(cachedData[name].timestamp/1000).format("M/DD/YYYY, H:mm:ss") + "</span>");
+						target = $('div#breadcrumb').find("span:nth-last-child(2)");
+						target.toggle(visible);
+						currentParams.push(name);
+					break;
+					case 4:
+						target.after("<span class='crumb' onclick='onFilterClick(" + currentParams.length + ")'>" + name + "</span>");
+						target = $('div#breadcrumb').find("span:nth-last-child(2)");
+						target.toggle(visible);
+						currentParams.push(name);
+					break;
+				}
+			};
+			
+			baseTooltipHandler = function(data, chart, titleFormat, nameFormat, valueFormat, baseColor)
+			{
+				var text;
+				for (i = 0; i < data.length; i++) {
+					if (! (data[i] && (data[i].value || data[i].value === 0))) { continue; }
+
+					if (! text) {
+						title = titleFormat ? titleFormat(data[i].x) : data[i].x;
+						text = "<table class='" + chart.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
+					}
+
+					name = nameFormat(data[i].name);
+					value = valueFormat(data[i].value, data[i].ratio, data[i].id, data[i].index);
+					bgcolor = chart.levelColor ? chart.levelColor(data[i].value) : baseColor(data[i].id);
+
+					text += "<tr class='" + chart.CLASS.tooltipName + "-" + data[i].id + "'>";
+					text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
+					text += "<td class='value'>" + value + "</td>";
+					text += "</tr>";
+				}
+				var output = {};
+				output['text'] = text;
+				output['lastColor'] = bgcolor;
+				return output;
+			}
+			
+			level1TooltipHandler = function(data, chart, titleFormat, nameFormat, valueFormat, baseColor)
+			{
+				if(chartAnimating) return "";
+				
+				var targetObject = cachedData[cachedChartData[0][data[0].x + 1]];
+				var output = baseTooltipHandler(data, chart, titleFormat, nameFormat, valueFormat, baseColor).text;
+				output += "<tr class='" + chart.CLASS.tooltipName + "'>";
+				output += "<td class='name'><span style='background-color:" + bgcolor + "'></span>Min Duration (s)</td>";
+				output += "<td class='value'>" + targetObject.min_dur + "</td>";
+				output += "</tr>";
+				output += "<tr class='" + chart.CLASS.tooltipName + "'>";
+				output += "<td class='name'><span style='background-color:" + bgcolor + "'></span>Avg Duration (s)</td>";
+				output += "<td class='value'>" + targetObject.avg_dur + "</td>";
+				output += "</tr>";
+				output += "<tr class='" + chart.CLASS.tooltipName + "'>";
+				output += "<td class='name'><span style='background-color:" + bgcolor + "'></span>Max Duration (s)</td>";
+				output += "<td class='value'>" + targetObject.max_dur + "</td>";
+				output += "</tr>";
+				return output;
+			};			
+			
+			level2TooltipHandler = function(data, chart, titleFormat, nameFormat, valueFormat, baseColor)
+			{
+				if(chartAnimating) return "";
+			
+				var targetObject = cachedData[cachedChartData[0][data[0].x + 1]];
+				var output = baseTooltipHandler(data, chart, titleFormat, nameFormat, valueFormat, baseColor).text;
+				output += "<tr class='" + chart.CLASS.tooltipName + "'>";
+				output += "<td class='name'><span style='background-color:" + bgcolor + "'></span>Min Duration (s)</td>";
+				output += "<td class='value'>" + targetObject.min_dur + "</td>";
+				output += "</tr>";
+				output += "<tr class='" + chart.CLASS.tooltipName + "'>";
+				output += "<td class='name'><span style='background-color:" + bgcolor + "'></span>Avg Duration (s)</td>";
+				output += "<td class='value'>" + targetObject.avg_dur + "</td>";
+				output += "</tr>";
+				output += "<tr class='" + chart.CLASS.tooltipName + "'>";
+				output += "<td class='name'><span style='background-color:" + bgcolor + "'></span>Max Duration (s)</td>";
+				output += "<td class='value'>" + targetObject.max_dur + "</td>";
+				output += "</tr>";
+				return output;
+			};
+			
+			level3TooltipHandler = function(data, chart, titleFormat, nameFormat, valueFormat, baseColor)
+			{
+				if(chartAnimating) return "";
+				
+				//overriding everything because we need the date to display and not the giant client_id
+				var text;
+				for (i = 0; i < data.length; i++) {
+					if (! (data[i] && (data[i].value || data[i].value === 0))) { continue; }
+
+					if (! text) {
+						title = titleFormat ? titleFormat(data[i].x) : data[i].x;
+						title = moment.unix(cachedData[title].timestamp/1000).format("M/DD/YYYY, H:mm:ss");
+						text = "<table class='" + chart.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
+					}
+
+					name = nameFormat(data[i].name);
+					value = valueFormat(data[i].value, data[i].ratio, data[i].id, data[i].index);
+					bgcolor = chart.levelColor ? chart.levelColor(data[i].value) : baseColor(data[i].id);
+
+					if(name == "Count") name = "Event Count";
+					
+					text += "<tr class='" + chart.CLASS.tooltipName + "-" + data[i].id + "'>";
+					text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
+					text += "<td class='value'>" + value + "</td>";
+					text += "</tr>";
+				}
+				
+				return text;
+			};
+			
+			level4TooltipHandler = function(data, chart, titleFormat, nameFormat, valueFormat, baseColor)
+			{
+				if(chartAnimating) return "";
+			
+				//overriding everything because we need the date to display and not the giant client_id
+				var text;
+				for (i = 0; i < data.length; i++) {
+					if (! (data[i] && (data[i].value || data[i].value === 0))) { continue; }
+
+					if (! text) {
+						title = titleFormat ? titleFormat(data[i].x) : data[i].x;
+						key = title;
+						text = "<table class='" + chart.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
+					}
+
+					name = nameFormat(data[i].name);
+					value = valueFormat(data[i].value, data[i].ratio, data[i].id, data[i].index);
+					bgcolor = chart.levelColor ? chart.levelColor(data[i].value) : baseColor(data[i].id);
+					
+					text += "<tr class='" + chart.CLASS.tooltipName + "-" + data[i].id + "'>";
+					text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
+					text += "<td class='value'>" + value + "</td>";
+					text += "</tr>";
+				}
+				
+				text += "<tr class='" + chart.CLASS.tooltipName + "'>";
+				text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>Type</td>";
+				if(cachedData[key].isContext)
+					text += "<td class='value'>Context</td>";
+				else
+					text += "<td class='value'>Event</td>";
+				text += "</tr>";
+				
+				return text;
+			};
+			
+			level5TooltipHandler = function(data, chart, titleFormat, nameFormat, valueFormat, baseColor)
+			{
+				if(chartAnimating) return "";
+				
+				return baseTooltipHandler(data, chart, titleFormat, nameFormat, valueFormat, baseColor).text;
+			};
+			
+			
+			execQuery = function(columnData, level)
+			{
+				console.log("current level:", level);
+				var output = [];
+				switch (level) 
+				{
+					case 0:
+						App.ADAGE.query(function(data){
+							//console.log("query 1");
+							//console.log(data);
+							var labels = new Array('x');
+							var values = new Array('Count');
+							for(var item in data){
+								var value = data[item].count;
+								if(value){
+									var text = data[item].uiText;
+									if(!text)
+										text = item;
+									labels.push(text);
+									values.push(value);
+								}
+							}
+							output = new Array(labels, values);
+							cachedData = data;
+							cachedChartData = output;
+							chart.load({
+								columns: output,
+								unload: chart.columns
+							});
+							$("div#title").text("Context Type Frequency");
+							$("div#desc").text("This chart is currently displaying all of the different types of contexts that were logged and how many times they were logged");
+						});
+						break;
+					case 1:
+						if(currentParams.length < level)
+						{
+							//add the param that got us here
+							addParamButton(cachedChartData[0][columnData.x + 1], true);
+						}
+						
+						App.ADAGE.context_list(currentParams[0],function(data){
+							//console.log("query 2: " + currentParams[0]);
+							//console.log(data);
+							var labels = new Array('x');
+							var values = new Array('Count');
+							for(var name in data){
+								var value = data[name].count;
+								if(value){
+									labels.push(name);
+									values.push(value);
+								}
+							}
+							cachedData = data;
+							if(labels.length == 2)
+							{
+								currentLevel = 2;
+								addParamButton(labels[1], false);
+								execQuery(null, currentLevel);
+							}
+							else
+							{
+								output = new Array(labels, values);
+								cachedChartData = output;
+								chart.load({
+									columns: output,
+									unload: chart.columns
+								});
+								$("div#title").text("Frequency for Context of " + currentParams[0]);
+								$("div#desc").text("This chart is currently displaying all of the unique context names that were logged using the previously specified context type");
+							}
+						});
+						break;
+					case 2:
+						if(currentParams.length < level)
+						{
+							//add the param that got us here
+							addParamButton(cachedChartData[0][columnData.x + 1], true);
+						}
+						
+						App.ADAGE.context_list_by_name(currentParams[0],currentParams[1],function(data){
+							//console.log("query 3: " + currentParams[0] + " " + currentParams[1]);
+							//console.log(data);
+							var labels = new Array('x');
+							var values = new Array('Count');
+							for(var id in data){
+								var value = data[id].event_count;
+								if(value){
+									labels.push(id);
+									values.push(value);
+								}
+							}
+							cachedData = data;
+							if(labels.length == 2) //there was only one result
+							{
+								currentLevel = 3;
+								addParamButton(labels[1], false);
+								execQuery(null, currentLevel);
+							}
+							else //do stuff with it
+							{
+								output = new Array(labels, values);
+								cachedChartData = output;
+								chart.load({
+									columns: output,
+									unload: chart.columns
+								});
+								$("div#title").text("Event Counts for Context " + currentParams[1]);
+								$("div#desc").text("This chart is currently displaying the total number of events logged for each context event of the previously specified type and name");
+							}
+						});
+						break;
+					case 3:
+						if(currentParams.length < level)
+						{
+							//add the param that got us here
+							addParamButton(cachedChartData[0][columnData.x + 1], true);
+						}
+						
+						App.ADAGE.context_event_type_list(currentParams[2],currentParams[0],currentParams[1],function(data){
+							//console.log("query 4: " + currentParams[2] + " " + currentParams[0] + " " + currentParams[1]);
+							//console.log(data);
+							var labels = new Array('x');
+							var values = new Array('Count');
+							for(var key in data){
+								var value = data[key].count;
+								if(value){
+									labels.push(key);
+									values.push(value);
+								}
+							}
+							cachedData = data;
+							if(labels.length == 2) //there was only one result
+							{
+								currentLevel = 4;
+								addParamButton(labels[1], false);
+								execQuery(null, currentLevel);
+							}
+							else //do stuff with it
+							{
+								output = new Array(labels, values);
+								cachedChartData = output;
+								chart.load({
+									columns: output,
+									unload: chart.columns
+								});
+								$("div#title").text("Events for " + currentParams[0] + " - " + currentParams[1]);
+								$("div#desc").text("This chart is currently displaying all of the different types of events that were logged under the previously specified context as well as how often those events were logged");
+							}
+						});
+						break;
+					case 4:
+						if(currentParams.length < level)
+						{
+							//add the param that got us here
+							addParamButton(cachedChartData[0][columnData.x + 1], true);
+						}
+						
+						if(cachedData[currentParams[3]].isContext)
+						{
+							var tar = currentParams[3];
+							if(cachedData[tar].startContextType)
+							{
+								currentParams = [];
+								currentParams[0] = cachedData[tar].startContextType;
+							}
+							else
+							{
+								currentParams = [];
+								currentParams[0] = tar;
+							}
+							onFilterClick(1);
+						}
+						else
+						{
+							App.ADAGE.context_event_count(currentParams[2],currentParams[3],function(data){
+								//console.log("query 5: " + currentParams[2] + " " + currentParams[3]);
+								//console.log(data);
+								var labels = new Array('x');
+								var values = new Array('Count');
+								for(var item in data){
+									var value = data[item].count;
+									if(value){
+										labels.push(data[item].uiText);
+										values.push(value);
+									}
+								}						
+								
+								output = new Array(labels, values);
+								cachedData = data;
+								cachedChartData = output;
+								chart.load({
+									columns: output,
+									unload: chart.columns,
+									y: {
+										label: {
+											text: 'Count',
+											position: 'outer-middle'
+										}
+									}
+								});
+								$("div#title").text("Individual Event Counts for Event Type " + currentParams[3]);
+								$("div#desc").text("This chart is currently displaying all of the unique event identifiers corresponding to the previously specified event type");
+							});
+						}
+						break;
+				}
+				return output;
+			};
+			var from = $( "#from" ).datepicker({
+				//Stupid offset override
+				beforeShow: function (input, inst) {
+					setTimeout(function () {
+						inst.dpDiv.css({
+							'margin-top': 20,
+						});
+					}, 0);
+				}
+			});
+			$("#to").datepicker({
+				//Stupid offset override
+				beforeShow: function (input, inst) {
+			        setTimeout(function () {
+			            inst.dpDiv.css({
+			                'margin-top': 20,
+			             });
+			        }, 0);
+			    }
+			});
+			chart = c3.generate({
+				    bindto: '#chart',
+				    data: {
+						x: 'x',
+				        columns: [['x'],['Count']],
+				        type: 'bar',
+						labels: true,
+						onclick: function (columnData, element) {
+							currentLevel++;
+							if(currentLevel <= 4)
+							{
+								chartAnimating = true;
+								//addParamButton(cachedChartData[0][columnData.x + 1]);
+								execQuery(columnData, currentLevel);
+							}
+							else
+							{
+								currentLevel = 4;
+							}
+						}
+				    },
+					onrendered: function() {
+						chartAnimating = false;
+					},
+					bar: {
+						width: {
+							ratio: 0.5 // this makes bar width 50% of length between ticks
+						}
+					},
+					axis: {
+						x: {
+							type: 'categorized',
+							tick: {
+								culling: true,
+								values: []
+							}
+						},
+						y: {
+							label: {
+								text: 'Count',
+								position: 'outer-middle'
+							}
+						}
+					},
+					legend: {
+						show: false
+					},
+					tooltip: {
+						contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
+							var $$ = this, config = $$.config,
+								titleFormat = config.tooltip_format_title || defaultTitleFormat,
+								nameFormat = config.tooltip_format_name || function (name) { return name; },
+								valueFormat = config.tooltip_format_value || defaultValueFormat;
+							
+							switch(currentLevel)
+							{
+								case 0:
+									return level1TooltipHandler(d, this, titleFormat, nameFormat, valueFormat, color) + "</table>";
+								break;
+								case 1:
+									return level2TooltipHandler(d, this, titleFormat, nameFormat, valueFormat, color) + "</table>";
+								break;
+								case 2:
+									return level3TooltipHandler(d, this, titleFormat, nameFormat, valueFormat, color) + "</table>";
+								break;
+								case 3:
+									return level4TooltipHandler(d, this, titleFormat, nameFormat, valueFormat, color) + "</table>";
+								break;
+								case 4:
+									return level5TooltipHandler(d, this, titleFormat, nameFormat, valueFormat, color) + "</table>";
+								break;
+							}
+						}
+					}
+				});
+			$("#filters").on("click",".close",function(){
+				if($(this).parent().attr("type") == "range")
+					$(this).parent().fadeOut();
+			});
+			$('div#back.fa.fa-caret-left.fa-3x').on("click",function(){
+				if(currentLevel > 0)
+				{
+					chartAnimating = true;
+					var temp = currentParams.length;
+					var buttons = temp + 1;
+					var target;
+					var done = false;
+					while(temp > 0 && !done)
+					{
+						target = $('div#breadcrumb').find("span:nth-last-child(" + (buttons - temp + 1) + ")");
+						if(target.is(":visible"))
+						{
+							//onFilterClick($("div#breadcrumb").find("span").length - 2);
+							onFilterClick(temp - 1);
+							done = true;
+						}
+						temp--;
+					}
+				}
+			});
+		});
+	#content
+		h1 
+			| ADAGE Explorer
+		
+		#applyfilters
+			
+			.addfilter
+				label Date Range
+				span.date
+					| From
+					input#from
+					i.fa.fa-calendar-o 
+
+				span.date
+					| To
+					input#to
+					i.fa.fa-calendar-o.fa-1
+				button.apply.fr Apply Filter
+		#filters
+			.filter("type"="range")
+				span#from 7/2/2015 
+				i.fa.fa-exchange.fa-1
+				span#to 7/15/2015
+				span.fa.fa-remove.fa-lg.close
+			.filter("type"="equals")
+				span#key User 
+				i.fa.fa-long-arrow-right.fa-1
+				span#val 8
+				span.fa.fa-remove.fa-lg.close
+			.filter("type"="equals")
+				span#key App 
+				i.fa.fa-long-arrow-right.fa-1
+				span#val econauts
+				span.fa.fa-remove.fa-lg.close
+		#options
+			div#back.fa.fa-caret-left.fa-3x
+			div#breadcrumb 
+		script.
+			$( document ).ready(function() {
+				execQuery(null, currentLevel);
+
+				$("#export").click(function(){
+					App.ADAGE.export(currentParams);
+				});
+
+				$(".apply").click(function(){
+					var from = moment($("#from").val()).format("M/DD/YYYY");
+					var to = moment($("#to").val()).format("M/DD/YYYY");
+					if(to != '' && from != ''){
+						var date = '<div class="filter" type="range"><span id="from">'+ from + '</span><i class=" fa fa-exchange fa-1"/><span id="to">'+ to + '</span><span class=" fa fa-remove fa-lg close"/></div>';
+
+						$("#filters .filter:first").remove();
+						$("#filters .filter:first").before(date);
+					
+						console.log(App.filters);
+						execQuery(null, currentLevel);
+					}
+
+				});
+			});
+		#title
+			div#title
+		#chart
+
+		#bottom
+			button#export 
+				label Export JSON
+			div#desc

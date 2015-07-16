@@ -1,0 +1,314 @@
+@import 'mixins';
+@import 'datepicker';
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,600,700,800);
+
+/***
+
+Variables
+
+***/
+
+$body: #eee;
+$bg: #34495E;
+$accent: #F47D7D;
+
+
+/***
+
+General HTML
+
+***/
+
+
+*{
+	font-family: 'Open Sans', sans-serif;
+}
+
+h1,h2,h3,h4{
+	font-weight: 600;
+	font-size: 3.3em;
+	margin-top: 0px;
+	margin-bottom: 5px;
+	color: $bg;
+	text-align: center;
+}
+
+html{
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#c1c1c1+7,7b9199+100&amp;0.65+29,0.37+43,0.33+53,0+100 */
+	background: -moz-radial-gradient(center, ellipse cover,  rgba(193,193,193,0.65) 7%, rgba(176,182,184,0.65) 29%, rgba(166,175,178,0.37) 43%, rgba(158,170,174,0.33) 53%, rgba(123,145,153,0) 100%); /* FF3.6+ */
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(7%,rgba(193,193,193,0.65)), color-stop(29%,rgba(176,182,184,0.65)), color-stop(43%,rgba(166,175,178,0.37)), color-stop(53%,rgba(158,170,174,0.33)), color-stop(100%,rgba(123,145,153,0))); /* Chrome,Safari4+ */
+	background: -webkit-radial-gradient(center, ellipse cover,  rgba(193,193,193,0.65) 7%,rgba(176,182,184,0.65) 29%,rgba(166,175,178,0.37) 43%,rgba(158,170,174,0.33) 53%,rgba(123,145,153,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-radial-gradient(center, ellipse cover,  rgba(193,193,193,0.65) 7%,rgba(176,182,184,0.65) 29%,rgba(166,175,178,0.37) 43%,rgba(158,170,174,0.33) 53%,rgba(123,145,153,0) 100%); /* Opera 12+ */
+	background: -ms-radial-gradient(center, ellipse cover,  rgba(193,193,193,0.65) 7%,rgba(176,182,184,0.65) 29%,rgba(166,175,178,0.37) 43%,rgba(158,170,174,0.33) 53%,rgba(123,145,153,0) 100%); /* IE10+ */
+	background: radial-gradient(ellipse at center,  rgba(193,193,193,0.65) 7%,rgba(176,182,184,0.65) 29%,rgba(166,175,178,0.37) 43%,rgba(158,170,174,0.33) 53%,rgba(123,145,153,0) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6c1c1c1', endColorstr='#007b9199',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+	height: 100%;
+}
+
+body{
+	padding: 10px;
+	padding-bottom: 100px;
+}
+
+
+/***
+
+General Classes	
+
+***/
+
+.green{
+	color: green;
+}
+
+.fr{
+	float:right;
+}
+
+.fl{
+	float:left;
+}
+
+input{
+	@include border-rounded(4px,4px,4px,4px);
+	outline: none;
+	border: none;
+	width: 100px;
+	font-size: 0.8em;
+	font-weight: 700;
+	letter-spacing:0.06em;
+	color: $bg;
+	padding: 3px;
+	text-align: center;
+}
+
+button{
+	@include border-rounded(4px,4px,5px,5px);
+	background-color: $bg;
+	padding: 8px;
+	font-size: 1.2em;
+	font-weight: 600;
+	letter-spacing:0.01em;
+	text-align: center;
+	min-width:80px;
+
+	outline: none;
+	border: none;  
+
+	&:hover{
+		@include transition;
+		background-color: $bg  +60;
+		cursor: pointer;
+	}
+}
+
+.apply{
+	color: white;
+	@include border-rounded(14px,14px,14px,14px);
+	padding: 2px;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: 0.9em;
+	letter-spacing:0.05em;
+	line-height: 1.4em;
+	background-color:  $accent;
+
+	&:hover{
+		@include transition;
+		background-color: $accent  +60;
+		cursor: pointer;
+	}
+}
+
+
+
+#content{
+	//@include box-shadow(2px, 2px, 4px,rgba(0,0,0,.4));
+	margin: 0  auto;
+	width: 70%;
+	max-width: 1000px;
+
+
+	#applyfilters{
+		@include border-rounded(4px,4px,0px,0px);
+		font-size: 1.2em;
+		letter-spacing:0.04em;
+		padding: 13px;
+		color:white;
+		background-color: $bg;
+
+		.date{
+			font-size: 0.9em;
+			margin-left: 25px;
+			input{
+				margin-left: 5px;
+				margin-right: 5px;
+			}
+
+			i{
+				font-size: 1.2em;
+				margin-left: 2px;
+				color:white;
+			}
+		}
+	}
+
+	#filters{
+		@include border-color(2px,0px,0px,0px,white);
+		font-size: 1.2em;
+		letter-spacing:0.04em;
+		padding: 5px 0px 2px 8px;
+		color:white;
+		background-color: white;
+
+		.filter{
+			@include border-rounded(14px,14px,14px,14px);
+			background-color:  $accent;
+			color: white;
+			padding: 4px;
+			padding-left: 10px;
+			padding-right: 10px;
+			margin-right: 8px;
+			margin-bottom: 2px;
+			font-size: 0.7em;
+			display: inline-block;
+
+			.fa{
+
+				padding-left: 2px;
+				padding-right: 4px;
+			}
+			.fa-remove{
+				font-size: 1.7em;
+			}
+
+			&:hover{
+				@include transition;
+				background-color: $accent  +60;
+					cursor: pointer;
+			}
+		}
+	}
+
+	#options{
+		width: 100%;
+		background-color: white;
+		height: 45px;
+		color: $bg;
+		font-size: 1.0em;
+		padding-top: 12px;
+		padding-bottom: 8px;
+
+		#back{
+			margin-left: 10px;
+			margin-right: 10px;
+			float: left;
+			line-height: 0.7em;
+			clear:none;
+
+
+			&:hover{
+				@include transition;
+				color: $bg  +60;
+				cursor: pointer;
+			}
+		}
+
+		#breadcrumb{
+			width: 100%;
+			margin: 0  auto;
+
+			.crumb{
+				position: relative;
+				height:26px;
+				min-width: 50px;
+				padding: 4px 10px 4px 10px;
+				background-color: $bg;
+				color: white;
+				line-height: 1.6em;
+				text-align: center;
+				display: inline-block; 
+
+				&:first-child{
+					padding-left:10px;
+					@include border-rounded(4px,0px,0px,4px);
+
+					&:last-child{
+						@include border-rounded(4px,4px,4px,4px);
+					}
+				}
+
+				&:last-child{
+					@include border-rounded(0px,4px,4px,0px);
+				}
+				&.selected{
+					background-color: $accent;
+
+					&:hover{
+						@include transition;
+						background-color: $accent  +60;
+						cursor: pointer;
+					}
+				}
+			
+				&:not(:first-child){
+					margin-left:3px;
+				}
+
+
+				&:hover{
+					@include transition;
+					background-color: $bg  +60;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+
+	#title{
+		position: absolute;
+		margin: 0 auto;
+		min-width: 800px;
+		display: block;
+
+		z-index: 1;
+		font-size: 1.25em;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		color: #34495E;
+		margin-top: -5px;
+		left: 25%;
+		text-align: center;
+	}
+
+	#chart{
+		@include border-rounded(0px,0px,4px,4px);
+		height: 500px;
+		background-color:white;
+	}
+
+	#bottom{
+		#export{
+			color:white;
+			margin-top: 10px;
+			float: right;
+			display: block;
+		}
+
+		#desc{
+			//@include box-shadow(1px, 1px, 5px,rgba(0,0,0,.4));
+			@include border-rounded(4px,4px,4px,4px);
+	  		background-color: white;
+	  		margin-top: 10px;
+			padding: 10px;
+			font-size: 1.07em;
+			letter-spacing: 0.02em;
+			color: #34495E;
+
+			width: 80%;
+			float: left;
+		}
+	}
+}
+
