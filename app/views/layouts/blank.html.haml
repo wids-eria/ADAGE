@@ -1,0 +1,88 @@
+!!! 5
+%html
+%head
+  %title Adage
+  // stylesheet_link_tag    "graph"
+  // stylesheet_link_tag    "detail"
+  // stylesheet_link_tag    "custom"
+  // stylesheet_link_tag    "rickshaw"
+  = stylesheet_link_tag    "adage"
+  = javascript_include_tag "application"
+  = javascript_include_tag "sidebar"
+  = csrf_meta_tags
+
+  <!-- typekit -->
+  %script{ :type=> "text/javascript", :src=>"//use.typekit.net/tbz4lac.js"}
+  :javascript
+      try{Typekit.load();}catch(e){};
+
+%body
+  .side_navigation
+    %ul.top
+      %a
+        %li
+          %span.icon_home
+      %a.edit
+        %li
+          %span.icon_edit
+      .edit_hidden
+        %a Click here to edit your profile
+
+      %a.games
+        %li
+          %span.icon_games
+
+      .games_hidden
+        %a APAawdiawd
+        %a APAawdiawd
+        %a APAawdiawd
+        %a APAawdiawd
+        %a 
+          %span.white View All
+      %a.groups
+        %li
+          %span.icon_groups
+
+      .groups_hidden
+        %a APAawdiawd
+        %a APAawdiawd
+        %a APAawdiawd
+        %a APAawdiawd
+          
+      %a.tools
+        %li
+          %span.icon_tools
+
+
+      .tools_hidden
+        %a Find User
+          
+    = link_to destroy_user_session_url, method: :delete ,class: :bottom do
+      %ul
+        %li
+          %span.icon_logout 
+    
+  - if user_signed_in? 
+    #userSecret{style: "display:none"}
+      = current_user.authentication_token
+
+  .page_wrap
+    .main_content
+      .welcome_or_error_container
+        - if flash[:alert].present?
+          %p.flashbox.alert
+            = flash[:alert]
+
+        -  if flash[:notice].present?
+          %p.flashbox.error_text
+            = flash[:notice]
+
+        -  if flash[:error].present?
+          %p.flashbox.error_text
+            = flash[:error]
+        .small_logo.right
+          %a{href: "http://www.adageapi.org", target: "_blank"}
+            %p.logotype.left ADAGE
+            %p.betatype.left Beta
+      = yield
+  .clear

@@ -1,5 +1,10 @@
-%h1.row Groups
-%h4.row
-  = link_to "New" ,new_group_path
-  = link_to "Back", profile_path
-= render "list"
+.row
+  .container.full.left
+    %table.striped_table
+      %thead
+        %th 
+          Groups
+          = link_to "New" ,new_group_path
+          = link_to "Back", profile_path
+      = render "list"
+

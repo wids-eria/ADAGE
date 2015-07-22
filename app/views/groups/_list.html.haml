@@ -1,5 +1,6 @@
-%ul
+%tbody
   - @groups.each do |group|
-    %li
-      = link_to group.name ,group
-      = group.created_at.strftime("%b %e")
+    %tr
+      %td
+        = link_to group.name ,group
+        = group.created_at.strftime("%b %e")

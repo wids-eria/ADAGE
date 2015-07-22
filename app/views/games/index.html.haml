@@ -1,14 +1,15 @@
-%table.table.table-striped
-  %thead
-    %tr
-      %th games
-  %tbody
-    - @games.each do |game|
-      %tr
-        %td
-          = link_to game do
-            = game.name
-            %br
-
-- if can? :create, Game
-  = link_to 'Add Game', new_game_path, class:'btn btn-primary'
+.row
+  .container.full.left
+    %table.striped_table
+      %thead
+        %th Games
+      %tbody
+        - @games.each do |game|
+          %tr
+            %td
+              = link_to game do
+                = game.name
+        %tr
+          - if can? :create, Game
+            %td
+              = link_to 'Add Game', new_game_path, class:'btn btn-primary'
