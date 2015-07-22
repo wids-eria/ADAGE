@@ -1,0 +1,25 @@
+= render 'welcome/nav'
+
+.login_container.floatleft
+  = form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f|
+    = devise_error_messages!
+    .field_container.login_element
+      = f.label :player_name, 'Player name', class: 'floatleft'
+      = f.text_field :player_name, class: 'floatright', placeholder: 'Player Name'
+    .field_container.login_element
+      = f.label :email, 'Email', class: 'floatleft'
+      = f.text_field :email, class: 'floatright', placeholder: 'Optional (required for teachers)'
+    .field_container.login_element
+      = f.label :password, class: 'floatleft'
+      = f.password_field :password, class: 'floatright', placeholder: 'Password'
+    .field_container.login_element
+      = f.label :password_confirmation, 'Confirm', class: 'floatleft'
+      = f.password_field :password_confirmation, class: 'floatright', placeholder: 'Password Confirmation'
+    .field_container_remember_me.full
+      = f.submit "Sign up", class: 'sign_in_button fork_button floatright'
+
+.sign_up
+  %p.floatleft
+    = link_to 'Sign In', new_user_session_url, class: 'floatleft'
+  %p.floatright
+    = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'

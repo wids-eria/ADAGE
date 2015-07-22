@@ -1,9 +1,9 @@
 -if @games.length > 0
   #games
-    %span Games
+    %label Games
     -@games.first(5).each do |game|
       -if can? :read, game
-        .game
+        .game.login_element
           = link_to game do
             = game.name
             %br

@@ -1,6 +1,4 @@
-.navigation
-  %li{class: ("active" if current_page? profile_path)}
-    = link_to 'Home', profile_path
+%ul.navigation
   -if current_user.admin?
     %li{class: ("active" if current_page? admin_users_path)}
       = link_to 'Admin Tools', admin_users_path
@@ -10,3 +8,10 @@
   -if can? :read, Group
     %li{class: ("active" if current_page? groups_path)}
       = link_to 'Groups', groups_path
+  -if current_user.admin?
+    %li{class: ("active" if current_page? teacher_requests_users_path)}
+      = link_to 'Teacher Requests', teacher_requests_users_path
+  %li.editprofilelink
+    = link_to 'Edit profile', edit_user_registration_url
+  %li.logoutlink
+    = link_to 'Logout', destroy_user_session_url, :method => :delete
