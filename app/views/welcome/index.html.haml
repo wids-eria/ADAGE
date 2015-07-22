@@ -1,14 +1,27 @@
 - if user_signed_in?
-  .login_container.floatleft
-    #adminbar
-      -if current_user.admin?
+  .welcome_or_error_container
+    %p
+      Welcome back
+      %span.bold 
+        ="#{current_user.player_name}!"
+      
+  %ul.navigation
+    %li{class: ("active" if current_page? profile_path)}
+      = link_to 'Home', profile_path
+    -if current_user.admin?
+      %li{class: ("active" if current_page? admin_users_path)}
         = link_to 'Admin Tools', admin_users_path
-      -if can? :manage, Game
+    -if can? :manage, Game
+      %li{class: ("active" if current_page? games_path)}
         = link_to 'Games', games_path
-      -if can? :read, Group
+    -if can? :read, Group
+      %li{class: ("active" if current_page? groups_path)}
         = link_to 'Groups', groups_path
-      -if current_user.admin?
+    -if current_user.admin?
+      %li{class: ("active" if current_page? teacher_requests_users_path)}
         = link_to 'Teacher Requests', teacher_requests_users_path
+
+  .login_container.floatleft
 
     .floatleft{:style => "border-left: 1px dotted #444; padding-left: 10px;"}
       .playername

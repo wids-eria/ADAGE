@@ -1,27 +1,31 @@
-.login_container.floatleft
+.login_container
   = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
-    .field_container
+    .field_container.login_element
       = f.label :login, class: 'floatleft'
       = f.text_field :login, class: 'floatright', placeholder: 'Playername or Email'
-    .field_container
+    .field_container.login_element
       = f.label :password, class: 'floatleft'
       = f.password_field :password, class: 'floatright', placeholder: 'Password'
     - if @code
-      .field_container
+      .field_container.login_element
         = f.label :code, class: 'floatleft'
         = f.text_field :group, class: 'floatright', placeholder: 'Play Code (optional)'
-    .field_container_remember_me
-      = f.submit "Sign in", class: 'sign_in_button floatright'
+    .field_container_remember_me.full
+      = f.submit "Sign in", class: 'sign_in_button fork_button floatright'
       - if devise_mapping.rememberable?
-        = f.check_box :remember_me, class: 'floatright remember_me_checkbox'
-        = f.label :remember_me, class: 'floatright'
+        .remember_me
+          = f.check_box :remember_me, class: 'remember_me_checkbox'
+          %p
+            = f.label :remember_me, class: ''
 
+.sign_up
+  %p.floatleft
+    = link_to 'Sign Up', new_user_registration_url, class: 'floatleft'
+  %p.floatright
+    = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'
 //.sign_up_container
 //  .field_container
 //    = link_to 'Connect with Facebook', user_omniauth_authorize_path(:facebook), class: 'floatleft'
 
 //  .field_container
 //    = link_to 'Connect with Google+', user_omniauth_authorize_path(:google_oauth2), class: 'floatleft'
-.sign_up_container
-  = link_to 'Sign Up', new_user_registration_url, class: 'floatleft'
-  = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'

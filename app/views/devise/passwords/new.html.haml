@@ -1,13 +1,14 @@
 .login_container.floatleft
   = form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f|
     = devise_error_messages!
-    .field_container
+    .field_container.login_element
       = f.label :email, class: 'floatleft'
       = f.text_field :email, class: 'floatright'
-    .field_container_remember_me
-      = f.submit "Send me reset password instructions", class: 'sign_in_button floatright'
+    .field_container_remember_me.full
+      = f.submit "Send me reset password instructions", class: 'sign_in_button fork_button floatright'
 
-
-.sign_up_container
-  = link_to 'Sign In', new_user_session_url, class: 'floatleft'
-  = link_to 'Sign Up', new_user_registration_url, class: 'floatright'
+.sign_up
+  %p.floatleft
+    = link_to 'Sign In', new_user_session_url, class: 'floatleft'
+  %p.floatright
+    = link_to 'Sign Up', new_user_registration_url, class: 'floatright'

@@ -1,13 +1,12 @@
-#nav
-  %ul.nav.nav-pills
-    %li{class: ("active" if current_page? profile_path)}
-      = link_to 'Home', profile_path
-    -if current_user.admin?
-      %li{class: ("active" if current_page? admin_users_path)}
-        = link_to 'Admin Tools', admin_users_path
-    -if can? :manage, Game
-      %li{class: ("active" if current_page? games_path)}
-        = link_to 'Games', games_path
-    -if can? :read, Group
-      %li{class: ("active" if current_page? groups_path)}
-        = link_to 'Groups', groups_path
+.navigation
+  %li{class: ("active" if current_page? profile_path)}
+    = link_to 'Home', profile_path
+  -if current_user.admin?
+    %li{class: ("active" if current_page? admin_users_path)}
+      = link_to 'Admin Tools', admin_users_path
+  -if can? :manage, Game
+    %li{class: ("active" if current_page? games_path)}
+      = link_to 'Games', games_path
+  -if can? :read, Group
+    %li{class: ("active" if current_page? groups_path)}
+      = link_to 'Groups', groups_path

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Adage</title>
-  <%= stylesheet_link_tag    "application" %>
+  <%= stylesheet_link_tag    "style" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 
@@ -18,24 +18,39 @@
   <% end %>
 
   <div class="page_wrap">
-    <div class="gls_logo_for_ada"></div>
+    <div class="main_content">
+      <div class="logo_container">
+        <div class="gls_logo"></div>
+      </div>
 
-    <% if flash[:alert].present? %>
-      <div class="flashbox alert"><%= flash[:alert] =%></div>
-    <% end %>
+      <div class="welcome_or_error_container">
 
-    <% if flash[:notice].present? %>
-      <div class="flashbox notice"><%= flash[:notice] =%></div>
-    <% end %>
+        <% if flash[:alert].present? %>
+          <p class="flashbox alert"><%= flash[:alert] =%></p>
+        <% end %>
 
-    <% if flash[:error].present? %>
-      <div class="flashbox error"><%= flash[:error] =%></div>
-    <% end %>
+        <% if flash[:notice].present? %>
+          <p class="flashbox error_text"><%= flash[:notice] =%></p>
+        <% end %>
 
-    <%= yield %>
+        <% if flash[:error].present? %>
+          <p class="flashbox error_text"><%= flash[:error] =%></p>
+        <% end %>
+      </div>
+        
+
+      <%= yield %>
+
+      <div class="small_logo">
+          <p class="left poweredby">Powered By</p>
+          
+          <a href="http://www.adageapi.org" target="_blank">
+              <p class="logotype left">ADAGE</p> <p class="betatype left">Beta</p>
+          </a>
+      </div>
+    </div>
   </div>
 
-  <div class="footer"></div>
   <div class="clear"></div>
 
 </body>

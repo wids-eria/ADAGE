@@ -2,12 +2,12 @@
   <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
     <%= devise_error_messages! %>
 
-    <div class="field_container">
+    <div class="field_container login_element">
       <%= f.label :player_name, class: 'floatleft' %>
       <%= f.text_field :player_name, class: 'floatright' %>
     </div>
 
-    <div class="field_container">
+    <div class="field_container login_element">
       <%= f.label :email, class: 'floatleft'%>
       <%= f.email_field :email, class: 'floatright' %>
     </div>
