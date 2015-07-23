@@ -239,9 +239,14 @@ h5{  }
     font-size:28px;
     margin:0 0 0 0;
 }
-
 .icon_tools:before {
     content: "\e604";
+    float:left;
+    font-size:28px;
+    margin:0 0 0 0;
+}
+.icon_admin:before {
+    content: "\e612";
     float:left;
     font-size:28px;
     margin:0 0 0 0;

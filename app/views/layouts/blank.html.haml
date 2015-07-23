@@ -4,7 +4,8 @@
   %title Adage
   // stylesheet_link_tag    "graph"
   // stylesheet_link_tag    "detail"
-  // stylesheet_link_tag    "custom"
+  = stylesheet_link_tag    "logger"
+  = stylesheet_link_tag    "font-awesome.min"
   // stylesheet_link_tag    "rickshaw"
   = stylesheet_link_tag    "adage"
   = javascript_include_tag "application"
@@ -25,34 +26,41 @@
       %a.edit
         %li
           %span.icon_edit
+
       .edit_hidden
         %a Click here to edit your profile
 
-      %a.games
-        %li
-          %span.icon_games
+      -if can? :manage, Game
+        = link_to games_path, class: :games do
+          %li
+            %span.icon_games{class: ("icon_active" if current_page? games_path)}
 
       .games_hidden
-        %a APAawdiawd
-        %a APAawdiawd
-        %a APAawdiawd
-        %a APAawdiawd
-        %a 
-          %span.white View All
-      %a.groups
-        %li
-          %span.icon_groups
+        -Game.first(5).each do |game|
+          -if can? :read, game
+            .game.login_element
+              = link_to game do
+                = game.name
+            %span.white
+              = link_to 'View all', games_path
+
+      -if can? :manage, Group
+        = link_to groups_path, class: :groups do
+          %li
+            %span.icon_groups{class: ("icon_active" if current_page? groups_path)}
 
       .groups_hidden
-        %a APAawdiawd
-        %a APAawdiawd
-        %a APAawdiawd
-        %a APAawdiawd
+        -Group.first(5).each do |group|
+          -if can? :read, group
+            .group.login_element
+              = link_to group do
+                = group.name
+            %span.white
+              = link_to 'View all', groups_path
           
       %a.tools
         %li
           %span.icon_tools
-
 
       .tools_hidden
         %a Find User

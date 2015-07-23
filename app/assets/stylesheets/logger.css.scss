@@ -1,0 +1,51 @@
+@import 'mixins';
+#logger{
+  padding-top:10px;
+
+  table{
+    width: 70%;
+
+    .rows{
+      .init{
+        background-color: rgba(253, 224, 106, 0.41);
+        -webkit-transition: all 0.3s ease;
+        -moz-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+      }
+      tr{
+        -webkit-transition: all 0.3s ease;
+        -moz-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+
+        .log{
+          display: none;
+          margin-left: 20px;
+          position: absolute;
+          top: 40%;
+          width: 500px;
+          border: 1px solid #ddd;
+          background-color: #FBFBFD;
+          @include rounded(4px);
+
+          pre{
+            font-size:0.8em;
+            line-height: 1.4em;
+          }
+        }
+
+        &:hover{
+
+          background-color: rgba(228, 228, 228, 0.41);
+          -webkit-transition: all 0.2s ease;
+          -moz-transition: all 0.2s ease;
+          -o-transition: all 0.2s ease;
+          transition: all 0.2s ease;
+        }
+      }
+    }
+  }
+
+  height:450px;
+}

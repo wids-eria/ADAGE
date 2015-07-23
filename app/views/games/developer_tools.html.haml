@@ -1,24 +1,30 @@
-%div#dev-tools
-  %h2= @game.name.capitalize
-  %br
-  - if current_user.admin? and !Rails.env.production? and !Rails.env.staging?
-    %button.btn.btn-danger#stop
-      = link_to "Clear data", clear_data_game_path(@game), method: :delete, data: { confirm: "Are you sure?" }
-  .row
-    .span12
-      %h2='Game Versions'
-      %ul
-        - @game.implementations.each do |version|
-          %li
-            = version.name
-            %br
-            -if version.client != nil
-              = 'App Token ' + version.client.app_token
-              %br
-              = 'App Secret ' + version.client.app_secret
-              %br
+.row
 
-      = render partial: 'implementations/add', locals: {game: @game}
-  .row
-    .span12
+  .container.full.left
+
+    .element
+      %div#dev-tools
+        %h2= @game.name.capitalize
+        %br
+        - if current_user.admin? and !Rails.env.production? and !Rails.env.staging?
+          %button.btn.btn-danger#stop
+            = link_to "Clear data", clear_data_game_path(@game), method: :delete, data: { confirm: "Are you sure?" }
+        .row
+          .span12
+            %h2='Game Versions'
+            %ul
+              - @game.implementations.each do |version|
+                %li
+                  = version.name
+                  %br
+                  -if version.client != nil
+                    = 'App Token ' + version.client.app_token
+                    %br
+                    = 'App Secret ' + version.client.app_secret
+                    %br
+
+            = render partial: 'implementations/add', locals: {game: @game}
+      
+  .container.full.left
+    .element
       = render partial: 'games/log_debugger', locals: {game: @game}
