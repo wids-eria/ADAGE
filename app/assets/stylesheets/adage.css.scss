@@ -27,11 +27,11 @@ STYLESHEET CONTENTS
 
 @mixin full { width:100%; float:left; }
 
-@mixin transition{
-    -webkit-transition: all 0.3s;
-       -moz-transition: all 0.3s;
-        -ms-transition: all 0.3s;
-         -o-transition: all 0.3s;
+@mixin transition($duration: 0.3s){
+    -webkit-transition: all $duration;
+       -moz-transition: all $duration;
+        -ms-transition: all $duration;
+         -o-transition: all $duration;
 }
 
 @mixin rounded_corners{
@@ -51,6 +51,17 @@ STYLESHEET CONTENTS
 
 /*------------------------------------------------------------------
 
+    Variables
+
+-------------------------------------------------------------------*/
+
+$primary-font: #546a7c;
+$secondary-font: rgba(92, 89, 89, 0.66);
+$fa-icon-color: #12181d;
+
+
+/*------------------------------------------------------------------
+
     Global Styles
 
 -------------------------------------------------------------------*/
@@ -63,7 +74,7 @@ STYLESHEET CONTENTS
             box-sizing: border-box;
     }
 
-html{ overflow:scroll; background:url(bg_2.png) 50% 0% no-repeat #26323c; }
+html{ background:url(bg_2.png) 50% 0% no-repeat #26323c; }
 
 body{ font-family:verdana; }
 
@@ -172,6 +183,93 @@ h5{  }
                 &:hover{
                     text-decoration:underline;
                 }
+            }
+        }
+    }
+
+
+    &.games{
+        .title{
+
+            font-size: 1.5em;
+            color: $primary-font;
+        }
+
+        .fa{
+            &:visited{
+                color: $fa-icon-color;
+            }
+            &:hover{
+                @include transition(0.2s);
+                color: $fa-icon-color + 80;
+            }
+        }
+
+        .game{
+
+            font-size: 2.4em;
+            color: $primary-font;
+            #title{
+                @include rounded_corners;
+                position: relative;
+                height: 180px;
+                display: block;
+                padding: 10px;
+                margin: -10px -10px 10px -10px;
+                background-color: rgb(231, 234, 234);
+
+                span{
+                    position: absolute;                    
+                    width: 80%;
+                    bottom: 10px;
+                    left: 10%;
+                    text-align: center;
+
+                    color: $secondary-font;
+                }
+
+                .fa{
+                    color: $primary-font;
+                    font-size: 1.2rem;
+                    position: absolute;
+                    right: 4px;
+                    top: 6px;
+                    
+                    &:hover{
+                        color: $primary-font + 80;
+                    }
+                }
+
+
+                &:hover{
+                    @include transition(0.2s);
+                    background-color: rgb(231, 234, 234) +10;
+
+                    span{
+                        @include transition(0.2s);
+                        color: $secondary-font + 80;
+                    }
+
+
+                    &:after {
+                        @include transition(0.2s);
+                        color: $primary-font + 80;
+                    }
+                }
+
+                &:after {
+                    content: "\f11b";
+                    font-family: FontAwesome;
+                    color: rgba(92, 89, 89, 0.66);
+                    text-align: center;
+                    display: block;
+                    padding-top: 2%;
+                    font-size: 3.1em;
+                }
+            }
+
+            #stats{
+                font-size: 1.0rem;
             }
         }
     }
