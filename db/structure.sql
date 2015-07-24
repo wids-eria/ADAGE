@@ -378,6 +378,70 @@ ALTER SEQUENCE implementations_id_seq OWNED BY implementations.id;
 
 
 --
+-- Name: organization_roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE organization_roles (
+    id integer NOT NULL,
+    name character varying(255),
+    user_id integer,
+    organization_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: organization_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE organization_roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: organization_roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE organization_roles_id_seq OWNED BY organization_roles.id;
+
+
+--
+-- Name: organizations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE organizations (
+    id integer NOT NULL,
+    name character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: organizations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE organizations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: organizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE organizations_id_seq OWNED BY organizations.id;
+
+
+--
 -- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -618,6 +682,20 @@ ALTER TABLE ONLY implementations ALTER COLUMN id SET DEFAULT nextval('implementa
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY organization_roles ALTER COLUMN id SET DEFAULT nextval('organization_roles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY organizations ALTER COLUMN id SET DEFAULT nextval('organizations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
 
 
@@ -720,6 +798,22 @@ ALTER TABLE ONLY groups
 
 ALTER TABLE ONLY implementations
     ADD CONSTRAINT implementations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: organization_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY organization_roles
+    ADD CONSTRAINT organization_roles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY organizations
+    ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
 
 
 --
@@ -843,6 +937,20 @@ CREATE INDEX fk__groups_users_user_id ON groups_users USING btree (user_id);
 --
 
 CREATE INDEX fk__implementations_game_id ON implementations USING btree (game_id);
+
+
+--
+-- Name: fk__organization_roles_organization_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__organization_roles_organization_id ON organization_roles USING btree (organization_id);
+
+
+--
+-- Name: fk__organization_roles_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__organization_roles_user_id ON organization_roles USING btree (user_id);
 
 
 --
@@ -1048,6 +1156,22 @@ ALTER TABLE ONLY implementations
 
 
 --
+-- Name: fk_organization_roles_organization_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY organization_roles
+    ADD CONSTRAINT fk_organization_roles_organization_id FOREIGN KEY (organization_id) REFERENCES organizations(id);
+
+
+--
+-- Name: fk_organization_roles_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY organization_roles
+    ADD CONSTRAINT fk_organization_roles_user_id FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
 -- Name: fk_roles_game_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1160,3 +1284,7 @@ INSERT INTO schema_migrations (version) VALUES ('20140709183815');
 INSERT INTO schema_migrations (version) VALUES ('20150107220957');
 
 INSERT INTO schema_migrations (version) VALUES ('20150109222014');
+
+INSERT INTO schema_migrations (version) VALUES ('20150724164657');
+
+INSERT INTO schema_migrations (version) VALUES ('20150724174955');

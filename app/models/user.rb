@@ -31,6 +31,8 @@ class User < ActiveRecord::Base
   has_many :dashboards
   has_and_belongs_to_many :roles
   has_and_belongs_to_many :groups
+  has_many :organization_roles
+  has_many :organizations, through: :organization_roles
 
   def role?(role)
       return !!self.roles.find_by_name(role.name)

@@ -41,11 +41,10 @@
       .games_hidden
         -Game.first(5).each do |game|
           -if can? :read, game
-            .game.login_element
-              = link_to game do
-                = game.name
-            %span.white
-              = link_to 'View all', games_path
+            = link_to game do
+              = game.name
+              = link_to games_path do
+                %span.white View All
 
       -if can? :manage, Group
         = link_to groups_path, class: :groups do
@@ -55,11 +54,10 @@
       .groups_hidden
         -Group.first(5).each do |group|
           -if can? :read, group
-            .group.login_element
-              = link_to group do
-                = group.name
-            %span.white
-              = link_to 'View all', groups_path
+            = link_to group do
+              = group.name
+              = link_to groups_path do
+                %span.white View All
           
       %a.tools
         %li
