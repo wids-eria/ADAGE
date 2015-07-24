@@ -1,12 +1,8 @@
 class Organization < ActiveRecord::Base
-  after_create :create_roles
-
-  attr_accessible :name
+  attr_accessible :name,:games
   validates :name, uniqueness: { case_sensitive: false }
   has_many :organization_roles
   has_many :users, through: :organization_roles
+  has_many :games
 
-  def create_roles
-  #  OrganizationRole.create(organization: self,name: "Admin")
-  end
 end

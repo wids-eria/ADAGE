@@ -15,3 +15,14 @@
 
   - @games.last(2).each do |game|
     = render "games/preview", game: game
+
+
+
+- @organizations.each do |org|
+  .row.games
+    .container.full.left
+      .element
+        .title.left 
+          = org.name
+        = link_to '', new_game_path, class:'right fa fa-plus-square fa-2x '
+        = new_polymorphic_path([:game, org])

@@ -216,7 +216,8 @@ CREATE TABLE games (
     id integer NOT NULL,
     name character varying(255),
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    organization_id integer
 );
 
 
@@ -1003,6 +1004,13 @@ CREATE INDEX index_achievements_on_data ON achievements USING gist (data);
 
 
 --
+-- Name: index_games_on_organization_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_games_on_organization_id ON games USING btree (organization_id);
+
+
+--
 -- Name: index_social_access_tokens_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1113,6 +1121,14 @@ ALTER TABLE ONLY assignments
 
 ALTER TABLE ONLY clients
     ADD CONSTRAINT fk_clients_implementation_id FOREIGN KEY (implementation_id) REFERENCES implementations(id);
+
+
+--
+-- Name: fk_games_organization_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY games
+    ADD CONSTRAINT fk_games_organization_id FOREIGN KEY (organization_id) REFERENCES organizations(id);
 
 
 --
@@ -1288,3 +1304,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150109222014');
 INSERT INTO schema_migrations (version) VALUES ('20150724164657');
 
 INSERT INTO schema_migrations (version) VALUES ('20150724174955');
+
+INSERT INTO schema_migrations (version) VALUES ('20150724215900');

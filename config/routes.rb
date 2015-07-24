@@ -15,7 +15,6 @@ Ada::Application.routes.draw do
     end
   end
 
-
   match "explorer" => "data#explorer", :via => :get
 
   match "save_game" => "save#save", :via => :post
@@ -31,6 +30,8 @@ Ada::Application.routes.draw do
 
   resources :roles
   resources :participant_roles
+  resources :implementations
+  resources :organizations
 
   resources :games do
     member do
@@ -46,9 +47,13 @@ Ada::Application.routes.draw do
       get :sync_time
       delete :clear_data
     end
+
+
+    collection do
+
+    end
   end
 
-  resources :implementations
 
   resources :data do
     collection do

@@ -191,6 +191,8 @@ class GamesController < ApplicationController
         @games << game
       end
     end
+
+    @organizations = current_user.organizations
   end
 
   def new
