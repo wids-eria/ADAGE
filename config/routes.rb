@@ -47,11 +47,6 @@ Ada::Application.routes.draw do
       get :sync_time
       delete :clear_data
     end
-
-
-    collection do
-
-    end
   end
 
 

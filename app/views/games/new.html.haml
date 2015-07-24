@@ -6,5 +6,6 @@
         %p
         = game.label :name
         = game.text_field :name
+        = game.text_field :organization_id, value: params[:organization]
         %p
         = game.submit 'Add'

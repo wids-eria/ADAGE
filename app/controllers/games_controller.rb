@@ -193,6 +193,9 @@ class GamesController < ApplicationController
     end
 
     @organizations = current_user.organizations
+
+    #@todo REMOVE
+    @organizations = Organization.all
   end
 
   def new
@@ -200,7 +203,12 @@ class GamesController < ApplicationController
   end
 
   def create
+    params[:game][:organization] = Organization.find(params[:game][:organization_id])
+    puts "_"*20
+    puts params.to_json
     @game = Game.new(params[:game])
+
+    puts @game.to_json
     if @game.save
       flash[:notice] = 'Game Added'
       #give the developer who created the game a developer role for the game

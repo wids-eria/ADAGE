@@ -1,6 +1,6 @@
 class AddStats < ActiveRecord::Migration
   def up
-    #execute 'CREATE EXTENSION hstore';
+    execute 'CREATE EXTENSION hstore';
 
     create_table(:stats) do |t|
       t.column :data, :hstore
