@@ -1,5 +1,9 @@
-%h1='Edit Group '+@group.name
-%ul
-  %h4.row
-    = link_to "Back", @group
-  = render partial: 'form'
+.row
+  .container.full.left
+    .element
+      .title.left
+        =@group.name
+      = link_to '', group_path(@group), class:'right fa fa-arrow-left fa-2x '
+      .clear
+
+      = render partial: 'form'

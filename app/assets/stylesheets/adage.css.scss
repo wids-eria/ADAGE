@@ -140,40 +140,19 @@ h5{  }
 .row{ 
     @include full; 
 
-    table{
-        border-collapse:separate;
-        
-        thead{
-            th{
-                border-top:none;
-                font-family: ubuntu;
-                font-weight: 500;
-                color: #24495B;
-                font-size: 20px;
-                text-align:left;
-                line-height:55px;
-                padding:0 0 0 10px; 
-            }
-        }
-    }
-    table.striped_table{
+    .list{
         @include rounded_corners;
         
         border-spacing:0;
         float:left;
         width:100%;
         background:white;
-        
-        
-        tbody{
-           
-        }
-        
-        tbody > tr:nth-child(odd) > td{
+
+        .item:nth-child(odd){
             background-color: #f6f9fc;
         }
         
-        td{
+        .item{
             padding:10px;
                 border-top:1px solid #d3dee7;
             a{            
@@ -188,25 +167,35 @@ h5{  }
     }
 
 
-    &.games{
-        .title{
+    .fa{
+        color: $fa-icon-color;
+        &:visited{
+            color: $fa-icon-color;
+        }
+        &:hover{
+            @include transition(0.2s);
+            color: $fa-icon-color + 80;
+            text-decoration: none !important;
+        }
+    }
 
+    .game{
+        .title{
             font-size: 1.5em;
             color: $primary-font;
+            margin-bottom: 10px;
         }
+    }
 
-        .fa{
-            &:visited{
-                color: $fa-icon-color;
-            }
-            &:hover{
-                @include transition(0.2s);
-                color: $fa-icon-color + 80;
-            }
-        }
+    .title{
+        font-size: 1.5em;
+        color: $primary-font;
+        margin-bottom: 10px;
+    }
+
+    &.games{
 
         .game{
-
             font-size: 2.4em;
             color: $primary-font;
             #title{
@@ -234,7 +223,7 @@ h5{  }
                     position: absolute;
                     right: 4px;
                     top: 6px;
-                    
+
                     &:hover{
                         color: $primary-font + 80;
                     }
@@ -620,6 +609,11 @@ header{  }
         color:#98CD80;
     }
     
+    .divider{
+        border-top: 2px solid $primary-font;
+        padding: 0px;
+    }
+
     div {
         margin:-60px -100px 0 80px;
         width:225px;

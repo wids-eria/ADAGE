@@ -1,10 +1,8 @@
 .row
   .container.full.left
-    %table.striped_table
-      %thead
-        %th 
-          Groups
-          = link_to "New" ,new_group_path
-          = link_to "Back", profile_path
-      = render "list"
+    .element
+      .title.left GROUPS
+      = link_to '', new_group_path, class:'right fa fa-plus-square fa-2x '
 
+      .full.list.striped_table
+        = render "list"

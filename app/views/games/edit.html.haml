@@ -1,7 +1,8 @@
-%ul
-  %h1=@game.name
-  = @game.created_at
-  %br
-
-  %h1='Add a game version'
-  = render partial: 'implementations/add', locals: {game: @game} 
+.row
+  .container.full.left
+    .element
+      .title.left
+        =@game.name
+      = link_to '', game_path(@game), class:'right fa fa-arrow-left fa-2x '
+      .clear
+      = render partial: 'implementations/add', locals: {game: @game} 
