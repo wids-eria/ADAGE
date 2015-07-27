@@ -314,24 +314,38 @@ h5{  }
 }
 
 .icon_games:before {
-    content: "\e602";
+    content: "\e603";
+    float:left;
+    font-size:28px;
+    margin:0 0 0 0;
+}
+
+.icon_dashboard:before {
+    content: "\e61b";
     float:left;
     font-size:28px;
     margin:0 0 0 0;
 }
 
 .icon_groups:before {
-    content: "\e603";
+    content: "\e60d";
+    float:left;
+    font-size:28px;
+    margin:0 0 0 0;
+}
+.icon_orgs:before {
+    content: "\e609";
     float:left;
     font-size:28px;
     margin:0 0 0 0;
 }
 .icon_tools:before {
-    content: "\e604";
+    content: "\e616";
     float:left;
     font-size:28px;
     margin:0 0 0 0;
 }
+
 .icon_admin:before {
     content: "\e612";
     float:left;
@@ -340,7 +354,7 @@ h5{  }
 }
 
 .icon_logout:before {
-    content: "\e605";
+    content: "\e623";
     float:left;
     font-size:28px;
     margin:0 0 0 0;

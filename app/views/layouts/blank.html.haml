@@ -26,6 +26,12 @@
           %li
             %span.icon_home
 
+
+      -if can? :manage, Game
+        = link_to games_path, class: :games do
+          %li
+            %span.icon_dashboard
+
       %a.edit
         %li
           %span.icon_edit
@@ -59,6 +65,10 @@
               = link_to groups_path do
                 %span.white View All
           
+      -if can? :read, Organization
+        = link_to organizations_path, class: :groups do
+          %li
+            %span.icon_orgs{class: ("icon_active" if current_page? organizations_path)}
       %a.tools
         %li
           %span.icon_tools
@@ -66,14 +76,10 @@
       .tools_hidden
         %a Find User
 
-      -if can? :read, Organization
-        = link_to organizations_path, class: :groups do
+      -if current_user.admin?
+        = link_to admin_users_path do
           %li
-            %span.icon_groups{class: ("icon_active" if current_page? groups_path)}
-
-
-      .tools_hidden
-        %a Find User
+            %span.icon_admin{class: ("icon_active" if current_page? admin_users_path)}
 
       %a.divider
         %li.divider
