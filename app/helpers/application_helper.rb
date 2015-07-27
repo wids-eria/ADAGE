@@ -22,4 +22,16 @@ module ApplicationHelper
 		#returns a friendly data url for the image
 		return qr.to_img.resize(width,height).to_data_url
 	end
+
+
+	def format_flash(errors)
+		body = ""
+		if errors.present?
+		  flash[:error].each do |error|
+		    body += "#{error}\</br>" 
+		  end
+		end
+
+		return body
+	end
 end

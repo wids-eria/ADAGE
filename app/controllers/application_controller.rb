@@ -156,8 +156,6 @@ class ApplicationController < ActionController::Base
     end
 
     return field_hash
-
-
   end
 
   def authenticate_app_token

@@ -1,3 +1,9 @@
+.row.games
+  .container.full.left
+    .element
+      .title.left 
+        = @org.name
+        
 .row
   .container.full.left
     .element
@@ -6,6 +12,6 @@
         %p
         = game.label :name
         = game.text_field :name
-        = game.text_field :organization_id, value: params[:organization]
+        = game.hidden_field :organization_id, value: params[:organization]
         %p
         = game.submit 'Add'

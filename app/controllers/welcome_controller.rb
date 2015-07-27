@@ -3,7 +3,7 @@ class WelcomeController < ApplicationController
 
   def index
     if user_signed_in?
-      redirect_to profile_url
+      redirect_to games_url
     else
       redirect_to new_user_session_url
     end

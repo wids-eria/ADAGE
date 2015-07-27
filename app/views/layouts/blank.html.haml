@@ -66,6 +66,15 @@
       .tools_hidden
         %a Find User
 
+      -if can? :read, Organization
+        = link_to organizations_path, class: :groups do
+          %li
+            %span.icon_groups{class: ("icon_active" if current_page? groups_path)}
+
+
+      .tools_hidden
+        %a Find User
+
       %a.divider
         %li.divider
 
@@ -95,7 +104,7 @@
 
         -  if flash[:error].present?
           %p.flashbox.error_text
-            = flash[:error]
+            = raw format_flash(flash[:error])
         .small_logo.right
           %a{href: "http://www.adageapi.org", target: "_blank"}
             %p.logotype.left ADAGE

@@ -1,8 +1,8 @@
 class Game < ActiveRecord::Base
 
   attr_accessible :name, :implementations,:organization
-  validates :name, uniqueness: { case_sensitive: false }
-  validates_presence_of :organization
+  validate  :unique_name
+  validates_presence_of :organization,:name
   has_many :implementations
 
   has_many :roles
@@ -31,7 +31,6 @@ class Game < ActiveRecord::Base
     ConfigData.where("game_id" => self.id)
   end
 
-
   protected
 
   def create_researcher_role
@@ -57,11 +56,17 @@ class Game < ActiveRecord::Base
     db = Mongoid::Sessions.default
     gamename = self.name.to_s.gsub(' ', '_')
     collection = db[gamename]
-
     collection.indexes.create(name: 1)
     collection.indexes.create(gameName: 1)
-    collection.indexes.create({ADAVersion: 1},{sparse:true})
     collection.indexes.create(user_id: 1)
     collection.indexes.create(timestamp: 1)
+    collection.indexes.create({ adage_version: 1, startContextID: 1,key: 1, created_at: 1 })
+  end
+
+  def unique_name
+    count = Game.where(organization_id: self.organization,name: self.name.downcase).count
+    if count != 0
+      errors.add(:game, "Name must be unique")
+    end
   end
 end

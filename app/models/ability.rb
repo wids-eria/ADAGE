@@ -8,6 +8,8 @@ class Ability
 
     if user.role? Role.find_by_name('admin')
       can :manage, :all
+
+
     elsif user.role? Role.find_by_name('player')
       can :create, AdaData
       can :read, AdaData do |data|
@@ -42,6 +44,11 @@ class Ability
 
       can :manage, ParticipantRole do |p_role|
         user.role?(ResearcherRole.where(game_id: p_role.game.id).first)
+      end
+
+      
+      can :manage, Organization do |org|
+        OrganizationRole.where(user_id: user,organization_id: org,name:"admin").count == 1
       end
     end
    end

@@ -11,9 +11,8 @@ class GamesController < ApplicationController
     @log_count = AdaData.with_game(@game.name).only(:_id).size
     @num_users = AdaData.with_game(@game.name).only(:user_id).distinct(:user_id).size
 
-     session[:graph_params] = nil
+    session[:graph_params] = nil
   end
-
 
   def developer_tools
     @game = Game.find(params[:id])
@@ -25,7 +24,6 @@ class GamesController < ApplicationController
 
     params[:start] = params[:start].to_i/1000
     start_time = DateTime.strptime(params[:start].to_s, "%s").to_time
-    puts start_time
     logs = AdaData.with_game(@game.name).where(:created_at.gt => start_time).all
     respond_to do |format|
       format.json {
@@ -73,25 +71,18 @@ class GamesController < ApplicationController
     redirect_to context_logs_data_path(game_id: params[:id], user_ids: @game.user_ids)
   end
 
-
   def select_graph
-
     @game = Game.find(params[:id])
 
     @implementations = @game.implementations
     @ranges = ['hour','day','week','month','all']
     @graph_types = ['value over time', 'session times', 'key count']
 
-
     if session[:graph_params].nil?
       session[:graph_params] = GraphParams.new
     end
 
     @graph_params = session[:graph_params]
-
-
-
-    puts @graph_params.app_token
 
     if params[:app_token] != nil
       @graph_params.app_token = params[:app_token]
@@ -129,9 +120,6 @@ class GamesController < ApplicationController
     @fields = Hash.new
     @game_ids = Array.new
     if @graph_params.app_token != nil
-
-
-
       if @graph_params.time_range == nil
         @graph_params.time_range = 'hour'
       end
@@ -139,17 +127,12 @@ class GamesController < ApplicationController
       @game_ids = AdaData.with_game(@game.name).where(:timestamp.gt => time_range_to_epoch(@graph_params.time_range)).distinct(:game_id)
       @game_ids << 'All Games'
 
-
       @keys = AdaData.with_game(@game.name).distinct(:key)
 
       if @graph_params.key != nil
 
-
         @fields = add_field_names(0, AdaData.with_game(@game.name).where(key: @graph_params.key).first.attributes, @fields, @graph_params.field_names)
-
       end
-
-
     end
 
     @rickshaw_url = @graph_params.to_rickshaw_url
@@ -194,33 +177,40 @@ class GamesController < ApplicationController
 
     @organizations = current_user.organizations
 
-    #@todo REMOVE
-    @organizations = Organization.all
+    if current_user.admin?
+      @organizations = Organization.all
+    end
   end
 
   def new
+    @org = Organization.find(params[:organization])
+    authorize! :manage, @org
     @game = Game.new
   end
 
   def create
-    params[:game][:organization] = Organization.find(params[:game][:organization_id])
-    puts "_"*20
-    puts params.to_json
+    @org = Organization.find(params[:game][:organization_id])
+    authorize! :manage, @org
+    params[:game][:organization] = @org
+
     @game = Game.new(params[:game])
 
-    puts @game.to_json
     if @game.save
       flash[:notice] = 'Game Added'
       #give the developer who created the game a developer role for the game
       current_user.roles << @game.developer_role
+      redirect_to games_path
     else
-      flash[:error] = 'Game name is not unique'
+      flash[:error] = @game.errors.full_messages
+
+      redirect_to new_game_path(id: @game, organization: params[:game][:organization])
     end
-    redirect_to games_path
   end
 
   def edit
     @game = Game.find(params[:id])
+    @org  = @game.organization
+    authorize! :manage, @game.organization
   end
 
   def clear_data
