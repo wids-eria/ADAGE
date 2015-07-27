@@ -1,5 +1,11 @@
-%h1='New Group '
-%ul
-  %h4.row
-    = link_to "Back", @group
-  = render partial: 'form'
+.row.games
+  .container.full.left
+    .element
+      .title.left 
+        = @org.name
+
+.row
+  .container.full.left
+    .element
+      .title Create New Group
+      = render partial: 'form'

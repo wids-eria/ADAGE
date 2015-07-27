@@ -6,6 +6,12 @@ class GroupsController < ApplicationController
 
   def index
     @groups = Group.all
+
+    @organizations = current_user.organizations
+
+    if current_user.admin?
+      @organizations = Organization.all
+    end
   end
 
   def show
@@ -16,6 +22,8 @@ class GroupsController < ApplicationController
   end
 
   def edit
+    @game = Game.find(params[:id])
+    @org  = @game.organization
     @group = Group.find(params[:id])
   end
 
@@ -30,16 +38,25 @@ class GroupsController < ApplicationController
   end
 
   def new
+    puts params.to_s
+    @org = Organization.find(params[:organization])
+    authorize! :manage, @org
     @group = Group.new(params[:group])
   end
 
   def create
+    puts "-"*20
+    
+    puts params.to_s
+    @org = Organization.find(params[:group][:organization_id])
+    authorize! :manage, @org
     @group = Group.new(params[:group])
     if @group.save
       flash[:notice] = 'Group Added'
       redirect_to @group
     else
-      render :new
+      flash[:error] = @group.errors.full_messages
+      redirect_to new_group_path(id: @group, organization: params[:group][:organization])
     end
   end
 

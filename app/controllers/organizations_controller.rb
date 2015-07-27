@@ -33,6 +33,9 @@ class OrganizationsController < ApplicationController
   def create
     @org = Organization.new(params[:organization])
     if @org.save
+      puts OrganizationRole.create(organization: @org, user: current_user, name: "admin").errors.full_messages
+
+
       flash[:notice] = 'organization Added'
       redirect_to @org
     else

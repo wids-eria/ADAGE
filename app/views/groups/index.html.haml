@@ -1,8 +1,10 @@
-.row
-  .container.full.left
-    .element
-      .title.left GROUPS
-      = link_to '', new_group_path, class:'right fa fa-plus-square fa-2x '
+- @organizations.each do |org|
+  .row.games
+    .container.full.left
+      .element
+        .title.left 
+          = org.name
+        = link_to '', new_group_path(organization: org), class:'right fa fa-plus-square fa-2x '
 
-      .full.list.striped_table
-        = render "list"
+    - org.groups.each do |group|
+      = render "groups/preview", group: group

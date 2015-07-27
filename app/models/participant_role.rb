@@ -3,5 +3,5 @@ class ParticipantRole < Role
 
   attr_accessible :name, :game, :type, :users
 
-  has_many :assignments
+  has_many :assignments, dependent: :delete_all
 end

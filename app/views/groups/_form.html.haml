@@ -1,3 +1,4 @@
 =simple_form_for @group do |f|
-  = f.input :name
-  = f.submit
+	= f.input :name
+	= f.hidden_field :organization_id, value: params[:organization]
+	= f.submit

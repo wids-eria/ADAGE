@@ -12,7 +12,6 @@ class ApplicationController < ActionController::Base
     new_user_session_path
   end
 
-
   def parse_filters(filters)
     @filters = Array.new
 

@@ -3,14 +3,14 @@ class Game < ActiveRecord::Base
   attr_accessible :name, :implementations,:organization
   validate  :unique_name
   validates_presence_of :organization,:name
-  has_many :implementations
+  has_many :implementations, dependent: :delete_all
 
-  has_many :roles
-  has_many :dashboards
+  has_many :roles, dependent: :delete_all
+  has_many :dashboards, dependent: :delete_all
 
-  has_one :participant_role
-  has_one :researcher_role
-  has_one :developer_role
+  has_one :participant_role, dependent: :delete
+  has_one :researcher_role, dependent: :delete
+  has_one :developer_role, dependent: :delete
   belongs_to :organization
 
   after_create :create_collection

@@ -312,7 +312,8 @@ CREATE TABLE groups (
     name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    playsquad boolean DEFAULT true
+    playsquad boolean DEFAULT true,
+    organization_id integer
 );
 
 
@@ -1011,6 +1012,13 @@ CREATE INDEX index_games_on_organization_id ON games USING btree (organization_i
 
 
 --
+-- Name: index_groups_on_organization_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_groups_on_organization_id ON groups USING btree (organization_id);
+
+
+--
 -- Name: index_social_access_tokens_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1145,6 +1153,14 @@ ALTER TABLE ONLY group_ownerships
 
 ALTER TABLE ONLY group_ownerships
     ADD CONSTRAINT fk_group_ownerships_user_id FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_groups_organization_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT fk_groups_organization_id FOREIGN KEY (organization_id) REFERENCES organizations(id);
 
 
 --
@@ -1306,3 +1322,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150724164657');
 INSERT INTO schema_migrations (version) VALUES ('20150724174955');
 
 INSERT INTO schema_migrations (version) VALUES ('20150724215900');
+
+INSERT INTO schema_migrations (version) VALUES ('20150727220525');
