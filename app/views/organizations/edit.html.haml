@@ -1,0 +1,9 @@
+.row
+  .container.full.left
+    .element
+      .title.left
+        =@org.name
+      = link_to '', group_path(@org), class:'right fa fa-arrow-left fa-2x '
+      .clear
+
+      = render partial: 'form'

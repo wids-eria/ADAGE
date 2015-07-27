@@ -1,0 +1,17 @@
+.row
+  .container.full.left
+    .element
+      .title.left 
+        = @org.name
+      - if can? :update, Organization
+        = link_to edit_group_path(@org) do
+          %li.fa.fa-cog.fa-2x.right
+  .container.two_third.left
+    .element
+      %span Users
+      -if @org.users.count==0
+        = "No Users in Organization"
+
+      - @org.users.each do |user|
+        %li
+          = user.player_name

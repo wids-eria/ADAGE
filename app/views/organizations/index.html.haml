@@ -1,0 +1,8 @@
+.row
+  .container.full.left
+    .element
+      .title.left Organizations
+      = link_to '', new_organization_path, class:'right fa fa-plus-square fa-2x '
+
+      .full.list.striped_table
+        = render "list"
