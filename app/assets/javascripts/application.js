@@ -13,4 +13,5 @@
 //= require bootstrap
 //= require ICanHaz.min
 //= require d3.min
+//= require c3.min
 //= require rickshaw
