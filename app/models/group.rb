@@ -3,17 +3,19 @@ class Group < ActiveRecord::Base
 
   has_many :group_ownerships
   has_many :owners, through: :group_ownerships, source: :user
+  has_many :teachers, through: :group_ownerships, source: :user
 
   belongs_to :organization
   before_create :generatecode
 
   scope :playsquads, -> { where(playsquad: 'true') }
+  scope :classes, -> { where(group_type: 'class') }
 
-  validates_presence_of :name,:organization
+  validates_presence_of :name,:organization,:group_type
   validates_uniqueness_of :code
   validate  :unique_name
 
-  attr_accessible :name, :code, :user_ids, :playsquad, :owner,:organization,:organization_id
+  attr_accessible :name, :code, :user_ids, :playsquad, :owner,:organization,:organization_id,:type
 
   def AddUser(user)
     unless user.nil?

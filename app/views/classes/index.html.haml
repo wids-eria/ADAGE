@@ -1,0 +1,10 @@
+- @organizations.each do |org|
+  .row.games
+    .container.full.left
+      .element
+        .title.left 
+          = org.name
+        = link_to '', new_class_path(organization: org), class:'right fa fa-plus-square fa-2x '
+
+    - org.groups.each do |group|
+      = render "groups/preview", group: group

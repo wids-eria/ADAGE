@@ -1,0 +1,4 @@
+=simple_form_for(@group,url: update_class_path) do |f|
+	= f.input :name
+	= f.hidden_field :organization_id, value: params[:organization]
+	= f.submit

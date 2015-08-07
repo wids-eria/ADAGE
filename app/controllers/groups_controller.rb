@@ -6,7 +6,6 @@ class GroupsController < ApplicationController
 
   def index
     @groups = Group.all
-
     @organizations = current_user.organizations
 
     if current_user.admin?
@@ -38,16 +37,12 @@ class GroupsController < ApplicationController
   end
 
   def new
-    puts params.to_s
     @org = Organization.find(params[:organization])
     authorize! :manage, @org
     @group = Group.new(params[:group])
   end
 
   def create
-    puts "-"*20
-    
-    puts params.to_s
     @org = Organization.find(params[:group][:organization_id])
     authorize! :manage, @org
     @group = Group.new(params[:group])

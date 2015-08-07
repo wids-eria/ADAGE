@@ -313,7 +313,8 @@ CREATE TABLE groups (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     playsquad boolean DEFAULT true,
-    organization_id integer
+    organization_id integer,
+    group_type character varying(255)
 );
 
 
@@ -420,7 +421,8 @@ CREATE TABLE organizations (
     id integer NOT NULL,
     name character varying(255),
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    subdomain character varying(255)
 );
 
 
@@ -1324,3 +1326,7 @@ INSERT INTO schema_migrations (version) VALUES ('20150724174955');
 INSERT INTO schema_migrations (version) VALUES ('20150724215900');
 
 INSERT INTO schema_migrations (version) VALUES ('20150727220525');
+
+INSERT INTO schema_migrations (version) VALUES ('20150806191710');
+
+INSERT INTO schema_migrations (version) VALUES ('20150806212533');

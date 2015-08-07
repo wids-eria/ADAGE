@@ -1,0 +1,31 @@
+!!! 5
+%html
+%head
+  = stylesheet_link_tag    "font-awesome.min"
+  = stylesheet_link_tag    "adage"
+  = javascript_include_tag "application"
+  = javascript_include_tag "sidebar"
+  = csrf_meta_tags
+
+  <!-- typekit -->
+  %script{ :type=> "text/javascript", :src=>"//use.typekit.net/tbz4lac.js"}
+  :javascript
+      try{Typekit.load();}catch(e){};
+
+%body
+  .page_wrap
+    .main_content
+      .welcome_or_error_container
+        - if flash[:alert].present?
+          %p.flashbox.alert
+            = flash[:alert]
+
+        -  if flash[:notice].present?
+          %p.flashbox.error_text
+            = flash[:notice]
+
+        -  if flash[:error].present?
+          %p.flashbox.error_text
+            = raw format_flash(flash[:error])
+      = yield
+  .clear

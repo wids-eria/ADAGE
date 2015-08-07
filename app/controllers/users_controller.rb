@@ -294,9 +294,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def homepage
+    subdomain = request.subdomain(0)
+    @org = Organization.where(subdomain: subdomain).first
+    @classes = current_user.owned_groups.where(organization_id: @org)
+
+    render layout: "homepage"
+  end
+
   protected
-
-
   def application
     @application ||= Client.where(app_token: params[:client_id]).first
   end
