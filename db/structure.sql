@@ -222,6 +222,16 @@ CREATE TABLE games (
 
 
 --
+-- Name: games_groups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE games_groups (
+    game_id integer,
+    group_id integer
+);
+
+
+--
 -- Name: games_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -909,6 +919,20 @@ CREATE INDEX fk__clients_implementation_id ON clients USING btree (implementatio
 
 
 --
+-- Name: fk__games_groups_game_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__games_groups_game_id ON games_groups USING btree (game_id);
+
+
+--
+-- Name: fk__games_groups_group_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__games_groups_group_id ON games_groups USING btree (group_id);
+
+
+--
 -- Name: fk__group_ownerships_group_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1134,6 +1158,22 @@ ALTER TABLE ONLY clients
 
 
 --
+-- Name: fk_games_groups_game_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY games_groups
+    ADD CONSTRAINT fk_games_groups_game_id FOREIGN KEY (game_id) REFERENCES games(id);
+
+
+--
+-- Name: fk_games_groups_group_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY games_groups
+    ADD CONSTRAINT fk_games_groups_group_id FOREIGN KEY (group_id) REFERENCES groups(id);
+
+
+--
 -- Name: fk_games_organization_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1330,3 +1370,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150727220525');
 INSERT INTO schema_migrations (version) VALUES ('20150806191710');
 
 INSERT INTO schema_migrations (version) VALUES ('20150806212533');
+
+INSERT INTO schema_migrations (version) VALUES ('20150810182302');

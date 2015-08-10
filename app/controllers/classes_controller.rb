@@ -1,11 +1,11 @@
 class ClassesController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :get_subdomain
   layout 'homepage'
 
   def index
     @group = Group.find(params[:id])
     authorize! :read, @group
-
   end
 
   def show
@@ -13,20 +13,13 @@ class ClassesController < ApplicationController
     authorize! :read, @group
   end
 
-
   def edit
     @group = Group.find(params[:id])
     authorize! :manage, @group
-
   end
-
 
   def update
     @group = Group.find(params[:id])
-
-    subdomain = request.subdomain(0)
-    @org = Organization.where(subdomain: subdomain).first
-    authorize! :manage, @org
 
     params[:group][:group_type] = "class"
     params[:group][:organization] = @org
@@ -40,18 +33,10 @@ class ClassesController < ApplicationController
   end
 
   def new
-    subdomain = request.subdomain(0)
-    @org = Organization.where(subdomain: subdomain).first
-    authorize! :manage, @org
-
     @group = Group.new(params[:group])
   end
 
   def create
-    subdomain = request.subdomain(0)
-    @org = Organization.where(subdomain: subdomain).first
-    authorize! :manage, @org
-
     @group = Group.new(params[:group])
     @group.group_type = "class"
     @group.organization = @org
@@ -65,4 +50,11 @@ class ClassesController < ApplicationController
       redirect_to new_class_path(id: @group)
     end
   end
+
+  protected
+    def get_subdomain
+      subdomain = request.subdomain(0)
+      @org = Organization.where(subdomain: subdomain).first
+      authorize! :manage, @org
+    end
 end

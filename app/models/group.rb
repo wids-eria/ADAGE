@@ -1,5 +1,6 @@
 class Group < ActiveRecord::Base
   has_and_belongs_to_many :users
+  has_and_belongs_to_many :games
 
   has_many :group_ownerships
   has_many :owners, through: :group_ownerships, source: :user
@@ -15,7 +16,7 @@ class Group < ActiveRecord::Base
   validates_uniqueness_of :code
   validate  :unique_name
 
-  attr_accessible :name, :code, :user_ids, :playsquad, :owner,:organization,:organization_id,:type
+  attr_accessible :name, :code, :user_ids, :playsquad, :owner,:organization,:organization_id,:type,:games
 
   def AddUser(user)
     unless user.nil?

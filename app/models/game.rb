@@ -1,10 +1,12 @@
 class Game < ActiveRecord::Base
 
-  attr_accessible :name, :implementations,:organization
+  attr_accessible :name, :implementations,:organization,:groups
   validate  :unique_name
   validates_presence_of :organization,:name
-  has_many :implementations, dependent: :delete_all
 
+  has_and_belongs_to_many :groups
+
+  has_many :implementations, dependent: :delete_all
   has_many :roles, dependent: :delete_all
   has_many :dashboards, dependent: :delete_all
 
