@@ -1,0 +1,21 @@
+
+.container.two_thirds.left
+  .element
+    %h4 
+      Classes
+      = link_to 'Manage Classes', new_class_path
+    - @classes.each do |item|
+      = link_to item.name, class_path(item)
+
+.container.full.left
+  .element
+    .title Games
+    - @games.each do |item|
+      #name 
+        = item.name
+
+      - item.groups.classes.each do |c|
+        - if can? :read, c
+          #classes Classes
+          = c.name
+
