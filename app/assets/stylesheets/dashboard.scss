@@ -453,6 +453,11 @@ select{
             &:last-child{
                 color:white;
                 opacity:1;
+
+                a{
+                    color:white;
+                    opacity:1;
+                }                 
             }
             
         }

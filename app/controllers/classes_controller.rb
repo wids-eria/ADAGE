@@ -6,11 +6,14 @@ class ClassesController < ApplicationController
   def index
     @group = Group.find(params[:id])
     authorize! :read, @group
+    breadcrumb("Class Management")
   end
 
   def show
     @group = Group.find(params[:id])
     authorize! :read, @group
+
+    breadcrumb("#{@group.name} Dashboard")
   end
 
   def edit
@@ -56,5 +59,6 @@ class ClassesController < ApplicationController
       subdomain = request.subdomain(0)
       @org = Organization.where(subdomain: subdomain).first
       authorize! :manage, @org
+      params[:page_title] = "Class Management"
     end
 end

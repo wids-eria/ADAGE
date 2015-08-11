@@ -47,17 +47,15 @@
     .content.full
       .header_content
         .page_label
-          %p.header Game name Here
+          %p.header 
+            = session[:breadcrumb][-1][:key].titleize
       .breadcrumb_container
         %ul.breadcrumbs
-          %li 
-            %a University of Wisconsin, Madison
-            %li.dot &#9679;
-          %li 
-            %a University of Wisconsin, Madison
-            %li.dot &#9679;
-          %li 
-            %a University of Wisconsin, Madison
+          - for i in 0..session[:breadcrumb].length - 1
+            %li 
+              = link_to session[:breadcrumb][i][:key], session[:breadcrumb][i][:url]
+            -if i < session[:breadcrumb].length - 1
+              %li.dot &#9679;
 
     .main_content
       .welcome_or_error_container

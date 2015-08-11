@@ -168,6 +168,34 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def breadcrumb(key,flush = false)
+    url = request.original_url
+
+    if flush
+      session[:breadcrumb] = nil
+    end
+
+    if session[:breadcrumb].nil? or session[:breadcrumb].length == 0
+      session[:breadcrumb] = [{key: key,url: url}]
+    else
+      found = false
+
+      l = session[:breadcrumb].length
+      for i in 0..l-1 do
+        if session[:breadcrumb][i][:key] == key
+          if i <= l -1 
+            session[:breadcrumb].slice!(i+1,l) 
+          end
+          found = true
+        end
+      end
+
+      unless found
+        session[:breadcrumb] << {key: key,url: url}
+      end
+    end
+  end
+
   protected
 
   def oauth_access_token

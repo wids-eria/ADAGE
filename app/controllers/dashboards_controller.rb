@@ -8,12 +8,18 @@ class DashboardsController < ApplicationController
   def homepage
     @classes = current_user.owned_groups.where(organization_id: @org)
     @games = Game.joins(:groups).where('groups.id' => @classes).all
+
+    params[:page_title] = "Homepage"
+
+    breadcrumb("Homepage",true)
   end
 
 
   def show
     @game = Game.find(params[:id])
 
+    params[:page_title] = @game.name
+    breadcrumb("#{@game.name} Dashboard")
   end
 
   protected
