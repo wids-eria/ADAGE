@@ -35,6 +35,9 @@ Ada::Application.routes.draw do
   resources :organizations
   resources :classes
 
+  resources :dashboards do
+
+  end
   resources :games do
     member do
       post :search_users

@@ -1,0 +1,772 @@
+
+/*------------------------------------------------------------------
+
+STYLESHEET CONTENTS
+
+    -- GLOBAL STYLES
+    -- MISC CLASSES
+    -- ACTIVE PAGE
+    -- CONTAINERS
+    -- NAVIGATION
+    -- ELEMENTS
+    -- FOOTER
+    
+-------------------------------------------------------------------*/
+
+
+/*------------------------------------------------------------------
+
+    Global Styles
+
+-------------------------------------------------------------------*/
+
+@import 'mixins';
+
+* {
+    margin:0; padding:0;
+
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+    }
+
+html{ overflow:scroll; background:url(bg.png) 50% 0% no-repeat #26323c;  }
+
+body{ font-family:verdana; font-size:12px; }
+
+a{ text-decoration:none; }
+    a:hover{  }
+
+p{
+    font-family: chaparral-pro;
+    color: #546a7c;
+    font-size: 19px;
+    font-weight: 300;
+}
+    p.logotype{
+        font-family:ubuntu;
+        font-weight:700;
+        color:white;
+        font-size:35px;
+    }
+    
+    p.betatype{
+        font-family:ubuntu;
+        font-weight:300;
+        color:#4d7698;
+        font-size:35px;
+        margin:65px 0 0 10px;
+    }
+    
+    p.poweredby{
+        font-family:ubuntu;
+        font-weight:300;
+        color:#4d7698;
+        font-size:15px;
+        margin:15px 15px 0 0;
+    }
+    
+    .small_text{
+        font-family: ubuntu;
+        font-size: 15px;
+        color: #546a7c;
+        margin:10px 0;
+        
+        a{
+            color:#5C9941;
+            font-weight:500;
+            
+            &:hover{
+                text-decoration:underline;
+            }
+        }
+    }
+
+ul{ list-style:none; }
+
+hr{  }
+
+h1{  }
+h2{  }
+h3{  }
+h4{  }
+h5{  }
+
+::selection{ background:#14191e; color:white; }
+
+input[type="submit"]{
+    border:none;
+    
+    &.green_button{
+        margin:0 0 0 5px;
+        
+        &:active{
+            margin:5px 0 -5px 5px;
+        }
+    }
+}
+
+input[type="search"]{
+    @include rounded_corners;
+    
+    background: #f6f9fc;
+    border: 1px solid #d0dce6;
+    padding: 10px 10px 10px 5px;
+    
+    font-family: ubuntu;
+    font-size: 16px;
+    color: #839eb5;
+    font-style: italic;
+}
+
+select{
+    @include rounded_corners;
+    width:200px;
+    
+    background: #f6f9fc;
+    border: 1px solid #d0dce6;
+    padding: 9px 10px 9px 5px;
+    margin:0 15px;
+    
+    font-family: ubuntu;
+    font-size: 16px;
+    color: #839eb5;
+    font-style: italic;
+    
+}
+
+.header{
+    font-family: ubuntu;
+    color: #c4ecff;
+    font-size: 25px;
+}
+
+/* End Global Styles */
+
+
+/*------------------------------------------------------------------
+
+    Misc Classes
+
+-------------------------------------------------------------------*/
+
+.clear{ clear: both; }
+
+.left{ float:left; }
+.right{ float:right; }
+
+.bold{ font-weight:500;}
+.italic{ font-style: italic; }
+.underline{ text-decoration:underline; }
+
+.center_text{ text-align:center; }
+.all_caps{ text-transform:uppercase; }
+.lower_case{ text-transform:lowercase; }
+
+/* End Misc Classes */
+
+
+
+/*------------------------------------------------------------------
+
+    Active Page
+
+-------------------------------------------------------------------*/
+
+    /*
+      body#ID_NAME_HERE .Navigation_Name li.List_Item_Class_Here{ Style for active Nav button }
+    */
+
+/* End Active Page */
+
+
+
+/*------------------------------------------------------------------
+
+    Containers
+
+-------------------------------------------------------------------*/
+
+.one_half{ width:50%; }
+.full{ @include full;}
+
+
+.page_wrap{ padding:20px; }
+.content{ padding:10px; }
+.container{
+    @include full;
+    @include rounded_corners;
+    
+    float:left;
+    padding:20px;
+    background: #fff;
+    
+    .header{
+        color: #4597b5;
+        font-weight:500;
+    }
+    
+    .one_half{
+        padding:0 10px;
+    }
+    
+}
+
+.subcontainer{
+    @include rounded_corners;
+    @include full;
+    
+    padding:20px;
+    margin:10px 0;
+    background: #f6f9fc;
+    border: 1px solid #d0dce6;
+    
+    .login_element{
+        input{
+            background:white;
+        }
+    }
+    
+    .file_import{
+        @include full;
+        
+        border: 1px solid #d0dce6;
+        padding: 10px 10px 10px 10px;
+        margin:10px 0; 
+        background:white;
+    }
+}
+
+
+
+
+.login_element{
+    @include full;
+    
+    label{
+        float:left;
+        font-family:ubuntu;
+        font-size:16px;
+        color:#546a7c;
+        margin:13px 10px 5px 0;
+    }
+    
+    input{
+        @include full;
+        @include rounded_corners;
+        
+        background:#f6f9fc;
+        border:1px solid #d0dce6;
+        padding:10px 10px 10px 5px;
+        
+        font-family:ubuntu;
+        font-size:16px;
+        color:#839eb5;
+        font-style:italic;
+    }
+    
+}
+
+
+
+/* End Containers */
+
+
+
+/*------------------------------------------------------------------
+
+    Navigation
+
+-------------------------------------------------------------------*/
+
+.navigation_container{
+    @include full;
+    
+    padding:20px 0;
+    background:#10161c;
+    
+    .navigation{
+        padding:0 30px;
+        
+        .header{            
+            font-size:22px;
+            margin-bottom:5px;
+        }
+        
+        .logotype{
+            margin-top:-45px;
+        }
+        
+        .breadcrumb_container{
+
+            .breadcrumbs{
+                list-style:none;
+                
+                li{
+                    float:left;
+                    color:white;
+                    opacity:.25; 
+                }
+                
+                a{
+                    @include transition;
+                    
+                    li{
+                        color:white;
+                        opacity:.25;
+                        
+                         &:hover{
+                            @include transition;
+                            
+                            color:white;
+                            opacity:1;
+                        }
+                    }
+
+                }
+
+            }
+        }
+    }
+}
+
+
+/* End Navigation */
+
+
+
+/*------------------------------------------------------------------
+
+    Elements
+
+-------------------------------------------------------------------*/
+  
+.element{  }
+
+.small_logo{
+    @include center;
+    
+    width:285px;
+    padding:0 0 0 0;
+    
+    .logotype{
+        font-size:35px;
+        margin:3px 0 0 0;
+    }
+    
+    .betatype{
+        font-size:22px;
+        margin:17px 0 0 5px;
+    }
+}
+
+.green_button{
+    margin:10px 0 0 0;
+    padding:9px 10px 9px 10px;
+    border-radius:3px;
+    box-shadow:0px 4px 0px #5c9941,
+               0px 2px 5px rgba(0,0,0,.15);
+    border-top:1px solid #caf6aa;
+    
+    font-family:ubuntu;
+    font-size:16px;
+    color:white;
+    font-weight:700;
+    letter-spacing:.5px;
+    
+    background: #8fd06f; /* Old browsers */
+    background: -moz-linear-gradient(top,  #8fd06f 0%, #7fca61 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#8fd06f), color-stop(100%,#7fca61)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #8fd06f 0%,#7fca61 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #8fd06f 0%,#7fca61 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #8fd06f 0%,#7fca61 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #8fd06f 0%,#7fca61 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8fd06f', endColorstr='#7fca61',GradientType=0 ); /* IE6-9 */
+
+    &:hover{
+        cursor:pointer;
+    
+        background: #9cce84; /* Old browsers */
+        background: -moz-linear-gradient(top,  #9cce84 0%, #8bc970 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9cce84), color-stop(100%,#8bc970)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  #9cce84 0%,#8bc970 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top,  #9cce84 0%,#8bc970 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,  #9cce84 0%,#8bc970 100%); /* IE10+ */
+        background: linear-gradient(to bottom,  #9cce84 0%,#8bc970 100%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9cce84', endColorstr='#8bc970',GradientType=0 ); /* IE6-9 */
+    }
+    
+    &:active{
+        box-shadow:0px 0px 2px rgba(0,0,0,.15);
+        margin:14px 0 -4px 0px;
+    }
+
+}
+
+.gbm{
+    margin-left:15px;
+    
+    &:active{
+        margin-left:15px;
+    }
+}
+
+
+.header_content{
+    float:left;
+    
+    .page_label{
+        @include full;
+        
+        .header{
+            float:left;
+            margin:0 30px 8px 0 
+        }
+    }
+    
+}
+
+.breadcrumb_container{
+    @include full;
+    
+    .breadcrumbs{
+        list-style:none;
+        
+        li{
+            float:left;
+            
+            a{
+                @include transition;
+                
+                color:white;
+                opacity:.25;
+                
+                &:hover{
+                    @include transition;
+                    
+                    color:white;
+                    opacity:1;
+                }
+            
+            }
+            
+            &:last-child{
+                color:white;
+                opacity:1;
+            }
+            
+        }
+        
+        .dot{
+            color:white;
+            padding:0 10px;
+            opacity:.25;
+        }
+    }
+}
+
+.remove_icon{
+    @include transition;
+    
+    height:25px;
+    width:25px;
+    background:url(remove_icon.png);
+    
+    &:hover{
+        @include transition;
+        opacity:.5;
+    }
+}
+
+.edit_icon{
+    @include transition;
+    
+    height:25px;
+    width:25px;
+    background:url(edit_icon.png);
+    margin-left:10px;
+    
+    &:hover{
+        @include transition;
+        opacity:.5;
+    }
+}
+
+.info_icon{
+    @include transition;
+    
+    height:25px;
+    width:25px;
+    background:url(info_icon.png);
+    margin-left:10px;
+    
+    &:hover{
+        @include transition;
+        opacity:.5;
+    }
+}
+
+.flag_icon{
+    height:25px;
+    width:25px;
+    background:url(flag_icon.png);
+    margin-right:10px;
+}
+
+
+.flagged_items{
+    @include full;
+    
+    margin-top:8px;
+    
+    a{
+       li{
+            &:hover{
+                text-decoration:underline;
+            }
+
+        }
+        
+        &:nth-child(odd){
+            @include full;
+    
+            padding:10px 10px 10px 10px;
+            background:#F6F9FC;
+                        
+            font-family: chaparral-pro;
+            color: #546a7c;
+            font-size: 19px;
+            font-weight: 300;
+         }
+             
+        &:nth-child(even){
+           @include full;
+           
+           padding:10px 10px 10px 10px;
+           background:white;
+           
+           font-family: chaparral-pro;
+           color: #546a7c;
+           font-size: 19px;
+           font-weight: 300;
+       }
+    }
+    
+    
+}
+
+.small_arrow{
+    @include transition;
+    
+    height:11px;
+    width:10px;
+    background:url(small_arrow.png);
+    margin-top:6px;
+    opacity:.75;
+    
+    &:hover{
+        @include transition;
+    
+        opacity:.25;
+    }
+    
+}
+
+/* End Elements */
+
+
+
+/*------------------------------------------------------------------
+
+    Accordion Styles
+
+-------------------------------------------------------------------*/
+
+    #accordion{
+        .ui-accordion-header{
+            font-family: ubuntu;
+            font-size: 16px;
+            color: #546a7c;
+            padding:10px 10px 10px 30px;
+        }
+        
+        .ui-accordion-content{
+            padding:20px;
+        }
+        
+        .ui-state-default{
+            background: #f6f9fc;
+            border: 1px solid #d0dce6;
+        }
+        
+        .ui-state-active{
+            background:white;
+            font-weight:500;
+        }
+        
+        li:nth-child(odd){
+            @include full;
+            
+            padding:10px 10px 10px 10px;
+            background:#F6F9FC;
+                        
+            font-family: chaparral-pro;
+            color: #546a7c;
+            font-size: 19px;
+            font-weight: 300;
+        }
+        
+        li:nth-child(even){
+            @include full;
+            
+            padding:10px 10px 10px 10px;
+            background:white;
+            
+            font-family: chaparral-pro;
+            color: #546a7c;
+            font-size: 19px;
+            font-weight: 300;
+        }
+        
+        .accordion_student_list{
+            li{
+                .accordion_student_name{
+                    float:left;
+                }
+                
+                .student_management{
+                    float:right;
+                }
+            }
+        }
+    }
+
+
+
+/* End Accordion Styles */
+
+
+/*------------------------------------------------------------------
+
+    Datepicker
+
+-------------------------------------------------------------------*/
+
+
+.datepicker{
+    input[type="text"]{
+        @include rounded_corners;
+        
+        width:110px;
+        background: #f6f9fc;
+        border: 1px solid #d0dce6;
+        padding: 10px 10px 10px 5px;
+        
+        font-family: ubuntu;
+        font-size: 16px;
+        color: #839eb5;
+        font-style: italic;
+    }
+    
+    label{
+        font-family: ubuntu;
+        font-size: 16px;
+        color:white;   
+    }
+    
+}
+
+.ui-widget-content{
+    background:#f6f9fc !important;
+    border: 1px solid #d0dce6 !important;
+    padding: 10px 10px 10px 5px !important;
+}
+
+
+.ui-datepicker{
+    width:auto !important;
+    
+	.ui-datepicker-header{
+        background:none;
+        border:none;
+
+		.ui-datepicker-next{
+            margin-top:20px;
+		}		
+
+		.ui-datepicker-prev{
+			margin-top:20px;
+		}
+	
+		.ui-datepicker-title{
+            @include rounded_corners;
+            
+	 		margin: 0 auto;
+            border: 1px solid #d0dce6;
+            background:white;
+            padding:10px;
+		}
+	}
+
+	table{
+
+		th{
+			color: #4597b5;
+		}
+
+		td{
+
+            
+			background-color: rgba(199, 199, 199, 0.59);
+			text-align: center;
+
+			a{
+				color: red;
+				text-decoration: none;
+			}
+            
+            .ui-state-default{
+                border: 1px solid #d0dce6;
+                background:white;
+                font-weight: normal;
+                color: #546a7c;
+                padding:5px 8px;
+            }
+		}
+	}
+
+	.ui-datepicker-calendar{
+        @include full;
+	}
+}
+
+
+/* End Datepicker */
+
+
+
+/*------------------------------------------------------------------
+
+    Footer
+
+-------------------------------------------------------------------*/
+.footer{
+    @include full;
+    
+    padding:0 20px;
+    margin:20px 0 30px 0 ;
+}
+
+/* End Footer */
+
+
+
+
+
+
+
+
+
+
+
+

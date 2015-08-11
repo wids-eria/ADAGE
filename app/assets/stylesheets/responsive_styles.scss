@@ -1,0 +1,75 @@
+/*------------------------------------------------------------------
+
+    Responsive Styles
+    
+-------------------------------------------------------------------*/
+
+@import 'mixins';
+
+@media screen and (min-width:1260px){
+    
+    .page_wrap{
+        @include center;
+        
+        width:1260px;
+    }
+    
+    .navigation{
+        @include center;
+        
+        width:1260px;
+    }
+    
+}
+
+@media screen and (max-width:1259px){
+    
+    .page_wrap{
+        @include full;
+    }
+    
+    .navigation{
+        @include full;
+    }
+}
+
+
+
+@media screen and (max-width:635px){
+    .page_wrap,
+    .one_half,
+    .navigation,
+    .datepicker,
+    .search,
+    .class_dropdown,
+    {
+        @include full;
+    }
+    
+}
+
+
+@media (min-width: 635px) and (max-width:770px){
+    
+    
+}
+
+
+@media (min-device-width: 519px) and (max-devide-width:770px){
+    
+    
+}
+
+
+/*Smartphones*/
+@media (max-device-width: 519px) {
+    
+    
+
+}
+
+
+
+
+
+

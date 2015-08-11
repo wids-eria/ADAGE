@@ -29,7 +29,8 @@ gem 'rqrcode_png'
 gem 'zoo_pass', github: 'wids-eria/zoo_pass', branch: 'abstracting'
 
 gem 'omniauth-oauth2', '1.1.1'
-gem 'rack-mini-profiler'
+gem "paperclip",'4.1.1'
+
 group :assets do
   gem 'sass-rails',   '~> 3.2.2'
   gem 'coffee-rails', '~> 3.2.1'

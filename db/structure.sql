@@ -217,7 +217,11 @@ CREATE TABLE games (
     name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    organization_id integer
+    organization_id integer,
+    image_file_name character varying(255),
+    image_content_type character varying(255),
+    image_file_size integer,
+    image_updated_at timestamp without time zone
 );
 
 
@@ -432,7 +436,11 @@ CREATE TABLE organizations (
     name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    subdomain character varying(255)
+    subdomain character varying(255),
+    logo_file_name character varying(255),
+    logo_content_type character varying(255),
+    logo_file_size integer,
+    logo_updated_at timestamp without time zone
 );
 
 
@@ -1372,3 +1380,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150806191710');
 INSERT INTO schema_migrations (version) VALUES ('20150806212533');
 
 INSERT INTO schema_migrations (version) VALUES ('20150810182302');
+
+INSERT INTO schema_migrations (version) VALUES ('20150810222329');

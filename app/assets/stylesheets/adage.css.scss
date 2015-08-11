@@ -207,6 +207,15 @@ h5{  }
                 margin: -10px -10px 10px -10px;
                 background-color: rgb(231, 234, 234);
 
+                img{
+                    @include rounded_corners;
+                    height: auto; 
+                    width: 100%; 
+                    max-width: 100%; 
+                    max-height: 100%;
+                    //margin-top: 10px;
+                }
+
                 span{
                     position: absolute;                    
                     width: 80%;
@@ -214,7 +223,7 @@ h5{  }
                     left: 10%;
                     text-align: center;
 
-                    color: $secondary-font;
+                    color: white;
                 }
 
                 .fa{

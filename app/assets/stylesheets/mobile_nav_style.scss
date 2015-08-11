@@ -1,0 +1,204 @@
+/*------------------------------------------------------------------
+
+    Mobile Navigation
+
+-------------------------------------------------------------------*/
+
+@import 'mixins';
+
+/* Menu Icon */
+@font-face {
+    font-family: 'fontello';
+    src: url('fontello.eot');
+    src: url('fontello.eot') format('embedded-opentype'),
+         url('fontello.woff') format('woff'),
+         url('fontello.ttf') format('truetype'),
+         url('fontello.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.mobile_nav{
+    /* Menu header background color */
+    background:#f1f1f1;
+    
+    /* Hide Mobile Nav */
+    display:none;
+    
+    .navtoggle{
+        /* Styling the toggle menu link and hiding it */
+        display: none;  
+        width: 100%;
+        padding: 4%;
+        background: none;   
+        border: none;
+        cursor: pointer;
+    }
+}
+ 
+/* Remove the blue Webkit background when element is tapped */
+a, button {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.no-touch{
+    .mobile_nav{
+        /* Menu Item Style */
+        li{
+            @include transition;
+            
+            padding:4%;
+            background:#f9f9f9;
+            border-top:1px solid rgba(0,0,0,.05);
+            
+            color:#555;
+            font-family:verdana;
+
+            &:hover{
+                background:white;
+                cursor:pointer;
+            }
+        }
+    }
+}
+
+
+/* Web Styles */
+@media (max-width: 575px) {
+    
+    .mobile_nav{
+        /* Unhide Mobile Nav */
+        display:block;
+        
+        .navtoggle{
+            margin: 0;
+            display: block;
+            
+            /* Menu Icon */
+            color:#333;
+            font-size: 25px;
+            font-family: verdana;
+            text-align: left;
+        }
+    }
+ 
+    /* If JavaScript is disabled, the menu stays open */
+    .no-js{
+        .mobile_nav ul {
+            max-height: 30em;
+            overflow: hidden;
+        }
+    }
+    
+    /* When JavaScript is enabled, we hide the menu */
+    .js{
+        .mobile_nav{
+            ul {
+                max-height: 0em;
+                overflow: hidden;
+            }
+        }
+    } 
+     
+    /* Displaying the menu when the user has clicked on the button */
+    .js{
+        .mobile_nav{
+            .active + ul{
+                max-height: 30em;
+                overflow: hidden;
+                transition: max-height .4s;
+            }
+        }
+    }
+
+} /* End Web */
+
+/* Smartphones */
+@media (max-device-width: 519px) {
+
+    .mobile_nav{
+        /* Unhide Mobile Nav */
+        display:block;
+        
+        /* Style for the main nav button background */
+        background:#f2f2f2;
+        
+        /* Menu Item Style */
+        li{
+            @include transition;
+            
+            padding:4%;
+            background:#f9f9f9;
+            border-top:1px solid rgba(0,0,0,.05);
+            
+            color:#555;
+            font-size:20px;
+            font-family:verdana;
+
+            &:hover{
+                background:white;
+                cursor:pointer;
+            }
+        }
+        
+        .navtoggle{
+            margin: 0;
+            display: block;
+            
+            /* Menu Icon */
+            color:#333;
+            font-size: 25px;
+            font-family: verdana;
+            text-align: left;
+        }
+    }
+ 
+    /* If JavaScript is disabled, the menu stays open */
+    .no-js{
+        .mobile_nav ul {
+            max-height: 30em;
+            overflow: hidden;
+        }
+    }
+    
+    /* When JavaScript is enabled, we hide the menu */
+    .js{
+        .mobile_nav{
+            ul {
+                max-height: 0em;
+                overflow: hidden;
+            }
+        }
+    } 
+     
+    /* Displaying the menu when the user has clicked on the button */
+    .js{
+        .mobile_nav{
+            .active + ul{
+                max-height: 100em;
+                overflow: hidden;
+                transition: max-height .4s;
+            }
+        }
+    }
+
+} /* End Smartphones */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

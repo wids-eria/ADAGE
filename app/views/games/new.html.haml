@@ -12,6 +12,7 @@
         %p
         = game.label :name
         = game.text_field :name
+        = game.file_field :image, as: :file
         = game.hidden_field :organization_id, value: params[:organization]
         %p
         = game.submit 'Add'

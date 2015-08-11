@@ -1,0 +1,56 @@
+!!! 5
+%html
+%head
+  %title Adage
+  // stylesheet_link_tag    "graph"
+  // stylesheet_link_tag    "detail"
+  = stylesheet_link_tag    "logger"
+  = stylesheet_link_tag    "font-awesome.min"
+  // stylesheet_link_tag    "rickshaw"
+  = stylesheet_link_tag    "dashboard"
+  = stylesheet_link_tag    "fontello/fontello"
+  = stylesheet_link_tag    "fontello/animation"
+  = stylesheet_link_tag    "responsive_styles"
+  = stylesheet_link_tag    "mobile_nav_style"
+  = javascript_include_tag "application"
+  = javascript_include_tag "sidebar"
+  = csrf_meta_tags
+
+  <!-- typekit -->
+  %script{ :type=> "text/javascript", :src=>"//use.typekit.net/tbz4lac.js"}
+  :javascript
+      try{Typekit.load();}catch(e){};
+
+%body
+  - if user_signed_in?
+    #userSecret(style="display:none")
+      = current_user.authentication_token
+
+  .navigation_container
+    .navigation
+      %p.header.full &nbsp;
+      .breadcrumb_container
+      %p.logotype.right ADAGE
+
+  .page_wrap
+    .content.full
+      .main_content
+        .welcome_or_error_container
+          - if flash[:alert].present?
+            %p.flashbox.alert
+              = flash[:alert]
+
+          -  if flash[:notice].present?
+            %p.flashbox.error_text
+              = flash[:notice]
+
+          -  if flash[:error].present?
+            %p.flashbox.error_text
+              = raw format_flash(flash[:error])
+      = yield
+  .clear
+  .footer
+    .small_logo.floatleft
+      %p.left.poweredby Powered By
+      %a(href="http://www.adageapi.org" target="_blank")
+        %p.left.logotype ADAGE

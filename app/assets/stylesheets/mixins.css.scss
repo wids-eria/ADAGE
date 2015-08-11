@@ -1,3 +1,34 @@
+/*------------------------------------------------------------------
+
+    Mixins
+
+-------------------------------------------------------------------*/
+
+@mixin center{ margin:0 auto; }
+
+@mixin full { width:100%; float:left; }
+
+@mixin vertical_align{
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+@mixin transition{
+    -webkit-transition: all 0.2s ease;
+       -moz-transition: all 0.2s ease;
+        -ms-transition: all 0.2s ease;
+         -o-transition: all 0.2s ease;
+}
+
+@mixin rounded_corners{
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+}
+
 @mixin rounded($radius) {
   -webkit-border-radius: $radius;
      -moz-border-radius: $radius;
@@ -7,3 +38,6 @@
 
   border-collapse: separate;
 }
+
+
+/* End Mixins */

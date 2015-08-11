@@ -16,16 +16,4 @@
   .container.full.left
     .element
       .title 
-        = "Welcome Back!, #{current_user.player_name}"
-  .container.one_third.left
-    .element
-      %h4 Profile Stuff
-  .container.two_thirds.left
-    .element
-      %h4 
-        Classes
-        = link_to 'Create Class', new_class_path
-      - @classes.each do |item|
-        = link_to item.name, class_path(item)
-      - @games.each do |item|
-        = item.name
+        = "Welcome, #{current_user.player_name}"

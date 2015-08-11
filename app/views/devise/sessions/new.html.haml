@@ -1,28 +1,35 @@
-.login_container
-  = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
-    .field_container.login_element
-      = f.label :login, class: 'floatleft'
-      = f.text_field :login, class: 'floatright', placeholder: 'Playername or Email'
-    .field_container.login_element
-      = f.label :password, class: 'floatleft'
-      = f.password_field :password, class: 'floatright', placeholder: 'Password'
-    - if @code
-      .field_container.login_element
-        = f.label :code, class: 'floatleft'
-        = f.text_field :group, class: 'floatright', placeholder: 'Play Code (optional)'
-    .field_container_remember_me.full
-      = f.submit "Sign in", class: 'sign_in_button fork_button floatright'
-      - if devise_mapping.rememberable?
-        .remember_me
-          = f.check_box :remember_me, class: 'remember_me_checkbox'
-          %p
-            = f.label :remember_me, class: ''
 
-.sign_up
-  %p.floatleft
-    = link_to 'Sign Up', new_user_registration_url, class: 'floatleft'
-  %p.floatright
-    = link_to 'Forgot your password?', new_user_password_url, class: 'floatright'
+.content.full
+  .container
+    .one_half.left
+      %p.header DeVry Login Page
+      %P asdasds
+      .full
+        = link_to 'Register', new_user_registration_url, class: 'green_button left'
+    .one_half.right
+      %p.header Sign In
+
+      = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
+        .login_element
+          = f.label :login, class: ''
+          = f.text_field :login, class: '', placeholder: 'Playername or Email'
+        .login_element
+          = f.label :password, class: ''
+          = f.password_field :password, class: '', placeholder: 'Password'
+        - if @code
+          .login_element
+            = f.label :code, class: ''
+            = f.text_field :group, class: '', placeholder: 'Play Code (optional)'
+
+        - if devise_mapping.rememberable?
+          .login_element
+            = f.label :remember_me, class: ''
+            = f.check_box :remember_me, class: ''
+
+        .full
+          = f.submit "Sign in", class: 'green_button left'
+          = link_to 'Forgot your password?', new_user_password_url, class: 'green_button right'
+
 //.sign_up_container
 //  .field_container
 //    = link_to 'Connect with Facebook', user_omniauth_authorize_path(:facebook), class: 'floatleft'

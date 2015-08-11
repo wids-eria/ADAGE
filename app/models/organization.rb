@@ -6,4 +6,7 @@ class Organization < ActiveRecord::Base
   has_many :users, through: :organization_roles
   has_many :games, dependent: :delete_all
   has_many :groups, dependent: :delete_all
+
+  has_attached_file :logo, :styles => { :medium => "300x300>", :thumb => "100x100>" }
+  validates_attachment :logo, content_type: {:content_type => ['image/png','image/jpg','image/jpeg']}
 end

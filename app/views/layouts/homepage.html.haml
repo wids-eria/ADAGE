@@ -1,19 +1,64 @@
 !!! 5
 %html
 %head
-  = stylesheet_link_tag    "font-awesome.min"
-  = stylesheet_link_tag    "adage"
+  //= stylesheet_link_tag    "font-awesome.min"
+  = stylesheet_link_tag    "dashboard"
+  = stylesheet_link_tag    "fontello/fontello"
+  = stylesheet_link_tag    "fontello/animation"
+  = stylesheet_link_tag    "responsive_styles"
+  = stylesheet_link_tag    "mobile_nav_style"
+  //= stylesheet_link_tag    "c3"
   = javascript_include_tag "application"
   = javascript_include_tag "sidebar"
   = csrf_meta_tags
 
   <!-- typekit -->
-  %script{ :type=> "text/javascript", :src=>"//use.typekit.net/tbz4lac.js"}
+  %script{ :type=> "text/javascript", :src=>"//use.typekit.net/iag3oxn.js"}
   :javascript
       try{Typekit.load();}catch(e){};
 
+      function toggleCodes(on) {
+        var obj = document.getElementById('icons');
+        
+        if (on) {
+          obj.className += ' codesOn';
+        } else {
+          obj.className = obj.className.replace(' codesOn', '');
+        }
+      }
+
 %body
+  .navigation_container
+    .navigation
+      %p.header.full 
+        Welcome Back,
+        %span.bold 
+          = current_user.player_name
+      .breadcrumb_container
+        %ul.breadcrumbs
+          %li University of Wisconsin, Madison
+          %li.dot &#9679;
+          = link_to destroy_user_session_url, method: :delete do
+            %li Logout
+
+      %p.logotype.right ADAGE
+
   .page_wrap
+    .content.full
+      .header_content
+        .page_label
+          %p.header Game name Here
+      .breadcrumb_container
+        %ul.breadcrumbs
+          %li 
+            %a University of Wisconsin, Madison
+            %li.dot &#9679;
+          %li 
+            %a University of Wisconsin, Madison
+            %li.dot &#9679;
+          %li 
+            %a University of Wisconsin, Madison
+
     .main_content
       .welcome_or_error_container
         - if flash[:alert].present?
@@ -29,3 +74,8 @@
             = raw format_flash(flash[:error])
       = yield
   .clear
+  .footer
+    .small_logo.floatleft
+      %p.left.poweredby Powered By
+      %a(href="http://www.adageapi.org" target="_blank")
+        %p.left.logotype ADAGE

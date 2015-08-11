@@ -1,9 +1,10 @@
 class Game < ActiveRecord::Base
 
-  attr_accessible :name, :implementations,:organization,:groups
+  attr_accessible :name, :implementations,:organization,:groups,:image
   validate  :unique_name
   validates_presence_of :organization,:name
 
+  has_attached_file :image, :styles => { :medium => "400x300>", :thumb => "100x75>" }
   has_and_belongs_to_many :groups
 
   has_many :implementations, dependent: :delete_all
@@ -19,6 +20,8 @@ class Game < ActiveRecord::Base
   after_create :create_researcher_role
   after_create :create_developer_role
   after_create :create_participant_role
+
+  validates_attachment :image, content_type: {:content_type => ['image/png','image/jpg','image/jpeg']}
 
   def users
    self.roles.where(id: participant_role.id).first.users

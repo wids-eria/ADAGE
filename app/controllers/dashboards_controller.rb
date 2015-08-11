@@ -10,6 +10,12 @@ class DashboardsController < ApplicationController
     @games = Game.joins(:groups).where('groups.id' => @classes).all
   end
 
+
+  def show
+    @game = Game.find(params[:id])
+
+  end
+
   protected
     def get_subdomain
       subdomain = request.subdomain(0)

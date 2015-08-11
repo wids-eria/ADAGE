@@ -1,6 +1,8 @@
 .container.one_third.left
   .element.game
     = link_to game, id: :title do
+      - if game.image.exists?
+        = image_tag game.image
       %span 
         = game.name
     #stats
