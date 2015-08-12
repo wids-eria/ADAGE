@@ -1,21 +1,44 @@
-.one_half.content.right
-  .container
-    .element
-      %h4 
-        Classes
-        = link_to 'Manage Classes', new_class_path
-      - @classes.each do |item|
-        = link_to item.name, class_path(item)
-
 .one_half.content.left
   .container
-    .element
-      .title Games
-      - @games.each do |item|
-        #name 
-          = item.name
-          = link_to item.name, dashboard_path(item)
-        - item.groups.classes.each do |c|
-          - if can? :read, c
-            #classes Classes
-            = c.name
+    %p.header Profile
+    %p.accordion_student_name 
+      = current_user.player_name
+    %i
+      = current_user.email
+    .clear
+    %i.accordion_student_name 
+      - @orgs.each do |org|
+        = org.name
+
+
+.one_half.content.right
+  .container
+    .content.one_half.header.left Your Classes
+    .content.one_half.header.right
+      = link_to new_class_path do
+        .green_button.right Create Class
+
+    %ul.flagged_items
+      - @classes.each do |item|
+        = link_to  class_path(item) do
+          %li
+            = item.name
+            .small_arrow.right
+
+.full.content.left
+  .container
+    %p.header Games
+    .game
+      - @games.each do |game|
+        .game.content.one_third.left
+          .subcontainer
+            = link_to dashboard_path(game), id: :title do
+              - if game.image.exists?
+                = image_tag game.image
+            %p.header.center_text
+              = game.name
+            %select.class_dropdown
+              - game.groups.classes.each do |c|
+                - if can? :read, c
+                  %option
+                    = c.name

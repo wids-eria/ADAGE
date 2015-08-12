@@ -37,6 +37,7 @@ class ClassesController < ApplicationController
 
   def new
     @group = Group.new(params[:group])
+    breadcrumb("Create Class")
   end
 
   def create

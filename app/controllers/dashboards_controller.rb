@@ -6,6 +6,7 @@ class DashboardsController < ApplicationController
   layout 'homepage'
 
   def homepage
+    @orgs = current_user.organizations
     @classes = current_user.owned_groups.where(organization_id: @org)
     @games = Game.joins(:groups).where('groups.id' => @classes).all
 

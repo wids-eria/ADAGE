@@ -10,6 +10,7 @@
 //= require bootstrap-datepicker
 //= require Chart
 //= require jquery.dynatable
+//= require jquery-ui.min
 //= require bootstrap
 //= require ICanHaz.min
 //= require d3.min

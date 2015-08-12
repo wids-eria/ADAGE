@@ -191,7 +191,7 @@ select{
 .full{ @include full;}
 
 
-.page_wrap{ padding:20px; }
+.page_wrap{ padding:20px;min-height: 100%; }
 .content{ padding:10px; }
 .container{
     @include full;

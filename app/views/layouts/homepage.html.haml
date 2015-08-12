@@ -1,79 +1,89 @@
 !!! 5
 %html
-%head
-  //= stylesheet_link_tag    "font-awesome.min"
-  = stylesheet_link_tag    "dashboard"
-  = stylesheet_link_tag    "fontello/fontello"
-  = stylesheet_link_tag    "fontello/animation"
-  = stylesheet_link_tag    "responsive_styles"
-  = stylesheet_link_tag    "mobile_nav_style"
-  //= stylesheet_link_tag    "c3"
-  = javascript_include_tag "application"
-  = javascript_include_tag "sidebar"
-  = csrf_meta_tags
+  %head
+    //= stylesheet_link_tag    "font-awesome.min"
+    = stylesheet_link_tag    "dashboard"
+    = stylesheet_link_tag    "fontello/fontello"
+    = stylesheet_link_tag    "fontello/animation"
+    = stylesheet_link_tag    "responsive_styles"
+    = stylesheet_link_tag    "mobile_nav_style"
+    = stylesheet_link_tag    "jquery-ui"
+    //= stylesheet_link_tag    "c3"
+    = javascript_include_tag "application"
+    = javascript_include_tag "sidebar"
+    = csrf_meta_tags
 
-  <!-- typekit -->
-  %script{ :type=> "text/javascript", :src=>"//use.typekit.net/iag3oxn.js"}
-  :javascript
-      try{Typekit.load();}catch(e){};
+    <!-- typekit -->
+    %script{ :type=> "text/javascript", :src=>"//use.typekit.net/iag3oxn.js"}
+    :javascript
+        try{Typekit.load();}catch(e){};
 
-      function toggleCodes(on) {
-        var obj = document.getElementById('icons');
-        
-        if (on) {
-          obj.className += ' codesOn';
-        } else {
-          obj.className = obj.className.replace(' codesOn', '');
+        function toggleCodes(on) {
+          var obj = document.getElementById('icons');
+          
+          if (on) {
+            obj.className += ' codesOn';
+          } else {
+            obj.className = obj.className.replace(' codesOn', '');
+          }
         }
-      }
+        $(function() {
+          $( "#accordion" ).accordion({
+            heightStyle: "content",
+            collapsible: true,
+            active: false
+          });
+        });
 
-%body
-  .navigation_container
-    .navigation
-      %p.header.full 
-        Welcome Back,
-        %span.bold 
-          = current_user.player_name
-      .breadcrumb_container
-        %ul.breadcrumbs
-          %li University of Wisconsin, Madison
-          %li.dot &#9679;
-          = link_to destroy_user_session_url, method: :delete do
-            %li Logout
 
-      %p.logotype.right ADAGE
 
-  .page_wrap
-    .content.full
-      .header_content
-        .page_label
-          %p.header 
-            = session[:breadcrumb][-1][:key].titleize
-      .breadcrumb_container
-        %ul.breadcrumbs
-          - for i in 0..session[:breadcrumb].length - 1
-            %li 
-              = link_to session[:breadcrumb][i][:key], session[:breadcrumb][i][:url]
-            -if i < session[:breadcrumb].length - 1
-              %li.dot &#9679;
+  %body
+    .navigation_container
+      .navigation
+        %p.header.full 
+          Welcome Back,
+          %span.bold 
+            = current_user.player_name
+        .breadcrumb_container
+          %ul.breadcrumbs
+            %li University of Wisconsin, Madison
+            %li.dot &#9679;
+            = link_to destroy_user_session_url, method: :delete do
+              %li Logout
 
-    .main_content
-      .welcome_or_error_container
-        - if flash[:alert].present?
-          %p.flashbox.alert
-            = flash[:alert]
+        %p.logotype.right ADAGE
 
-        -  if flash[:notice].present?
-          %p.flashbox.error_text
-            = flash[:notice]
+    .page_wrap
+      .content.full
+        .header_content
+          .page_label
+            %p.header 
+              = session[:breadcrumb][-1][:key].titleize
+        .breadcrumb_container
+          %ul.breadcrumbs
+            - for i in 0..session[:breadcrumb].length - 1
+              %li 
+                = link_to session[:breadcrumb][i][:key], session[:breadcrumb][i][:url]
+              -if i < session[:breadcrumb].length - 1
+                %li.dot &#9679;
 
-        -  if flash[:error].present?
-          %p.flashbox.error_text
-            = raw format_flash(flash[:error])
-      = yield
-  .clear
-  .footer
-    .small_logo.floatleft
-      %p.left.poweredby Powered By
-      %a(href="http://www.adageapi.org" target="_blank")
-        %p.left.logotype ADAGE
+      .main_content
+        .welcome_or_error_container
+          - if flash[:alert].present?
+            %p.flashbox.alert
+              = flash[:alert]
+
+          -  if flash[:notice].present?
+            %p.flashbox.error_text
+              = flash[:notice]
+
+          -  if flash[:error].present?
+            %p.flashbox.error_text
+              = raw format_flash(flash[:error])
+        = yield
+    .clear
+    .footer
+      .small_logo.floatleft
+        %p.left.poweredby Powered By
+        %a(href="http://www.adageapi.org" target="_blank")
+          %p.left.logotype ADAGE

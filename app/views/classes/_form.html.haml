@@ -1,4 +1,6 @@
-=simple_form_for(@group,url: update_class_path) do |f|
-	= f.input :name
-	= f.hidden_field :organization_id, value: params[:organization]
-	= f.submit
+=simple_form_for(@group,url: classes_path) do |f|
+	.subcontainer
+		.login_element
+			= f.input :name
+		= f.hidden_field :organization_id, value: params[:organization]
+	= f.button :submit,"Create",class: "green_button"

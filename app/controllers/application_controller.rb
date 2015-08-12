@@ -179,14 +179,14 @@ class ApplicationController < ActionController::Base
       session[:breadcrumb] = [{key: key,url: url}]
     else
       found = false
-
       l = session[:breadcrumb].length
-      for i in 0..l-1 do
+      for i in 0..l -1 do
         if session[:breadcrumb][i][:key] == key
-          if i <= l -1 
+          if i <= l - 1
             session[:breadcrumb].slice!(i+1,l) 
+            found = true
+            break
           end
-          found = true
         end
       end
 

@@ -1,15 +1,8 @@
-.row
-  .container.full.left
-    .element
-      .title.left 
-        = @group.name
-      - if can? :update, Group
-        = link_to edit_class_path(@group) do
-          %li.fa.fa-cog.fa-2x.right
-
-  .container.two_third.left
-    .element
-      %span Students
+.full.content.left
+  .container
+    %p.header User Management
+    .one_half.left
+      %p Students
       -if @group.users.count==0
         = "No Students in Class"
 
@@ -17,3 +10,11 @@
         %li
           = user.player_name
 
+    .one_half.right
+      %p Students
+      -if @group.users.count==0
+        = "No Students in Class"
+
+      - @group.users.each do |user|
+        %li
+          = user.player_name
