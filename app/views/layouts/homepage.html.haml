@@ -67,7 +67,6 @@
               -if i < session[:breadcrumb].length - 1
                 %li.dot &#9679;
 
-      .main_content
         .welcome_or_error_container
           - if flash[:alert].present?
             %p.flashbox.alert
@@ -80,7 +79,7 @@
           -  if flash[:error].present?
             %p.flashbox.error_text
               = raw format_flash(flash[:error])
-        = yield
+      = yield
     .clear
     .footer
       .small_logo.floatleft

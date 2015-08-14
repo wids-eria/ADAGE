@@ -1,19 +1,32 @@
-.row
-  .welcome_or_error_container
-    - if flash[:alert].present?
-      %p.flashbox.alert
-        = flash[:alert]
+.full.content
+  .datepicker.left
+    %label{for: "from",name: "from"} From
+    %input#from{type: "text",name: "from"}
+    %label{for: "to",name: "to"} To
+    %input#from{type: "text",name: "to"}
 
-    -  if flash[:notice].present?
-      %p.flashbox.error_text
-        = flash[:notice]
+              
+  %form.search.right{action: ""}
+    %input.green_button.right{type: "submit", value: "Search"}
+    %input.right{type: "search", name: "search",value: "Search For Student"}
 
-    -  if flash[:error].present?
-      %p.flashbox.error_text
-        = raw format_flash(flash[:error])
-  = yield
+  %select.right.class_dropdown
+    %option{value: "volvo"} Super Ultra Mega Long Class Name
+    %option{value: "volvo"} Super Ultra Mega Long Class Name
+    %option{value: "volvo"} Super Ultra Mega Long Class Name
+    %option{value: "volvo"} Super Ultra Mega Long Class Name
 
-  .container.full.left
-    .element
-      .title 
-        = "Welcome, #{current_user.player_name}"
+
+.content.one_half.left
+  .container
+    %p.header Example Graph
+    #bar.graph
+
+    :css
+      .graph{
+          @include full;
+          height:325px;
+
+          border: 1px solid gray;
+          margin: 4px;
+      }

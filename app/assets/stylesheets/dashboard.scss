@@ -30,7 +30,7 @@ STYLESHEET CONTENTS
             box-sizing: border-box;
     }
 
-html{ overflow:scroll; background:url(bg.png) 50% 0% no-repeat #26323c;  }
+html{ overflow-y:scroll;background:url(bg.png) 50% 0% no-repeat #26323c;  }
 
 body{ font-family:verdana; font-size:12px; }
 
@@ -91,7 +91,6 @@ h2{  }
 h3{  }
 h4{  }
 h5{  }
-
 ::selection{ background:#14191e; color:white; }
 
 input[type="submit"]{
@@ -577,6 +576,89 @@ select{
     
 }
 
+.results_bar{
+    @include full;
+    @include rounded_corners;
+    
+    height:46px;
+    
+    border: 1px solid #546a7c;
+    margin:10px 0;
+    overflow:hidden;
+    
+    position:relative;
+
+    .results_bar_container{
+        height:100%;
+        width:100%;
+        float:left;
+       
+        
+        .results_text_container{
+            @include full;
+            
+            z-index:99;
+            position:relative;
+            
+            padding:0 10px;
+        
+            line-height:44px;
+            
+            p{
+                font-family: ubuntu;
+                font-size: 18px;
+                color: #546a7c;
+                font-weight:500;
+            }
+        }
+        
+        .bar_container{
+            @include full;
+            
+            z-index:5;
+            position:absolute;
+                
+            .bar{
+                height:46px;
+                width:50%;
+                float:left;
+                
+                opacity:.9;
+            }
+            
+            .green{
+                background:#80CA62;
+            }
+            
+            .red{
+                background:#e09898;
+            }
+            
+        }
+
+        
+    }
+}
+
+
+.check_box{
+
+    input[type="checkbox"]{
+        position: absolute;
+        visibility: hidden;
+
+        &:checked + .subcontainer{
+            background: #d0dce6;    
+            border: 1px solid #546a7c;
+        }
+
+    }
+
+    &:hover{
+        cursor: pointer;
+    }
+}
+
 /* End Elements */
 
 
@@ -586,8 +668,9 @@ select{
     Accordion Styles
 
 -------------------------------------------------------------------*/
-
-    #accordion{
+    #accordion,#accordion2{
+        @include full;
+        
         .ui-accordion-header{
             font-family: ubuntu;
             font-size: 16px;
@@ -597,6 +680,7 @@ select{
         
         .ui-accordion-content{
             padding:20px;
+            background:white !important;
         }
         
         .ui-state-default{
@@ -647,7 +731,6 @@ select{
     }
 
 
-
 /* End Accordion Styles */
 
 
@@ -684,7 +767,8 @@ select{
 .ui-widget-content{
     background:#f6f9fc !important;
     border: 1px solid #d0dce6 !important;
-    padding: 10px 10px 10px 5px !important;
+    padding: 20px !important;
+    //padding: 10px 10px 10px 5px !important;
 }
 
 

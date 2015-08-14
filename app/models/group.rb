@@ -42,9 +42,11 @@ class Group < ActiveRecord::Base
   end
 
   def unique_name
-    count = Group.where(organization_id: self.organization,name: self.name.downcase).count
-    if count != 0
-      errors.add(:game, "Name must be unique")
+    group = Group.where(organization_id: self.organization,name: self.name.downcase).first
+    unless group.nil?
+      if group.id != self.id
+        errors.add(:game, "Name must be unique")
+      end
     end
   end
 end

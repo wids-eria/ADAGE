@@ -1,4 +1,18 @@
 =simple_form_for(@group,url: class_path) do |f|
-	= f.input :name
-	= f.hidden_field :organization_id, value: params[:organization]
-	= f.button :submit,"Update",class: "green_button"
+	.subcontainer
+		.login_element
+			= f.input :name
+		= f.hidden_field :organization_id, value: params[:organization]
+
+	.content.full
+	%p.header Select Applications
+	- f.collection_check_boxes :game_ids, @games,:id,:name do |b|
+		=  b.label(class: "content one_third left") do
+
+			.check_box
+				= b.check_box
+				.subcontainer
+					%p.header
+						= b.text
+	.clear
+	= f.button :submit,"Update Class",class: "green_button"

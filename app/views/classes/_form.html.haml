@@ -3,4 +3,15 @@
 		.login_element
 			= f.input :name
 		= f.hidden_field :organization_id, value: params[:organization]
-	= f.button :submit,"Create",class: "green_button"
+
+
+	.content.full
+	%p.header Select Applications
+	- @games.each do |game|
+		.content.one_third.left
+			.subcontainer
+				%p.header.center_text
+					= game.name
+	= f.collection_check_boxes :game_ids, @games,:id,:name
+	.clear
+	= f.button :submit,"Create Class",class: "green_button"

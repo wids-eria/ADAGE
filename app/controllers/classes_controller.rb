@@ -18,25 +18,38 @@ class ClassesController < ApplicationController
 
   def edit
     @group = Group.find(params[:id])
+    @games = @org.games
+    
+    authorize! :read, @org
     authorize! :manage, @group
   end
 
   def update
     @group = Group.find(params[:id])
+    authorize! :read, @org
+    authorize! :manage, @group
 
     params[:group][:group_type] = "class"
     params[:group][:organization] = @org
 
     if @group.update_attributes params[:group]
+      @games = Game.where(id: params[:group][:game_ids],organization_id: @org)
+      @group.update_attribute(:games ,@games)
+
       flash[:notice] = 'Class Updated'
       redirect_to class_path(@group)
     else
+      flash[:error] = @group.errors.full_messages
+      @games = @org.games
       render :edit
     end
   end
 
   def new
+    authorize! :read, @org
     @group = Group.new(params[:group])
+    @games = @org.games
+
     breadcrumb("Create Class")
   end
 
@@ -44,8 +57,11 @@ class ClassesController < ApplicationController
     @group = Group.new(params[:group])
     @group.group_type = "class"
     @group.organization = @org
+
     if @group.save
       @owner = GroupOwnership.create(user: current_user,group:@group)
+      @games = Game.where(id: params[:group][:game_ids],organization_id: @org)
+      @group.update_attribute(:games ,@games)
 
       flash[:notice] = 'Class Added'
       redirect_to class_path(@group)

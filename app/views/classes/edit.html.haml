@@ -1,9 +1,4 @@
-.row
-  .container.full.left
-    .element
-      .title.left
-        =@group.name
-      = link_to '', class_path(@group), class:'right fa fa-arrow-left fa-2x '
-      .clear
-
-      = render partial: 'edit'
+.content.full
+	.container
+		%p.header Edit Class
+		= render partial: 'edit'

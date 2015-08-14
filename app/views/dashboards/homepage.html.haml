@@ -32,13 +32,14 @@
       - @games.each do |game|
         .game.content.one_third.left
           .subcontainer
-            = link_to dashboard_path(game), id: :title do
-              - if game.image.exists?
-                = image_tag game.image
             %p.header.center_text
               = game.name
+
             %select.class_dropdown
               - game.groups.classes.each do |c|
                 - if can? :read, c
                   %option
                     = c.name
+
+            = link_to dashboard_path(game), id: :title do
+              .small_arrow.right
