@@ -2,8 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 gem 'pg'
-gem 'devise', '1.5.4'
-gem 'devise_invitable', '~> 1.3.4'
+gem 'devise', '2.0.0'
+gem 'devise_invitable', '~> 1.0.3'
 gem 'mongoid'
 gem 'simple_enum'
 
