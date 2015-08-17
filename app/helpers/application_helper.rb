@@ -27,9 +27,11 @@ module ApplicationHelper
 	def format_flash(errors)
 		body = ""
 		if errors.present?
-		  flash[:error].each do |error|
-		    body += "#{error}\</br>" 
-		  end
+			if flash[:error].kind_of?(Array)
+			  flash[:error].each do |error|
+			    body += "#{error}\</br>" 
+			  end
+			end
 		end
 
 		return body

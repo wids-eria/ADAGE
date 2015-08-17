@@ -590,7 +590,7 @@ ALTER SEQUENCE stats_id_seq OWNED BY stats.id;
 CREATE TABLE users (
     id integer NOT NULL,
     email character varying(255) DEFAULT ''::character varying NOT NULL,
-    encrypted_password character varying(128) DEFAULT ''::character varying NOT NULL,
+    encrypted_password character varying(128) DEFAULT ''::character varying,
     reset_password_token character varying(255),
     reset_password_sent_at timestamp without time zone,
     remember_token character varying(255),
@@ -607,7 +607,13 @@ CREATE TABLE users (
     control_group boolean,
     player_name character varying(255) DEFAULT ''::character varying,
     guest boolean DEFAULT false,
-    teacher_status_cd integer
+    teacher_status_cd integer,
+    invitation_token character varying(60),
+    invitation_sent_at timestamp without time zone,
+    invitation_accepted_at timestamp without time zone,
+    invitation_limit integer,
+    invited_by_id integer,
+    invited_by_type character varying(255)
 );
 
 
@@ -1081,6 +1087,20 @@ CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
 
 
 --
+-- Name: index_users_on_invitation_token; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_on_invitation_token ON users USING btree (invitation_token);
+
+
+--
+-- Name: index_users_on_invited_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_on_invited_by_id ON users USING btree (invited_by_id);
+
+
+--
 -- Name: index_users_on_player_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1382,3 +1402,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150806212533');
 INSERT INTO schema_migrations (version) VALUES ('20150810182302');
 
 INSERT INTO schema_migrations (version) VALUES ('20150810222329');
+
+INSERT INTO schema_migrations (version) VALUES ('20150817224403');
