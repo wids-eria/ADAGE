@@ -2,19 +2,23 @@
   .container
     %p.header User Management
     .one_half.left
-      %p Students
-      -if @group.users.count==0
-        = "No Students in Class"
+      .subcontainer
+        %p.header Students
+        -if @group.users.count==0
+          %p.small_text.center_text.full
+            = "No Students in Class"
 
-      - @group.users.each do |user|
-        %li
-          = user.player_name
+        - @group.users.each do |user|
+          %li
+            = user.player_name
 
     .one_half.right
-      %p Students
-      -if @group.users.count==0
-        = "No Students in Class"
-
-      - @group.users.each do |user|
-        %li
-          = user.player_name
+      .subcontainer
+        %p.header Import Student List
+        =simple_form_for :import, url: import_class_path(@group) do |f|
+          = f.input :file, as: :file, label: false, wrapper: false,accept: 'text/csv' ,input_html: { class: "file_import"} 
+          %p.small_text.center_text.full
+            Need a student import template? <a href="">Here you go.</a>
+          = f.button :submit,"Import",class: "green_button right"
+      .subcontainer
+        = render "users/student_form"

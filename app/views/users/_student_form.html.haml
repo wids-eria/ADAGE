@@ -1,0 +1,9 @@
+%p.header Or Enter Student Information
+=simple_form_for @student do |f|
+  .content.full
+    .login_element
+      = f.input :player_name
+    .login_element
+      = f.input :email
+  .full
+    = f.button :submit,"Add Student",class: "green_button right"

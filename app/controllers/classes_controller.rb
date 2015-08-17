@@ -1,4 +1,6 @@
 class ClassesController < ApplicationController
+  require 'CSV'
+
   before_filter :authenticate_user!
   before_filter :get_subdomain
   layout 'homepage'
@@ -10,8 +12,12 @@ class ClassesController < ApplicationController
   end
 
   def show
+
     @group = Group.find(params[:id])
     authorize! :read, @group
+
+    @student = User.new
+    @import = nil
 
     breadcrumb("#{@group.name} Dashboard")
   end
@@ -70,6 +76,21 @@ class ClassesController < ApplicationController
       redirect_to new_class_path(id: @group)
     end
   end
+
+  def import
+    @group = Group.find(params[:id])
+    authorize! :manage, @group
+
+    file =  params[:import][:file].tempfile
+    flash[:error] = []
+    CSV.foreach(file.path, headers: true) do |row|
+      flash[:error] << row[0].to_s
+      puts row
+    end 
+
+    redirect_to class_path(@group)
+  end
+
 
   protected
     def get_subdomain

@@ -34,7 +34,11 @@ Ada::Application.routes.draw do
   resources :participant_roles
   resources :implementations
   resources :organizations
-  resources :classes
+  resources :classes do
+    member do
+      post :import
+    end
+  end
 
   resources :dashboards do
 
