@@ -2,7 +2,7 @@ Ada::Application.routes.draw do
   get "welcome/index"
   get "profile" => 'welcome#profile'
   get "homepage" => 'dashboards#homepage'
-  get "dashboard/:id" => 'dashboards#show'
+  get "dashboards/:id/:class_id" => 'dashboards#show'
 
   devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions",:omniauth_callbacks => "users/omniauth_callbacks" }
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
@@ -37,6 +37,7 @@ Ada::Application.routes.draw do
   resources :classes do
     member do
       post :import
+      post :invite
     end
   end
 

@@ -5,17 +5,18 @@
     %label{for: "to",name: "to"} To
     %input#from{type: "text",name: "to"}
 
-              
   %form.search.right{action: ""}
-    %input.green_button.right{type: "submit", value: "Search"}
-    %input.right{type: "search", name: "search",value: "Search For Student"}
-
+    %input.green_button.right{type: "submit", value: "Apply"}
+              
   %select.right.class_dropdown
-    %option{value: "volvo"} Super Ultra Mega Long Class Name
-    %option{value: "volvo"} Super Ultra Mega Long Class Name
-    %option{value: "volvo"} Super Ultra Mega Long Class Name
-    %option{value: "volvo"} Super Ultra Mega Long Class Name
-
+    - @classes.each do |c|
+      - if can? :read, c
+        - if c.id ==@class.id
+          %option{value: c.id,selected: "selected"}
+            = c.name
+        - else
+          %option{value: c.id}
+            = c.name
 
 .content.one_half.left
   .container

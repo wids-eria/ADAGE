@@ -12,12 +12,11 @@ class ClassesController < ApplicationController
   end
 
   def show
-
     @group = Group.find(params[:id])
     authorize! :read, @group
 
     @student = User.new
-    @import = nil
+    
 
     breadcrumb("#{@group.name} Dashboard")
   end
@@ -89,6 +88,18 @@ class ClassesController < ApplicationController
     end 
 
     redirect_to class_path(@group)
+  end
+
+  def invite
+    
+
+
+
+    
+    puts params[:invite]
+
+
+
   end
 
 

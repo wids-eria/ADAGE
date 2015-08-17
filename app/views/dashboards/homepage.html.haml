@@ -1,3 +1,4 @@
+= javascript_include_tag "dashboards"
 .one_half.content.left
   .container
     %p.header Profile
@@ -9,7 +10,6 @@
     %i.accordion_student_name 
       - @orgs.each do |org|
         = org.name
-
 
 .one_half.content.right
   .container
@@ -35,11 +35,12 @@
             %p.header.center_text
               = game.name
 
-            %select.class_dropdown
-              - game.groups.classes.each do |c|
-                - if can? :read, c
-                  %option
-                    = c.name
+            .two_thirds.right
+              %select.class_dropdown
+                - game.groups.classes.each do |c|
+                  - if can? :read, c
+                    %option{value: c.id}
+                      = c.name
 
-            = link_to dashboard_path(game), id: :title do
-              .small_arrow.right
+              = link_to dashboard_path(game), id: :title, class: :dashboard_link do
+                .small_arrow.right
