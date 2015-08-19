@@ -23,7 +23,6 @@ module ApplicationHelper
 		return qr.to_img.resize(width,height).to_data_url
 	end
 
-
 	def format_flash(errors)
 		body = ""
 		if errors.present?

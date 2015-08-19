@@ -11,7 +11,18 @@
         - @group.users.each do |user|
           %li
             = user.player_name
-
+      .subcontainer
+        %p.header Pending Invites
+        -if @group.group_invites.count==0
+          %p.small_text.center_text.full
+            = "No Pending Invites"
+        %ul.flagged_items
+          - @group.group_invites.each do |invite|
+            .content.full
+              %li.small_text.two_thirds.left
+                = invite.user.email
+              %p.right.small_text.one_third
+                = distance_of_time_in_words_to_now(invite.user.updated_at) + " ago"
     .one_half.right
       .subcontainer
         %p.header Import Student List

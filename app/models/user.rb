@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   before_save :ensure_authentication_token
 
   attr_accessor :login
+  attr_writer :invitation_instructions
+
   # Setup accessible (or protected) attributes for your model
 
   attr_accessible :id,:email, :player_name, :password, :password_confirmation, :remember_me, :authentication_token, :role_ids, :consented, :guest, :group_ids,:teacher_status
@@ -33,6 +35,8 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :groups
   has_many :organization_roles
   has_many :organizations, through: :organization_roles
+  has_many :invitations, :class_name => self.to_s, :as => :invited_by
+  has_many :group_invites
 
   def role?(role)
       return !!self.roles.find_by_name(role.name)
@@ -351,6 +355,26 @@ class User < ActiveRecord::Base
       text = ActiveSupport::JSON.encode({username: self.player_name,password: self.password,timestamp: Time.now})
       return text
     end
+  end
+
+  def deliver_invitation
+   if @invitation_instructions.present?
+     ::Devise.mailer.send(@invitation_instructions, self).deliver
+   else
+     super
+   end
+  end
+
+  def self.invite_class!(attributes={}, invited_by=nil)
+   self.invite!(attributes, invited_by) do |invitable|
+     invitable.invitation_instructions = :class_invitation_instructions
+   end
+  end
+
+  def self.invite_org!(attributes={}, invited_by=nil)
+   self.invite!(attributes, invited_by) do |invitable|
+     invitable.invitation_instructions = :organization_invitation_instructions
+   end
   end
 
   protected

@@ -1,8 +1,8 @@
 class ClassesController < ApplicationController
   require 'CSV'
 
-  before_filter :authenticate_user!
-  before_filter :get_subdomain
+  before_filter :authenticate_user!, except: [:accept_invite]
+  before_filter :get_subdomain, except: [:accept_invite]
   layout 'homepage'
 
   def index
@@ -91,13 +91,24 @@ class ClassesController < ApplicationController
   end
 
   def invite
-    
+    @group = Group.find(params[:id])
+    authorize! :manage, @group
 
+    user = User.invite_class!(email: params[:invite][:email])
 
+    invites = GroupInvite.where(user_id:user,group_id:@group).exists?
+    if(!invites) 
+      GroupInvite.create(user:user,group:@group)
+    end
 
-    
-    puts params[:invite]
+    flash[:notice] = 'Student #{user.email} Invited'
+    redirect_to class_path(@group)
+  end
 
+  def accept_invite
+    puts params.to_json
+
+    puts User.find_by_invitation_token(params[:invitation_token])
 
 
   end

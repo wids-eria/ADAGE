@@ -36,4 +36,17 @@ Ada::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  #config.action_mailer.default_url_options = { :host => 'adage.gameslearningsociety.org' }
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    address: "smtp.postmarkapp.com",
+    port: 25,
+    authentication: "plain",
+    user_name: "b552d717-3009-4be6-b329-394c34823436",
+    password: ""
+  }
+
+
 end

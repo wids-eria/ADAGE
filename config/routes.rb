@@ -4,7 +4,7 @@ Ada::Application.routes.draw do
   get "homepage" => 'dashboards#homepage'
   get "dashboards/:id/:class_id" => 'dashboards#show'
 
-  devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions",:omniauth_callbacks => "users/omniauth_callbacks" }
+  devise_for :users, :controllers => { registrations: "registrations", sessions: "sessions",:omniauth_callbacks => "users/omniauth_callbacks",:invitations => 'users/invitations' }
   match "users/authenticate_for_token" => "users#authenticate_for_token", :via => :post
   match "data_collector" => "data#create", :via => :post
   match "data/heatmap" => "data#heatmap"
@@ -38,6 +38,7 @@ Ada::Application.routes.draw do
     member do
       post :import
       post :invite
+      get :accept_invite
     end
   end
 

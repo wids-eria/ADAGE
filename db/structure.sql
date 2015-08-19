@@ -287,6 +287,38 @@ ALTER SEQUENCE graphs_id_seq OWNED BY graphs.id;
 
 
 --
+-- Name: group_invites; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE group_invites (
+    id integer NOT NULL,
+    group_id integer,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: group_invites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE group_invites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: group_invites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE group_invites_id_seq OWNED BY group_invites.id;
+
+
+--
 -- Name: group_ownerships; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -689,6 +721,13 @@ ALTER TABLE ONLY graphs ALTER COLUMN id SET DEFAULT nextval('graphs_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY group_invites ALTER COLUMN id SET DEFAULT nextval('group_invites_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY group_ownerships ALTER COLUMN id SET DEFAULT nextval('group_ownerships_id_seq'::regclass);
 
 
@@ -802,6 +841,14 @@ ALTER TABLE ONLY games
 
 ALTER TABLE ONLY graphs
     ADD CONSTRAINT graphs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: group_invites_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY group_invites
+    ADD CONSTRAINT group_invites_pkey PRIMARY KEY (id);
 
 
 --
@@ -944,6 +991,20 @@ CREATE INDEX fk__games_groups_game_id ON games_groups USING btree (game_id);
 --
 
 CREATE INDEX fk__games_groups_group_id ON games_groups USING btree (group_id);
+
+
+--
+-- Name: fk__group_invites_group_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__group_invites_group_id ON group_invites USING btree (group_id);
+
+
+--
+-- Name: fk__group_invites_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX fk__group_invites_user_id ON group_invites USING btree (user_id);
 
 
 --
@@ -1210,6 +1271,22 @@ ALTER TABLE ONLY games
 
 
 --
+-- Name: fk_group_invites_group_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_invites
+    ADD CONSTRAINT fk_group_invites_group_id FOREIGN KEY (group_id) REFERENCES groups(id);
+
+
+--
+-- Name: fk_group_invites_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_invites
+    ADD CONSTRAINT fk_group_invites_user_id FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
 -- Name: fk_group_ownerships_group_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1404,3 +1481,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150810182302');
 INSERT INTO schema_migrations (version) VALUES ('20150810222329');
 
 INSERT INTO schema_migrations (version) VALUES ('20150817224403');
+
+INSERT INTO schema_migrations (version) VALUES ('20150818180543');

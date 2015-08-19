@@ -6,6 +6,7 @@ gem 'devise', '2.0.0'
 gem 'devise_invitable', '~> 1.0.3'
 gem 'mongoid'
 gem 'simple_enum'
+gem 'postmark-rails'
 
 gem 'bson_ext'
 gem 'decent_exposure'

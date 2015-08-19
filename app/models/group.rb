@@ -5,6 +5,7 @@ class Group < ActiveRecord::Base
   has_many :group_ownerships
   has_many :owners, through: :group_ownerships, source: :user
   has_many :teachers, through: :group_ownerships, source: :user
+  has_many :group_invites
 
   belongs_to :organization
   before_create :generatecode
