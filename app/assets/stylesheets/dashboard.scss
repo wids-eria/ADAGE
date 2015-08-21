@@ -532,14 +532,32 @@ select{
     
     margin-top:8px;
     
-    a{
-       li{
+    li{
+       a{
             &:hover{
                 text-decoration:underline;
             }
-
+            &:nth-child(odd){
+        
+                font-family: chaparral-pro;
+                color: #546a7c;
+                font-size: 19px;
+                font-weight: 300;
+             }
+                 
+            &:nth-child(even){               
+               
+               font-family: chaparral-pro;
+               color: #546a7c;
+               font-size: 19px;
+               font-weight: 300;
+           }
         }
         
+        .student_management a div{
+            margin-left: 15px;
+        }
+
         &:nth-child(odd){
             @include full;
     

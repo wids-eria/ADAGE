@@ -33,7 +33,7 @@ class OrganizationsController < ApplicationController
   def create
     @org = Organization.new(params[:organization])
     if @org.save
-      pOrganizationRole.create(organization: @org, user: current_user, name: "admin").errors.full_messages
+      OrganizationRole.create(organization: @org, user: current_user, name: "admin").errors.full_messages
 
 
       flash[:notice] = 'organization Added'

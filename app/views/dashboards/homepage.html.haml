@@ -20,10 +20,15 @@
 
     %ul.flagged_items
       - @classes.each do |item|
-        = link_to  class_path(item) do
-          %li
+        %li.full
+          = link_to  class_path(item), class: "left" do
             = item.name
-            .small_arrow.right
+
+          .student_management
+            = link_to  class_path(item), class: "" do
+              .small_arrow.right
+            = link_to  edit_class_path(item), class: "" do
+              .edit_icon.right
 
 .full.content.left
   .container
