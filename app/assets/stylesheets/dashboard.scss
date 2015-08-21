@@ -224,6 +224,15 @@ select{
         input{
             background:white;
         }
+    
+        .error{
+            color: red;
+            float: left;
+            margin-top: 5px;
+            margin-left: 1px;
+        }
+
+
     }
     
     .file_import{

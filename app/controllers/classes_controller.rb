@@ -1,8 +1,8 @@
 class ClassesController < ApplicationController
   require 'CSV'
 
-  before_filter :authenticate_user!, except: [:accept_invite]
-  before_filter :get_subdomain, except: [:accept_invite]
+  before_filter :authenticate_user!, except: [:accept_invite,:process_invite]
+  before_filter :get_subdomain, except: [:accept_invite,:process_invite,:join]
   layout 'homepage'
 
   def index
@@ -94,31 +94,71 @@ class ClassesController < ApplicationController
     @group = Group.find(params[:id])
     authorize! :manage, @group
 
-    user = User.invite_class!(email: params[:invite][:email])
+    @user = User.invite_class!(email: params[:invite][:email])
+    unless @user.invitation_accepted_at.nil?
+      InviteMailer.class_invite(@user).deliver
+    end
 
-    invites = GroupInvite.where(user_id:user,group_id:@group).exists?
+    invites = GroupInvite.where(user_id:@user,group_id:@group).exists?
     if(!invites) 
-      GroupInvite.create(user:user,group:@group)
+      GroupInvite.create(user:@user,group:@group)
     end
 
     flash[:notice] = 'Student #{user.email} Invited'
     redirect_to class_path(@group)
   end
 
-  def accept_invite
-    puts params.to_json
+  def join
+    invites =  GroupInvite.where(user_id:current_user,group_id: params[:id]).all
+    invites.each do |invite|
+      invite.group.users << current_user
+      OrganizationRole.create(organization: invite.group.organization, user: current_user, name: "student")
+    end
 
-    puts User.find_by_invitation_token(params[:invitation_token])
+    invites.each do |invite|
+      invite.destroy
+    end
 
-
+    redirect_to homepage_path
   end
 
+  def accept_invite
+    @user = User.find_by_invitation_token(params[:invitation_token])
+    @resource = User.find_by_invitation_token(params[:invitation_token])
+    @invite = GroupInvite.where(user_id:@user).last
+
+    render "devise/invitations/edit",layout: 'application'
+  end
+
+  def process_invite
+    @user = User.find(params[:id])
+    @invite = GroupInvite.where(user_id:@user).last
+
+    if User.accept_invitation!(params[:user])
+      flash[:notice] = 'Account Created!'
+
+      invites =  GroupInvite.where(user_id:@user).all
+      invites.each do |invite|
+        invite.group.users << @user
+        OrganizationRole.create(organization: invite.group.organization, user: current_user, name: "student")
+      end
+
+      invites.each do |invite|
+        invite.destroy
+      end
+
+      sign_in @user, :bypass => true
+      redirect_to homepage_path
+    else
+      render "devise/invitations/edit",layout: 'application'
+    end
+  end
 
   protected
     def get_subdomain
       subdomain = request.subdomain(0)
       @org = Organization.where(subdomain: subdomain).first
-      authorize! :manage, @org
+      authorize! :read, @org
       params[:page_title] = "Class Management"
     end
 end

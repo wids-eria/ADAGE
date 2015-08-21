@@ -39,6 +39,8 @@ Ada::Application.routes.draw do
       post :import
       post :invite
       get :accept_invite
+      post :process_invite
+      get :join
     end
   end
 

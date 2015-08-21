@@ -1,0 +1,23 @@
+.content.full
+  .header_content
+    .page_label
+      - unless @invite.nil?
+        %p.header You have been invited to join class #{@invite.group.name}
+      - else
+        %p.header You have been invited to join ADAGE
+
+=simple_form_for(@user,url: process_invite_class_url(@user),method: :post) do |f|
+  .container.full
+    %p.header Update your account info to complete your registration
+    .subcontainer
+      .login_element
+        = f.input :player_name
+      = f.hidden_field :invitation_token
+      .login_element
+        = f.input :email
+      .login_element
+        = f.input :password
+      .login_element
+        = f.input :password_confirmation
+
+    = f.button :submit,"Update Information",class: "green_button right"

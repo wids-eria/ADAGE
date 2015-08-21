@@ -45,11 +45,15 @@ class Ability
       can :manage, ParticipantRole do |p_role|
         user.role?(ResearcherRole.where(game_id: p_role.game.id).first)
       end
-
       
       can :manage, Organization do |org|
         OrganizationRole.where(user_id: user,organization_id: org,name:"admin").count == 1
       end
+
+      can :read, Organization do |org|
+        OrganizationRole.where(user_id: user,organization_id: org,name:["admin","teacher","student"]).count == 1
+      end
+
     end
    end
 end

@@ -46,8 +46,20 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_type('ResearcherRole')
   end
 
-  def teacher?
-    return !!self.roles.find_by_name('teacher')
+  def teacher?(org = nil)
+    if org
+      return OrganizationRole.where(user_id: self,organization_id: org,name:"teacher").exists?
+    else
+      return !!self.roles.find_by_name('teacher')
+    end
+  end
+
+  def student?(org = nil)
+    if org
+      return OrganizationRole.where(user_id: self,organization_id: org,name:"student").exists?
+    else
+      return !!self.roles.find_by_name('student')
+    end
   end
 
   def researcher?
@@ -58,8 +70,12 @@ class User < ActiveRecord::Base
     return !!self.roles.find_by_name('researdevelopercher')
   end
 
-  def admin?
-    return !!self.roles.find_by_name('admin')
+  def admin?(org = nil)
+    if org
+      return OrganizationRole.where(user_id: self,organization_id: org,name:"admin").exists?
+    else
+      return !!self.roles.find_by_name('admin')
+    end
   end
 
   def data(gameName)

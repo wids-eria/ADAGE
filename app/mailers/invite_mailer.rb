@@ -10,4 +10,7 @@ class InviteMailer < Devise::Mailer
     devise_mail(record, :organization_invitation_instructions)
   end
 
+  def class_invite(record)
+    devise_mail(record, :class_invite)
+  end
 end
