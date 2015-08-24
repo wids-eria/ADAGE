@@ -122,6 +122,15 @@ class ClassesController < ApplicationController
     redirect_to homepage_path
   end
 
+  def remove_user
+    @group = Group.find(params[:id])
+    authorize! :manage, @group
+    @group.RemoveUser(params[:user_id])
+
+    flash[:notice] = 'Student #{user.email} Remove From Class'
+    redirect_to class_path(@group)
+  end
+
   def accept_invite
     @user = User.find_by_invitation_token(params[:invitation_token])
     @resource = User.find_by_invitation_token(params[:invitation_token])

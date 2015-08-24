@@ -67,7 +67,7 @@ class User < ActiveRecord::Base
   end
 
   def developer?
-    return !!self.roles.find_by_name('researdevelopercher')
+    return !!self.roles.find_by_name('developer')
   end
 
   def admin?(org = nil)

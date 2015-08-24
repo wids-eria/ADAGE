@@ -12,12 +12,10 @@
           %ul.flagged_items
             - @group.users.each do |user|
               %li.full
-                = user.player_name
+                = user.email
 
                 .student_management.right
-                  = link_to  class_path(user), class: "" do
-                    .edit_icon.right
-                  = link_to  edit_class_path(user), class: "" do
+                  = link_to  remove_user_class_url(user), class: "",method: :delete, data: {confirm: "Are you sure?"}  do
                     .remove_icon.right
       .subcontainer
         %p.header Pending Invites

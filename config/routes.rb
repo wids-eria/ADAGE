@@ -41,6 +41,7 @@ Ada::Application.routes.draw do
       get :accept_invite
       post :process_invite
       get :join
+      delete :remove_user
     end
   end
 

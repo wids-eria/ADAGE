@@ -1,13 +1,33 @@
+:javascript
+  $(function() {
+    $( "#from" ).datepicker({
+      defaultDate: "+1w",
+      changeMonth: true,
+      numberOfMonths: 1,
+      onClose: function( selectedDate ) {
+        $( "#to" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $( "#to" ).datepicker({
+      defaultDate: "+1w",
+      changeMonth: true,
+      numberOfMonths: 1,
+      onClose: function( selectedDate ) {
+        $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+  });
+
 .full.content
   .datepicker.left
     %label{for: "from",name: "from"} From
     %input#from{type: "text",name: "from"}
     %label{for: "to",name: "to"} To
-    %input#from{type: "text",name: "to"}
+    %input#to{type: "text",name: "to"}
 
   %form.search.right{action: ""}
     %input.green_button.right{type: "submit", value: "Apply"}
-              
+  
   %select.right.class_dropdown
     - @classes.each do |c|
       - if can? :read, c
@@ -17,17 +37,14 @@
         - else
           %option{value: c.id}
             = c.name
+  %select.right.class_dropdown
+    - @class.users.each do |c|
+      - if can? :read, c
+        - if @student and c.id ==@student.id
+          %option{value: c.id,selected: "selected"}
+            = c.email
+        - else
+          %option{value: c.id}
+            = c.email
 
-.content.one_half.left
-  .container
-    %p.header Example Graph
-    #bar.graph
-
-    :css
-      .graph{
-          @include full;
-          height:325px;
-
-          border: 1px solid gray;
-          margin: 4px;
-      }
+= render "dashboards/handwashing"

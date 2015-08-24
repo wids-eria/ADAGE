@@ -2,6 +2,7 @@ class Game < ActiveRecord::Base
 
   attr_accessible :name, :implementations,:organization,:groups,:image
   validate  :unique_name
+  validates_uniqueness_of :name
   validates_presence_of :organization,:name
 
   has_attached_file :image, :styles => { :medium => "400x300>", :thumb => "100x75>" }

@@ -12,6 +12,27 @@ class ApplicationController < ActionController::Base
     new_user_session_path
   end
 
+  def after_sign_in_path_for(resource_or_scope)
+    if current_user.roles.where('name NOT IN (?)',["teacher","student","player"]).count == 0
+
+      subdomain = request.subdomain(0)
+      if subdomain == ""
+        #No subdomain
+
+        @org = current_user.organizations.first
+        puts "-"*20
+
+        url =  homepage_url
+        http = url.split("//")
+        url = http[0]+"//"+@org.subdomain+"."+http[1]
+      else
+        homepage_path
+      end
+    else
+      welcome_index_path
+    end
+  end
+
   def parse_filters(filters)
     @filters = Array.new
 
@@ -27,8 +48,6 @@ class ApplicationController < ActionController::Base
             "$lte"=> to.to_i,
           }
           @filters << temp
-
-          puts filters.to_json
         elsif type == "equals"
 
         end

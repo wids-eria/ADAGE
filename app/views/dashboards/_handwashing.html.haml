@@ -1,0 +1,31 @@
+- score = []
+- AdaData.with_game(@game.name).where(key: :ADAGEData_Score).limit(10).each do |record|
+  - score << record.percentCovered
+
+- if score
+  :javascript
+    $(document).ready( function() {
+      var chart = c3.generate({
+        bindto: "#cleaned",
+        data: {
+            columns: [
+              #{j(score.to_json)},
+            ]
+        }
+      });
+    });
+.content.one_half.left
+  .container
+    %p.header Solo Play Data
+    #cleaned
+
+.content.one_half.right
+  .container
+    %p.header Leaderboard
+    %ul.flagged_items
+      - AdaData.with_game(@game.name).where(key: :LeaderboardEntry_Handwashing).desc(:scoreAsFloat).limit(10).each do |record|
+        %li.full
+          Score: 
+          =  record.scoreAsFloat
+          .student_management.right
+            = record.playerDefinedName

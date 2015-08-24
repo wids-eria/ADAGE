@@ -25,7 +25,12 @@ class DashboardsController < ApplicationController
   def show
     @game = Game.find(params[:id])
     @class = Group.find(params[:class_id])
+
+    if params[:student_id]
+      @student = User.find(params[:student_id])
+    end
     @classes = current_user.owned_groups.classes.where(organization_id: @org).joins(:games).where('games.id' => @game)
+
 
     authorize! :read, @game
     authorize! :manage, @class
