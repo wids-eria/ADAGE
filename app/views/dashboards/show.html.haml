@@ -1,9 +1,9 @@
 = javascript_include_tag "dashboard"
 = javascript_include_tag "moment"
 
-.full.content
-  #filters 
-    .datepicker.left.filter{filter: "range"}
+.full
+  #filters.content
+    .datepicker.one_fourth.left.filter{filter: "range"}
       %label{for: "from",name: "from"} From
       - if @filters["timestamp"]
         %input#from{type: "text",name: "from",value: @filters["timestamp"]["$gte"]}
@@ -16,32 +16,44 @@
       - else
         %input#to{type: "text",name: "to"}
 
-    %form.search.right{action: ""}
-      #apply.green_button.right{type: "submit", value: "Apply"} Apply
-    
-    %select.right.class_dropdown.filter{filter: "select", key: "class_id"}
 
-      - @classes.each do |c|
-        - if can? :read, c
-          - if c.id == @class.id
-            %option{value: c.id,selected: "selected"}
-              = c.name
-          - else
-            %option{value: c.id}
-              = c.name
-    %select.right.class_dropdown.filter{filter: "select", key: "user_id"}
-      - if @student.nil?
-        %option{value: -1,selected: "selected"} All Students
-      - else
-        %option{value: -1} All Students
+    .one_fourth.right
+      %form.search.right{action: ""}
+        #apply.green_button.right{type: "submit", value: "Apply"} Apply
+      
+    .selector.one_fourth.right
+      %select.right.class_dropdown.filter{filter: "select", key: "class_id"}
+        - if @class.nil?
+          %option{value: -1,selected: "selected"} All Classes
+        - else
+          %option{value: -1} All Classes
 
-      - @class.users.each do |c|
-        - if can? :read, c
-          - if @student and c.id ==@student.id
-            %option{value: c.id,selected: "selected"}
-              = c.email
-          - else
-            %option{value: c.id}
-              = c.email
+        - @classes.each do |c|
+          - if can? :read, c
+            - if !@class.nil? and c.id == @class.id
+              %option{value: c.id,selected: "selected"}
+                = c.name
+            - else
+              %option{value: c.id}
+                = c.name
+      %label.right Class
+
+    .selector.one_fourth.right
+      %select.right.class_dropdown.filter{filter: "select", key: "user_id"}
+        - if @student.nil?
+          %option{value: -1,selected: "selected"} All Students
+        - else
+          %option{value: -1} All Students
+
+        - unless @class.nil?
+          - @class.users.each do |c|
+            - if can? :read, c
+              - if @student and c.id ==@student.id
+                %option{value: c.id,selected: "selected"}
+                  = c.email
+              - else
+                %option{value: c.id}
+                  = c.email
+      %label.right Student
 
 = render "dashboards/handwashing"

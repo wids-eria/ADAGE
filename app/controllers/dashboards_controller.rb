@@ -28,7 +28,10 @@ class DashboardsController < ApplicationController
     @game = Game.find(params[:id])
 
     if @filters.has_key?("class_id")
-      @class = Group.find(@filters["class_id"])
+      #User -1 for all users
+      if @filters["class_id"] != "-1"
+        @class = Group.find(@filters["class_id"])
+      end
 
       #remove key so the data isn't filtered directly
       @filters.delete("class_id")
