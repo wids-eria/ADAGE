@@ -1,12 +1,12 @@
 
-.content.full
-  .container
-    .one_half.left
-      %p.header DeVry Login Page
-      %P asdasds
-      .full
-        = link_to 'Register', new_user_registration_url, class: 'green_button left'
-    .one_half.right
+.container
+  .one_half.left
+    %p.header DeVry Login Page
+    %p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vulputate libero et orci porta, vel pellentesque neque laoreet. Donec vel vulputate neque. Proin dapibus felis sit amet tortor accumsan, eu iaculis dui bibendum. Nunc tristique odio quis libero commodo viverra. In efficitur massa id ligula porta viverra. Nam commodo diam ut sem efficitur lobortis. Curabitur non arcu at velit varius ultrices a eu turpis.
+    .full
+      = link_to 'Register', new_user_registration_url, class: 'green_button left'
+  .one_half.right
+    .subcontainer
       %p.header Sign In
 
       = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
@@ -27,12 +27,5 @@
             = f.check_box :remember_me, class: ''
 
         .full
-          = f.submit "Sign in", class: 'green_button left'
+          = f.submit "Sign in", class: 'green_button right'
           = link_to 'Forgot your password?', new_user_password_url, class: 'green_button right'
-
-//.sign_up_container
-//  .field_container
-//    = link_to 'Connect with Facebook', user_omniauth_authorize_path(:facebook), class: 'floatleft'
-
-//  .field_container
-//    = link_to 'Connect with Google+', user_omniauth_authorize_path(:google_oauth2), class: 'floatleft'

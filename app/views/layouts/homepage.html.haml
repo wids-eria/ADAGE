@@ -46,8 +46,8 @@
             = current_user.player_name
         .breadcrumb_container
           %ul.breadcrumbs
-            %li University of Wisconsin, Madison
-            %li.dot &#9679;
+            //%li University of Wisconsin, Madison
+            //%li.dot &#9679;
             = link_to destroy_user_session_url, method: :delete do
               %li Logout
 
@@ -66,18 +66,17 @@
                 = link_to session[:breadcrumb][i][:key], session[:breadcrumb][i][:url]
               -if i < session[:breadcrumb].length - 1
                 %li.dot &#9679;
-
-        .welcome_or_error_container
+        .notifications.center.content.full
           - if flash[:alert].present?
-            %p.flashbox.alert
+            %p.header.alert
               = flash[:alert]
 
           -  if flash[:notice].present?
-            %p.flashbox.error_text
+            %p.header.notice
               = flash[:notice]
 
           -  if flash[:error].present?
-            %p.flashbox.error_text
+            %p.header.error
               = raw format_flash(flash[:error])
       = yield
     .clear

@@ -1,15 +1,16 @@
 = javascript_include_tag "dashboards"
+
 .one_half.content.left
   .container
     %p.header Profile
-    %p.accordion_student_name 
-      = current_user.player_name
-    %i
-      = current_user.email
-    .clear
-    %i.accordion_student_name 
-      - @orgs.each do |org|
-        = org.name
+    .content
+      %p.small_text
+        = current_user.player_name
+      %p.small_text
+        = current_user.email
+      %p.small_text
+        - @orgs.each do |org|
+          = org.name
 
 .one_half.content.right
   .container
@@ -39,13 +40,14 @@
           .subcontainer
             %p.header.center_text
               = game.name
-
-            .two_thirds.right
+            .content.full
               %select.class_dropdown
                 - game.groups.classes.each do |c|
                   - if can? :read, c
                     %option{value: c.id}
                       = c.name
 
-              = link_to dashboard_path(game), id: :title, class: :dashboard_link do
-                .small_arrow.right
+              .center
+                = simple_form_for :dashboard, url: dashboard_path(game), id: :title, class: :green_button, method: :post do |f|
+                  = f.hidden_field :class_id
+                  = f.button :submit,"View Dashboard",class: "green_button"

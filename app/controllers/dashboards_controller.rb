@@ -1,6 +1,7 @@
 class DashboardsController < ApplicationController
   before_filter :get_subdomain
   before_filter :authenticate_user!
+  protect_from_forgery :except => :show
   
   respond_to :html, :json
   layout 'homepage'
@@ -23,18 +24,30 @@ class DashboardsController < ApplicationController
   end
 
   def show
+    parse_filters(params[:filters])
     @game = Game.find(params[:id])
-    @class = Group.find(params[:class_id])
 
-    if params[:student_id]
-      @student = User.find(params[:student_id])
+    if @filters.has_key?("class_id")
+      @class = Group.find(@filters["class_id"])
+
+      #remove key so the data isn't filtered directly
+      @filters.delete("class_id")
+    elsif params[:dashboard]
+      @class = Group.find(params[:dashboard][:class_id])
+    end
+
+    if @filters.has_key?("user_id")
+      #User -1 for all users
+      if @filters["user_id"] != "-1"
+        @student = User.find(@filters["user_id"])
+      else
+        @filters.delete("user_id")
+      end
     end
     @classes = current_user.owned_groups.classes.where(organization_id: @org).joins(:games).where('games.id' => @game)
 
-
     authorize! :read, @game
     authorize! :manage, @class
-
     params[:page_title] = @game.name
     breadcrumb("#{@game.name} Dashboard")
   end

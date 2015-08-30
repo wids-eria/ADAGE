@@ -34,19 +34,18 @@
 
   .page_wrap
     .content.full
-      .main_content
-        .welcome_or_error_container
-          - if flash[:alert].present?
-            %p.flashbox.alert
-              = flash[:alert]
+      .notifications.center.content.full
+        - if flash[:alert].present?
+          %p.header.alert
+            = flash[:alert]
 
-          -  if flash[:notice].present?
-            %p.flashbox.error_text
-              = flash[:notice]
+        -  if flash[:notice].present?
+          %p.header.notice
+            = flash[:notice]
 
-          -  if flash[:error].present?
-            %p.flashbox.error_text
-              = raw format_flash(flash[:error])
+        -  if flash[:error].present?
+          %p.header.error
+            = raw format_flash(flash[:error])
       = yield
   .clear
   .footer

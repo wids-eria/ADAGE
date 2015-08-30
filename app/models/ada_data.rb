@@ -25,6 +25,13 @@ class AdaData
     with(collection: gameName.to_s.gsub(' ', '_').downcase)
   end
 
+  def self.include_filters(filters = @filters)
+    puts "-"*20
+    puts filters.to_json
+
+    where(filters)
+  end
+
   def set_collection
     game_name = 'ada_data'
 
@@ -36,8 +43,7 @@ class AdaData
     if self.respond_to?('application_name')
       game_name = self.application_name
     end
-      
-
+    
     with(collection: game_name.gsub(' ', '_').downcase)
   end
 end

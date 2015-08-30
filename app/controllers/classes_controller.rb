@@ -82,10 +82,49 @@ class ClassesController < ApplicationController
 
     file =  params[:import][:file].tempfile
     flash[:error] = []
-    CSV.foreach(file.path, headers: true) do |row|
-      flash[:error] << row[0].to_s
-      puts row
-    end 
+
+    ext = File.extname(params[:import][:file].original_filename)
+
+    count = 0
+    if ext == ".csv"
+      CSV.foreach(file.path, headers: true) do |row|
+        #Email column
+        email = row[0]
+
+        @user = User.invite_class!(email: email)
+        unless @user.invitation_accepted_at.nil?
+          InviteMailer.class_invite(@user).deliver
+        end
+
+        invites = GroupInvite.where(user_id:@user,group_id:@group).exists?
+        if(!invites) 
+          GroupInvite.create(user:@user,group:@group)
+        end
+        count +=1 
+      end 
+    elsif ext == ".exp"
+      CSV.foreach(file.path, col_sep: "\t") do |row|
+        #Email column
+        email = row[4]
+
+        unless email.blank?
+          @user = User.invite_class!(email: email)
+          unless @user.invitation_accepted_at.nil?
+            InviteMailer.class_invite(@user).deliver
+          end
+
+          invites = GroupInvite.where(user_id:@user,group_id:@group).exists?
+          if(!invites) 
+            GroupInvite.create(user:@user,group:@group)
+          end
+          count +=1 
+        end
+      end 
+    end
+
+    if count >0 
+      flash[:notice] = "#{count} Students Invited"
+    end
 
     redirect_to class_path(@group)
   end
@@ -168,6 +207,7 @@ class ClassesController < ApplicationController
       subdomain = request.subdomain(0)
       @org = Organization.where(subdomain: subdomain).first
       authorize! :read, @org
+
       params[:page_title] = "Class Management"
     end
 end

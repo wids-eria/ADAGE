@@ -10,12 +10,10 @@ class DataController < ApplicationController
     respond_with @data
   end
 
-
   def get_events_by_group
     if params[:app_token] != nil
       client = Client.where(app_token: params[:app_token]).first
     end
-
 
     if client != nil
 
@@ -42,13 +40,9 @@ class DataController < ApplicationController
       end
     end
 
-
     @result = Hash.new
     @result['data'] = @data
     respond_with @result
-
-
-
   end
 
 
@@ -82,7 +76,6 @@ class DataController < ApplicationController
         @data.limit(params[:limit])
       end
     end
-
 
     @result = Hash.new
     @result['data'] = @data
@@ -123,7 +116,6 @@ class DataController < ApplicationController
       end
     end
 
-    puts @data.count
     @result = Hash.new
     @result['data'] = @data
     
@@ -171,10 +163,7 @@ class DataController < ApplicationController
           format.html {render}
           format.csv { send_data @data_group.to_csv, filename: client.implementation.game.name+"_"+current_user.player_name+".csv" }
       end
-
     end
-
-
   end
 
 

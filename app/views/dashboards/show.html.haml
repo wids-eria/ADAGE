@@ -1,50 +1,47 @@
-:javascript
-  $(function() {
-    $( "#from" ).datepicker({
-      defaultDate: "+1w",
-      changeMonth: true,
-      numberOfMonths: 1,
-      onClose: function( selectedDate ) {
-        $( "#to" ).datepicker( "option", "minDate", selectedDate );
-      }
-    });
-    $( "#to" ).datepicker({
-      defaultDate: "+1w",
-      changeMonth: true,
-      numberOfMonths: 1,
-      onClose: function( selectedDate ) {
-        $( "#from" ).datepicker( "option", "maxDate", selectedDate );
-      }
-    });
-  });
+= javascript_include_tag "dashboard"
+= javascript_include_tag "moment"
 
 .full.content
-  .datepicker.left
-    %label{for: "from",name: "from"} From
-    %input#from{type: "text",name: "from"}
-    %label{for: "to",name: "to"} To
-    %input#to{type: "text",name: "to"}
+  #filters 
+    .datepicker.left.filter{filter: "range"}
+      %label{for: "from",name: "from"} From
+      - if @filters["timestamp"]
+        %input#from{type: "text",name: "from",value: @filters["timestamp"]["$gte"]}
+      - else
+        %input#from{type: "text",name: "from"}
 
-  %form.search.right{action: ""}
-    %input.green_button.right{type: "submit", value: "Apply"}
-  
-  %select.right.class_dropdown
-    - @classes.each do |c|
-      - if can? :read, c
-        - if c.id ==@class.id
-          %option{value: c.id,selected: "selected"}
-            = c.name
-        - else
-          %option{value: c.id}
-            = c.name
-  %select.right.class_dropdown
-    - @class.users.each do |c|
-      - if can? :read, c
-        - if @student and c.id ==@student.id
-          %option{value: c.id,selected: "selected"}
-            = c.email
-        - else
-          %option{value: c.id}
-            = c.email
+      %label{for: "to",name: "to"} To
+      - if @filters["timestamp"]
+        %input#to{type: "text",name: "to",value: @filters["timestamp"]["$lte"]}
+      - else
+        %input#to{type: "text",name: "to"}
+
+    %form.search.right{action: ""}
+      #apply.green_button.right{type: "submit", value: "Apply"} Apply
+    
+    %select.right.class_dropdown.filter{filter: "select", key: "class_id"}
+
+      - @classes.each do |c|
+        - if can? :read, c
+          - if c.id == @class.id
+            %option{value: c.id,selected: "selected"}
+              = c.name
+          - else
+            %option{value: c.id}
+              = c.name
+    %select.right.class_dropdown.filter{filter: "select", key: "user_id"}
+      - if @student.nil?
+        %option{value: -1,selected: "selected"} All Students
+      - else
+        %option{value: -1} All Students
+
+      - @class.users.each do |c|
+        - if can? :read, c
+          - if @student and c.id ==@student.id
+            %option{value: c.id,selected: "selected"}
+              = c.email
+          - else
+            %option{value: c.id}
+              = c.email
 
 = render "dashboards/handwashing"

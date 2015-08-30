@@ -34,25 +34,33 @@ class ApplicationController < ActionController::Base
   end
 
   def parse_filters(filters)
-    @filters = Array.new
 
+    @filters = Hash.new
     unless filters.nil?
+      filters =  JSON.parse(filters)
+
       filters.keys.each do |key|
         type =  filters[key]['type']
         if type == "range"
-          from = filters[key]['values'][0]
-          to =  filters[key]['values'][1]
-          temp = Hash.new
-          temp['created_at'] = {
-            "$gte"=> from.to_i,
-            "$lte"=> to.to_i,
-          }
-          @filters << temp
+          from = filters[key]['values'][0].to_i*1000
+          to =  filters[key]['values'][1].to_i*1000
+
+          @filters["timestamp"] = {
+            "$gte"=> from.to_s,
+            "$lte"=> to.to_s,
+          }         
+
         elsif type == "equals"
 
+          temp = Hash.new
+
+          @filters[filters[key]["key"]] = temp
+        elsif type == "select"
+          @filters[filters[key]["key"]] = filters[key]["values"]
         end
       end
     end
+    return @filters
   end
 
   def qrcode(text="",width=200,height=200)

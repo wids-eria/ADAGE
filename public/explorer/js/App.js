@@ -1,6 +1,6 @@
 App = {
 	ADAGE: new ADAGE({
-		url: "http://adage.gameslearningsociety.org/",
+		url: "http://devry.localhost:3000",
 		app_token: "",
 		app_secret: ""
 	}),

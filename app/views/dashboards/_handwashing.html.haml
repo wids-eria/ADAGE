@@ -1,5 +1,5 @@
 - score = []
-- AdaData.with_game(@game.name).where(key: :ADAGEData_Score).limit(10).each do |record|
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGEData_Score).each do |record|
   - score << record.percentCovered
 
 - if score
@@ -23,7 +23,7 @@
   .container
     %p.header Leaderboard
     %ul.flagged_items
-      - AdaData.with_game(@game.name).where(key: :LeaderboardEntry_Handwashing).desc(:scoreAsFloat).limit(10).each do |record|
+      - AdaData.with_game(@game.name).include_filters(@filters).where(key: :LeaderboardEntry_Handwashing).desc(:scoreAsFloat).limit(10).each do |record|
         %li.full
           Score: 
           =  record.scoreAsFloat
