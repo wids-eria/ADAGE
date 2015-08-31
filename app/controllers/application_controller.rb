@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = exception.message
-    redirect_to profile_url
+    redirect_to homepage_url
   end
 
   def after_sign_out_path_for(resource_or_scope)
@@ -18,9 +18,7 @@ class ApplicationController < ActionController::Base
       subdomain = request.subdomain(0)
       if subdomain == ""
         #No subdomain
-
         @org = current_user.organizations.first
-        puts "-"*20
 
         url =  homepage_url
         http = url.split("//")

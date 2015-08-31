@@ -143,7 +143,7 @@ class ClassesController < ApplicationController
       GroupInvite.create(user:@user,group:@group)
     end
 
-    flash[:notice] = 'Student #{user.email} Invited'
+    flash[:notice] = "Student #{user.email} Invited"
     redirect_to class_path(@group)
   end
 
@@ -164,9 +164,10 @@ class ClassesController < ApplicationController
   def remove_user
     @group = Group.find(params[:id])
     authorize! :manage, @group
-    @group.RemoveUser(params[:user_id])
+    user = User.find(params[:user_id])
+    @group.RemoveUser(user)
 
-    flash[:notice] = 'Student #{user.email} Remove From Class'
+    flash[:notice] = "#{user.email} Remove From Class"
     redirect_to class_path(@group)
   end
 

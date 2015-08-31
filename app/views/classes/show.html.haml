@@ -14,9 +14,10 @@
               %li.full
                 = user.email
 
-                .student_management.right
-                  = link_to  remove_user_class_url(user), class: "",method: :delete, data: {confirm: "Are you sure?"}  do
-                    .remove_icon.right
+                - if can? :manage, @group
+                  .student_management.right
+                    = link_to  remove_user_class_url(@group,user), class: "",method: :delete, data: {confirm: "Are you sure?"}  do
+                      .remove_icon.right
       .subcontainer
         %p.header Pending Invites
         -if @group.group_invites.count==0

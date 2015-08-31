@@ -7,17 +7,12 @@ class DashboardsController < ApplicationController
   layout 'homepage'
 
   def homepage
-    if current_user.teacher?(@org) or current_user.admin?
-      @orgs = current_user.organizations
-      @classes = current_user.owned_groups.classes.where(organization_id: @org)
-      @games = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @classes)
-    end
+    puts current_user.roles.to_json
 
-    if current_user.student?(@org)
-      @orgs = current_user.organizations
-      @classes = current_user.groups.classes.where(organization_id: @org)
-      @games = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @classes)
-    end
+    @orgs = current_user.organizations
+    @classes = current_user.owned_groups.classes.where(organization_id: @org)
+    @classes << current_user.groups.classes.where(organization_id: @org)
+    @games = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @classes)
 
     params[:page_title] = "Homepage"
     breadcrumb("Homepage",true)

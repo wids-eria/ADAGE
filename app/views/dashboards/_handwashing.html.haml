@@ -11,6 +11,20 @@
             columns: [
               #{j(score.to_json)},
             ]
+        },
+        axis: {
+          x: {
+              label: {
+                  text: 'Attempt',
+                  position: 'outer-center'
+              }
+          },
+          y: {
+              label: {
+                  text: 'Percent Cleaned',
+                  position: 'outer-middle'
+              }
+          }
         }
       });
     });

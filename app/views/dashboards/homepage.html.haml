@@ -21,22 +21,24 @@
 
     %ul.flagged_items
       - @classes.each do |item|
-        %li.full
-          = link_to  class_path(item), class: "left" do
-            = item.name
+        - if can? :read, item
+          %li.full
+            = link_to  class_path(item), class: "left" do
+              = item.name
 
-          .student_management
-            = link_to  class_path(item), class: "" do
-              .small_arrow.right
-            = link_to  edit_class_path(item), class: "" do
-              .edit_icon.right
+            - if can? :manage, item
+              .student_management
+                = link_to  class_path(item), class: "" do
+                  .small_arrow.right
+                = link_to  edit_class_path(item), class: "" do
+                  .edit_icon.right
 
 .full.content.left
   .container
     %p.header Games
     .game
       - @games.each do |game|
-        .game.content.one_third.left
+        .game.content.one_fourth.left
           .subcontainer
             %p.header.center_text
               = game.name
@@ -48,6 +50,6 @@
                       = c.name
 
               .center
-                = simple_form_for :dashboard, url: dashboard_path(game), id: :title, class: :green_button, method: :post do |f|
+                = simple_form_for :dashboard, url: dashboard_path(game), id: :title, class: [:green_button,:full], method: :post do |f|
                   = f.hidden_field :class_id
-                  = f.button :submit,"View Dashboard",class: "green_button"
+                  = f.button :submit,"View Dashboard",class: "green_button full"

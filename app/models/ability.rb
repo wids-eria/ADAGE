@@ -15,6 +15,7 @@ class Ability
       can :read, AdaData do |data|
         data.user_id == user.id
       end
+
       can :read, User do |a_user|
         user == a_user
       end
@@ -42,6 +43,14 @@ class Ability
         cannot :manage, Game
       end
 
+      can :read, Game do |game|
+        game.groups.each do |group|
+          if group.users.include? user
+            return true
+          end
+        end
+      end
+
       can :manage, ParticipantRole do |p_role|
         user.role?(ResearcherRole.where(game_id: p_role.game.id).first)
       end
@@ -52,6 +61,14 @@ class Ability
 
       can :read, Organization do |org|
         OrganizationRole.where(user_id: user,organization_id: org,name:["admin","teacher","student"]).count == 1
+      end
+
+      can :read, Group, Group.joins(:users).where('users.id' => user) do |group|
+        group.users.include? user
+      end
+
+      can :manage, Group, Group.joins(:owners).where('users.id' => user) do |group|
+        group.owners.include? user
       end
 
     end

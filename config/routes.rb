@@ -40,7 +40,7 @@ Ada::Application.routes.draw do
       get :accept_invite
       post :process_invite
       get :join
-      delete :remove_user
+      delete "remove_user/:user_id", action: :remove_user, as: :remove_user
     end
   end
 
