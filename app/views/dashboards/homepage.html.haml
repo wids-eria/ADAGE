@@ -2,22 +2,31 @@
 
 .one_half.content.left
   .container
-    %p.header Profile
-    .content
+    %p.header.one_half.left
+      Profile
+    = link_to  edit_user_registration_url, class: "" do
+      .edit_icon.right
+    .content.full
+      %p Username
       %p.small_text
         = current_user.player_name
+      %p Email
       %p.small_text
         = current_user.email
-      %p.small_text
-        - @orgs.each do |org|
-          = org.name
+      - if @orgs.count > 0
+        %p Organizations
+        %p.small_text
+          - @orgs.each do |org|
+            = org.name
 
 .one_half.content.right
   .container
     .content.one_half.header.left Your Classes
-    .content.one_half.header.right
-      = link_to new_class_path do
-        .green_button.right Create Class
+
+    - if current_user.teacher?(@org) or current_user.admin?
+      .content.one_half.header.right
+        = link_to new_class_path do
+          .green_button.right Create Class
 
     %ul.flagged_items
       - @classes.each do |item|
@@ -43,7 +52,7 @@
             %p.header.center_text
               = game.name
             .content.full
-              %select.class_dropdown
+              %select.class_dropdown.full
                 - game.groups.classes.each do |c|
                   - if can? :read, c
                     %option{value: c.id}

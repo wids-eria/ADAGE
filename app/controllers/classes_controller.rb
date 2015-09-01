@@ -133,9 +133,10 @@ class ClassesController < ApplicationController
     @group = Group.find(params[:id])
     authorize! :manage, @group
 
-    @user = User.invite_class!(email: params[:invite][:email])
-    unless @user.invitation_accepted_at.nil?
-      InviteMailer.class_invite(@user).deliver
+    @user = User.invite_class!(email: params[:invite][:email],player_name: params[:invite][:player_name],group: @group)
+
+    if @user.invitation_accepted_at or @user.last_sign_in_at
+      InviteMailer.class_invite(@user,@group).deliver
     end
 
     invites = GroupInvite.where(user_id:@user,group_id:@group).exists?
@@ -143,15 +144,18 @@ class ClassesController < ApplicationController
       GroupInvite.create(user:@user,group:@group)
     end
 
-    flash[:notice] = "Student #{user.email} Invited"
+    flash[:notice] = "#{@user.email} Invited"
     redirect_to class_path(@group)
   end
 
   def join
     invites =  GroupInvite.where(user_id:current_user,group_id: params[:id]).all
+
     invites.each do |invite|
       invite.group.users << current_user
       OrganizationRole.create(organization: invite.group.organization, user: current_user, name: "student")
+  
+      flash[:notice] = "Joined Class #{invite.group.name}"
     end
 
     invites.each do |invite|
@@ -173,7 +177,7 @@ class ClassesController < ApplicationController
 
   def accept_invite
     @user = User.find_by_invitation_token(params[:invitation_token])
-    @resource = User.find_by_invitation_token(params[:invitation_token])
+    @resource = @user
     @invite = GroupInvite.where(user_id:@user).last
 
     render "devise/invitations/edit",layout: 'application'

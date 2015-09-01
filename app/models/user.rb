@@ -382,15 +382,21 @@ class User < ActiveRecord::Base
   end
 
   def self.invite_class!(attributes={}, invited_by=nil)
-   self.invite!(attributes, invited_by) do |invitable|
-     invitable.invitation_instructions = :class_invitation_instructions
-   end
+    if attributes[:player_name].blank?
+      attributes[:player_name] = attributes[:email]
+    end
+    self.invite!(attributes, invited_by) do |invitable|
+      invitable.invitation_instructions = :class_invitation_instructions
+    end
   end
 
   def self.invite_org!(attributes={}, invited_by=nil)
-   self.invite!(attributes, invited_by) do |invitable|
-     invitable.invitation_instructions = :organization_invitation_instructions
-   end
+    if attributes[:player_name].blank?
+      attributes[:player_name] = attributes[:email]
+    end
+    self.invite!(attributes, invited_by) do |invitable|
+      invitable.invitation_instructions = :organization_invitation_instructions
+    end
   end
 
   protected

@@ -1,7 +1,20 @@
 
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  before_filter :oauth_access_token
+  before_filter :oauth_access_token,:store_location
+
+  def store_location
+    return unless request.get? 
+    if (request.path != "/users/sign_in" &&
+        request.path != "/users/sign_up" &&
+        request.path != "/users/password/new" &&
+        request.path != "/users/password/edit" &&
+        request.path != "/users/confirmation" &&
+        request.path != "/users/sign_out" &&
+        !request.xhr?)
+      session[:previous_url] = request.fullpath 
+    end
+  end
 
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = exception.message
@@ -13,21 +26,25 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource_or_scope)
-    if current_user.roles.where('name NOT IN (?)',["teacher","student","player"]).count == 0
+    if session[:previous_url].blank?
+      if current_user.roles.where('name NOT IN (?)',["teacher","student","player"]).count == 0
 
-      subdomain = request.subdomain(0)
-      if subdomain == ""
-        #No subdomain
-        @org = current_user.organizations.first
+        subdomain = request.subdomain(0)
+        if subdomain == ""
+          #No subdomain
+          @org = current_user.organizations.first
 
-        url =  homepage_url
-        http = url.split("//")
-        url = http[0]+"//"+@org.subdomain+"."+http[1]
+          url =  homepage_url
+          http = url.split("//")
+          url = http[0]+"//"+@org.subdomain+"."+http[1]
+        else
+          homepage_path
+        end
       else
-        homepage_path
+        welcome_index_path
       end
     else
-      welcome_index_path
+      session[:previous_url]
     end
   end
 

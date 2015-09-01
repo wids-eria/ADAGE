@@ -1,11 +1,11 @@
-%h2 Class
-
+%h2 
+	You've been invited to join class
+	= @resource.group.name
 %p
 	= t("devise.mailer.invitation_instructions.hello", email: @resource.email)
-
 %p
 	= t("devise.mailer.invitation_instructions.someone_invited_you", url: root_url)
 %p
-	= link_to t("devise.mailer.invitation_instructions.accept"), accept_invite_class_url(@resource, invitation_token: @token)
+	= link_to t("devise.mailer.invitation_instructions.accept"), join_class_url(@resource.group.id, invitation_token: @token)
 %p
 	= t("devise.mailer.invitation_instructions.ignore").html_safe

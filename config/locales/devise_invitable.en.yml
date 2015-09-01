@@ -13,4 +13,10 @@ en:
         submit_button: "Set my password"
     mailer:
       invitation_instructions:
-        subject: 'Invitation instructions'
+        subject: 'Invitation Instructions'
+      class_invitation_instructions:
+        subject: 'ADAGE Class Inivitation Instructions'
+      organization_invitation_instructions:
+        subject: 'ADAGE Organization Inivitation Instructions'
+      class_invite:
+        subject: 'ADAGE Class Inivitation'
