@@ -1,5 +1,5 @@
 class ClassesController < ApplicationController
-  require 'CSV'
+  require 'csv'
 
   before_filter :authenticate_user!, except: [:accept_invite,:process_invite]
   before_filter :get_subdomain, except: [:accept_invite,:process_invite,:join]
