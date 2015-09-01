@@ -49,10 +49,9 @@ module Ada
     config.assets.paths << Rails.root.join("fonts")
 
     config.to_prepare do
-        Devise::RegistrationsController.layout proc{ |controller| user_signed_in? ? "homepage"   : "devise" }
+        Devise::RegistrationsController.layout proc{ |controller| user_signed_in? ? "homepage" : "application" }
         Devise::ConfirmationsController.layout "homepage"
-        Devise::UnlocksController.layout "homepage"            
-        Devise::PasswordsController.layout "homepage"        
+        Devise::UnlocksController.layout "homepage"          
     end
 
     config.generators do |g|
