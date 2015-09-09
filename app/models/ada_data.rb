@@ -26,9 +26,6 @@ class AdaData
   end
 
   def self.include_filters(filters = @filters)
-    puts "-"*20
-    puts filters.to_json
-
     where(filters)
   end
 

@@ -18,7 +18,7 @@ class ClassesController < ApplicationController
     @student = User.new
     
 
-    breadcrumb("#{@group.name} Dashboard")
+    breadcrumb("#{@group.name}")
   end
 
   def edit

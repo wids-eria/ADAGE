@@ -7,10 +7,10 @@
 	.content.full
 	%p.header Select Applications
 	- f.collection_check_boxes :game_ids, @games,:id,:name do |b|
-		=  b.label(class: "content one_fourth left") do
-			.check_box
+		=  b.label(class: "content one_third left") do
+			.check_box.full
 				= b.check_box
-				.subcontainer
+				.subcontainer.full
 					%p.header.center_text
 						= b.text
 	.clear

@@ -41,14 +41,15 @@
           Welcome Back,
           %span.bold 
             = current_user.player_name
-        .breadcrumb_container
-          %ul.breadcrumbs
-            //%li University of Wisconsin, Madison
-            //%li.dot &#9679;
-            = link_to destroy_user_session_url, method: :delete do
-              %li Logout
 
-        %p.logotype.right ADAGE
+        %p.logotype.right 
+          ADAGE
+          .breadcrumb_container
+            %ul.breadcrumbs.right
+              //%li University of Wisconsin, Madison
+              //%li.dot &#9679;
+              = link_to destroy_user_session_url, method: :delete do
+                %li Logout
 
     .page_wrap
       .content.full
@@ -56,13 +57,15 @@
           .page_label
             %p.header 
               = session[:breadcrumb][-1][:key].titleize
-        .breadcrumb_container
-          %ul.breadcrumbs
-            - for i in 0..session[:breadcrumb].length - 1
-              %li 
-                = link_to session[:breadcrumb][i][:key], session[:breadcrumb][i][:url]
-              -if i < session[:breadcrumb].length - 1
-                %li.dot &#9679;
+        -#
+          .breadcrumb_container
+            %ul.breadcrumbs
+              - for i in 0..session[:breadcrumb].length - 1
+                %li 
+                  = link_to session[:breadcrumb][i][:key], session[:breadcrumb][i][:url]
+                -if i < session[:breadcrumb].length - 1
+                  %li.dot &#9679;
+
         .notifications.center.content.full
           - if flash[:alert].present?
             %p.header.alert

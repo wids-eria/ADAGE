@@ -46,7 +46,8 @@ class Ability
       can :read, Game do |game|
         game.groups.each do |group|
           if group.users.include? user
-            return true
+            true
+            break
           end
         end
       end
