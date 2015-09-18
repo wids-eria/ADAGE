@@ -1,0 +1,77 @@
+- @users << 61376
+= @users
+
+= @game.name
+- @users.each do |user_id|
+  - end_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "PEx Pulse").last
+
+  - if end_log
+    - start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID).first
+    = AdaData.with_game(@game.name).distinct(:_id).count
+
+    = AdaData.with_game(@game.name).where(:_id.in => [Moped::BSON::ObjectId("55f8784b8bfe0dc7df000120")]).count
+    = AdaData.with_game(@game.name).where(:adadata_id => Moped::BSON::ObjectId("55f8784b8bfe0dc7df000120")).count
+    - spinners = AdaData.with_game(@game.name).where(:_id.gte => Moped::BSON::ObjectId("55f8784b8bfe0dc7df000120")).all
+    = raw("<br/>#{spinners.count}")
+
+    - spinners = AdaData.with_game(@game.name).between(_id: start_log._id..end_log._id).all
+    = raw("<br/>#{spinners.count}")
+
+    - spinners = AdaData.with_game(@game.name).include_filters(@filters).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).all
+    = raw("<br/>#{spinners.count}")
+
+:javascript
+  $(document).ready( function() {
+    c3.generate({
+      bindto: "#pulse-check",
+      data: {
+        type: 'bar',
+        x: 'x',
+        columns: [
+          ['x',30,40,50,60,70],
+          ['', 3,5,7,2,3],
+        ]
+      },
+      bar: {
+        width: {
+            ratio: 0.5
+        }
+      },
+      axis: {
+        x: {
+          label: {
+              text: 'Pulse',
+              position: 'outer-center'
+          }
+        },
+        y: {
+          label: {
+              text: 'Number of Students',
+              position: 'outer-middle'
+          }
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
+  });
+
+.content.full
+  .container
+    %p.header Physical Exam
+    .one_half.left
+      #pulse-check
+    .one_half.right
+      #pulse-check
+
+.content.one_half.right
+  .container
+    %p.header Leaderboard
+    %ul.flagged_items
+      - AdaData.with_game(@game.name).include_filters(@filters).where(key: :LeaderboardEntry_Handwashing).desc(:scoreAsFloat).limit(10).each do |record|
+        %li.full
+          Score: 
+          =  record.scoreAsFloat
+          .student_management.right
+            = record.playerDefinedName

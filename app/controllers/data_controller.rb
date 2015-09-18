@@ -57,7 +57,7 @@ class DataController < ApplicationController
 
       unless params[:time_range].nil?
         since = time_range_to_epoch(params[:time_range])
-
+        since = since.to_i
         if params[:user_id].nil? or params[:user_id].empty?
           @data = AdaData.with_game(game_name).where(:timestamp.gt => since).where(key: params[:key]).desc(params[:field_name]).skip(params[:start]).limit(params[:limit])
         else

@@ -23,11 +23,6 @@
       
     .selector.one_fourth.right
       %select.right.class_dropdown.filter{filter: "select", key: "class_id"}
-        - if @class.nil?
-          %option{value: -1,selected: "selected"} All Classes
-        - else
-          %option{value: -1} All Classes
-
         - @classes.each do |c|
           - if can? :read, c
             - if !@class.nil? and c.id == @class.id
@@ -56,4 +51,5 @@
                   = c.email
       %label.right Student
 
-= render "dashboards/handwashing"
+- if lookup_context.exists? "dashboards/_#{@game.name.downcase}"
+  = render "dashboards/#{@game.name.downcase}"

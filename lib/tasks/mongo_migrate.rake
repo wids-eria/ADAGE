@@ -47,4 +47,42 @@ namespace :mongo_migrate do
             puts "Did not remove AdaData: Total game records do not equal AdaData totals " + db[:ada_data].find.count.to_s + "/" + total.to_s
         end
     end
+
+    desc 'Upgrades the record _id format to uniformly use ObjectId rather than strings'
+    task :migrate_ids => :environment do
+        db = Mongoid::Sessions.default
+        db.use :ada_development
+
+        puts "Starting"
+        db.collections.each do |collection|
+            #swap to admin database to run commands
+            db.use :admin
+            database_name = "ada_development"
+
+            from = collection.name
+            to =collection.name+"_original"
+            puts "Renaming #{from} to #{to}"
+            begin
+                db.command(renameCollection: "#{database_name}.#{from}", to: "#{database_name}.#{to}")
+            rescue
+                puts "Cannot convert collection #{from} to #{to}"
+            end
+
+            #swap back to db for records
+            db.use :ada_development                   
+            new_collection = db[from]
+            new_collection.drop
+            puts "Migration collection #{collection.name}"
+
+            db[to].find.each do |document|                
+                document["_id"] = Moped::BSON::ObjectId(document["_id"])
+                #puts document["_id"]
+                new_collection.insert(document, :safe => true)
+            end
+
+            db[to].drop
+        end
+    end
+
+
 end

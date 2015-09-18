@@ -47,6 +47,7 @@ module Ada
     config.assets.version = '1.0'
     config.active_record.schema_format = :sql
     config.assets.paths << Rails.root.join("fonts")
+    config.autoload_paths << Rails.root.join("concerns")
 
     config.to_prepare do
         Devise::RegistrationsController.layout proc{ |controller| user_signed_in? ? "homepage" : "application" }

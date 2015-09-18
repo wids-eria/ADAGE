@@ -235,7 +235,7 @@ namespace :seed_data do
     rand = Random.new(Time.now.to_i)
 
     client_token = ''
-    game = Game.where('lower(name) = ?', 'oztoctablet').first
+    game = Game.where('lower(name) = ?', 'oztoc').first
 
     if game != nil
       imp = game.implementations.first
@@ -245,24 +245,24 @@ namespace :seed_data do
     end
 
     circuit_template = {
-        'application_name' => 'OztocTablet',
+        'application_name' => 'oztoc',
         "key"=>"MakeCircuitCreated",
         "num_batteries"=>1,
         "num_leds"=>2,
         "playspace_ids"=>[4],
         "timestamp" => Time.now.to_i,
-        'session_token' => 'oztoctablet',
-        'game_id' => 'oztoctablet'
+        'session_token' => 'oztoc',
+        'game_id' => 'oztoc'
     }
 
     fish_template = {
-        'application_name' => 'OztocTablet',
+        'application_name' => 'oztoc',
         "key"=>"MakeSpawnFish",
         "fish"=>{"name"=>"large red fish"},
         "playspace_ids"=>[1],
         "timestamp" => Time.now.to_i,
-        'session_token' => 'oztoctablet',
-        'game_id' => 'oztoctablet'
+        'session_token' => 'oztoc',
+        'game_id' => 'oztoc'
     }
 
     types = [circuit_template, fish_template]
@@ -272,7 +272,7 @@ namespace :seed_data do
 
     #Add indices to collection
     db = Mongoid::Sessions.default
-    gamename = 'oztoctablet'.downcase
+    gamename = 'oztoc'.downcase
     collection = db[gamename]
     collection.indexes.create(name: 1)
     collection.indexes.create(gameName: 1)
@@ -281,7 +281,7 @@ namespace :seed_data do
 
     (0..1000).each do |i|
         sleep 3
-        data = AdaData.with_game("oztoctablet").new(types.sample)
+        data = AdaData.with_game("oztoc").new(types.sample)
         data.user_id = rand.rand(0...4)
         data.playspace_ids = [rand.rand(1...5)]
         data.timestamp = (Time.now.to_f*1000).to_i
@@ -292,7 +292,7 @@ namespace :seed_data do
         end
         puts 'creating data for playspace ' + data.playspace_ids.to_s
         data.save
-        puts AdaData.with_game("oztoctablet").all.count
+        puts AdaData.with_game("oztoc").all.count
     end
 
 

@@ -41,6 +41,7 @@ class DashboardsController < ApplicationController
       end
     end
     @classes = current_user.owned_groups.classes.where(organization_id: @org).joins(:games).where('games.id' => @game)
+    @users = @class.users.pluck(:id)
 
     authorize! :read, @game
     authorize! :manage, @class

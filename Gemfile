@@ -4,7 +4,7 @@ gem 'rails', '3.2.13'
 gem 'pg'
 gem 'devise', '2.0.0'
 gem 'devise_invitable', '~> 1.0.3'
-gem 'mongoid'
+gem 'mongoid', '~> 3.1.7'
 gem 'simple_enum'
 gem 'postmark-rails'
 

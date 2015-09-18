@@ -60,7 +60,7 @@ class Game < ActiveRecord::Base
   def create_collection
     #Creates collection and add indices
     db = Mongoid::Sessions.default
-    gamename = self.name.to_s.gsub(' ', '_')
+    gamename = self.name.to_s.gsub(' ', '_').downcase
     collection = db[gamename]
     collection.indexes.create(name: 1)
     collection.indexes.create(gameName: 1)
