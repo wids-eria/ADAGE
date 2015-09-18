@@ -1,36 +1,85 @@
 - @users << 61376
 = @users
-
-= @game.name
+- scores = []
 - @users.each do |user_id|
   - end_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "PEx Pulse").last
 
   - if end_log
     - start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID).first
-    = AdaData.with_game(@game.name).distinct(:_id).count
 
-    = AdaData.with_game(@game.name).where(:_id.in => [Moped::BSON::ObjectId("55f8784b8bfe0dc7df000120")]).count
-    = AdaData.with_game(@game.name).where(:adadata_id => Moped::BSON::ObjectId("55f8784b8bfe0dc7df000120")).count
-    - spinners = AdaData.with_game(@game.name).where(:_id.gte => Moped::BSON::ObjectId("55f8784b8bfe0dc7df000120")).all
-    = raw("<br/>#{spinners.count}")
-
-    - spinners = AdaData.with_game(@game.name).between(_id: start_log._id..end_log._id).all
-    = raw("<br/>#{spinners.count}")
-
-    - spinners = AdaData.with_game(@game.name).include_filters(@filters).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).all
-    = raw("<br/>#{spinners.count}")
-
+    - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).each do |record|
+      - scores << record.attempt
 :javascript
+
+  function Histogram(data){
+    var self = this;
+    self.convert = function(bin){
+      if(!self.init && self.bin !=bin){
+        var min_num = Math.min.apply(Math,self.data);
+        var max_num = Math.max.apply(Math,self.data);
+
+        var w = (max_num - min_num)/bin;
+
+        self.ticks = [];
+        self.values = [];
+
+        for(var i=0; i < bin;i++){
+          var min = i*w+min_num;
+          var max = (i+1)*w+min_num;
+          self.values[i] = 0;
+          self.ticks[i] = min;
+          self.data.forEach(function(score){
+            if(score >= min && score <=max){
+              self.values[i] += 1;
+            }
+          });
+        }
+
+        self.init = true;
+      }
+    };
+
+    self.getValues = function(bin){
+      self.convert(bin);
+      return self.values;
+    };
+
+    self.getLabels = function(bin){
+      self.convert(bin);
+      return self.ticks;
+    };
+
+    function Histogram(){
+      self.data = data;
+      self.init = false;
+      self.bin = 0;
+      self.ticks = [];
+      self.values = [];
+    };
+
+    return Histogram();
+  };
+
+
   $(document).ready( function() {
+
+    var histo = new Histogram(#{scores});
+
+    var hist_ticks = histo.getLabels(3);
+    var hist = histo.getValues(5);
+    hist_ticks.unshift('x');
+    hist.unshift('');
+
     c3.generate({
       bindto: "#pulse-check",
       data: {
         type: 'bar',
         x: 'x',
         columns: [
-          ['x',30,40,50,60,70],
-          ['', 3,5,7,2,3],
-        ]
+          hist_ticks,
+          histo.getValues(),
+        ],
+        order: 'asc'
       },
       bar: {
         width: {
@@ -42,12 +91,22 @@
           label: {
               text: 'Pulse',
               position: 'outer-center'
+          },
+          tick: {
+            format: function(x){
+              return x.toFixed(0);
+            }
           }
         },
         y: {
           label: {
               text: 'Number of Students',
               position: 'outer-middle'
+          },
+          tick: {
+            format: function(x){
+              return (x == Math.floor(x)) ? x: "";
+            }
           }
         }
       },

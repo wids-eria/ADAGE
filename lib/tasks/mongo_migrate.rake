@@ -64,25 +64,24 @@ namespace :mongo_migrate do
             puts "Renaming #{from} to #{to}"
             begin
                 db.command(renameCollection: "#{database_name}.#{from}", to: "#{database_name}.#{to}")
+
+                #swap back to db for records
+                db.use :ada_development                   
+                new_collection = db[from]
+                new_collection.drop
+                puts "Migration collection #{collection.name}"
+
+                db[to].find.each do |document|                
+                    document["_id"] = Moped::BSON::ObjectId(document["_id"])
+                    #puts document["_id"]
+                    new_collection.insert(document, :safe => true)
+                end
+
+                db[to].drop
             rescue
                 puts "Cannot convert collection #{from} to #{to}"
             end
 
-            #swap back to db for records
-            db.use :ada_development                   
-            new_collection = db[from]
-            new_collection.drop
-            puts "Migration collection #{collection.name}"
-
-            db[to].find.each do |document|                
-                document["_id"] = Moped::BSON::ObjectId(document["_id"])
-                #puts document["_id"]
-                new_collection.insert(document, :safe => true)
-            end
-
-            db[to].drop
         end
     end
-
-
 end
