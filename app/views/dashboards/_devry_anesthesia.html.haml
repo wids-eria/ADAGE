@@ -1,6 +1,12 @@
 - @users << 61376
 = @users
-- scores = []
+- pulse_scores = []
+- asa_scores = []
+
+- avg_time = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).avg(:duration)
+- total_time = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).sum("duration")
+= AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).sum(:duration)
+
 - @users.each do |user_id|
   - end_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "PEx Pulse").last
 
@@ -8,7 +14,15 @@
     - start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID).first
 
     - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).each do |record|
-      - scores << record.attempt
+      - pulse_scores << record.attempt
+
+  - asa = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id,name: "ASA-PS Score").last
+  - if asa
+    - asa_scores << asa.score
+
+  //= AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id,name: "ASA-PS Score").avg(:score)
+  //= AdaData.with_game(@game.name).include_filters(@filters).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).avg(:attempt)
+
 :javascript
 
   function Histogram(data){
@@ -41,11 +55,14 @@
 
     self.getValues = function(bin){
       self.convert(bin);
+
+      if(self.values[0] !='x') self.values.unshift('x');
       return self.values;
     };
 
     self.getLabels = function(bin){
       self.convert(bin);
+      if(self.ticks[0] !='') self.ticks.unshift('');
       return self.ticks;
     };
 
@@ -62,13 +79,8 @@
 
 
   $(document).ready( function() {
-
-    var histo = new Histogram(#{scores});
-
-    var hist_ticks = histo.getLabels(3);
-    var hist = histo.getValues(5);
-    hist_ticks.unshift('x');
-    hist.unshift('');
+    var pulse = new Histogram(#{pulse_scores});
+    var asa = new Histogram(#{asa_scores});
 
     c3.generate({
       bindto: "#pulse-check",
@@ -76,10 +88,9 @@
         type: 'bar',
         x: 'x',
         columns: [
-          hist_ticks,
-          histo.getValues(),
-        ],
-        order: 'asc'
+          pulse.getLabels(3),
+          pulse.getValues(3),
+        ]
       },
       bar: {
         width: {
@@ -89,7 +100,51 @@
       axis: {
         x: {
           label: {
-              text: 'Pulse',
+              text: '',
+              position: 'outer-center'
+          },
+          tick: {
+            format: function(x){
+              return x.toFixed(0);
+            }
+          }
+        },
+        y: {
+          label: {
+              text: 'Number of Students',
+              position: 'outer-middle'
+          },
+          tick: {
+            format: function(x){
+              return (x == Math.floor(x)) ? x: "";
+            }
+          }
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
+
+    c3.generate({
+      bindto: "#asa-ps",
+      data: {
+        type: 'bar',
+        x: 'x',
+        columns: [
+          asa.getLabels(3),
+          asa.getValues(3),
+        ]
+      },
+      bar: {
+        width: {
+            ratio: 0.5
+        }
+      },
+      axis: {
+        x: {
+          label: {
+              text: '',
               position: 'outer-center'
           },
           tick: {
@@ -118,19 +173,19 @@
 
 .content.full
   .container
+    .one_half.left
+      %p 
+        = avg_time
+      %p 
+        = total_time
+
+.content.full
+  .container
     %p.header Physical Exam
     .one_half.left
-      #pulse-check
-    .one_half.right
+      .center_text Pulse Check (Most Recent Play)
       #pulse-check
 
-.content.one_half.right
-  .container
-    %p.header Leaderboard
-    %ul.flagged_items
-      - AdaData.with_game(@game.name).include_filters(@filters).where(key: :LeaderboardEntry_Handwashing).desc(:scoreAsFloat).limit(10).each do |record|
-        %li.full
-          Score: 
-          =  record.scoreAsFloat
-          .student_management.right
-            = record.playerDefinedName
+    .one_half.right
+      .center_text ASA-PS Score (Most Recent Play)
+      #asa-ps
