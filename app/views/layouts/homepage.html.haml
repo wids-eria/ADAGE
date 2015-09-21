@@ -38,12 +38,13 @@
     .navigation_container
       .navigation
         %p.header.full 
-          Welcome Back,
-          %span.bold 
-            = current_user.player_name
+          = link_to homepage_url do
+            Welcome Back,
+            %span.bold 
+              = current_user.player_name
 
         %p.logotype.right 
-          ADAGE
+          = link_to  "ADAGE",homepage_url
           .breadcrumb_container
             %ul.breadcrumbs.right
               //%li University of Wisconsin, Madison

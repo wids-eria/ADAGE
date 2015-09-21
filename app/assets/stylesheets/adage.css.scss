@@ -92,6 +92,14 @@ p{
         font-weight:700;
         color:white;
         font-size:100px;
+
+        a{
+            color:white;
+            &:visited{
+
+            color:white;
+            }
+        }
     }
     
     p.betatype{

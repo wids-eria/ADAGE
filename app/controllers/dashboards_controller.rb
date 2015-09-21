@@ -43,6 +43,7 @@ class DashboardsController < ApplicationController
     @classes = current_user.owned_groups.classes.where(organization_id: @org).joins(:games).where('games.id' => @game)
     @users = @class.users.pluck(:id)
 
+    @users = [1,61376, 61878, 61993, 245, 61899]
     authorize! :read, @game
     authorize! :manage, @class
     params[:page_title] = @game.name

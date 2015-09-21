@@ -48,6 +48,13 @@ p{
         font-weight:700;
         color:white;
         font-size:35px;
+        a{
+            color:white;
+            &:visited{
+
+            color:white;
+            }
+        }
     }
     
     p.betatype{
@@ -321,6 +328,13 @@ select{
         .header{            
             font-size:22px;
             margin-bottom:5px;
+            a{
+                color:#c4ecff;
+                &:visited{
+                    color:#c4ecff;
+                }
+
+            }
         }
         
         .logotype{
@@ -551,6 +565,35 @@ select{
         opacity:.5;
     }
 }
+
+.remove_icon_small{
+    @include transition;
+    
+    height:15px;
+    width:15px;
+    background:url(remove_icon_small.png);
+    
+    &:hover{
+        @include transition;
+        opacity:.5;
+    }
+}
+
+.edit_icon_small{
+    @include transition;
+    
+    height:15px;
+    width:15px;
+    background:url(edit_icon_small.png);
+    margin-left:10px;
+    
+    &:hover{
+        @include transition;
+        opacity:.5;
+    }
+}
+
+
 
 .info_icon{
     @include transition;
