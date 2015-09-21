@@ -47,9 +47,9 @@
     %p.header Games
     .game
       - @games.each do |game|
-        .game.content.one_fourth.left
-          .subcontainer
-            %p.header.center_text
+        .game.content.left
+          .subcontainer.one_third
+            %p.header.center_text.one_third
               = game.name
             .content.full
               %select.class_dropdown.full
