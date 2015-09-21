@@ -119,8 +119,8 @@
       axis: {
         x: {
           label: {
-              text: '',
-              position: 'outer-center'
+            text: '',
+            position: 'outer-center'
           },
           tick: {
             format: function(x){
@@ -163,8 +163,8 @@
       axis: {
         x: {
           label: {
-              text: '',
-              position: 'outer-center'
+            text: '',
+            position: 'outer-center'
           },
           tick: {
             format: function(x){
@@ -174,8 +174,8 @@
         },
         y: {
           label: {
-              text: 'Number of Students',
-              position: 'outer-middle'
+            text: 'Number of Students',
+            position: 'outer-middle'
           },
           tick: {
             format: function(x){
@@ -191,15 +191,23 @@
 
 
 
+    console.log(#{pie});
     c3.generate({
       bindto: "#pie",
       size: {
-        width: 160,
-        height: 160
+        width: 130,
+        height: 130
       },
       data: {
           columns: #{pie},
           type : 'pie',
+      },
+      pie: {
+        label: {
+          format: function (value, ratio, id) {
+            return moment(new Date(value/1000)).format('h:mm:ss');    
+          }
+        }
       },
       legend: {
         show: false
@@ -223,22 +231,22 @@
         x: 'x',
         x_format : '%Y%m%d',
         columns: [
-            labels,
-            scores
+          labels,
+          scores
         ]
       },
       axis: {
         x: {
           type : 'timeseries',
           label: {
-              text: 'Date',
-              position: 'outer-center'
+            text: 'Date',
+            position: 'outer-center'
           }
         },
         y: {
           label: {
-              text: 'Avg Score',
-              position: 'outer-middle'
+            text: 'Avg Score',
+            position: 'outer-middle'
           },
           tick: {
             format: function(y){
@@ -322,17 +330,17 @@
   .container
     %p.header Physical Exam
     .one_half.left.graph
-      .center_text Pulse Check (Most Recent Play)
+      .title.center_text Pulse Check (Most Recent Play)
       #pulse-check
 
     .one_half.right.graph
-      .center_text ASA-PS Score (Most Recent Play)
+      .title.center_text ASA-PS Score (Most Recent Play)
       #asa-ps
-  .container.content
-    .one_half.left.graph
-      .center_text Pulse Check Score
-      #pex-line
+    .content
+      .one_half.left.graph
+        .title.center_text Pulse Check Score
+        #pex-line
 
-    .one_half.right.graph
-      .center_text ASA-PS Score
-      #asa-line
+      .one_half.right.graph
+        .title.center_text ASA-PS Score
+        #asa-line

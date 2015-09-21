@@ -170,6 +170,10 @@ select{
 .italic{ font-style: italic; }
 .underline{ text-decoration:underline; }
 
+.title{     
+    font-size: 1.1em;
+    padding-bottom: 2px;
+}
 .center_text{ text-align:center; }
 .all_caps{ text-transform:uppercase; }
 .lower_case{ text-transform:lowercase; }
