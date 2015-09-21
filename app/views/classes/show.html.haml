@@ -37,7 +37,8 @@
         =simple_form_for :import, url: import_class_path(@group) do |f|
           = f.input :file, as: :file, label: false, wrapper: false,accept: 'text/csv' ,input_html: { class: "file_import"} 
           %p.small_text.center_text.full
-            Need a student import template? <a href="">Here you go.</a>
+            Need a student import template?
+            = link_to 'Here you go.', '/student-list-template.csv'
           = f.button :submit,"Import",class: "green_button right"
       .subcontainer
         = render "users/student_form"
