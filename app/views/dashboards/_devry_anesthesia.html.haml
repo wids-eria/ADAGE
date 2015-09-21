@@ -3,9 +3,12 @@
 - pulse_scores = []
 - asa_scores = []
 
-- avg_time = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).avg(:duration)
-- total_time = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).sum("duration")
-= AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).sum(:duration)
+- count = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).count
+- total_time = 0
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).pluck(:duration).each do |duration|
+  - total_time += duration.to_i
+- total_time /= 1000
+- avg_time = total_time/count
 
 - @users.each do |user_id|
   - end_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "PEx Pulse").last
@@ -22,6 +25,10 @@
 
   //= AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id,name: "ASA-PS Score").avg(:score)
   //= AdaData.with_game(@game.name).include_filters(@filters).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).avg(:attempt)
+
+- pie = Array.new
+- AdaData.with_game(@game.name).include_filters(@filters).only(:name,:duration).where(key: :ContextEnd_GameSection).group_by(&:name).each do |name, event|
+  - pie << [ name,event.inject(0){|sum,e| sum += e.duration.to_i }]
 
 :javascript
 
@@ -169,15 +176,30 @@
         show: false
       }
     });
+
+
+
+    c3.generate({
+      bindto: "#pie",
+      data: {
+          columns: #{pie},
+          type : 'pie',
+      }
+    });
+
   });
 
 .content.full
   .container
     .one_half.left
       %p 
-        = avg_time
+        Total time spent playing:
+        = Time.at(total_time).utc.strftime("%H:%M:%S")
       %p 
-        = total_time
+        Average time spent playing: 
+        = Time.at(avg_time).utc.strftime("%H:%M:%S")
+    .one_half.right
+      #pie
 
 .content.full
   .container
