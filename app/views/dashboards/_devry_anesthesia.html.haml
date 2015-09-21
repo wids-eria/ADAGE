@@ -10,6 +10,23 @@
 - total_time /= 1000
 - avg_time = total_time/count
 
+- avg_pex = []
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,name: "PEx Pulse").inject({}) do |record,event|
+  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << event.score
+  - record
+  - avg_pex = record
+- avg_pex.keys.each do |key|
+  - avg_pex[key] = avg_pex[key].inject{ |sum, el| sum + el }.to_f / avg_pex[key].size
+
+- avg_asa = []
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,name: "ASA-PS Score").inject({}) do |record,event|
+  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << event.score
+  - record
+  - avg_asa = record
+- avg_asa.keys.each do |key|
+  - avg_asa[key] = avg_asa[key].inject{ |sum, el| sum + el }.to_f / avg_asa[key].size
+
+
 - @users.each do |user_id|
   - end_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "PEx Pulse").last
 
@@ -181,33 +198,135 @@
 
     c3.generate({
       bindto: "#pie",
+      size: {
+        width: 160,
+        height: 160
+      },
       data: {
           columns: #{pie},
           type : 'pie',
+      },
+      legend: {
+        show: false
       }
     });
+
+    var asa_scores = #{avg_asa.to_json};
+
+    var labels =[];
+
+    var scores = []
+    for(var key in asa_scores){
+      labels.push(new Date(key).getTime());
+      scores.push(asa_scores[key]);
+    }
+    labels.unshift('x');
+    scores.unshift('');
+    c3.generate({
+      bindto: "#asa-line",
+      data: {
+        x: 'x',
+        x_format : '%Y%m%d',
+        columns: [
+            labels,
+            scores
+        ]
+      },
+      axis: {
+        x: {
+          type : 'timeseries',
+          label: {
+              text: 'Date',
+              position: 'outer-center'
+          }
+        },
+        y: {
+          label: {
+              text: 'Avg Score',
+              position: 'outer-middle'
+          }
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
+
+    var pex_scores = #{avg_pex.to_json};
+
+    var labels = [];
+
+    var scores = []
+    for(var key in pex_scores){
+      labels.push(new Date(key).getTime());
+      scores.push(pex_scores[key]);
+    }
+
+    labels.unshift('x');
+
+    scores.unshift('');
+    console.log(labels);
+
+    c3.generate({
+      bindto: "#pex-line",
+      data: {
+        x: 'x',
+        x_format : '%Y%m%d',
+        columns: [
+          labels,
+          scores
+        ]
+      },
+      axis: {
+        x: {
+          type : 'timeseries',
+          label: {
+              text: 'Date',
+              position: 'outer-center'
+          }
+        },
+        y: {
+          label: {
+              text: 'Avg Score',
+              position: 'outer-middle'
+          }
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
+
 
   });
 
 .content.full
   .container
-    .one_half.left
+    .two_thirds.left
       %p 
         Total time spent playing:
         = Time.at(total_time).utc.strftime("%H:%M:%S")
       %p 
         Average time spent playing: 
         = Time.at(avg_time).utc.strftime("%H:%M:%S")
-    .one_half.right
-      #pie
+    .one_third.right
+      #pie.right
 
 .content.full
   .container
     %p.header Physical Exam
-    .one_half.left
+    .one_half.left.graph
       .center_text Pulse Check (Most Recent Play)
       #pulse-check
 
-    .one_half.right
+    .one_half.right.graph
       .center_text ASA-PS Score (Most Recent Play)
       #asa-ps
+  .container.content
+    .one_half.left.graph
+      .center_text Pulse Check Score
+      #pex-line
+
+    .one_half.right.graph
+      .center_text ASA-PS Score
+      #asa-line

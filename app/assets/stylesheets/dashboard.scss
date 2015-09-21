@@ -202,6 +202,15 @@ select{
 
 .page_wrap{ padding:20px;min-height: 100%; }
 .content{ padding:10px; }
+
+.graph{
+    margin-top: 15px;
+}
+
+.divider{
+    border-right: 1px solid black;
+}
+
 .container{
     @include full;
     @include rounded_corners;
