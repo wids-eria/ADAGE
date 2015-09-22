@@ -42,6 +42,27 @@
 - AdaData.with_game(@game.name).include_filters(@filters).only(:name,:duration).where(key: :ContextEnd_GameSection).group_by(&:name).each do |name, event|
   - pie << [ name,event.inject(0){|sum,e| sum += e.duration.to_i }]
 
+
+
+- timetho_scores = []
+- checklist_scores = Hash.new
+- @users.each do |user_id|
+  - end_log =  AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "Trimethoprim-Sulfadiazine").last
+  - if end_log
+    - start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID).first
+
+    - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).each do |record|
+      - timetho_scores << record.attempt
+
+  - end_log =  AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_GameSection,user_id: user_id.to_i,name: "Perioperative Checklist").last
+  - if end_log
+    - start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID).first
+
+    - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :PlayerEvent_MultipleChoiceOutput,user_id: user_id).each do |record|      
+      - if !checklist_scores.has_key? record.attempt
+        - checklist_scores[record.attempt] = 0
+      - checklist_scores[record.attempt] += 1
+
 :javascript
 
   function Histogram(data){
@@ -309,6 +330,112 @@
     });
 
 
+    var timetho = new Histogram(#{timetho_scores});
+
+    c3.generate({
+      bindto: "#timetho",
+      data: {
+        type: 'bar',
+        x: 'x',
+        columns: [
+          timetho.getLabels(5),
+          timetho.getValues(5),
+        ]
+      },
+      bar: {
+        width: {
+            ratio: 0.5
+        }
+      },
+      axis: {
+        x: {
+          label: {
+            text: '',
+            position: 'outer-center'
+          },
+          tick: {
+            format: function(x){
+              return x.toFixed(0)+"mg";
+            }
+          }
+        },
+        y: {
+          label: {
+              text: 'Number of Students',
+              position: 'outer-middle'
+          },
+          tick: {
+            format: function(x){
+              return (x == Math.floor(x)) ? x: "";
+            }
+          }
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
+
+
+    var checklist = #{checklist_scores.to_json};
+    var label_lookup = Object.keys(checklist);
+
+
+    var values = [];
+    var keys = [];
+    var i = 0;
+    for(var key in checklist){
+      values.push(checklist[key]);
+      keys.push(i);
+      i +=1;
+    }
+    values.unshift('');
+    keys.unshift('x');
+
+    c3.generate({
+      bindto: "#checklist",
+      data: {
+        type: 'bar',
+        x: 'x',
+        columns: [
+          keys,
+          values,
+        ]
+      },
+      bar: {
+        width: {
+            ratio: 0.5
+        }
+      },
+      axis: {
+        x: {
+          label: {
+            text: '',
+            position: 'outer-center'
+          },
+          tick: {
+            format: function(x){
+              return label_lookup[x];
+            }
+          }
+        },
+        y: {
+          label: {
+              text: 'Number of Students',
+              position: 'outer-middle'
+          },
+          tick: {
+            format: function(x){
+              return (x == Math.floor(x)) ? x: "";
+            }
+          }
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
+
   });
 
 .content.full
@@ -325,7 +452,7 @@
 
 .content.full
   .container
-    %p.header Physical Exam
+    %p.header.center_text Physical Exam
     .one_half.left.graph
       .title.center_text Pulse Check (Most Recent Play)
       #pulse-check
@@ -341,3 +468,15 @@
       .one_half.right.graph
         .title.center_text ASA-PS Score
         #asa-line
+
+
+.content.full
+  .container
+    %p.header.center_text Pre-Op Checklist
+    .one_half.left.graph
+      .title.center_text Checklist Selections
+      #checklist
+
+    .one_half.right.graph
+      .title.center_text Timethoprim-Sulfadiazine Dose Entry
+      #timetho

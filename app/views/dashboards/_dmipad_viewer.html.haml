@@ -1,0 +1,35 @@
+.content.full
+  .container
+    .two_thirds.left
+      %p 
+        Total time spent playing:
+        //= Time.at(total_time).utc.strftime("%H:%M:%S")
+      %p 
+        Average time spent playing: 
+        //= Time.at(avg_time).utc.strftime("%H:%M:%S")
+    .one_third.right
+      #pie.right
+
+.content.one_half.left
+  .container
+    %p.header Physical Exam
+
+.content.one_half.right
+  .container
+    %p.header Physical Exam
+
+.clear
+
+.content.full
+  .one_fourth.header.left Calf Leg
+  .one_fourth.header.left Cow Skeleton
+  .one_fourth.header.left Dog Skull
+  .one_fourth.header.left Cat Skeleton
+
+.content.full
+  .container
+    %p.header.center_text Calf Leg
+    .two_thirds.left
+      %p Total time spent playing:
+    .one_third.right
+      %p Quiz Score
