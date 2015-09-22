@@ -39,8 +39,6 @@
               .student_management
                 = link_to  class_path(item), class: "" do
                   .small_arrow.right
-                = link_to  edit_class_path(item), class: "" do
-                  .edit_icon_small.right
 
 .full.content.left
   .container
@@ -61,4 +59,4 @@
               .center
                 = simple_form_for :dashboard, url: dashboard_path(game), id: :title, class: [:green_button,:full], method: :post do |f|
                   = f.hidden_field :class_id
-                  = f.button :submit,"View Dashboard",class: "green_button full"
+                  = f.button :submit,"View Data",class: "green_button full"

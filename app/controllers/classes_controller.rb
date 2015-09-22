@@ -18,6 +18,10 @@ class ClassesController < ApplicationController
     @student = User.new
     
 
+    @games = @org.games
+    
+    authorize! :read, @org
+    authorize! :manage, @group
     breadcrumb("#{@group.name}")
   end
 

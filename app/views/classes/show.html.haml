@@ -1,6 +1,6 @@
 .full.content.left
   .container
-    %p.header Class Management
+    %p.header User Management
     .one_half.left
       .subcontainer
         %p.header Students
@@ -42,3 +42,6 @@
           = f.button :submit,"Import",class: "green_button right"
       .subcontainer
         = render "users/student_form"
+.full.content.left
+  .container
+    = render "classes/edit", :locals => {group: @group}
