@@ -115,15 +115,13 @@ class DataController < ApplicationController
       end
 
       if params[:game_id].nil? or params[:game_id].empty?
-        since = since.to_i
-        puts since
+        #since = since.to_i
         @data = AdaData.with_game(game_name).where(:timestamp.gt => since.to_i).in(key: keys).asc(:timestamp)
       else
         @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys).asc(:timestamp)
       end
     end
 
-    puts @data.count
     @result = Hash.new
     @result['data'] = @data
     
