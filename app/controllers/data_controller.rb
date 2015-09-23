@@ -107,6 +107,7 @@ class DataController < ApplicationController
     if client != nil
 
       since = time_range_to_epoch(params[:time_range])
+      since = since.to_i/1000
       game_name = client.implementation.game.name
 
       keys = params[:events_list]
@@ -115,8 +116,7 @@ class DataController < ApplicationController
       end
 
       if params[:game_id].nil? or params[:game_id].empty?
-        #since = since.to_i
-        @data = AdaData.with_game(game_name).where(:timestamp.gt => since.to_i).in(key: keys).asc(:timestamp)
+        @data = AdaData.with_game(game_name).where(:created_at.gt => since).in(key: keys).asc(:timestamp)
       else
         @data = AdaData.with_game(game_name).where(game_id: params[:game_id]).where(:timestamp.gt => since).in(key: keys).asc(:timestamp)
       end
