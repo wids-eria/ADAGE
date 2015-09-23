@@ -107,7 +107,7 @@ class DataController < ApplicationController
     if client != nil
 
       since = time_range_to_epoch(params[:time_range])
-      since = since.to_i/1000
+      since = since.to_i
       game_name = client.implementation.game.name
 
       keys = params[:events_list]
