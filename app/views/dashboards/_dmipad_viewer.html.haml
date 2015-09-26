@@ -1,22 +1,36 @@
+- count = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).count
+- total_time = 0
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).pluck(:duration).each do |duration|
+  - total_time += duration.to_i
+- total_time /= 1000
+- avg_time = total_time/count
+
+:javascript
+  $(document).ready( function() {
+
+
+
+  });
+
 .content.full
   .container
     .two_thirds.left
       %p 
         Total time spent playing:
-        //= Time.at(total_time).utc.strftime("%H:%M:%S")
+        = Time.at(total_time).utc.strftime("%H:%M:%S")
       %p 
         Average time spent playing: 
-        //= Time.at(avg_time).utc.strftime("%H:%M:%S")
-    .one_third.right
-      #pie.right
+        = Time.at(avg_time).utc.strftime("%H:%M:%S")
+
 
 .content.one_half.left
   .container
-    %p.header Physical Exam
+    .title.center_text Average Final Scores
+    #pulse-check
 
 .content.one_half.right
   .container
-    %p.header Physical Exam
+    .title.center_text Average Score by Bone Set
 
 .clear
 
