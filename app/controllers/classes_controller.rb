@@ -213,7 +213,7 @@ class ClassesController < ApplicationController
 
   protected
     def get_subdomain
-      subdomain = request.subdomain(0)
+      subdomain = request.subdomain(0).split(".")[0]
       @org = Organization.where(subdomain: subdomain).first
       authorize! :read, @org
 
