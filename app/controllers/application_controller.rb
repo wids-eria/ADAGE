@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
     if session[:previous_url].blank?
       if current_user.roles.where('name NOT IN (?)',["teacher","student","player"]).count == 0
 
-        subdomain = request.subdomain(0)
+        subdomain = request.subdomain(0).split(".")[0]
         if subdomain == ""
           #No subdomain
           @org = current_user.organizations.first
