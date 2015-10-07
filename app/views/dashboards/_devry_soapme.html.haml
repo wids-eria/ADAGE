@@ -1,0 +1,50 @@
+- count = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).count
+- total_time = 0
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).pluck(:duration).each do |duration|
+  - total_time += duration.to_i
+- total_time /= 1000
+- avg_time = total_time/count
+
+:javascript
+  $(document).ready( function() {
+
+
+
+  });
+
+.content.full
+  .container
+    .two_thirds.left
+      %p 
+        Total time spent playing:
+        = Time.at(total_time).utc.strftime("%H:%M:%S")
+      %p 
+        Average time spent playing: 
+        = Time.at(avg_time).utc.strftime("%H:%M:%S")
+
+
+.content.one_half.left
+  .container
+    .title.center_text Average Final Scores
+    #pulse-check
+
+.content.one_half.right
+  .container
+    .title.center_text Average Score by Bone Set
+
+.clear
+
+.content.menu.full
+  %span.one_eight.header History of Complaint
+  %span.one_eight.header General Physical
+  %span.one_eight.header Other Physicals
+  %span.one_eight.header Diagnosis
+  %span.one_eight.header Lab Tests
+  %span.one_eight.header Expert Review
+
+.content.full
+  .container
+    %p.header.center_text History of Complaint
+    .two_thirds.left
+    .one_third.right
+      %p Quiz Score

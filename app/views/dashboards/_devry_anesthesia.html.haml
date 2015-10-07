@@ -46,6 +46,7 @@
 
 - timetho_scores = []
 - checklist_scores = Hash.new
+- checklist_scores['total'] = 0
 - @users.each do |user_id|
   - end_log =  AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "Trimethoprim-Sulfadiazine").last
   - if end_log
@@ -62,11 +63,9 @@
       - if !checklist_scores.has_key? record.attempt
         - checklist_scores[record.attempt] = 0
       - checklist_scores[record.attempt] += 1
+      - checklist_scores['total'] += 1
 
 :javascript
-
-
-
   $(document).ready( function() {
     var pulse = new Histogram(#{pulse_scores});
     var asa = new Histogram(#{asa_scores});
@@ -324,67 +323,6 @@
         show: false
       }
     });
-
-
-    var checklist = #{checklist_scores.to_json};
-    var label_lookup = Object.keys(checklist);
-
-
-    var values = [];
-    var keys = [];
-    var i = 0;
-    for(var key in checklist){
-      values.push(checklist[key]);
-      keys.push(i);
-      i +=1;
-    }
-    values.unshift('');
-    keys.unshift('x');
-
-    c3.generate({
-      bindto: "#checklist",
-      data: {
-        type: 'bar',
-        x: 'x',
-        columns: [
-          keys,
-          values,
-        ]
-      },
-      bar: {
-        width: {
-            ratio: 0.5
-        }
-      },
-      axis: {
-        x: {
-          label: {
-            text: '',
-            position: 'outer-center'
-          },
-          tick: {
-            format: function(x){
-              return label_lookup[x];
-            }
-          }
-        },
-        y: {
-          label: {
-              text: 'Number of Students',
-              position: 'outer-middle'
-          },
-          tick: {
-            format: function(x){
-              return (x == Math.floor(x)) ? x: "";
-            }
-          }
-        }
-      },
-      legend: {
-        show: false
-      }
-    });
-
   });
 
 .content.full
@@ -422,9 +360,12 @@
 .content.full
   .container
     %p.header.center_text Pre-Op Checklist
+
     .one_half.left.graph
-      .title.center_text Checklist Selections
-      #checklist
+      - checklist_scores.keys.each do |key|
+        - if key != 'total'
+          - percent = checklist_scores[key]*100/checklist_scores['total']
+          = render "progress_bar", name: key,percent: percent
 
     .one_half.right.graph
       .title.center_text Timethoprim-Sulfadiazine Dose Entry

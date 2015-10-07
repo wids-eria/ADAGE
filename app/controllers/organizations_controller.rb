@@ -35,7 +35,6 @@ class OrganizationsController < ApplicationController
     if @org.save
       OrganizationRole.create(organization: @org, user: current_user, name: "admin").errors.full_messages
 
-
       flash[:notice] = 'organization Added'
       redirect_to @org
     else

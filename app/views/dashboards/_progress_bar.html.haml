@@ -1,0 +1,9 @@
+.results_bar
+    .results_bar_container
+        .results_text_container
+            %p.left 
+                = name
+            %p.right 
+                = "#{percent}%"
+        .bar_container
+            .bar.green{style: "width: #{percent}%;"}
