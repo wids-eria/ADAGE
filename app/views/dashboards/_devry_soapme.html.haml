@@ -5,6 +5,23 @@
 - total_time /= 1000
 - avg_time = total_time/count
 
+
+// Pull in start log to get initial text choices
+- start = AdaData.with_game(@game.name).include_filters(@filters).where(key: :SOAPHistoryStart).last
+
+- choices = Hash.new
+- choices['total'] = 0
+- start.availableQuestions.each do |option|
+  - choices[option] = 0
+
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :SOAPHistoryEnd).each do |end_log|
+  - start_log =  AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID)
+  - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :SOAPHistoryEnd).each do |choice|
+    - choices[choice.questionAsked] += 1
+
+
+
+
 :javascript
   $(document).ready( function() {
 
