@@ -3,7 +3,7 @@ namespace :mongo_migrate do
     task :split => :environment do
 
         db = Mongoid::Sessions.default
-        db.use :ada_development
+        db.use :ada_development_dash
 
         collection = db[:ada_data]
 
@@ -28,7 +28,7 @@ namespace :mongo_migrate do
     desc 'Removes AdaData collection from database'
     task :clean => :environment do
         db = Mongoid::Sessions.default
-        db.use :ada_development
+        db.use :ada_development_dash
         collection = db[:ada_data]
 
         games = collection.find.distinct(:gameName)
@@ -51,13 +51,13 @@ namespace :mongo_migrate do
     desc 'Upgrades the record _id format to uniformly use ObjectId rather than strings'
     task :migrate_ids => :environment do
         db = Mongoid::Sessions.default
-        db.use :ada_development
+        db.use :ada_development_dash
 
         puts "Starting"
         db.collections.each do |collection|
             #swap to admin database to run commands
             db.use :admin
-            database_name = "ada_development"
+            database_name = "ada_development_dash"
 
             from = collection.name
             to =collection.name+"_original"
@@ -66,7 +66,7 @@ namespace :mongo_migrate do
                 db.command(renameCollection: "#{database_name}.#{from}", to: "#{database_name}.#{to}")
 
                 #swap back to db for records
-                db.use :ada_development                   
+                db.use :ada_development_dash                   
                 new_collection = db[from]
                 new_collection.drop
                 puts "Migration collection #{collection.name}"

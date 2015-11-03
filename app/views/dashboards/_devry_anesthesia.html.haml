@@ -24,6 +24,22 @@
 - avg_asa.keys.each do |key|
   - avg_asa[key] = avg_asa[key].inject{ |sum, el| sum + el }.to_f / avg_asa[key].size
 
+- avg_final = []
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :PlayerEvent_FinalScore).inject({}) do |record,event|
+  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << event.finalScore
+  - record
+  - avg_final = record
+- avg_final.keys.each do |key|
+  - avg_final[key] = - avg_final[key].inject{ |sum, el| sum + el }.to_f / - avg_final[key].size
+
+-avg_trimeth = []
+-AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,name: "Trimethoprim-Sulfadiazine").inject({}) do |record, event|
+  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << event.score
+  - record
+  - avg_trimeth = record
+- avg_trimeth.keys.each do |key|
+  - avg_trimeth[key] = - avg_trimeth[key].inject{ |sum, el| sum + el }.to_f / - avg_trimeth[key].size
+
 
 - @users.each do |user_id|
   - end_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "PEx Pulse").last
@@ -51,7 +67,8 @@
   - end_log =  AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "Trimethoprim-Sulfadiazine").last
   - if end_log
     - start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID).first
-
+    -puts start_log.id
+    -puts end_log.id
     - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).each do |record|
       - timetho_scores << record.attempt
 
@@ -59,7 +76,7 @@
   - if end_log
     - start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID).first
 
-    - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :PlayerEvent_MultipleChoiceOutput,user_id: user_id).each do |record|      
+    - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :PlayerEvent_MultipleChoiceOutput,user_id: user_id).each do |record|
       - if !checklist_scores.has_key? record.attempt
         - checklist_scores[record.attempt] = 0
       - checklist_scores[record.attempt] += 1
@@ -171,7 +188,7 @@
       pie: {
         label: {
           format: function (value, ratio, id) {
-            return moment(new Date(value/1000)).format('h:mm:ss');    
+            return moment(new Date(value/1000)).format('h:mm:ss');
           }
         }
       },
@@ -226,6 +243,97 @@
       }
     });
 
+    var final_scores = #{avg_final.to_json};
+
+    var labels =[];
+
+    var scores = []
+    for(var key in final_scores){
+      labels.push(new Date(key).getTime());
+      scores.push(final_scores[key]);
+    }
+    labels.unshift('x');
+    scores.unshift('');
+    c3.generate({
+      bindto: "#finalScore-line",
+      data: {
+        x: 'x',
+        x_format : '%Y%m%d',
+        columns: [
+          labels,
+          scores
+        ]
+      },
+      axis: {
+        x: {
+          type : 'timeseries',
+          label: {
+            text: 'Date',
+            position: 'outer-center'
+          }
+        },
+        y: {
+          label: {
+            text: 'Avg Score',
+            position: 'outer-middle'
+          },
+          tick: {
+            format: function(y){
+              return y.toFixed(1);
+            }
+          }
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
+
+    var trimeth_scores = #{avg_trimeth.to_json};
+
+    var labels =[];
+
+    var scores = []
+    for(var key in trimeth_scores){
+      labels.push(new Date(key).getTime());
+      scores.push(trimeth_scores[key]);
+    }
+    labels.unshift('x');
+    scores.unshift('');
+    c3.generate({
+      bindto: "#trimethScore-line",
+      data: {
+        x: 'x',
+        x_format : '%Y%m%d',
+        columns: [
+          labels,
+          scores
+        ]
+      },
+      axis: {
+        x: {
+          type : 'timeseries',
+          label: {
+            text: 'Date',
+            position: 'outer-center'
+          }
+        },
+        y: {
+          label: {
+            text: 'Avg Score',
+            position: 'outer-middle'
+          },
+          tick: {
+            format: function(y){
+              return y.toFixed(1);
+            }
+          }
+        }
+      },
+      legend: {
+        show: false
+      }
+    });
     var pex_scores = #{avg_pex.to_json};
 
     var labels = [];
@@ -328,14 +436,33 @@
 .content.full
   .container
     .two_thirds.left
-      %p 
+      %p
         Total time spent playing:
         = Time.at(total_time).utc.strftime("%H:%M:%S")
-      %p 
-        Average time spent playing: 
+      %p
+        Average time spent playing:
         = Time.at(avg_time).utc.strftime("%H:%M:%S")
     .one_third.right
       #pie.right
+
+.content.one_half.right
+  .container
+    .middle_third
+      .title.center_text Flagged Students
+      .content
+        %ol
+          %li
+            Student one
+          %li
+            Student 2
+          %li
+            Student 333
+
+.content.one_half
+  .container
+    .full.left.graph
+      .title.center_text Final Scores
+      #finalScore-line
 
 .content.full
   .container
@@ -345,15 +472,17 @@
       #pulse-check
 
     .one_half.right.graph
-      .title.center_text ASA-PS Score (Most Recent Play)
-      #asa-ps
+      .title.center_text Pulse Check Score
+      #pex-line
+    .content.full_width
+      %hr
     .content
       .one_half.left.graph
-        .title.center_text Pulse Check Score
-        #pex-line
+        .title.center_text ASA-PS Score (Most Recent Play)
+        #asa-ps
 
       .one_half.right.graph
-        .title.center_text ASA-PS Score
+        .title.center_text ASA-PS Scores
         #asa-line
 
 
@@ -361,12 +490,16 @@
   .container
     %p.header.center_text Pre-Op Checklist
 
-    .one_half.left.graph
+    .full_width.middle.graph
       - checklist_scores.keys.each do |key|
         - if key != 'total'
           - percent = checklist_scores[key]*100/checklist_scores['total']
           = render "progress_bar", name: key,percent: percent
-
-    .one_half.right.graph
-      .title.center_text Timethoprim-Sulfadiazine Dose Entry
+    .content.full_width
+      %hr
+    .one_half.left.graph
+      .title.center_text Trimethoprim-Sulfadiazine Dose Entry
       #timetho
+    .one_half.right.graph
+      .title.center_text Trimethoprim-Sulfadiazine Dose Scores
+      #trimethScore-line

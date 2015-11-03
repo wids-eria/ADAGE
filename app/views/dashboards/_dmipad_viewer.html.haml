@@ -5,21 +5,126 @@
 - total_time /= 1000
 - avg_time = total_time/count
 
+-sceneNames =[]
+-quizNames = []
+-AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizStart).each do |record|
+  -if !sceneNames.include? record.scene
+    -sceneNames << record.scene
+
+  -quizNames << record.quiz
+
+-#Quiz Scores
+-#THis needs to be filtered by scene so the questions can be guaranteed unique
+-temp_users = []
+-scenes = Hash.new
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizEnd).each do |end_log|
+
+  -#HACK TEMPORARY
+  -unless temp_users.include? end_log.user_id
+    -temp_users << end_log.user_id
+  -#HACK TEMPORARY
+
+  -start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID, user_id: end_log.user_id.to_i).first
+  -AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log.id..end_log.id).where(key: :ModelViewerQuizGuess).each do |record|
+    -if !scenes.has_key? start_log.scene
+      -scenes[start_log.scene] = Hash.new
+    -if !scenes[start_log.scene].has_key? record.question
+      -scenes[start_log.scene][record.question] = []
+    -scenes[start_log.scene][record.question] << record.correct
+
+-scene_averages_recent = Hash.new
+-recent_scene_scores = Hash.new
+-scene_average_list = []
+-#HACK, switch temp_users to @users
+-@users.each do |user_id|
+  -scenes.keys.each do |scene|
+    -start_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizStart ,user_id: user_id.to_i,scene: scene).last
+    -if start_log
+      -end_log = AdaData.with_game(@game.name).include_filters(@filters).where(startContextID: start_log.client_id).first
+      -if end_log
+        -if !recent_scene_scores.has_key? scene
+          -recent_scene_scores[scene] = []
+        -recent_scene_scores[scene] << end_log
+
+-recent_scene_scores.keys.each do |scene|
+  -running_total = 0
+  -recent_scene_scores[scene].each do |end_log|
+    -quiz_score = end_log.questionsAnsweredCorrectly/([end_log.questionsTotal, 1].max.to_f)
+    -running_total += quiz_score
+  -percent = ((running_total/recent_scene_scores[scene].count.to_f)*100).to_i
+  -scene_averages_recent[scene] = percent
+  -scene_hash = Hash.new
+  -scene_hash["name"] = scene
+  -scene_hash["score"] = percent
+  -scene_average_list << scene_hash
+
+
 :javascript
   $(document).ready( function() {
+    function SetActiveGraphs(sceneName) {
+      var sceneElements = document.getElementsByClassName("sceneGraphContainer");
+      for (var i = 0; i < sceneElements.length; i++) {
+        if (sceneElements[i].id === sceneName) {
+          sceneElements[i].style.display = "block";
+        } else {
+          sceneElements[i].style.display = "none";
+        }
+      }
+    }
+
+    var sceneHash = #{scenes.to_json};
+    var activeScene = Object.keys(sceneHash)[0];
+    SetActiveGraphs(activeScene);
+
+    var sceneButtons = document.getElementById("sceneButtons");
+    for (var i = 0; i < sceneButtons.children.length; i++) {
+      var button = sceneButtons.children[i];
+      button.addEventListener("click", function() {
+        SetActiveGraphs(this.innerText);
+      }, false)
+    }
 
 
+
+    //Average Score histogram
+    function CompareSceneScores(a,b){
+      return a.score - b.score;
+    }
+    var avgScores = #{scene_average_list.to_json}
+    //avgScores.sort(CompareSceneScores);
+
+    c3.generate({
+      bindto: "#average-scores",
+      data: {
+        type: 'bar',
+        json: avgScores,
+        keys: {
+            x: 'name',
+            value: ['score']
+          }
+      },
+      axis: {
+              x: {
+                  type: 'category'
+              }
+      },
+      bar: {
+          width: {
+              ratio: 0.5
+          }
+      }
+    });
 
   });
 
 .content.full
   .container
     .two_thirds.left
-      %p 
+      %p
         Total time spent playing:
         = Time.at(total_time).utc.strftime("%H:%M:%S")
-      %p 
-        Average time spent playing: 
+      %p
+        Average time spent playing:
         = Time.at(avg_time).utc.strftime("%H:%M:%S")
 
 
@@ -31,19 +136,47 @@
 .content.one_half.right
   .container
     .title.center_text Average Score by Bone Set
+    #average-scores
 
 .clear
 
-.content.full
-  .one_fourth.header.left Calf Leg
-  .one_fourth.header.left Cow Skeleton
-  .one_fourth.header.left Dog Skull
-  .one_fourth.header.left Cat Skeleton
+.content.full#sceneButtons
+  -sceneNames.each do |scene|
+    .green_button.left{:id => "#{scene}Button", :class => "green_button"}
+      =scene
+
+  -# .one_fourth.header.left Calf Leg
+  -# .one_fourth.header.left Cow Skeleton
+  -# .one_fourth.header.left Dog Skull
+  -# .one_fourth.header.left Cat Skeleton
 
 .content.full
-  .container
-    %p.header.center_text Calf Leg
-    .two_thirds.left
-      %p Total time spent playing:
-    .one_third.right
-      %p Quiz Score
+  -scenes.keys.each do |scene|
+    .container{:id => "#{scene}", :class => "sceneGraphContainer"}
+      %p.header.center_text
+        =scene
+      .two_thirds.left
+        .full_width.middle.graph#sceneGraphs
+          -scene_scores = []
+          .container
+            - scenes[scene].keys.each do |question|
+              - if question != 'total'
+                -total_correct = 0
+                -scenes[scene][question].each do |correct|
+                  -if correct
+                    -total_correct += 1
+                - percent = ((total_correct.to_f/scenes[scene][question].count)*100).to_i
+                -scene_scores << percent
+                = render "progress_bar", name: question,percent: percent
+
+      .one_third.right
+        %p.center.center_text
+          Average Quiz Score
+          .one_third.subcontainer.center.center_text
+            =scene_averages_recent[scene].to_s + "%"
+          %h4.center_text (Most Recent)
+          .center.center_text= link_to "Show for Date Range"
+
+
+
+

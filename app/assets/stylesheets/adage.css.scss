@@ -12,7 +12,7 @@ STYLESHEET CONTENTS
     -- NAVIGATION
     -- ELEMENTS
     -- FOOTER
-    
+
 -------------------------------------------------------------------*/
 
 
@@ -101,7 +101,7 @@ p{
             }
         }
     }
-    
+
     p.betatype{
         font-family:ubuntu;
         font-weight:300;
@@ -109,7 +109,7 @@ p{
         font-size:35px;
         margin:65px 0 0 10px;
     }
-    
+
     p.poweredby{
         font-family:ubuntu;
         font-weight:300;
@@ -117,7 +117,7 @@ p{
         font-size:15px;
         margin:15px 15px 0 0;
     }
-    
+
     p.header{
         border-top: none;
         font-family: ubuntu;
@@ -127,7 +127,7 @@ p{
         text-align: left;
         padding:0 0 15px 0;
     }
-    
+
 ul{ list-style:none; }
 
 hr{
@@ -145,12 +145,12 @@ h5{  }
 
 ::selection{ background:#161d23; color:white; }
 
-.row{ 
-    @include full; 
+.row{
+    @include full;
 
     .list{
         @include rounded_corners;
-        
+
         border-spacing:0;
         float:left;
         width:100%;
@@ -159,14 +159,14 @@ h5{  }
         .item:nth-child(odd){
             background-color: #f6f9fc;
         }
-        
+
         .item{
             padding:10px;
                 border-top:1px solid #d3dee7;
-            a{            
+            a{
                 font-size:14px;
                 color:#546a7c;
-                
+
                 &:hover{
                     text-decoration:underline;
                 }
@@ -217,15 +217,15 @@ h5{  }
 
                 img{
                     @include rounded_corners;
-                    height: auto; 
-                    width: 100%; 
-                    max-width: 100%; 
+                    height: auto;
+                    width: 100%;
+                    max-width: 100%;
                     max-height: 100%;
                     //margin-top: 10px;
                 }
 
                 span{
-                    position: absolute;                    
+                    position: absolute;
                     width: 80%;
                     bottom: 10px;
                     left: 10%;
@@ -389,7 +389,7 @@ h5{  }
     position:absolute;
     width:80px;
     left:0;
-    
+
     @include transition;
 
     width:30px;
@@ -399,13 +399,13 @@ h5{  }
 
     &:hover{
         @include transition;
-        
+
         color:#98CD80;
     }
     span{
         &:active{
             @include transition;
-            
+
             color:#98CD80;
         }
     }
@@ -423,7 +423,6 @@ h5{  }
 -------------------------------------------------------------------*/
 
 .clear{ clear: both; }
-
 .left{ float:left; }
 .right{ float:right; }
 
@@ -475,7 +474,7 @@ h5{  }
 
 .element{
     @include rounded_corners;
-    
+
     float:left;
     width:100%;
     background:white;
@@ -490,56 +489,56 @@ h5{  }
 
 .login_container{
     @include rounded_corners;
-    
+
     background:white;
     padding:20px;
     margin:0 0 75px 0;
-    
+
     .login_element{
         @include full;
-        
+
         margin:5px 0;
-        
+
         label{
             float:left;
-            
+
             font-family:ubuntu;
             font-size:16px;
             color:#546a7c;
             margin:8px 0 0 0;
         }
-        
+
 
         input{
             @include rounded_corners;
-            
+
             background:#f6f9fc;
             border:1px solid #d0dce6;
             width:360px;
             float:right;
             padding:10px 10px 10px 5px;
-            
+
             font-family:ubuntu;
             font-size:16px;
             color:#839eb5;
             font-style:italic;
         }
-        
+
     }
 }
 
 .logo_container{
     @include full;
-    
+
     margin:75px 0 75px 0;
 }
 
 
 .welcome_or_error_container{
     @include full;
-        
+
     margin:0 0 20px 0;
-    
+
     p.welcome_back{
         float:left;
         font-family: ubuntu;
@@ -551,9 +550,9 @@ h5{  }
         &.error_text{
             color:#d15757;
         }
-        
+
     }
-    
+
 }
 
 
@@ -575,73 +574,73 @@ header{  }
     li{
         float:left;
         margin:0 0 70px 0;
-        
+
         a{
             font-family:ubuntu;
             color:rgba(255,255,255,.5);
             font-weight:300;
             font-size:14px;
             margin:0 9px 0 9px;
-            
+
             @include transition;
         }
-        
+
         a:hover{
             color:white;
             text-decoration:none;
-            
+
             @include transition;
         }
     }
 }
 
 .side_navigation{
-    
+
     width:80px;
     top: 0;
     left: 0;
     bottom: 0;
     position:fixed;
     background:#12181d;
-    
+
     ul{
         float:left;
         margin:20px 0 0 0 ;
         a{
             li{
                 @include transition;
-                
+
                 display:block;
                 width:30px;
                 height:30px;
                 margin:0px 5px 20px 26px;
                 color:#485e70;
-            
+
                 &:hover{
                     @include transition;
-                    
+
                     color:#98CD80;
                 }
                 span{
-                
-                
-                
+
+
+
                 &:active{
                     @include transition;
-                    
+
                     color:#98CD80;
                 }
                 }
             }
         }
     }
-    
+
     .icon_active{
         @include transition;
-        
+
         color:#98CD80;
     }
-    
+
     .divider{
         border-top: 2px solid $primary-font;
         padding: 0px;
@@ -654,26 +653,26 @@ header{  }
         display:none;
         background: #12181d;
         padding:5px 5px 5px 0;
-        
+
         a{
             @include transition;
-            
+
             float:left;
             padding:15px 10px;
             width:100%;
-    
+
             font-family: ubuntu;
             color: rgba(255,255,255,.5);
             font-weight: 300;
             font-size: 14px;
-            
+
             &:hover{
                 @include transition;
-                
+
                 color:white;
                 background:#23313c;
             }
-            
+
         }
     }
 
@@ -689,16 +688,16 @@ header{  }
     Elements
 
 -------------------------------------------------------------------*/
-  
+
 .element{  }
 
 .small_logo{
-    
+
     .logotype{
         font-size:35px;
         margin:3px 0 0 0;
     }
-    
+
     .betatype{
         font-size:22px;
         margin:17px 0 0 5px;
@@ -713,13 +712,13 @@ header{  }
     box-shadow:0px 4px 0px #5c9941,
                0px 2px 5px rgba(0,0,0,.15);
     border-top:1px solid #caf6aa;
-    
+
     font-family:ubuntu;
     font-size:13px;
     color:white;
     font-weight:700;
     letter-spacing:.5px;
-    
+
     background: #8fd06f; /* Old browsers */
     background: -moz-linear-gradient(top,  #8fd06f 0%, #7fca61 100%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#8fd06f), color-stop(100%,#7fca61)); /* Chrome,Safari4+ */
@@ -731,7 +730,7 @@ header{  }
 
     &:hover{
         cursor:pointer;
-    
+
         background: #9cce84; /* Old browsers */
         background: -moz-linear-gradient(top,  #9cce84 0%, #8bc970 100%); /* FF3.6+ */
         background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9cce84), color-stop(100%,#8bc970)); /* Chrome,Safari4+ */
@@ -741,7 +740,7 @@ header{  }
         background: linear-gradient(to bottom,  #9cce84 0%,#8bc970 100%); /* W3C */
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9cce84', endColorstr='#8bc970',GradientType=0 ); /* IE6-9 */
     }
-    
+
     &:active{
         box-shadow:0px 0px 2px rgba(0,0,0,.15);
         margin:14px 0 -4px 0;
@@ -751,12 +750,12 @@ header{  }
 
 .remember_me{
     float:right;
-    
+
     p{
         float:right;
         margin:20px 0 0 0;
     }
-    
+
     input[type="checkbox"]{
         float:right;
         margin:23px 20px 0 10px

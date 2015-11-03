@@ -21,7 +21,7 @@
     .one_fourth.right
       %form.search.right{action: ""}
         #apply.green_button.right{type: "submit", value: "Apply"} Apply
-      
+
     .selector.one_fourth.right
       %select.right.class_dropdown.filter{filter: "select", key: "class_id"}
         - @classes.each do |c|
@@ -44,6 +44,7 @@
         - unless @class.nil?
           - @class.users.each do |c|
             - if can? :read, c
+              -puts c.id
               - if @student and c.id ==@student.id
                 %option{value: c.id,selected: "selected"}
                   = c.email
@@ -51,6 +52,5 @@
                 %option{value: c.id}
                   = c.email
       %label.right Student
-
 - if lookup_context.exists? "dashboards/_#{@game.name.downcase}"
   = render "dashboards/#{@game.name.downcase}"
