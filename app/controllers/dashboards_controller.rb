@@ -8,9 +8,12 @@ class DashboardsController < ApplicationController
 
   def homepage
     @orgs = current_user.organizations
+    puts @orgs
     @classes = current_user.owned_groups.classes.where(organization_id: @org)
     @classes << current_user.groups.classes.where(organization_id: @org)
+    puts @classes
     @games = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @classes)
+    puts @games
 
     params[:page_title] = "Home"
     breadcrumb("Home",true)
