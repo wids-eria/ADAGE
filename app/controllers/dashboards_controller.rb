@@ -8,17 +8,12 @@ class DashboardsController < ApplicationController
 
   def homepage
     @orgs = current_user.organizations
-    Rails.logger.info "-------------------------------------------------------"
-    Rails.logger.info @orgs
     @classes = current_user.owned_groups.classes.where(organization_id: @org)
-    @classes << current_user.groups.classes.where(organization_id: @org)
-    Rails.logger.info @classes
-    @games = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @classes)
-    if @games
-      Rails.logger.info @games.count
+    unless @classes
+      @classes = []
     end
-    Rails.logger.info @games
-    Rails.logger.info "-------------------------------------------------------"
+    @classes << current_user.groups.classes.where(organization_id: @org)
+    @games = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @classes)
 
     params[:page_title] = "Home"
     breadcrumb("Home",true)
