@@ -9,9 +9,9 @@ class DashboardsController < ApplicationController
   def homepage
     @orgs = current_user.organizations
     @classes = current_user.owned_groups.classes.where(organization_id: @org)
-    # unless @classes
-      # @classes = []
-    # end
+    unless @classes
+      @classes = []
+    end
     @classes << current_user.groups.classes.where(organization_id: @org)
     @games = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @classes)
 
