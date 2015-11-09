@@ -19,11 +19,6 @@
 -scenes = Hash.new
 - AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizEnd).each do |end_log|
 
-  -#HACK TEMPORARY
-  -unless temp_users.include? end_log.user_id
-    -temp_users << end_log.user_id
-  -#HACK TEMPORARY
-
   -start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID, user_id: end_log.user_id.to_i).first
   -AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log.id..end_log.id).where(key: :ModelViewerQuizGuess).each do |record|
     -if !scenes.has_key? start_log.scene

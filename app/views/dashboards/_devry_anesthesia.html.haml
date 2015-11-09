@@ -67,8 +67,6 @@
   - end_log =  AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,user_id: user_id.to_i,name: "Trimethoprim-Sulfadiazine").last
   - if end_log
     - start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID).first
-    -puts start_log.id
-    -puts end_log.id
     - AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log._id..end_log._id).where(key: :PlayerEvent_SpinnerOutput,user_id: user_id).each do |record|
       - timetho_scores << record.attempt
 
