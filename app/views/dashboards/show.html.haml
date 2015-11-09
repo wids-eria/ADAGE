@@ -3,6 +3,7 @@
 = javascript_include_tag "histogram"
 
 .full
+  = debug @users
   #filters.content
     .datepicker.one_fourth.left.filter{filter: "range"}
       %label{for: "from",name: "from"} From
