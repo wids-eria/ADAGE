@@ -29,9 +29,7 @@
           .green_button.right Create Class
 
     %ul.flagged_items
-      test2
       - @classes.each do |item|
-        test
         - if can? :read, item
           %li.full
             = link_to  class_path(item), class: "left" do

@@ -8,13 +8,17 @@ class DashboardsController < ApplicationController
 
   def homepage
     @orgs = current_user.organizations
-    @classes = current_user.owned_groups.classes.where(organization_id: @org)
-    unless @classes
-      @classes = []
-    end
-    @classes << current_user.groups.classes.where(organization_id: @org)
-    @games = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @classes)
-
+    @owned_classes = current_user.owned_groups.classes.where(organization_id: @org)
+    # current_user.groups.classes.each do |potentialClass|
+    #   if potentialClass.organization_id == @org.id
+    #     @classes << potentialClass
+    #   end
+    # end
+    @joined_classes = current_user.groups.classes.where(organization_id: @org)
+    @games_from_owned = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @joined_classes)
+    @games_from_joined = Game.select("DISTINCT games.*").joins(:groups).where('groups.id' => @owned_classes)
+    @classes = (@owned_classes.to_a << @joined_classes.to_a).flatten
+    @games = (@games_from_owned.to_a << @games_from_joined.to_a).flatten
     params[:page_title] = "Home"
     breadcrumb("Home",true)
   end
