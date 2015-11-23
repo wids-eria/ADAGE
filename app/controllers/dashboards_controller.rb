@@ -38,7 +38,6 @@ class DashboardsController < ApplicationController
     elsif params[:dashboard]
       @class = Group.find(params[:dashboard][:class_id])
     end
-
     if @filters.has_key?("user_id")
       #User -1 for all users
       if @filters["user_id"] != "-1"
@@ -47,13 +46,18 @@ class DashboardsController < ApplicationController
         @filters.delete("user_id")
       end
     end
-    @classes = current_user.owned_groups.classes.where(organization_id: @org).joins(:games).where('games.id' => @game)
+
+    @joined_classes = current_user.groups.classes.where(organization_id: @org)
+    @owned_classes = current_user.owned_groups.classes.where(organization_id: @org)
+    @classes = (@owned_classes.to_a << @joined_classes.to_a).flatten
     @users = @class.users.pluck(:id)
 
     # @users = [1,61376, 61878, 61993, 245, 61899]
     # @users = [61354 , 61353]
-    authorize! :read, @game
-    authorize! :manage, @class
+
+    # THIS NEEDS TO BE UNCOMMENTED
+    # authorize! :read, @game
+    # authorize! :manage, @class
     params[:page_title] = @game.name
     breadcrumb("#{@game.name} Dashboard")
   end

@@ -1,0 +1,145 @@
+- count = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).count
+- total_time = 0
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).pluck(:duration).each do |duration|
+  - total_time += duration.to_i
+- total_time /= 1000
+- avg_time = total_time/count
+
+- score = []
+-time = []
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGEData_Score).each do |record|
+  - score << record.percentCovered
+  -start_context = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: record.context[0]).first
+  -if start_context
+    -time << (record.timestamp.to_f - start_context.timestamp.to_f)/1000.0
+  -else
+    -time << 1
+
+-power_ups = []
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :PlayerEvent_HandwashingPowerup).each do |record|
+  -power_ups << (record.powerUpButtonID.to_i + 1)
+
+- if score
+  :javascript
+    $(document).ready( function() {
+      var timetho = new Histogram(#{power_ups});
+
+      c3.generate({
+        bindto: "#timetho",
+        data: {
+          type: 'bar',
+          x: 'x',
+          columns: [
+            timetho.getLabels(5),
+            timetho.getValues(5),
+          ]
+        },
+        bar: {
+          width: {
+              ratio: 0.5
+          }
+        },
+        axis: {
+          x: {
+            label: {
+              text: '',
+              position: 'outer-center'
+            },
+            tick: {
+              format: function(x){
+                return "Power Up " +x.toFixed(0);
+              }
+            }
+          },
+          y: {
+            label: {
+                text: 'Total Times Used',
+                position: 'outer-middle'
+            },
+            tick: {
+              format: function(x){
+                return (x == Math.floor(x)) ? x: "";
+              }
+            }
+          }
+        },
+        legend: {
+          show: false
+        }
+      });
+
+      var scores = #{j(score.to_json)};
+      scores.unshift("Percent");
+
+      var time = #{j(time.to_json)}
+      time.unshift("Time")
+
+      var chart = c3.generate({
+        bindto: "#cleaned",
+        data: {
+            columns: [
+              scores,
+              time
+            ],
+            axes: {
+              Score: 'y',
+              Time: 'y2'
+            }
+        },
+        axis: {
+          x: {
+              label: {
+                  text: 'Attempt',
+                  position: 'outer-center'
+              }
+          },
+          y: {
+              label: {
+                  text: 'Percent Cleaned',
+                  position: 'outer-middle'
+              },
+              padding: {top:0, bottom:0}
+          },
+          y2: {
+            show: true,
+            label: {
+              text: 'Time Spent',
+              position: 'outer-middle'
+            }
+          }
+        }
+      });
+    });
+
+.content.one_half.left
+  .container
+    .two_thirds.left
+      %p
+        Total time spent playing:
+        = Time.at(total_time).utc.strftime("%H:%M:%S")
+      %p
+        Average time spent playing:
+        = Time.at(avg_time).utc.strftime("%H:%M:%S")
+
+.content.one_half.right
+  .container
+    .title.center_text Flagged Students
+    .content
+      %ol
+        -@users.first(3).each do |user_id|
+          -user = User.where(id: user_id).first
+          -if user
+            %li
+              =user.player_name
+
+
+.content.one_half.left
+  .container
+    %p.header Solo Play Data
+    #cleaned
+
+.content.one_half.right
+  .container
+    .container
+      %p.header Power Up Usage
+      #timetho

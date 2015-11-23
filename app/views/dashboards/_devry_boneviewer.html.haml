@@ -1,0 +1,246 @@
+- count = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).count
+- total_time = 0
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ADAGESessionEnd).pluck(:duration).each do |duration|
+  - total_time += duration.to_i
+- total_time /= 1000
+- avg_time = total_time/count
+
+
+-#Iterate over all quizzes
+-# -scene_names = []
+-# -quizzes = []
+-# -scenes = []
+-# -AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizEnd).each do |end_quiz|
+-#   -start_quiz = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_quiz.startContextID).first
+-#   -if start_quiz
+-#     -quiz = Hash.new
+-#     -#Get the scene of the current quiz from the parent context
+-#     -quiz[:scene] = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: start_quiz.context[0]).first.name
+-#     -unless scene_names.include? quiz[:scene]
+-#       -scene_names.push(quiz[:scene])
+-#     -quiz[:guesses] = []
+-#     -quiz[:name] = start_quiz.client_id
+-#     -total_guesses = 0
+-#     -correct_guesses = 0
+-#     -#Iterate over all the guesses within the quiz
+-#     -AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_quiz._id..end_quiz._id).where(key: :ModelViewerQuizGuess).each do |guess|
+-#       -total_guesses += 1
+-#       -if guess.correct
+-#         -correct_guesses += 1
+-#       -new_guess = Hash.new
+-#       -new_guess[:correct] = guess.correct
+-#       -new_guess[:question] = guess.question
+-#       -quiz[:guesses].push(new_guess)
+-#     -#Calculate the score based on correct and incorrect guesses
+-#     -quiz[:score] = (correct_guesses.to_f/total_guesses.to_f) * 100
+-#     -#Only save the quiz data if there were guesses during the quiz
+-#     -if total_guesses > 0
+
+-#       -quizzes.push(quiz)
+
+-# =debug quizzes.last
+
+-# -AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizStart).each do |record|
+-#   -scene = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: record.context[0]).first.name
+-#   -if !sceneNames.include? record.scene
+-#     -sceneNames << record.scene
+
+-#   -quizNames << record.quiz
+
+-# Quiz Scores
+-scenes = Hash.new
+-scene_names = []
+- AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizEnd).each do |end_log|
+
+  -start_log = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: end_log.startContextID, user_id: end_log.user_id.to_i).first
+  -AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log.id..end_log.id).where(key: :ModelViewerQuizGuess).each do |record|
+    -scene = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: start_log.context[0]).first.name
+    -if !scene_names.include? scene
+      -scene_names << scene
+    -if !scenes.has_key? scene
+      -scenes[scene] = Hash.new
+    -if !scenes[scene].has_key? record.question
+      -scenes[scene][record.question] = []
+    -scenes[scene][record.question] << record.correct
+
+-recent_scenes = Hash.new
+-@users.each do |user_id|
+  -scenes.keys.each do |scene|
+    -start_scene = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerViewStart ,user_id: user_id.to_i, name: scene).last
+    -if start_scene
+      -end_scene = AdaData.with_game(@game.name).include_filters(@filters).where(startContextID: start_scene.client_id).first
+      -if end_scene
+        -start_quiz = AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_scene.id..end_scene.id).where(key: :ModelViewerQuizStart, :client_id.exists => true).last
+        -if start_quiz
+          -end_quiz = AdaData.with_game(@game.name).include_filters(@filters).where(startContextID: start_quiz.client_id).first
+          -if end_quiz
+            -AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_quiz.id..end_quiz.id).where(key: :ModelViewerQuizGuess).each do |record|
+              -scene = start_scene.name
+              -if !recent_scenes.has_key? scene
+                -recent_scenes[scene] = Hash.new
+              -if !recent_scenes[scene].has_key? record.question
+                -recent_scenes[scene][record.question] = []
+              -recent_scenes[scene][record.question] << record.correct
+
+
+    -# -start_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizStart ,user_id: user_id.to_i,).last
+    -# -if start_log
+    -#   -end_log = AdaData.with_game(@game.name).include_filters(@filters).where(startContextID: start_log.client_id).first
+    -#     -AdaData.with_game(@game.name).include_filters(@filters).between(_id: start_log.id..end_log.id).where(key: :ModelViewerQuizGuess).each do |record|
+    -#     -scene = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: start_log.context[0]).first.name
+    -#     -if !recent_scenes.has_key? scene
+    -#       -recent_scenes[scene] = Hash.new
+    -#     -if !recent_scenes[scene].has_key? record.question
+    -#       -recent_scenes[scene][record.question] = []
+    -#     -recent_scenes[scene][record.question] << record.correct
+
+-scene_averages_recent = Hash.new
+-recent_scene_scores = Hash.new
+-scene_average_list = []
+-@users.each do |user_id|
+  -puts "----------- " + user_id.to_s
+  -scenes.keys.each do |scene|
+    -start_log = AdaData.with_game(@game.name).include_filters(@filters).where(key: :ModelViewerQuizStart ,user_id: user_id.to_i).last
+    -if start_log
+      -scene = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: start_log.context[0]).first.name
+      -puts scene
+      -end_log = AdaData.with_game(@game.name).include_filters(@filters).where(startContextID: start_log.client_id).first
+      -if end_log
+        -if !recent_scene_scores.has_key? scene
+          -recent_scene_scores[scene] = []
+        -recent_scene_scores[scene] << end_log
+
+-recent_scene_scores.keys.each do |scene|
+  -running_total = 0
+  -recent_scene_scores[scene].each do |end_log|
+    -quiz_score = end_log.questionsAnsweredCorrectly/([end_log.questionsTotal, 1].max.to_f)
+    -running_total += quiz_score
+  -percent = ((running_total/recent_scene_scores[scene].count.to_f)*100).to_i
+  -scene_averages_recent[scene] = percent
+  -scene_hash = Hash.new
+  -scene_hash["name"] = scene
+  -scene_hash["score"] = percent
+  -scene_average_list << scene_hash
+
+
+:javascript
+  $(document).ready( function() {
+    function SetActiveGraphs(sceneName) {
+      var sceneElements = document.getElementsByClassName("sceneGraphContainer");
+      for (var i = 0; i < sceneElements.length; i++) {
+        if (sceneElements[i].id === sceneName) {
+          sceneElements[i].style.display = "block";
+        } else {
+          sceneElements[i].style.display = "none";
+        }
+      }
+    }
+
+    var sceneHash = #{scenes.to_json};
+    var activeScene = Object.keys(sceneHash)[0];
+    SetActiveGraphs(activeScene);
+
+    var sceneButtons = document.getElementById("sceneButtons");
+    for (var i = 0; i < sceneButtons.children.length; i++) {
+      var button = sceneButtons.children[i];
+      button.addEventListener("click", function() {
+        SetActiveGraphs(this.innerText);
+      }, false)
+    }
+
+    //Average Score histogram
+    function CompareSceneScores(a,b){
+      return a.score - b.score;
+    }
+    var avgScores = #{scene_average_list.to_json}
+    //avgScores.sort(CompareSceneScores);
+    console.log(#{recent_scene_scores.to_json})
+    c3.generate({
+      bindto: "#average-scores",
+      data: {
+        type: 'bar',
+        json: avgScores,
+        keys: {
+            x: 'name',
+            value: ['score']
+          }
+      },
+      axis: {
+              x: {
+                  type: 'category'
+              }
+      },
+      bar: {
+          width: {
+              ratio: 0.5
+          }
+      }
+    });
+
+
+
+  });
+
+.content.full
+  .container
+    .two_thirds.left
+      %p
+        Total time spent playing:
+        = Time.at(total_time).utc.strftime("%H:%M:%S")
+      %p
+        Average time spent playing:
+        = Time.at(avg_time).utc.strftime("%H:%M:%S")
+
+
+.content.one_half.left
+  .container
+    .title.center_text Average Final Scores
+    #pulse-check
+
+.content.one_half.right
+  .container
+    .title.center_text Average Score by Bone Set
+    #average-scores
+
+.clear
+
+.content.full#sceneButtons
+  -scene_names.each do |scene|
+    .green_button.left{:id => "#{scene}Button", :class => "green_button"}
+      =scene
+
+  -# .one_fourth.header.left Calf Leg
+  -# .one_fourth.header.left Cow Skeleton
+  -# .one_fourth.header.left Dog Skull
+  -# .one_fourth.header.left Cat Skeleton
+
+.content.full
+  -scenes.keys.each do |scene|
+    .container{:id => "#{scene}", :class => "sceneGraphContainer"}
+      %p.header.center_text
+        =scene
+      .two_thirds.left
+        .full_width.middle.graph#sceneGraphs
+          -scene_scores = []
+          .container
+            - scenes[scene].keys.each do |question|
+              - if question != 'total'
+                -total_correct = 0
+                -scenes[scene][question].each do |correct|
+                  -if correct
+                    -total_correct += 1
+                - percent = ((total_correct.to_f/scenes[scene][question].count)*100).to_i
+                -scene_scores << percent
+                = render "progress_bar", name: question,percent: percent
+
+  -#     .one_third.right
+  -#       %p.center.center_text
+  -#         Average Quiz Score
+  -#         .one_third.subcontainer.center.center_text
+  -#           =scene_averages_recent[scene].to_s + "%"
+  -#         %h4.center_text (Most Recent)
+  -#         .center.center_text= link_to "Show for Date Range"
+
+
+
+

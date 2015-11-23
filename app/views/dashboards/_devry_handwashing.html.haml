@@ -39,7 +39,7 @@
     %ul.flagged_items
       - AdaData.with_game(@game.name).include_filters(@filters).where(key: :LeaderboardEntry_Handwashing).desc(:scoreAsFloat).limit(10).each do |record|
         %li.full
-          Score: 
+          Score:
           =  record.scoreAsFloat
           .student_management.right
             = record.playerDefinedName
