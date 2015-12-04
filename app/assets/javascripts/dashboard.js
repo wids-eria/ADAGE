@@ -1,4 +1,5 @@
 $(function() {
+  console.log("1")
   $( "#from" ).datepicker({
     defaultDate: "+1w",
     changeMonth: true,
@@ -21,7 +22,7 @@ $(function() {
   });
 
   var to = $( "#to" ).val();
-  if(to != "") $( "#to" ).val(moment(from,"x").format("MM/DD/YYYY"));
+  if(to != "") $( "#to" ).val(moment(to,"x").format("MM/DD/YYYY"));
   $("#apply").click(function(){
   	var filter = {};
   	$.each(Dashboard.filters(),function(key,value){
@@ -48,6 +49,8 @@ Dashboard = {
 	filters: function(){
 		//Grab all of the filters
 		var temp = [];
+
+    console.log('here');
 
 		$("#filters .filter").each(function(key,value){
 			var filter = {
