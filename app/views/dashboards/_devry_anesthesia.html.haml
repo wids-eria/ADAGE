@@ -10,7 +10,7 @@
 
 - avg_pex = []
 - AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,name: "PEx Pulse").inject({}) do |record,event|
-  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << event.score
+  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << (event.score * 100)
   - record
   - avg_pex = record
 - avg_pex.keys.each do |key|
@@ -18,7 +18,7 @@
 
 - avg_asa = []
 - AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,name: "ASA-PS Score").inject({}) do |record,event|
-  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << event.score
+  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << (event.score * 100)
   - record
   - avg_asa = record
 - avg_asa.keys.each do |key|
@@ -34,7 +34,7 @@
 
 -avg_trimeth = []
 -AdaData.with_game(@game.name).include_filters(@filters).where(key: :ContextEnd_Spinner,name: "Trimethoprim-Sulfadiazine").inject({}) do |record, event|
-  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << event.score
+  - ( record[Time.at(event.timestamp.to_i/1000).strftime("%m/%d/%y")] ||= [] ) << (event.score * 100)
   - record
   - avg_trimeth = record
 - avg_trimeth.keys.each do |key|
@@ -438,7 +438,7 @@
         Total time spent playing:
         = Time.at(total_time).utc.strftime("%H:%M:%S")
       %p
-        Average time spent playing:
+        Average time spent playing per session:
         = Time.at(avg_time).utc.strftime("%H:%M:%S")
     .one_third.right
       #pie.right
@@ -486,8 +486,8 @@
 
 .content.full
   .container
-    %p.header.center_text Pre-Op Checklist
-
+    %p.header.center_text Surgery Prep
+    .title.center_text Pre-Op Checklist
     .full_width.middle.graph
       - checklist_scores.keys.each do |key|
         - if key != 'total'

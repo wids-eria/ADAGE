@@ -1,0 +1,51 @@
+-# Collect stage ordering data
+-# -stage_scores = Hash.new
+-# -AdaData.with_game(@game.name).where(key: :EmbryologySegmentIdentifyEnd).each do |segment_end|
+-#   -segment_start = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: segment_end.startContextID).first
+-#   -if segment_start
+-#     - last_attempt = AdaData.with_game(@game.name).include_filters(@filters).between(_id: segment_start._id..segment_end._id).where(key: :EmbryologySegmentIdentifyAttempt).last
+-#     -if last_attempt
+-#       -unless stage_scores.keys.include? last_attempt.madeChoice
+-#         -stage_scores[last_attempt.madeChoice] = []
+-#       -stage_scores[last_attempt.madeChoice] << [0, 100 - ((segment_end.attempts - 1) * 25)].max
+
+-#Collect stage naming data
+-stage_scores = Hash.new
+-AdaData.with_game(@game.name).where(key: :EmbryologySegmentIdentifyEnd).each do |segment_end|
+  -segment_start = AdaData.with_game(@game.name).include_filters(@filters).where(client_id: segment_end.startContextID).first
+  -if segment_start
+    - last_attempt = AdaData.with_game(@game.name).include_filters(@filters).between(_id: segment_start._id..segment_end._id).where(key: :EmbryologySegmentIdentifyAttempt).last
+    -if last_attempt
+      -unless stage_scores.keys.include? last_attempt.madeChoice
+        -stage_scores[last_attempt.madeChoice] = []
+      -stage_scores[last_attempt.madeChoice] << [0, 100 - ((segment_end.attempts - 1) * 25)].max
+
+-# Stage ordering
+-# .content.full
+-#   .container
+-#     %p.header.center_text
+-#       Stage Naming
+-#     .two_thirds.left
+-#       .full_width.middle.graph#sceneGraphs
+-#         .container
+-#           - stage_scores.keys.each do |stage|
+-#             -aggregate_score = 0
+-#             -stage_scores[stage].each do |score|
+-#               -aggregate_score += score
+-#             - percent = ((aggregate_score.to_f/(stage_scores[stage].count*100).to_f)*100).to_i
+-#             = render "progress_bar", name: stage,percent: percent
+
+-#Stage naming
+.content.full
+  .container
+    %p.header.center_text
+      Stage Naming
+    .two_thirds.left
+      .full_width.middle.graph#sceneGraphs
+        .container
+          - stage_scores.keys.each do |stage|
+            -aggregate_score = 0
+            -stage_scores[stage].each do |score|
+              -aggregate_score += score
+            - percent = ((aggregate_score.to_f/(stage_scores[stage].count*100).to_f)*100).to_i
+            = render "progress_bar", name: stage,percent: percent
